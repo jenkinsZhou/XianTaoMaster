@@ -1,11 +1,174 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- popup window 显示消失动画-->
+    <style name="PopWindowAnimStyle">
+        <item name="android:windowShowAnimation">@anim/dialog_enter</item>
+        <!-- 指定显示的动画xml  -->
+        <item name="android:windowHideAnimation">@anim/dialog_exit</item>
+        <!-- 指定消失的动画xml  -->
+    </style>
+
+    <style name="BaseDialogStyle">
+        <!--设置dialog的背景-->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--Dialog的windowFrame框为无-->
+        <item name="android:windowFrame">@null</item>
+        <!--是否显示title-->
+        <item name="android:windowNoTitle">true</item>
+        <!--是否浮现在activity之上-->
+        <item name="android:windowIsFloating">true</item>
+        <!--是否半透明-->
+        <item name="android:windowIsTranslucent">true</item>
+        <!--是否有遮盖-->
+        <item name="android:windowContentOverlay">@null</item>
+        <!--背景是否模糊显示-->
+        <item name="android:backgroundDimEnabled">true</item>
+        <!--点击非dialog关闭-->
+        <item name="android:windowCloseOnTouchOutside">true</item>
+    </style>
+
+
+    <style name="AlertViewDialogStyle" parent="BaseDialogStyle">
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+    </style>
+
+    <style name="AlertViewButtonStyle">
+        <item name="android:clickable">true</item>
+        <item name="android:layout_width">0dip</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:minHeight">45dp</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textColor">@color/colorAlertButton</item>
+        <item name="android:textSize">@dimen/alert_message_size</item>
+    </style>
+
+    <style name="ProgressViewDialogStyle" parent="BaseDialogStyle">
+        <!-- 对话框动画 -->
+        <item name="android:windowAnimationStyle">@style/PopWindowAnimStyle</item>
+    </style>
+
+    <style name="ActionSheetAnimation" parent="@android:style/Animation.Dialog">
+        <item name="android:windowEnterAnimation">@anim/push_up_in</item>
+        <item name="android:windowExitAnimation">@anim/push_up_out</item>
+    </style>
+
+    <style name="ActionSheetViewDialogStyle" parent="BaseDialogStyle">
+        <item name="android:windowAnimationStyle">@style/ActionSheetAnimation</item>
+    </style>
+
+    <style name="LineGray">
+        <item name="android:background">@color/colorLineGray</item>
+    </style>
+
+    <style name="LineGray.Horizontal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/dp_line_size</item>
+    </style>
+
+    <style name="LineGray.Horizontal.BreakLeft">
+        <item name="android:layout_marginLeft">@dimen/dp_line_break</item>
+    </style>
+
+    <style name="LineGray.Horizontal.BreakRight">
+        <item name="android:layout_marginLeft">@dimen/dp_line_break</item>
+    </style>
+
+    <style name="LineGray.Horizontal.BreakAll">
+        <item name="android:layout_marginLeft">@dimen/dp_line_break</item>
+        <item name="android:layout_marginRight">@dimen/dp_line_break</item>
+    </style>
+
+    <style name="LineGray.Vertical">
+        <item name="android:layout_width">@dimen/dp_line_size</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+
+    <!-- CollapsingTitleBarLayout start -->
+    <declare-styleable name="CollapsingTitleBarLayout">
+        <attr name="collapsing_expandedTitleMargin" format="dimension"/>
+        <attr name="collapsing_expandedTitleMarginStart" format="dimension"/>
+        <attr name="collapsing_expandedTitleMarginTop" format="dimension"/>
+        <attr name="collapsing_expandedTitleMarginEnd" format="dimension"/>
+        <attr name="collapsing_expandedTitleMarginBottom" format="dimension"/>
+        <attr name="collapsing_expandedTitleTextAppearance" format="reference"/>
+        <attr name="collapsing_collapsedTitleTextAppearance" format="reference"/>
+        <attr name="collapsing_contentScrim" format="color"/>
+        <attr name="collapsing_statusBarScrim" format="color"/>
+        <attr name="collapsing_titleBarId" format="reference"/>
+        <attr name="collapsing_scrimVisibleHeightTrigger" format="dimension"/>
+        <attr name="collapsing_scrimAnimationDuration" format="integer"/>
+        <attr name="collapsing_collapsedTitleGravity">
+            <flag name="top" value="0x30"/>
+            <flag name="bottom" value="0x50"/>
+            <flag name="left" value="0x03"/>
+            <flag name="right" value="0x05"/>
+            <flag name="center_vertical" value="0x10"/>
+            <flag name="fill_vertical" value="0x70"/>
+            <flag name="center_horizontal" value="0x01"/>
+            <flag name="center" value="0x11"/>
+            <flag name="start" value="0x00800003"/>
+            <flag name="end" value="0x00800005"/>
+        </attr>
+        <attr name="collapsing_expandedTitleGravity">
+            <flag name="top" value="0x30"/>
+            <flag name="bottom" value="0x50"/>
+            <flag name="left" value="0x03"/>
+            <flag name="right" value="0x05"/>
+            <flag name="center_vertical" value="0x10"/>
+            <flag name="fill_vertical" value="0x70"/>
+            <flag name="center_horizontal" value="0x01"/>
+            <flag name="center" value="0x11"/>
+            <flag name="start" value="0x00800003"/>
+            <flag name="end" value="0x00800005"/>
+        </attr>
+        <attr name="collapsing_titleEnabled" format="boolean"/>
+        <attr name="title"/>
+    </declare-styleable>
+
+    <declare-styleable name="CollapsingTitleBarLayout_Layout">
+        <attr name="collapsing_layout_collapseMode">
+            <enum name="none" value="0"/>
+            <enum name="pin" value="1"/>
+            <enum name="parallax" value="2"/>
+        </attr>
+        <attr name="collapsing_layout_collapseParallaxMultiplier" format="float"/>
+    </declare-styleable>
+
+    <!-- CollapsingTitleBarLayout end -->
+    <declare-styleable name="CollapsingTextAppearance">
+        <attr name="android:textSize"/>
+        <attr name="android:textColor"/>
+        <attr name="android:textColorHint"/>
+        <attr name="android:textStyle"/>
+        <attr name="android:typeface"/>
+        <attr name="android:textAllCaps"/>
+        <attr name="android:shadowColor"/>
+        <attr name="android:shadowDy"/>
+        <attr name="android:shadowDx"/>
+        <attr name="android:shadowRadius"/>
+    </declare-styleable>
+
+    <!--展开状态样式-->
+    <style name="CollapsingTitleBarLayoutExpanded">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <!--折叠状态TextView样式-->
+    <style name="CollapsingTitleBarLayoutCollapsed">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">18sp</item>
+    </style>
 </resources>

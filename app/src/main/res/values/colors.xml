@@ -1,6 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#41baff</color>
+    <color name="colorPrimaryDark">#41baff</color>
+    <color name="colorAccent">#41baff</color>
+
+
+    <color name="colorLineGray">#DCDCDC</color>
+
+    <color name="colorLoadingTextWeiBo">#f0f0f0</color>
+    <color name="colorLoadingText">#393939</color>
+    <color name="colorLoadingBg">#f5ffffff</color>
+    <color name="colorLoadingBgWei">#a5000000</color>
+
+    <color name="colorActionSheetWeiXinText">#393939</color>
+    <color name="colorActionSheetNormalItemText">#393939</color>
+    <color name="colorActionSheetTitleText">#969696</color>
+    <color name="colorActionSheetCancelText">#1382FF</color>
+    <color name="colorActionSheetItemText">#1382FF</color>
+    <color name="colorActionSheetEdgePressed">#F0F0F0</color>
+    <color name="colorActionSheetEdge">#FFFFFF</color>
+    <color name="colorActionSheetEdgeLineGray">@color/colorLineGray</color>
+    <color name="colorActionSheetNormalBackground">#e5e3e4</color>
+
+    <color name="colorRadiusDefaultRipple">#c8cccccc</color>
+
+
+    <color name="colorItems">#524188</color>
+    <color name="colorBackground">#f8f8f8</color>
+    <color name="colorTitle">#FFFFFF</color>
+    <color name="colorTextBlack">#333333</color>
+    <color name="colorTextBlackLight">#636363</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorWhitePressed">#e8e8e8</color>
+
+    <!--弹窗相关颜色-->
+    <color name="colorAlertBg">#FFFFFF</color>
+    <color name="colorAlertBgPressed">#e6e6e6</color>
+    <color name="colorAlertLineGray">#DCDCDC</color>
+    <color name="colorAlertTitle">#393939</color>
+    <color name="colorAlertMessage">#393939</color>
+    <color name="colorAlertButton">#393939</color>
 </resources>
