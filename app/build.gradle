@@ -9,6 +9,7 @@ android {
         versionCode 1
         versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -17,6 +18,12 @@ android {
         }
     }
     buildToolsVersion '28.0.3'
+
+    //指定jdk版本
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -52,7 +59,6 @@ dependencies {
     implementation 'com.github.Bakumon:StatusLayoutManager:1.0.4'
     implementation 'cn.bingoogolapple:bga-banner:2.1.7@aar'
     implementation 'cn.bingoogolapple:bga-swipebacklayout:1.2.0@aar'
-    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.5.1'
     implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
     //图片加载 4.X
     implementation('com.github.bumptech.glide:glide:4.7.1') {
@@ -69,15 +75,29 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 
-    api 'com.trello.rxlifecycle3:rxlifecycle-components:3.0.0'
+    implementation 'com.trello.rxlifecycle3:rxlifecycle-components:3.0.0'
     //滑动返回Activity
-    api 'cn.bingoogolapple:bga-swipebacklayout:1.2.0@aar'
+    implementation 'cn.bingoogolapple:bga-swipebacklayout:1.2.0@aar'
 
     //快速Tab库
-    api 'com.github.AriesHoo:TabLayout:1.0.2'
+    implementation 'com.github.AriesHoo:TabLayout:1.0.2'
     //页面事件交互
-    api 'org.simple:androideventbus:1.0.5.1'
+    implementation 'org.simple:androideventbus:1.0.5.1'
     //多状态视图切换
-    api 'com.github.Bakumon:StatusLayoutManager:1.0.4'
+    implementation 'com.github.Bakumon:StatusLayoutManager:1.0.4'
+    //retrofit2.0
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.5.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.13.1'
 
+    //webView库
+    implementation 'com.just.agentweb:agentweb:4.0.2'
+
+    //下拉刷新库注意刷新头SmartRefreshHeader版本最好对应尤其头版本不要低于SmartRefreshLayout版本
+    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.5.1'
+    implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.0.5.1'
+
+    //图片选择器
+    implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.3'
 }

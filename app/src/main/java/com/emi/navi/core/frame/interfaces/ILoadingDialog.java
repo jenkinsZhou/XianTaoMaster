@@ -2,6 +2,8 @@ package com.emi.navi.core.frame.interfaces;
 
 import android.app.Activity;
 
+import com.emi.navi.core.frame.widget.LoadingDialog;
+
 import androidx.annotation.Nullable;
 
 
@@ -12,7 +14,7 @@ import androidx.annotation.Nullable;
  * @date 2019年 03月 02日 22时53分
  * @Email: 971613168@qq.com
  */
-public interface LoadingDialog {
+public interface ILoadingDialog {
 
     /**
      * 设置快速Loading Dialog

@@ -4,8 +4,9 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import androidx.core.content.ContextCompat;
 import android.util.TypedValue;
+
+import androidx.core.content.ContextCompat;
 
 /**
  * @author :zhoujian
@@ -21,6 +22,7 @@ public class ResourceUtil {
     public ResourceUtil(Context context) {
         this.mContext = context;
     }
+
 
     public CharSequence getText(int res) {
         CharSequence txt = null;

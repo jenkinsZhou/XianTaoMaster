@@ -3,7 +3,6 @@ package com.emi.navi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.View;
 
 import com.emi.navi.core.log.NaViLogUtil;
 import com.emi.navi.core.util.ToastUtil;
@@ -23,17 +22,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.base_activity_main);
         context = this;
         initAlert();
         NaViLogUtil.d("测试安达市大所多啥所发生奥术大师大大所多奥术大师大所多的");
-        findViewById(R.id.btnTest).setOnClickListener(new View.OnClickListener() {
+      /*  findViewById(R.id.btnTest).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                emiAlertDialog.show();
                 ToastUtil.show("测试一下吐司");
             }
-        });
+        });*/
     }
 
 

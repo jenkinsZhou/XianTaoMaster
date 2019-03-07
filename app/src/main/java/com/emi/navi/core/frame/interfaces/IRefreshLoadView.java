@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @author :zhoujian
- * @description :下拉刷新 上拉加载
+ * @description :下拉刷新 上拉加载接口
  * @company :翼迈科技
  * @date 2019年 03月 02日 22时23分
  * @Email: 971613168@qq.com

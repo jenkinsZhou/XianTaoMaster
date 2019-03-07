@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">NaViMaster</string>
 
     <string name="custom_activityoncrash_error_activity_error_occurred_explanation">抱歉，出现了不可预期的错误，您可重新启动应用，或者将错误信息反馈给我们，感谢您的理解与支持！</string>
@@ -21,5 +21,43 @@
     <string name="custom_activity_on_crash_error_activity_error_details_copy">复制</string>
     <string name="custom_activity_on_crash_error_activity_error_details_copied">复制</string>
     <string name="custom_activity_on_crash_error_activity_error_details_clipboard_label">错误信息</string>
-    <string name="loading">加载中...</string>
+
+    <string name="loading">正在加载</string>
+    <string name="load_more_load_failed" tools:ignore="ExtraTranslation">加载失败,请点我重试</string>
+    <string name="load_more_load_end">没有更多数据</string>
+
+
+    <string name="multi_loading">加载中...</string>
+    <string name="multi_empty">暂无数据</string>
+    <string name="multi_error">加载错误</string>
+
+
+    <string name="external_cache_dir">fast_external_cache_dir</string>
+    <string name="cache_dir">fast_cache_dir</string>
+    <string name="external_storage_directory">fast_external_storage_directory</string>
+    <string name="external_files_dir">fast_external_files_dir</string>
+    <string name="files_dir">fast_files_dir</string>
+
+    <string name="web_alert_title">Kindly Reminder</string>
+    <string name="web_alert_msg">Are you sure to close this page?</string>
+    <string name="web_alert_left">Back</string>
+    <string name="web_alert_right">Close</string>
+    <string name="copy_success">Copy Successful</string>
+
+
+
+    <string name="exception_network_not_connected">Network Not Connected Exception</string>
+    <string name="exception_network_error">Network Error Exception</string>
+    <string name="exception_accounts">Account Exception</string>
+    <string name="exception_connect">Connect Exception</string>
+    <string name="exception_socket">Socket Exception</string>
+    <string name="exception_http">HTTP Exception</string>
+    <string name="exception_unknown_host">Unknown Host Exception</string>
+    <string name="exception_json_syntax">Json Syntax Exception</string>
+    <string name="exception_time_out">Time Out Exception</string>
+    <string name="exception_class_cast">Class Cast Exception</string>
+    <string name="exception_other_error">Other Exception</string>
+    <string name="cancel">取消</string>
+    <string name="load_more_loading">加载中...</string>
+    <string name="quit_app">再按一次退出</string>
 </resources>

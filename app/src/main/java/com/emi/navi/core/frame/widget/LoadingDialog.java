@@ -13,7 +13,6 @@ import com.emi.navi.widget.core.util.FindViewUtil;
 import java.lang.ref.WeakReference;
 
 
-
 /**
  * @author :zhoujian
  * @description :创建loading对话框
@@ -21,24 +20,24 @@ import java.lang.ref.WeakReference;
  * @date 2019年 03月 02日 22时53分
  * @Email: 971613168@qq.com
  */
-public class LoadDialog {
+public class LoadingDialog {
 
     private Dialog mDialog = null;
 
     private Activity mActivity;
     private final WeakReference<Activity> mReference;
 
-    public LoadDialog() {
+    public LoadingDialog() {
         this(StackUtil.getInstance().getCurrent());
     }
 
-    public LoadDialog(Activity activity) {
+    public LoadingDialog(Activity activity) {
         this(activity, new ProgressDialog.Builder(activity)
-                .setMessage(R.string.loading)
+                .setMessage(R.string.load_more_loading)
                 .create());
     }
 
-    public LoadDialog(Activity activity, Dialog dialog) {
+    public LoadingDialog(Activity activity, Dialog dialog) {
         this.mReference = new WeakReference<>(activity);
         this.mDialog = dialog;
     }
@@ -49,7 +48,7 @@ public class LoadDialog {
      * @param enable
      * @return
      */
-    public LoadDialog setCancelable(boolean enable) {
+    public LoadingDialog setCancelable(boolean enable) {
         if (mDialog != null) {
             mDialog.setCancelable(enable);
         }
@@ -62,7 +61,7 @@ public class LoadDialog {
      * @param enable
      * @return
      */
-    public LoadDialog setCanceledOnTouchOutside(boolean enable) {
+    public LoadingDialog setCanceledOnTouchOutside(boolean enable) {
         if (mDialog != null) {
             mDialog.setCanceledOnTouchOutside(enable);
         }
@@ -73,7 +72,7 @@ public class LoadDialog {
      * @param msg
      * @return
      */
-    public LoadDialog setMessage(CharSequence msg) {
+    public LoadingDialog setMessage(CharSequence msg) {
         if (mDialog == null) {
             return this;
         }
@@ -92,7 +91,7 @@ public class LoadDialog {
      * @param msg
      * @return
      */
-    public LoadDialog setMessage(int msg) {
+    public LoadingDialog setMessage(int msg) {
         mActivity = mReference.get();
         if (mActivity != null) {
             return setMessage(mActivity.getText(msg));
@@ -104,7 +103,7 @@ public class LoadDialog {
      * @param enable 设置全透明
      * @return
      */
-    public LoadDialog setFullTrans(boolean enable) {
+    public LoadingDialog setFullTrans(boolean enable) {
         if (mDialog != null) {
             WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
             // 黑暗度
