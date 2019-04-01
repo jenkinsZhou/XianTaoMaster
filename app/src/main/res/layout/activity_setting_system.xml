@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F4F5F7"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_title_bar" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_marginTop="@dimen/dp_20"
+            android:layout_marginRight="@dimen/dp_10"
+            android:background="@drawable/bg_radius_12_white"
+            android:orientation="vertical">
+
+            <com.allen.library.SuperTextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_18"
+                android:layout_marginTop="@dimen/dp_20"
+                android:textStyle="bold"
+                app:sDividerLineType="none"
+                app:sLeftTextColor="@color/blackCommon"
+                app:sLeftTextSize="@dimen/sp_15"
+                app:sLeftTextString="修改登录密码"
+                app:sRightIconRes="@mipmap/ic_all"
+                app:sRightTextColor="@color/grayLittleCommon"
+                app:sRightTextString="去修改"
+                app:sUseRipple="false" />
+
+            <com.allen.library.SuperTextView
+                android:id="@+id/stvAboutUs"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_18"
+                android:layout_marginTop="@dimen/dp_20"
+                android:layout_marginBottom="@dimen/dp_12"
+                android:textStyle="bold"
+                app:sDividerLineType="none"
+                app:sLeftTextColor="@color/blackCommon"
+                app:sLeftTextSize="@dimen/sp_15"
+                app:sLeftTextString="关于我们"
+                app:sRightIconRes="@mipmap/ic_all"
+                app:sRightTextColor="@color/grayLittleCommon"
+                app:sRightTextString="@string/app_name"
+                app:sUseRipple="false" />
+
+            <com.allen.library.SuperTextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_18"
+                android:layout_marginTop="@dimen/dp_12"
+                android:layout_marginBottom="@dimen/dp_12"
+                android:textStyle="bold"
+                app:sDividerLineType="none"
+                app:sLeftTextColor="@color/blackCommon"
+                app:sLeftTextSize="@dimen/sp_15"
+                app:sLeftTextString="清除缓存"
+                app:sRightIconRes="@mipmap/ic_all"
+                app:sRightTextColor="@color/grayLittleCommon"
+                app:sRightTextString="12M"
+                app:sUseRipple="false" />
+
+            <com.allen.library.SuperTextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_18"
+                android:layout_marginTop="@dimen/dp_12"
+                android:layout_marginBottom="@dimen/dp_12"
+                android:textStyle="bold"
+                app:sDividerLineType="none"
+                app:sLeftTextColor="@color/blackCommon"
+                app:sLeftTextSize="@dimen/sp_15"
+                app:sLeftTextString="当前版本"
+                app:sRightIconRes="@mipmap/ic_all"
+                app:sRightTextColor="@color/grayLittleCommon"
+                app:sRightTextString="已经是最新版本"
+                app:sUseRipple="false" />
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/btnExitLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_marginRight="@dimen/dp_10"
+            android:layout_marginBottom="@dimen/dp_36"
+            android:background="@drawable/selector_bg_radius_16_green_hollow"
+            android:gravity="center"
+            android:paddingTop="@dimen/dp_12"
+            android:paddingBottom="@dimen/dp_12"
+            android:text="退出登录"
+            android:textColor="@color/colorPrimary" />
+
+
+    </RelativeLayout>
+</LinearLayout>

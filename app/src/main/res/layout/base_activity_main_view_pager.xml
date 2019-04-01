@@ -7,5 +7,5 @@
 
     <include layout="@layout/layout_view_pager"/>
 
-    <include layout="@layout/layout_tab"/>
+    <include layout="@layout/layout_tab_main"/>
 </LinearLayout>

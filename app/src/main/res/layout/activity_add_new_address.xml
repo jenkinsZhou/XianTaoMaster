@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grayBgCommon"
+    android:orientation="vertical">
+    <!--新增地址-->
+    <include layout="@layout/layout_title_bar" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/dp_13"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginRight="@dimen/dp_13">
+
+        <TextView
+            android:id="@+id/tvSaveShippingAddress"
+            style="@style/TextViewButtonBlueBgMatchParentStyleBase"
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/dp_25"
+            android:text="保存地址"
+            android:textSize="@dimen/sp_16" />
+
+        <LinearLayout
+            android:id="@+id/llAddress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/tvSaveShippingAddress"
+            android:background="@drawable/bg_radius_5_white"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/dp_15"
+            android:paddingTop="@dimen/dp_16"
+            android:paddingRight="@dimen/dp_15">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TextViewBlackCommStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="收件人姓名"
+                    android:textSize="@dimen/sp_15" />
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:background="@null"
+                    android:gravity="right"
+                    android:hint="填写姓名"
+                    android:textSize="@dimen/sp_15" />
+            </LinearLayout>
+            <!--收件人号码-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_20"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TextViewBlackCommStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="收件人号码"
+                    android:textSize="@dimen/sp_15" />
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:background="@null"
+                    android:gravity="right"
+                    android:hint="填写号码"
+                    android:textSize="@dimen/sp_15" />
+            </LinearLayout>
+
+            <!--所在区域-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_20"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TextViewBlackCommStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="所在区域"
+                    android:textSize="@dimen/sp_15" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:drawableRight="@mipmap/ic_all"
+                    android:drawablePadding="@dimen/dp_10"
+                    android:gravity="right"
+                    android:text="选择区域"
+                    android:textColor="@color/grayCommon"
+                    android:textSize="@dimen/sp_15" />
+
+                <!--  <ImageView
+                      android:layout_width="@dimen/dp_0"
+                      android:layout_height="@dimen/dp_11"
+                      android:layout_gravity="center_vertical"
+                      android:layout_weight="0.2"
+                      android:src="@mipmap/ic_all" />-->
+            </LinearLayout>
+
+            <!--详细地址-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_20"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TextViewBlackCommStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="详细地址"
+                    android:textSize="@dimen/sp_15" />
+            </LinearLayout>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_20"
+                android:layout_marginBottom="@dimen/dp_20"
+                android:background="@null"
+                android:gravity="left"
+                android:hint="填写详细地址"
+                android:textColor="#B2B2B2"
+                android:textSize="@dimen/sp_15" />
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+
+</LinearLayout>

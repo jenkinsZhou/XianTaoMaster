@@ -1,14 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#41baff</color>
-    <color name="colorPrimaryDark">#41baff</color>
-    <color name="colorAccent">#41baff</color>
+
+    <color name="color_black_alpha_20">#33000000</color>
+    <color name="whiteCommon">#FFFFFF</color>
+    <!--灰色背景通用-->
+    <color name="grayBgCommon">#F9F9F9</color>
+    <color name="grayDeepBgCommon">#F2F2F2</color>
+
+    <color name="test">#bbbbbb</color>
+    <color name="test1">#aaaaaa</color>
+    <color name="test2">#999999</color>
+    <color name="test3">#888888</color>
+    <color name="test4">#777777</color>
+    <color name="test5">#666666</color>
+
+    <!--弹窗内容字体颜色-->
+    <color name="gray_alert">#333333</color>
+    <!--弹窗相关分割线-->
+    <color name="gray_alert_line">#E5E5E5</color>
+    <!--灰色字体通用-->
+    <color name="text_gray_common">#999999</color>
+    <color name="colorTextGray">#666666</color>
+    <!--灰色字体通用-->
+    <color name="grayCommon">#666666</color>
+    <!--黑色字体通用-->
+    <color name="blackCommon">#171717</color>
+    <!--浅灰色字体通用-->
+    <color name="grayLittleCommon">#999999</color>
+
+    <color name="redTextCommon">#F95B47</color>
+    <!-- 个人中心颜色相关-->
+    <color name="red_common">#FF3636</color>
+    <!--分割线-->
+    <color name="line_color_common">#dddddd</color>
+    <color name="line_color_gray_little">#EAEAEA</color>
+
+    <color name="greenCommon">#2BC475</color>
+    <color name="greenCommonPress">#2BC436</color>
+    <color name="colorPrimary">#2BC475</color>
+    <color name="colorPrimaryDark">#2BC436</color>
+    <color name="colorAccent">#2BC436</color>
     <color name="trans_parent">#00000000</color>
-    <color name="colorLineGray">#DCDCDC</color>
+    <color name="grayDivider">#F0F0E9</color>
     <color name="colorLoadingTextWeiBo">#f0f0f0</color>
     <color name="colorLoadingText">#393939</color>
     <color name="colorLoadingBg">#f5ffffff</color>
     <color name="colorLoadingBgWei">#a5000000</color>
+
+    <color name="common_background_color_gray">#F4F5F7</color>
 
     <color name="colorActionSheetWeiXinText">#393939</color>
     <color name="colorActionSheetNormalItemText">#393939</color>
@@ -17,7 +56,7 @@
     <color name="colorActionSheetItemText">#1382FF</color>
     <color name="colorActionSheetEdgePressed">#F0F0F0</color>
     <color name="colorActionSheetEdge">#FFFFFF</color>
-    <color name="colorActionSheetEdgeLineGray">@color/colorLineGray</color>
+    <color name="colorActionSheetEdgeLineGray">@color/grayDivider</color>
     <color name="colorActionSheetNormalBackground">#e5e3e4</color>
 
     <color name="colorRadiusDefaultRipple">#c8cccccc</color>
@@ -47,7 +86,7 @@
     <color name="colorTitleDivider">#DCDCDC</color>
 
     <!--主页tab背景色-->
-    <color name="colorTabBackground">#FCFCFC</color>
+    <color name="colorTabBackground">@color/whiteCommon</color>
     <!--主页上划线颜色-->
     <color name="colorTabUnderline">#d6d6d6</color>
     <!--主页tab文字默认颜色-->
@@ -77,4 +116,7 @@
     <color name="colorQQBackgroundCenter">#34b0fc</color>
     <!--Activity滑动返回背景-->
     <color name="colorSwipeBackBackground">#3b3b3b</color>
+
+    <color name="lineColor_click">@color/colorPrimary</color>
+    <color name="lineColor_unclick">#D3DFEF</color>
 </resources>

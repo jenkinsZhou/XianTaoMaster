@@ -75,7 +75,7 @@
     </style>
 
     <style name="LineGray">
-        <item name="android:background">@color/colorLineGray</item>
+        <item name="android:background">@color/grayDivider</item>
     </style>
 
     <style name="LineGray.Horizontal">
@@ -104,67 +104,67 @@
 
     <!-- CollapsingTitleBarLayout start -->
     <declare-styleable name="CollapsingTitleBarLayout">
-        <attr name="collapsing_expandedTitleMargin" format="dimension"/>
-        <attr name="collapsing_expandedTitleMarginStart" format="dimension"/>
-        <attr name="collapsing_expandedTitleMarginTop" format="dimension"/>
-        <attr name="collapsing_expandedTitleMarginEnd" format="dimension"/>
-        <attr name="collapsing_expandedTitleMarginBottom" format="dimension"/>
-        <attr name="collapsing_expandedTitleTextAppearance" format="reference"/>
-        <attr name="collapsing_collapsedTitleTextAppearance" format="reference"/>
-        <attr name="collapsing_contentScrim" format="color"/>
-        <attr name="collapsing_statusBarScrim" format="color"/>
-        <attr name="collapsing_titleBarId" format="reference"/>
-        <attr name="collapsing_scrimVisibleHeightTrigger" format="dimension"/>
-        <attr name="collapsing_scrimAnimationDuration" format="integer"/>
+        <attr name="collapsing_expandedTitleMargin" format="dimension" />
+        <attr name="collapsing_expandedTitleMarginStart" format="dimension" />
+        <attr name="collapsing_expandedTitleMarginTop" format="dimension" />
+        <attr name="collapsing_expandedTitleMarginEnd" format="dimension" />
+        <attr name="collapsing_expandedTitleMarginBottom" format="dimension" />
+        <attr name="collapsing_expandedTitleTextAppearance" format="reference" />
+        <attr name="collapsing_collapsedTitleTextAppearance" format="reference" />
+        <attr name="collapsing_contentScrim" format="color" />
+        <attr name="collapsing_statusBarScrim" format="color" />
+        <attr name="collapsing_titleBarId" format="reference" />
+        <attr name="collapsing_scrimVisibleHeightTrigger" format="dimension" />
+        <attr name="collapsing_scrimAnimationDuration" format="integer" />
         <attr name="collapsing_collapsedTitleGravity">
-            <flag name="top" value="0x30"/>
-            <flag name="bottom" value="0x50"/>
-            <flag name="left" value="0x03"/>
-            <flag name="right" value="0x05"/>
-            <flag name="center_vertical" value="0x10"/>
-            <flag name="fill_vertical" value="0x70"/>
-            <flag name="center_horizontal" value="0x01"/>
-            <flag name="center" value="0x11"/>
-            <flag name="start" value="0x00800003"/>
-            <flag name="end" value="0x00800005"/>
+            <flag name="top" value="0x30" />
+            <flag name="bottom" value="0x50" />
+            <flag name="left" value="0x03" />
+            <flag name="right" value="0x05" />
+            <flag name="center_vertical" value="0x10" />
+            <flag name="fill_vertical" value="0x70" />
+            <flag name="center_horizontal" value="0x01" />
+            <flag name="center" value="0x11" />
+            <flag name="start" value="0x00800003" />
+            <flag name="end" value="0x00800005" />
         </attr>
         <attr name="collapsing_expandedTitleGravity">
-            <flag name="top" value="0x30"/>
-            <flag name="bottom" value="0x50"/>
-            <flag name="left" value="0x03"/>
-            <flag name="right" value="0x05"/>
-            <flag name="center_vertical" value="0x10"/>
-            <flag name="fill_vertical" value="0x70"/>
-            <flag name="center_horizontal" value="0x01"/>
-            <flag name="center" value="0x11"/>
-            <flag name="start" value="0x00800003"/>
-            <flag name="end" value="0x00800005"/>
+            <flag name="top" value="0x30" />
+            <flag name="bottom" value="0x50" />
+            <flag name="left" value="0x03" />
+            <flag name="right" value="0x05" />
+            <flag name="center_vertical" value="0x10" />
+            <flag name="fill_vertical" value="0x70" />
+            <flag name="center_horizontal" value="0x01" />
+            <flag name="center" value="0x11" />
+            <flag name="start" value="0x00800003" />
+            <flag name="end" value="0x00800005" />
         </attr>
-        <attr name="collapsing_titleEnabled" format="boolean"/>
-        <attr name="title"/>
+        <attr name="collapsing_titleEnabled" format="boolean" />
+        <attr name="title" />
     </declare-styleable>
 
     <declare-styleable name="CollapsingTitleBarLayout_Layout">
         <attr name="collapsing_layout_collapseMode">
-            <enum name="none" value="0"/>
-            <enum name="pin" value="1"/>
-            <enum name="parallax" value="2"/>
+            <enum name="none" value="0" />
+            <enum name="pin" value="1" />
+            <enum name="parallax" value="2" />
         </attr>
-        <attr name="collapsing_layout_collapseParallaxMultiplier" format="float"/>
+        <attr name="collapsing_layout_collapseParallaxMultiplier" format="float" />
     </declare-styleable>
 
     <!-- CollapsingTitleBarLayout end -->
     <declare-styleable name="CollapsingTextAppearance">
-        <attr name="android:textSize"/>
-        <attr name="android:textColor"/>
-        <attr name="android:textColorHint"/>
-        <attr name="android:textStyle"/>
-        <attr name="android:typeface"/>
-        <attr name="android:textAllCaps"/>
-        <attr name="android:shadowColor"/>
-        <attr name="android:shadowDy"/>
-        <attr name="android:shadowDx"/>
-        <attr name="android:shadowRadius"/>
+        <attr name="android:textSize" />
+        <attr name="android:textColor" />
+        <attr name="android:textColorHint" />
+        <attr name="android:textStyle" />
+        <attr name="android:typeface" />
+        <attr name="android:textAllCaps" />
+        <attr name="android:shadowColor" />
+        <attr name="android:shadowDy" />
+        <attr name="android:shadowDx" />
+        <attr name="android:shadowRadius" />
     </declare-styleable>
 
     <!--展开状态样式-->
@@ -178,4 +178,106 @@
         <item name="android:textColor">@android:color/black</item>
         <item name="android:textSize">18sp</item>
     </style>
+
+
+    <style name="loading_dialog" parent="android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="IosDialogStyle">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+    <style name="ios_progress_dialog" parent="android:Theme.Dialog">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:backgroundDimAmount">0.4</item>
+    </style>
+
+    <style name="DialogWindowStyle">
+        <item name="android:windowEnterAnimation">@anim/modal_in</item>
+        <item name="android:windowExitAnimation">@anim/modal_out</item>
+    </style>
+
+
+    <style name="CheckBoxLoginTheme" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/selector_checkbox_login</item>
+    </style>
+
+
+    <!--圆角绿色按钮样式-->
+    <style name="TextViewButtonBlueBgMatchParentStyleBase">
+        <item name="android:layout_height">@dimen/dp_40</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:paddingTop">@dimen/dp_8</item>
+        <item name="android:paddingBottom">@dimen/dp_8</item>
+        <item name="android:gravity">center</item>
+        <item name="android:clickable">true</item>
+        <item name="android:background">@drawable/selector_bg_radius_20_green</item>
+    </style>
+
+    <!--黑色字体通用样式-->
+    <style name="TextViewBlackCommStyle">
+        <item name="android:textSize">@dimen/sp_15</item>
+        <item name="android:textColor">@color/blackCommon</item>
+    </style>
+
+
+    <!-- CustomCheckBox theme -->
+    <style name="CustomCheckBoxTheme" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/checkbox_style</item>
+    </style>
+
+    <!--白色12sp白色字体通用样式-->
+    <style name="TextView12spWhite">
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/sp_12</item>
+        <item name="android:textColor">@color/whiteCommon</item>
+    </style>
+
+    <!--白色12sp灰色字体通用样式-->
+    <style name="TextView12spGray666">
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/sp_12</item>
+        <item name="android:textColor">#666666</item>
+    </style>
+
+    <!--白色13sp灰色字体通用样式-->
+    <style name="TextView13spBlack333333">
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/sp_13</item>
+        <item name="android:textColor">#333333</item>
+    </style>
+    <!--白色15sp灰色字体通用样式-->
+    <style name="TextView15spBlack171717">
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/sp_15</item>
+        <item name="android:textColor">#171717</item>
+    </style>
+
+    <!-- 自定义ConfirmDialog -->
+    <style name="BaseDialog" parent="android:style/Theme.Dialog">
+        <item name="android:background">#00000000</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
 </resources>

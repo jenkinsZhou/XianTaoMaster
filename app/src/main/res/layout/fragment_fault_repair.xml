@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_title_bar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/common_background_color_gray">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_23"
+            android:layout_marginRight="@dimen/dp_23"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_20"
+                android:drawableLeft="@mipmap/ic_introduction"
+                android:drawablePadding="@dimen/dp_9"
+                android:text="故障描述"
+                android:textSize="@dimen/sp_15" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_130"
+                android:layout_marginTop="@dimen/dp_6"
+                android:background="@drawable/bg_radius_12_white">
+
+                <EditText
+                    android:id="@+id/etRepairContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dp_11"
+                    android:layout_marginTop="@dimen/dp_15"
+                    android:background="@color/white"
+                    android:hint="请填写内容描述"
+                    android:maxLength="200"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginRight="@dimen/dp_9"
+                    android:layout_marginBottom="@dimen/dp_23"
+                    android:text="200字以内"
+                    android:textColor="#3D8FEA" />
+
+            </RelativeLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_20"
+                android:drawableLeft="@mipmap/ic_picture"
+                android:drawablePadding="@dimen/dp_9"
+                android:text="附加图片"
+                android:textSize="@dimen/sp_15" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_140"
+                    android:visibility="gone"
+                    />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_140">
+
+                    <ImageView
+                        android:id="@+id/ivCamera"
+                        android:layout_width="@dimen/dp_63"
+                        android:layout_height="@dimen/dp_63"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/dp_24"
+                        android:src="@mipmap/ic_camera" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ivCamera"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/dp_10"
+                        android:text="拍照或者上传" />
+                </RelativeLayout>
+
+
+            </LinearLayout>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_20"
+                android:background="@drawable/selector_bg_radius_16_green"
+                android:gravity="center"
+                android:id="@+id/btnRepair"
+                android:text="立即报修"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+
+    </ScrollView>
+</LinearLayout>
