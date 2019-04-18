@@ -10,7 +10,7 @@ import com.tourcoo.xiantao.core.frame.interfaces.HttpRequestControl;
 import com.tourcoo.xiantao.core.frame.interfaces.HttpRequestListener;
 import com.tourcoo.xiantao.core.frame.interfaces.IRequestControl;
 import com.tourcoo.xiantao.core.frame.util.NetworkUtil;
-import com.tourcoo.xiantao.core.log.TourcoolLogUtil;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
@@ -51,7 +51,7 @@ public class HttpRequestControlImpl implements HttpRequestControl {
         int page = requestControl.getCurrentPage();
         int size = requestControl.getPageSize();
 
-        TourcoolLogUtil.i(TAG, "smartRefreshLayout:" + smartRefreshLayout + ";adapter:" + adapter + ";status:" + ";page:" + page + ";class:" + requestControl.getRequestClass());
+        TourCooLogUtil.i(TAG, "smartRefreshLayout:" + smartRefreshLayout + ";adapter:" + adapter + ";status:" + ";page:" + page + ";class:" + requestControl.getRequestClass());
         if (smartRefreshLayout != null) {
             smartRefreshLayout.finishRefresh();
         }

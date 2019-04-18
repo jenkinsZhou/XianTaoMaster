@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
-import com.tourcoo.xiantao.core.log.TourcoolLogUtil;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.base_activity_main);
         context = this;
-        TourcoolLogUtil.d("测试安达市大所多啥所发生奥术大师大大所多奥术大师大所多的");
+        TourCooLogUtil.d("测试安达市大所多啥所发生奥术大师大大所多奥术大师大所多的");
     }
 
 

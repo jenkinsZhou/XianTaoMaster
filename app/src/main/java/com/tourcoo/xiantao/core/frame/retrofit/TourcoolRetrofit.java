@@ -4,7 +4,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.tourcoo.xiantao.core.frame.util.SslUtil;
-import com.tourcoo.xiantao.core.log.TourcoolLogUtil;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -167,7 +167,7 @@ public class TourcoolRetrofit {
     public <T> T createService(Class<T> apiService, boolean useCacheEnable) {
         if (useCacheEnable && apiService != null) {
             if (mServiceMap.containsKey(apiService.getName())) {
-                TourcoolLogUtil.i("className:" + apiService.getName() + ";service取自缓存");
+                TourCooLogUtil.i("className:" + apiService.getName() + ";service取自缓存");
                 return (T) mServiceMap.get(apiService.getName());
             }
             T tClass = getRetrofit().create(apiService);
@@ -424,7 +424,7 @@ public class TourcoolRetrofit {
                         boolean isJson = message.startsWith("[") || message.startsWith("{");
                         isJson = isJson && mLogJsonEnable;
                         if (isJson) {
-                            TourcoolLogUtil.json(finalTag, message);
+                            TourCooLogUtil.json(finalTag, message);
                             return;
                         }
                         Log.d(finalTag, message);

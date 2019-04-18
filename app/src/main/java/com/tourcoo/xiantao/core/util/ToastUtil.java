@@ -43,7 +43,6 @@ public class ToastUtil {
     private static Context sContext;
     private static Toast sSystemToast;
     private static RadiusTextView sTextView;
-    private static Handler sHandler = new Handler(Looper.getMainLooper());
     /**
      * 是否前台运行才显示toast
      */
@@ -196,22 +195,8 @@ public class ToastUtil {
         if (control != null) {
             control.setToast(sSystemToast, sTextView);
         }
-        boolean showEnable = !isShowRunningForeground || (isShowRunningForeground && TourcoolUtil.isRunningForeground(sContext));
-        if (showEnable) {
-            long delay = TOAST_DURATION;
-            if (delay < 0) {
-                delay = SHORT_DURATION_TIMEOUT;
-            } else if (delay > LONG_DURATION_TIMEOUT) {
-                delay = LONG_DURATION_TIMEOUT;
-            }
             sSystemToast.show();
-            sHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    sSystemToast.cancel();
-                }
-            }, delay);
-        }
+
     }
 
     public static void showSuccess(CharSequence msg) {

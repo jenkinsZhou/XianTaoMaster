@@ -1,6 +1,9 @@
 package com.tourcoo.xiantao.core.frame.base.fragment;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.widget.TextView;
 
 import com.tourcoo.xiantao.core.frame.delegate.TitleBarDelegate;
 import com.tourcoo.xiantao.core.frame.interfaces.ITitleView;
@@ -13,7 +16,7 @@ import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
  * @date 2019年 03月 05日 20时50分
  * @Email: 971613168@qq.com
  */
-public abstract class BaseTitleRefreshViewFragment<T> extends BaseRefreshFragment<T> implements ITitleView {
+public abstract class BaseTitleViewRefreshFragment<T> extends BaseRefreshFragment<T> implements ITitleView {
 
     protected TitleBarDelegate mFastTitleDelegate;
     protected TitleBarView mTitleBar;
@@ -27,5 +30,12 @@ public abstract class BaseTitleRefreshViewFragment<T> extends BaseRefreshFragmen
         super.beforeInitView(savedInstanceState);
         mFastTitleDelegate = new TitleBarDelegate(mContentView, this, this.getClass());
         mTitleBar = mFastTitleDelegate.mTitleBar;
+    }
+
+    @Override
+    public void setTitleBar(TitleBarView titleBar) {
+        mTitleBar = titleBar;
+        TextView textView = titleBar.getTextView(Gravity.CENTER | Gravity.TOP);
+        textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
     }
 }

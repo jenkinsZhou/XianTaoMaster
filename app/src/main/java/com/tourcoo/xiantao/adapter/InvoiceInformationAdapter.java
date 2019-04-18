@@ -3,7 +3,7 @@ package com.tourcoo.xiantao.adapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.tourcoo.xiantao.R;
-import com.tourcoo.xiantao.core.util.TourcoolUtil;
+import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.entity.InvoiceInfomationEntity;
 
 import java.util.List;
@@ -30,36 +30,36 @@ public class InvoiceInformationAdapter extends BaseQuickAdapter<InvoiceInfomatio
 
     @Override
     protected void convert(BaseViewHolder helper, InvoiceInfomationEntity item) {
-        helper.setText(R.id.tvInvoiceDescription, TourcoolUtil.getStringNotNull(item.invoiceDescription));
+        helper.setText(R.id.tvInvoiceDescription, TourCoolUtil.getStringNotNull(item.invoiceDescription));
         switch (item.invoiceType) {
             case TYPE_INVOICE_PAPER:
-                helper.setText(R.id.tvInvoiceType, TourcoolUtil.getStringNotNull("纸质发票"));
+                helper.setText(R.id.tvInvoiceType, TourCoolUtil.getStringNotNull("纸质发票"));
                 break;
             case TYPE_INVOICE_ELECTRON:
-                helper.setText(R.id.tvInvoiceType, TourcoolUtil.getStringNotNull("电子发票"));
+                helper.setText(R.id.tvInvoiceType, TourCoolUtil.getStringNotNull("电子发票"));
                 break;
             default:
-                helper.setText(R.id.tvInvoiceType, TourcoolUtil.getStringNotNull("未知"));
+                helper.setText(R.id.tvInvoiceType, TourCoolUtil.getStringNotNull("未知"));
                 break;
         }
         helper.setText(R.id.tvInvoiceMoney, "￥" + item.invoiceMoney);
         switch (item.invoiceStatus) {
             case STATUS_INVOICE_WAIT:
                 helper.setText(R.id.tvInvoiceStatus, "待开具");
-                helper.setTextColor(R.id.tvInvoiceStatus, TourcoolUtil.getColor(R.color.redTextCommon));
+                helper.setTextColor(R.id.tvInvoiceStatus, TourCoolUtil.getColor(R.color.redTextCommon));
                 break;
             case STATUS_INVOICE_FINISH:
                 helper.setText(R.id.tvInvoiceStatus, "已开具");
-                helper.setTextColor(R.id.tvInvoiceStatus, TourcoolUtil.getColor(R.color.colorPrimary));
+                helper.setTextColor(R.id.tvInvoiceStatus, TourCoolUtil.getColor(R.color.colorPrimary));
                 break;
             default:
                 helper.setText(R.id.tvInvoiceStatus, "未知");
-                helper.setTextColor(R.id.tvInvoiceStatus, TourcoolUtil.getColor(R.color.redTextCommon));
+                helper.setTextColor(R.id.tvInvoiceStatus, TourCoolUtil.getColor(R.color.redTextCommon));
                 break;
         }
-        helper.setText(R.id.tvInvoiceCompany, TourcoolUtil.getStringNotNull(item.invoiceCompany));
+        helper.setText(R.id.tvInvoiceCompany, TourCoolUtil.getStringNotNull(item.invoiceCompany));
 
-        helper.setText(R.id.tvInvoiceNumber, TourcoolUtil.getStringNotNull(item.invoiceNumber));
+        helper.setText(R.id.tvInvoiceNumber, TourCoolUtil.getStringNotNull(item.invoiceNumber));
 
 
     }

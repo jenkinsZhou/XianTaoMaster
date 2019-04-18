@@ -16,7 +16,7 @@ import android.webkit.WebView;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.UiConfigManager;
 import com.tourcoo.xiantao.core.frame.interfaces.TitleBarViewControl;
-import com.tourcoo.xiantao.core.util.TourcoolUtil;
+import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.action.ActionSheetDialog;
 import com.tourcoo.xiantao.core.widget.core.action.BaseDialog;
@@ -47,7 +47,7 @@ public abstract class BaseWebActivity extends BaseTitleActivity {
     protected static void start(Activity mActivity, Class<? extends BaseWebActivity> activity, String url) {
         Bundle bundle = new Bundle();
         bundle.putString("url", url);
-        TourcoolUtil.startActivity(mActivity, activity, bundle);
+        TourCoolUtil.startActivity(mActivity, activity, bundle);
     }
 
 
@@ -107,7 +107,7 @@ public abstract class BaseWebActivity extends BaseTitleActivity {
                 onBackPressed();
             }
         })
-                .setRightTextDrawable(TourcoolUtil.getTintDrawable(
+                .setRightTextDrawable(TourCoolUtil.getTintDrawable(
                         ContextCompat.getDrawable(mContext, R.drawable.ic_more),
                         ContextCompat.getColor(mContext, R.color.colorTitleText)))
                 .setOnRightTextClickListener(new View.OnClickListener() {
@@ -117,7 +117,7 @@ public abstract class BaseWebActivity extends BaseTitleActivity {
                     }
                 })
                 .addLeftAction(titleBar.new ImageAction(
-                        TourcoolUtil.getTintDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_close),
+                        TourCoolUtil.getTintDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_close),
                                 ContextCompat.getColor(mContext, R.color.colorTitleText)), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -197,11 +197,11 @@ public abstract class BaseWebActivity extends BaseTitleActivity {
                                     mAgentWeb.getUrlLoader().reload();
                                     break;
                                 case 1:
-                                    TourcoolUtil.copyToClipboard(mContext, mCurrentUrl);
+                                    TourCoolUtil.copyToClipboard(mContext, mCurrentUrl);
                                     ToastUtil.show("复制成功");
                                     break;
                                 case 2:
-                                    TourcoolUtil.startShareText(mContext, mCurrentUrl);
+                                    TourCoolUtil.startShareText(mContext, mCurrentUrl);
                                     break;
                                 default:
                                     break;

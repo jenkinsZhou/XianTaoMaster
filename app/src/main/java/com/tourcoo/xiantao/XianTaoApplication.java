@@ -14,10 +14,11 @@ import com.tourcoo.xiantao.core.frame.impl.HttpRequestControlImpl;
 import com.tourcoo.xiantao.core.frame.impl.SwipeBackControlImpl;
 import com.tourcoo.xiantao.core.frame.impl.UiConfigImpl;
 import com.tourcoo.xiantao.core.frame.retrofit.TourcoolRetrofit;
-import com.tourcoo.xiantao.core.log.TourcoolLogUtil;
+import com.tourcoo.xiantao.core.frame.util.SizeUtil;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.log.widget.LogFileEngineFactory;
 import com.tourcoo.xiantao.core.log.widget.config.LogLevel;
-import com.tourcoo.xiantao.core.util.TourcoolUtil;
+import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.squareup.leakcanary.LeakCanary;
 
@@ -38,7 +39,7 @@ import static com.tourcoo.xiantao.core.common.CommonConstant.TAG_PRE_SUFFIX;
  */
 public class XianTaoApplication extends LitePalApplication {
     private static Application mContext;
-
+    private static int imageHeight = 0;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -137,14 +138,14 @@ public class XianTaoApplication extends LitePalApplication {
      * 初始化日志配置
      */
     private void initLog() {
-        TourcoolLogUtil.getLogConfig()
+        TourCooLogUtil.getLogConfig()
                 .configAllowLog(DEBUG_MODE)
                 .configTagPrefix(TAG_PRE_SUFFIX)
                 .configShowBorders(false).
                 configLevel(LogLevel.TYPE_VERBOSE);
         // 支持输入日志到文件
         String filePath = Environment.getExternalStorageDirectory() + "/NaViMaster/logs/";
-        TourcoolLogUtil.getLogFileConfig().configLogFileEnable(DEBUG_MODE)
+        TourCooLogUtil.getLogFileConfig().configLogFileEnable(DEBUG_MODE)
                 .configLogFilePath(filePath)
                 .configLogFileLevel(LogLevel.TYPE_VERBOSE)
                 .configLogFileEngine(new LogFileEngineFactory(this));
@@ -156,7 +157,7 @@ public class XianTaoApplication extends LitePalApplication {
      * @return
      */
     public static boolean isControlNavigation() {
-        TourcoolLogUtil.i("XianTaoApplication", "mode:" + Build.MODEL);
+        TourCooLogUtil.i("XianTaoApplication", "mode:" + Build.MODEL);
         return true;
     }
 
@@ -166,8 +167,8 @@ public class XianTaoApplication extends LitePalApplication {
      */
     private void initBugLy() {
         CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(this);
-        strategy.setAppVersion(TourcoolUtil.getVersionName(this));
-        strategy.setAppPackageName(TourcoolUtil.getPackageName(this));
+        strategy.setAppVersion(TourCoolUtil.getVersionName(this));
+        strategy.setAppPackageName(TourCoolUtil.getPackageName(this));
         strategy.setAppReportDelay(20000);
         Bugly.init(this, BUGLY_APPID, true, strategy);
     }
@@ -176,5 +177,16 @@ public class XianTaoApplication extends LitePalApplication {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
+    }
+
+
+    /**
+     * 获取banner及个人中心设置ImageView宽高
+     *
+     * @return
+     */
+    public static int getImageHeight() {
+        imageHeight = (int) (SizeUtil.getScreenWidth() * 0.55);
+        return imageHeight;
     }
 }

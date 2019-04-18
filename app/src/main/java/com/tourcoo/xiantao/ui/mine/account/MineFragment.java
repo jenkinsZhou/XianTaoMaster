@@ -9,13 +9,11 @@ import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.MenuAdapter;
 import com.tourcoo.xiantao.core.frame.base.fragment.BaseTitleFragment;
 import com.tourcoo.xiantao.core.util.ToastUtil;
-import com.tourcoo.xiantao.core.util.TourcoolUtil;
+import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.core.widget.divider.TourCoolRecycleViewDivider;
 import com.tourcoo.xiantao.entity.MenuItem;
-import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
-import com.tourcoo.xiantao.retrofit.service.ApiService;
 import com.tourcoo.xiantao.ui.mine.goods.CollectionGoodsListActivity;
 
 import java.util.ArrayList;
@@ -93,18 +91,18 @@ public class MineFragment extends BaseTitleFragment {
                 switch (position) {
                     case 0:
                         //账户余额
-                        TourcoolUtil.startActivity(mContext, AccountBalanceActivity.class);
+                        TourCoolUtil.startActivity(mContext, AccountBalanceActivity.class);
                         break;
                     case 1:
                         //拼团记录
                         break;
                     case 2:
                         //收藏商品
-                        TourcoolUtil.startActivity(mContext, CollectionGoodsListActivity.class);
+                        TourCoolUtil.startActivity(mContext, CollectionGoodsListActivity.class);
                         break;
                     case 3:
                         //收货地址
-                        TourcoolUtil.startActivity(mContext, ShippingAddressActivity.class);
+                        TourCoolUtil.startActivity(mContext, ShippingAddressActivity.class);
                         break;
                     case 4:
                         //客服电话
@@ -112,7 +110,7 @@ public class MineFragment extends BaseTitleFragment {
                         break;
                     case 5:
                         //发票信息
-                        TourcoolUtil.startActivity(mContext, InvoiceInformationActivity.class);
+                        TourCoolUtil.startActivity(mContext, InvoiceInformationActivity.class);
                         break;
                     case 6:
                         break;

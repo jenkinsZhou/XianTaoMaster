@@ -9,7 +9,7 @@ import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.UiConfigManager;
 import com.tourcoo.xiantao.core.frame.interfaces.IRefreshLoadView;
 import com.tourcoo.xiantao.core.frame.widget.NaViLoadMoreView;
-import com.tourcoo.xiantao.core.log.TourcoolLogUtil;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.widget.core.util.FindViewUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
@@ -204,7 +204,7 @@ public class RefreshLoadDelegate<T> {
         mManager = null;
         mRootView = null;
         mTargetClass = null;
-        TourcoolLogUtil.i("RefreshLoadDelegate", "onDestroy");
+        TourCooLogUtil.i("RefreshLoadDelegate", "onDestroy");
     }
 
 }

@@ -16,8 +16,8 @@ import com.tourcoo.xiantao.core.frame.base.activity.BaseMainActivity;
 import com.tourcoo.xiantao.core.frame.interfaces.ActivityFragmentControl;
 import com.tourcoo.xiantao.core.frame.interfaces.SwipeBackControl;
 import com.tourcoo.xiantao.core.frame.util.StackUtil;
-import com.tourcoo.xiantao.core.log.TourcoolLogUtil;
-import com.tourcoo.xiantao.core.util.TourcoolUtil;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
+import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.core.util.DrawableUtil;
 import com.tourcoo.xiantao.core.widget.core.util.FindViewUtil;
 import com.tourcoo.xiantao.core.widget.core.util.RomUtil;
@@ -55,9 +55,8 @@ public class NaViLifecycleCallbacks extends FragmentManager.FragmentLifecycleCal
 
     @Override
     public void onActivityCreated(final Activity activity, final Bundle savedInstanceState) {
-        TourcoolLogUtil.i(TAG, "onActivityCreated:" + activity.getClass().getSimpleName() + ";contentView:" + TourcoolUtil.getRootView(activity));
+        TourCooLogUtil.i(TAG, "onActivityCreated:" + activity.getClass().getSimpleName() + ";contentView:" + TourCoolUtil.getRootView(activity));
         getControl();
-
         //统一Activity堆栈管理
         StackUtil.getInstance().push(activity);
         //统一横竖屏操作
@@ -85,10 +84,10 @@ public class NaViLifecycleCallbacks extends FragmentManager.FragmentLifecycleCal
     @Override
     public void onActivityStarted(Activity activity) {
         getControl();
-        TourcoolLogUtil.i(TAG, "onActivityStarted:" + activity.getClass().getSimpleName() + ";contentView:" + TourcoolUtil.getRootView(activity));
+        TourCooLogUtil.i(TAG, "onActivityStarted:" + activity.getClass().getSimpleName() + ";contentView:" + TourCoolUtil.getRootView(activity));
         boolean isSet = activity.getIntent().getBooleanExtra(IS_SET_CONTENT_VIEW_BACKGROUND, false);
         if (!isSet) {
-            setContentViewBackground(TourcoolUtil.getRootView(activity), activity.getClass());
+            setContentViewBackground(TourCoolUtil.getRootView(activity), activity.getClass());
         }
         //设置状态栏
         setStatusBar(activity);
@@ -103,7 +102,7 @@ public class NaViLifecycleCallbacks extends FragmentManager.FragmentLifecycleCal
     @Override
     public void onActivityResumed(Activity activity) {
         getControl();
-        TourcoolLogUtil.i(TAG, "onActivityResumed:" + activity.getClass().getSimpleName());
+        TourCooLogUtil.i(TAG, "onActivityResumed:" + activity.getClass().getSimpleName());
         if (mActivityLifecycleCallbacks != null) {
             mActivityLifecycleCallbacks.onActivityResumed(activity);
         }
@@ -112,7 +111,7 @@ public class NaViLifecycleCallbacks extends FragmentManager.FragmentLifecycleCal
     @Override
     public void onActivityPaused(Activity activity) {
         getControl();
-        TourcoolLogUtil.i(TAG, "onActivityPaused:" + activity.getClass().getSimpleName() + ";isFinishing:" + activity.isFinishing());
+        TourCooLogUtil.i(TAG, "onActivityPaused:" + activity.getClass().getSimpleName() + ";isFinishing:" + activity.isFinishing());
         //Activity销毁前的时机需要关闭软键盘-在onActivityStopped及onActivityDestroyed生命周期内已无法关闭
         if (activity.isFinishing()) {
             BGAKeyboardUtil.closeKeyboard(activity);
@@ -125,7 +124,7 @@ public class NaViLifecycleCallbacks extends FragmentManager.FragmentLifecycleCal
     @Override
     public void onActivityStopped(Activity activity) {
         getControl();
-        TourcoolLogUtil.i(TAG, "onActivityStopped:" + activity.getClass().getSimpleName() + ";isFinishing:" + activity.isFinishing());
+        TourCooLogUtil.i(TAG, "onActivityStopped:" + activity.getClass().getSimpleName() + ";isFinishing:" + activity.isFinishing());
         if (mActivityLifecycleCallbacks != null) {
             mActivityLifecycleCallbacks.onActivityStopped(activity);
         }
@@ -134,7 +133,7 @@ public class NaViLifecycleCallbacks extends FragmentManager.FragmentLifecycleCal
     @Override
     public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
         getControl();
-        TourcoolLogUtil.i(TAG, "onActivitySaveInstanceState:" + activity.getClass().getSimpleName());
+        TourCooLogUtil.i(TAG, "onActivitySaveInstanceState:" + activity.getClass().getSimpleName());
         if (mActivityLifecycleCallbacks != null) {
             mActivityLifecycleCallbacks.onActivitySaveInstanceState(activity, outState);
         }
@@ -149,7 +148,7 @@ public class NaViLifecycleCallbacks extends FragmentManager.FragmentLifecycleCal
             activity.getIntent().putExtra(IS_SET_CONTENT_VIEW_BACKGROUND, false);
         }
         getControl();
-        TourcoolLogUtil.i(TAG, "onActivityDestroyed:" + activity.getClass().getSimpleName() + ";isFinishing:" + activity.isFinishing());
+        TourCooLogUtil.i(TAG, "onActivityDestroyed:" + activity.getClass().getSimpleName() + ";isFinishing:" + activity.isFinishing());
         StackUtil.getInstance().pop(activity, false);
         //统一注销Fragment生命周期处理
         if (activity instanceof FragmentActivity) {
@@ -221,7 +220,7 @@ public class NaViLifecycleCallbacks extends FragmentManager.FragmentLifecycleCal
      * @param activity
      */
     private void setSwipeBack(final Activity activity) {
-        TourcoolLogUtil.i(TAG, activity + getClass().getSimpleName() + ":设置Activity滑动返回");
+        TourCooLogUtil.i(TAG, activity + getClass().getSimpleName() + ":设置Activity滑动返回");
         //需设置activity window背景为透明避免滑动过程中漏出背景也可减少背景层级降低过度绘制
         activity.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         final BGASwipeBackHelper swipeBackHelper = new BGASwipeBackHelper(activity, new BGASwipeBackHelper.Delegate() {
@@ -232,7 +231,7 @@ public class NaViLifecycleCallbacks extends FragmentManager.FragmentLifecycleCal
 
             @Override
             public void onSwipeBackLayoutSlide(float slideOffset) {
-                TourcoolLogUtil.i(TAG, "onSwipeBackLayoutCancel");
+                TourCooLogUtil.i(TAG, "onSwipeBackLayoutCancel");
                 if (mSwipeBackControl != null) {
                     mSwipeBackControl.onSwipeBackLayoutSlide(activity, slideOffset);
                 }
@@ -240,7 +239,7 @@ public class NaViLifecycleCallbacks extends FragmentManager.FragmentLifecycleCal
 
             @Override
             public void onSwipeBackLayoutCancel() {
-                TourcoolLogUtil.i(TAG, "onSwipeBackLayoutCancel");
+                TourCooLogUtil.i(TAG, "onSwipeBackLayoutCancel");
                 if (mSwipeBackControl != null) {
                     mSwipeBackControl.onSwipeBackLayoutCancel(activity);
                 }
@@ -279,8 +278,8 @@ public class NaViLifecycleCallbacks extends FragmentManager.FragmentLifecycleCal
         TitleBarView titleBarView = FindViewUtil.getTargetView(activity.getWindow().getDecorView(), TitleBarView.class);
         //不包含TitleBarView处理
         if (titleBarView == null && !(activity instanceof BaseMainActivity)) {
-            View topView = getTopView(TourcoolUtil.getRootView(activity));
-            TourcoolLogUtil.i(TAG, "其它三方库设置状态栏沉浸");
+            View topView = getTopView(TourCoolUtil.getRootView(activity));
+            TourCooLogUtil.i(TAG, "其它三方库设置状态栏沉浸");
             StatusViewHelper statusViewHelper = StatusViewHelper.with(activity)
                     .setControlEnable(true)
                     .setPlusStatusViewEnable(false)
@@ -308,8 +307,8 @@ public class NaViLifecycleCallbacks extends FragmentManager.FragmentLifecycleCal
         if (isSet) {
             return;
         }
-        TourcoolLogUtil.i(TAG, "setNavigationBars:设置虚拟导航栏");
-        View bottomView = TourcoolUtil.getRootView(activity);
+        TourCooLogUtil.i(TAG, "setNavigationBars:设置虚拟导航栏");
+        View bottomView = TourCoolUtil.getRootView(activity);
         //继承FastMainActivity底部View处理
         if (BaseMainActivity.class.isAssignableFrom(activity.getClass())) {
             CommonTabLayout tabLayout = FindViewUtil.getTargetView(bottomView, CommonTabLayout.class);

@@ -74,13 +74,12 @@ public class CollectionGoodsListActivity extends BaseTourcooRefreshLoadActivity<
         int size = 25;
         GoodsEntity goodsEntity;
         for (int i = 0; i < size; i++) {
-            goodsEntity = new GoodsEntity();
+            goodsEntity = new GoodsEntity(3);
             goodsEntity.goodsSpec = "10" + i + "g/包";
             goodsEntity.goodsCurrentPrice = 10 + i + 0.9;
             goodsEntity.goodsLabels = "维生素C 很甜";
             goodsEntity.goodsName = "赣州脐橙";
             collectionGoodsList.add(goodsEntity);
         }
-
     }
 }

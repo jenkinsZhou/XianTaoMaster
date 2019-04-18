@@ -9,7 +9,7 @@ import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.base.BaseHelper;
-import com.tourcoo.xiantao.core.log.TourcoolLogUtil;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.widget.core.util.StatusBarUtil;
 
 import java.util.ArrayList;
@@ -76,7 +76,7 @@ public class ImagePickerHelper extends BaseHelper {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        TourcoolLogUtil.i("onActivityResult", "path:");
+        TourCooLogUtil.i("onActivityResult", "path:");
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode != mRequestCode) {
                 return;
@@ -91,7 +91,7 @@ public class ImagePickerHelper extends BaseHelper {
             List<String> list = new ArrayList<>();
             for (LocalMedia item : selectList) {
                 list.add(item.getPath());
-                TourcoolLogUtil.i("onActivityResult", "path:" + item.getPath());
+                TourCooLogUtil.i("onActivityResult", "path:" + item.getPath());
             }
             if (mOnImageSelect != null) {
                 mOnImageSelect.onImageSelect(mRequestCode, list);

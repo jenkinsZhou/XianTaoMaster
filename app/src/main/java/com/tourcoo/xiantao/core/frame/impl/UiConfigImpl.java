@@ -3,7 +3,6 @@ package com.tourcoo.xiantao.core.frame.impl;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.widget.Toast;
 
@@ -22,8 +21,7 @@ import com.tourcoo.xiantao.core.frame.interfaces.ToastControl;
 import com.tourcoo.xiantao.core.frame.util.StackUtil;
 import com.tourcoo.xiantao.core.frame.widget.LoadingDialog;
 import com.tourcoo.xiantao.core.frame.widget.NaViLoadMoreView;
-import com.tourcoo.xiantao.core.log.TourcoolLogUtil;
-import com.tourcoo.xiantao.core.util.TourcoolUtil;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.util.SizeUtil;
 import com.tourcoo.xiantao.core.widget.core.util.StatusBarUtil;
@@ -36,7 +34,6 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
@@ -126,7 +123,7 @@ public class UiConfigImpl implements DefaultRefreshHeaderCreator, LoadMoreFoot,
      */
     @Override
     public void setRecyclerView(RecyclerView recyclerView, Class<?> cls) {
-        TourcoolLogUtil.i(TAG, "setRecyclerView-" + cls.getSimpleName() + "context:" + recyclerView.getContext() + ";:" + (Activity.class.isAssignableFrom(recyclerView.getContext().getClass())) + ";:" + (recyclerView.getContext() instanceof Activity));
+        TourCooLogUtil.i(TAG, "setRecyclerView-" + cls.getSimpleName() + "context:" + recyclerView.getContext() + ";:" + (Activity.class.isAssignableFrom(recyclerView.getContext().getClass())) + ";:" + (recyclerView.getContext() instanceof Activity));
     }
 
     @Override

@@ -3,10 +3,8 @@ package com.tourcoo.xiantao.core.frame.delegate;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.aries.ui.view.tab.CommonTabLayout;
@@ -15,8 +13,7 @@ import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.entity.TabEntity;
 import com.tourcoo.xiantao.core.frame.interfaces.IHomeView;
 import com.tourcoo.xiantao.core.frame.manager.TabLayoutManager;
-import com.tourcoo.xiantao.core.log.TourcoolLogUtil;
-import com.tourcoo.xiantao.core.util.TourcoolUtil;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.widget.core.util.FindViewUtil;
 import com.tourcoo.xiantao.core.widget.core.util.SizeUtil;
 
@@ -29,7 +26,6 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
-import static android.view.Gravity.RIGHT;
 import static android.view.Gravity.TOP;
 
 /**
@@ -251,6 +247,6 @@ public class MainTabDelegate {
             mSavedInstanceState.clear();
             mSavedInstanceState = null;
         }
-        TourcoolLogUtil.e(TAG, "onDestroy");
+        TourCooLogUtil.w(TAG, "onDestroy");
     }
 }

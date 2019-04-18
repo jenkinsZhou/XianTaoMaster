@@ -1,17 +1,15 @@
 package com.tourcoo.xiantao.adapter;
 
-import android.widget.TextView;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.tourcoo.xiantao.R;
-import com.tourcoo.xiantao.core.util.TourcoolUtil;
 import com.tourcoo.xiantao.core.widget.core.util.ResourceUtil;
 import com.tourcoo.xiantao.entity.RechargeEntity;
 
 import java.util.List;
 
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @author :JenkinsZhou
@@ -37,5 +35,8 @@ public class RechargeAmountAdapter extends BaseQuickAdapter<RechargeEntity, Base
         }
     }
 
-
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+    }
 }

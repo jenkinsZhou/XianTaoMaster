@@ -1,7 +1,7 @@
 package com.tourcoo.xiantao.core.log.widget.patter;
 
 
-import com.tourcoo.xiantao.core.log.TourcoolLogUtil;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.log.widget.utils.Utils;
 
 import java.text.SimpleDateFormat;
@@ -294,7 +294,7 @@ public abstract class BaseLogPattern {
                 String dateString = dateFormat.format(date);
                 temp = temp.replace(matcher.group(0), dateString);
             }
-            TourcoolLogUtil.w("奇葩原因:"+temp+"------");
+            TourCooLogUtil.w("奇葩原因:"+temp+"------");
             return temp;
         }
     }

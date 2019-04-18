@@ -18,7 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tourcoo.xiantao.XianTaoApplication;
-import com.tourcoo.xiantao.core.log.TourcoolLogUtil;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 
 import java.util.List;
 import java.util.Random;
@@ -36,7 +36,7 @@ import static com.tourcoo.xiantao.core.log.widget.config.LogConstant.TAG;
  * @date 2019年 03月 01日 22时46分
  * @Email: 971613168@qq.com
  */
-public class TourcoolUtil {
+public class TourCoolUtil {
     private static final String STRING_EMPTY = "";
     private static int ACTIVITY_SINGLE_FLAG = Intent.FLAG_ACTIVITY_SINGLE_TOP;
 
@@ -54,7 +54,7 @@ public class TourcoolUtil {
             int labelRes = packageInfo.applicationInfo.labelRes;
             return context.getResources().getText(labelRes);
         } catch (PackageManager.NameNotFoundException e) {
-            TourcoolLogUtil.e(TAG, "getAppName:" + e.getMessage());
+            TourCooLogUtil.e(TAG, "getAppName:" + e.getMessage());
         }
         return null;
     }
@@ -148,7 +148,7 @@ public class TourcoolUtil {
                 }
             }
         } catch (PackageManager.NameNotFoundException e) {
-            TourcoolLogUtil.e("getVersionName:" + e.getMessage());
+            TourCooLogUtil.e("getVersionName:" + e.getMessage());
         }
         return "";
     }
@@ -167,7 +167,7 @@ public class TourcoolUtil {
                 }
             }
         } catch (PackageManager.NameNotFoundException e) {
-            TourcoolLogUtil.e("getVersionCode:" + e.getMessage());
+            TourCooLogUtil.e("getVersionCode:" + e.getMessage());
         }
         return -1;
     }
@@ -184,7 +184,7 @@ public class TourcoolUtil {
             Class.forName(className);
             isExit = true;
         } catch (ClassNotFoundException e) {
-            TourcoolLogUtil.e("isClassExist:" + e.getMessage());
+            TourCooLogUtil.e("isClassExist:" + e.getMessage());
         }
         return isExit;
     }
@@ -254,7 +254,7 @@ public class TourcoolUtil {
             marketIntent.setData(Uri.parse(mAddress));
             mContext.startActivity(marketIntent);
         } catch (Exception e) {
-            TourcoolLogUtil.e("jumpMarket:" + e.getMessage());
+            TourCooLogUtil.e("jumpMarket:" + e.getMessage());
         }
     }
 

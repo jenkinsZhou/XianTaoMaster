@@ -10,12 +10,9 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
-import android.widget.TextView;
 
 import com.tourcoo.xiantao.R;
-import com.tourcoo.xiantao.core.log.TourcoolLogUtil;
-
-import java.lang.reflect.Field;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 
 import androidx.appcompat.widget.AppCompatEditText;
 
@@ -152,7 +149,7 @@ public class SuperEditText extends AppCompatEditText {
 
         lineColor_click = typedArray.getColor(R.styleable.SuperEditText_lineColor_click, lineColorClick_default);
         lineColor_unclick = typedArray.getColor(R.styleable.SuperEditText_lineColor_unclick, lineColorunClick_default);
-        TourcoolLogUtil.d("分割线颜色:" + lineColor_unclick);
+        TourCooLogUtil.d("分割线颜色:" + lineColor_unclick);
         color = lineColor_unclick;
         // 分割线默认颜色 = 灰色
         mPaint.setColor(lineColor_unclick);

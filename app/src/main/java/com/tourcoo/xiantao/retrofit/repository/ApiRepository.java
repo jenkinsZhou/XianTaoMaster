@@ -4,7 +4,7 @@ import com.tourcoo.xiantao.XianTaoApplication;
 import com.tourcoo.xiantao.core.frame.retrofit.RetryWhen;
 import com.tourcoo.xiantao.core.frame.retrofit.TourcoolRetrofit;
 import com.tourcoo.xiantao.core.frame.retrofit.TourCooTransformer;
-import com.tourcoo.xiantao.core.util.TourcoolUtil;
+import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.entity.UpdateEntity;
 import com.tourcoo.xiantao.retrofit.service.ApiService;
 
@@ -53,8 +53,8 @@ public class ApiRepository extends BaseRepository {
      */
     public Observable<UpdateEntity> updateApp() {
         Map<String, Object> params = new HashMap<>(2);
-        params.put("versionCode", TourcoolUtil.getVersionCode(XianTaoApplication.getContext()));
-        params.put("versionName", TourcoolUtil.getVersionName(XianTaoApplication.getContext()));
+        params.put("versionCode", TourCoolUtil.getVersionCode(XianTaoApplication.getContext()));
+        params.put("versionName", TourCoolUtil.getVersionName(XianTaoApplication.getContext()));
         return TourCooTransformer.switchSchedulers(getApiService().updateApp(params).retryWhen(new RetryWhen()));
     }
 

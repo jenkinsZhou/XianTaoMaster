@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/dp_5"
+    android:layout_marginBottom="@dimen/dp_10"
+    android:background="@drawable/bg_radius_5_white"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/dp_8"
+    android:paddingTop="@dimen/dp_12"
+    android:paddingRight="@dimen/dp_8"
+    android:paddingBottom="@dimen/dp_12">
+<!--商品网格布局-->
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/rvGoodsImage"
+        android:layout_width="@dimen/dp_66"
+        android:layout_height="@dimen/dp_45"
+        android:layout_gravity="center_horizontal"
+        android:scaleType="fitXY"
+        android:src="@mipmap/ic_orange" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/selector_bg_radius_16_green_hollow"
+        android:gravity="center"
+        android:paddingLeft="@dimen/dp_9"
+        android:paddingTop="@dimen/dp_4"
+        android:paddingRight="9dp"
+        android:paddingBottom="@dimen/dp_4"
+        android:text="拼团价半价"
+        android:textColor="@color/greenCommon"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/tvGuessLikeGoodsName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/dp_8"
+        android:text="阿克苏冰糖心苹果"
+        android:textColor="@color/blackCommon"
+        android:textSize="@dimen/sp_11" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <ImageView
+            android:id="@+id/tvGuessLikeGoodsAdd"
+            android:layout_width="@dimen/dp_16"
+            android:layout_height="@dimen/dp_16"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/ic_add" />
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/tvGuessLikeGoodsAdd"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvGuessLikeSinglePrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¥ 9.8 "
+                android:textColor="@color/red_common"
+                android:textSize="@dimen/sp_12" />
+
+            <TextView
+                android:id="@+id/tvGuessLikeGoodsSpec"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_2"
+                android:layout_marginRight="@dimen/dp_2"
+                android:text="/300g"
+                android:textSize="@dimen/sp_10" />
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+</LinearLayout>

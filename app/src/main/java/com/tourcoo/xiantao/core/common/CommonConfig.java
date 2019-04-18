@@ -24,4 +24,5 @@ public class CommonConfig {
      * 吐司默认持续时间
      */
     public static long TOAST_DURATION = TOAST_DURATION_DEFAULT;
+
 }

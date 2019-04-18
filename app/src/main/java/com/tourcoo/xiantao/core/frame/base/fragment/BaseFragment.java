@@ -13,7 +13,7 @@ import com.tourcoo.xiantao.core.frame.interfaces.IBaseView;
 import com.tourcoo.xiantao.core.frame.interfaces.IRefreshLoadView;
 import com.tourcoo.xiantao.core.frame.manager.RxJavaManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
-import com.tourcoo.xiantao.core.log.TourcoolLogUtil;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 import com.trello.rxlifecycle3.components.support.RxFragment;
@@ -55,7 +55,7 @@ public abstract class BaseFragment extends RxFragment implements IBaseView {
         if (manager != null) {
             size = manager.getFragments().size();
         }
-        TourcoolLogUtil.i(TAG, TAG + ";FragmentManager承载Fragment数量:" + size);
+        TourCooLogUtil.i(TAG, TAG + ";FragmentManager承载Fragment数量:" + size);
         return size <= 1;
     }
 
@@ -92,7 +92,7 @@ public abstract class BaseFragment extends RxFragment implements IBaseView {
                 onVisibleChanged(true);
             }
         }
-        TourcoolLogUtil.i(TAG, TAG + ";mIsVisibleChanged:" + mIsVisibleChanged
+        TourCooLogUtil.i(TAG, TAG + ";mIsVisibleChanged:" + mIsVisibleChanged
                 + ";getUserVisibleHint:" + getUserVisibleHint()
                 + ";isHidden:" + isHidden() + ";isVisible:" + isVisible());
         return mContentView;
@@ -131,7 +131,7 @@ public abstract class BaseFragment extends RxFragment implements IBaseView {
     @Override
     public void onResume() {
         super.onResume();
-        TourcoolLogUtil.i(TAG, "onResume-isAdded:" + isAdded() + ";getUserVisibleHint:" + getUserVisibleHint()
+        TourCooLogUtil.i(TAG, "onResume-isAdded:" + isAdded() + ";getUserVisibleHint:" + getUserVisibleHint()
                 + ";isHidden:" + isHidden() + ";isVisible:" + isVisible() + ";isResume:" + isResumed() + ";isVisibleToUser:" + isVisibleToUser(this) + ";host:");
         if (isAdded() && isVisibleToUser(this)) {
             onVisibleChanged(true);
@@ -209,7 +209,7 @@ public abstract class BaseFragment extends RxFragment implements IBaseView {
      * @param isVisibleToUser
      */
     protected void onVisibleChanged(final boolean isVisibleToUser) {
-        TourcoolLogUtil.i(TAG, "onVisibleChanged-isVisibleToUser:" + isVisibleToUser);
+        TourCooLogUtil.i(TAG, "onVisibleChanged-isVisibleToUser:" + isVisibleToUser);
         mIsVisibleChanged = true;
         if (isVisibleToUser) {
             //避免因视图未加载子类刷新UI抛出异常

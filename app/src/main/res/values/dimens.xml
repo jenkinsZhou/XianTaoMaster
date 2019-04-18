@@ -32,7 +32,7 @@
     <!--主页tab文字字号-->
     <dimen name="dp_tab_text_size">10dp</dimen>
     <!--主页tab 上划线宽度-->
-    <dimen name="dp_tab_underline">0.0dp</dimen>
+    <dimen name="dp_tab_underline">0dp</dimen>
 
     <!--glide加载圆角图片占位图圆角弧度-->
     <dimen name="dp_placeholder_radius">6dp</dimen>

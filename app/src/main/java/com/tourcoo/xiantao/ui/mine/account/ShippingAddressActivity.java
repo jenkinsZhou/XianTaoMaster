@@ -10,7 +10,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.ReceivingInfoAdapter;
-import com.tourcoo.xiantao.core.util.TourcoolUtil;
+import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.core.util.ResourceUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.ReceivingInfoEntity;
@@ -60,7 +60,7 @@ public class ShippingAddressActivity extends BaseTourcooRefreshLoadActivity<Rece
                 setRightTextSize(15).setOnRightTextClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TourcoolUtil.startActivity(mContext, AddNewAddressActivity.class);
+                TourCoolUtil.startActivity(mContext, AddNewAddressActivity.class);
             }
         });
     }

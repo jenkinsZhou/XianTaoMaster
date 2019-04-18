@@ -10,7 +10,7 @@ import com.tourcoo.xiantao.core.frame.retrofit.TourcoolRetrofit;
 import com.tourcoo.xiantao.core.frame.util.FileUtil;
 import com.tourcoo.xiantao.core.frame.util.FormatUtil;
 import com.tourcoo.xiantao.core.frame.util.StackUtil;
-import com.tourcoo.xiantao.core.log.TourcoolLogUtil;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.entity.UpdateEntity;
 import com.trello.rxlifecycle3.android.ActivityEvent;
@@ -55,7 +55,7 @@ public class VersionCheckHelper {
             if (mIsLoading) {
                 ToastUtil.show("不是有效的下载链接:" + entity.url);
             }
-            TourcoolLogUtil.e("检测新版本:不是有效的apk下载链接");
+            TourCooLogUtil.e("检测新版本:不是有效的apk下载链接");
             return;
         }
         showAlert(entity);
@@ -127,7 +127,7 @@ public class VersionCheckHelper {
         if (isRangeEnable) {
             header = new HashMap<>(1);
             header.put("range", "bytes=" + length + "-");
-            TourcoolLogUtil.i("downloadApk", "length:" + length);
+            TourCooLogUtil.i("downloadApk", "length:" + length);
         }
         //不同url不能使用相同的本地绝对路径不然很可能将B的后半部分下载追加到A的后面--最终也是错误的
         ProgressDialog finalMProgressDialog = mProgressDialog;
@@ -139,7 +139,7 @@ public class VersionCheckHelper {
 
             @Override
             public void onFail(Throwable e) {
-                TourcoolLogUtil.e("downloadApk", e.getMessage());
+                TourCooLogUtil.e("downloadApk", e.getMessage());
                 //HTTP 416 Range Not Satisfiable 出现该错误--很大可能性是文件已下载完成传递的
                 boolean satisfiable = e != null && e.getMessage().contains("416") && e.getMessage().toLowerCase().contains("range");
                 if (satisfiable) {
@@ -156,7 +156,7 @@ public class VersionCheckHelper {
 
             @Override
             public void onProgress(float progress, long current, long total) {
-                TourcoolLogUtil.i("downloadApk", "current:" + current + ";total:" + total);
+                TourCooLogUtil.i("downloadApk", "current:" + current + ";total:" + total);
                 if (!finalMProgressDialog.isShowing()) {
                     return;
                 }

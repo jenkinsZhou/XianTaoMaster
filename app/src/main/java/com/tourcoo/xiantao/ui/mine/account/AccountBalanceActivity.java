@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.RechargeAmountAdapter;
-import com.tourcoo.xiantao.core.util.TourcoolUtil;
+import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.core.util.ResourceUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.RechargeEntity;
@@ -96,7 +96,7 @@ public class AccountBalanceActivity extends BaseTourcooTitleActivity implements 
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tvRechargeRule:
-                TourcoolUtil.startActivity(mContext, RechargeRuleActivity.class);
+                TourCoolUtil.startActivity(mContext, RechargeRuleActivity.class);
                 break;
             default:
                 break;
@@ -112,7 +112,7 @@ public class AccountBalanceActivity extends BaseTourcooTitleActivity implements 
                 setRightTextSize(15).setOnRightTextClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TourcoolUtil.startActivity(mContext, RechargeDetailActivity.class);
+                TourCoolUtil.startActivity(mContext, RechargeDetailActivity.class);
             }
         });
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(

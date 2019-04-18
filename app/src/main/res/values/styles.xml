@@ -242,7 +242,13 @@
 
     <!-- CustomCheckBox theme -->
     <style name="CustomCheckBoxTheme" parent="@android:style/Widget.CompoundButton.CheckBox">
-        <item name="android:button">@drawable/checkbox_style</item>
+        <item name="android:button">@null</item>
+        <item name="android:background">@drawable/selector_checkbox_small</item>
+    </style>
+
+    <style name="CustomCheckBoxGoodsTheme" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="android:button">@null</item>
+        <item name="android:background">@drawable/selector_checkbox_goods</item>
     </style>
 
     <!--白色12sp白色字体通用样式-->

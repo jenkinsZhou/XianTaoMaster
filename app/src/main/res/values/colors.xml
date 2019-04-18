@@ -6,7 +6,8 @@
     <!--灰色背景通用-->
     <color name="grayBgCommon">#F9F9F9</color>
     <color name="grayDeepBgCommon">#F2F2F2</color>
-
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorGrayLittle">#EEEEEE</color>
     <color name="test">#bbbbbb</color>
     <color name="test1">#aaaaaa</color>
     <color name="test2">#999999</color>
@@ -34,6 +35,11 @@
     <!--分割线-->
     <color name="line_color_common">#dddddd</color>
     <color name="line_color_gray_little">#EAEAEA</color>
+
+
+    <color name="gray_e3">#E3E3E3</color>
+    <color name="gray_f5">#F5F5F5</color>
+    <color name="gray_divi">#FFE5E5E5</color>
 
     <color name="greenCommon">#2BC475</color>
     <color name="greenCommonPress">#2BC436</color>
@@ -67,7 +73,6 @@
     <color name="colorTitle">#FFFFFF</color>
     <color name="colorTextBlack">#333333</color>
     <color name="colorTextBlackLight">#636363</color>
-    <color name="colorWhite">#ffffff</color>
     <color name="colorWhitePressed">#e8e8e8</color>
 
     <!--弹窗相关颜色-->
