@@ -1,6 +1,7 @@
 package com.tourcoo.xiantao.core.frame.manager;
 
-import com.tourcoo.xiantao.core.frame.retrofit.TourCooTransformer;
+
+import com.tourcoo.xiantao.core.frame.retrofit.TourCoolTransformer;
 
 import java.util.concurrent.TimeUnit;
 
@@ -11,7 +12,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 /**
  * @author :zhoujian
  * @description : RxJava使用管理类
- * @company :途酷科技
+ * @company :翼迈科技
  * @date 2019年03月04日下午 04:59
  * @Email: 971613168@qq.com
  */
@@ -51,7 +52,7 @@ public class RxJavaManager {
     public <T> Observable<T> getDelayObservable(T value, long delay, TimeUnit unit) {
         return Observable.just(value)
                 .delay(delay, unit)
-                .compose(TourCooTransformer.switchSchedulers());
+                .compose(TourCoolTransformer.switchSchedulersIo());
     }
 
     /**

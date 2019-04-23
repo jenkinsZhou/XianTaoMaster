@@ -29,7 +29,8 @@
         android:theme="@style/AppTheme">
         <activity android:name="com.tourcoo.xiantao.MainActivity" />
         <activity android:name="com.tourcoo.xiantao.core.crash.ErrorActivity" />
-        <activity android:name="com.tourcoo.xiantao.core.module.MainTabActivity">
+        <activity android:name="com.tourcoo.xiantao.core.module.MainTabActivity"
+            >
 
         </activity>
         <activity
@@ -43,19 +44,23 @@
             </intent-filter>
         </activity>
         <activity android:name="com.tourcoo.xiantao.core.module.TestRefreshActivity" />
-        <activity android:name=".ui.mine.account.AddNewAddressActivity" />
-        <activity android:name=".ui.mine.account.PersonalDataActivity" />
-        <activity android:name=".ui.mine.recharge.RechargeDetailActivity" />
+        <activity android:name=".ui.account.AddNewAddressActivity" />
+        <activity android:name=".ui.account.PersonalDataActivity" />
+        <activity android:name=".ui.recharge.RechargeDetailActivity" />
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:theme="@android:style/Theme.Translucent" />
-        <activity android:name=".ui.mine.account.RegisterActivity" />
-        <activity android:name=".ui.mine.account.AccountBalanceActivity" />
-        <activity android:name=".ui.mine.recharge.RechargeRuleActivity" />
-        <activity android:name=".ui.mine.account.ShippingAddressActivity" />
-        <activity android:name=".ui.mine.goods.CollectionGoodsListActivity" />
-        <activity android:name=".ui.mine.account.InvoiceInformationActivity" />
+        <activity android:name=".ui.account.RegisterActivity" />
+        <activity android:name=".ui.account.AccountBalanceActivity" />
+        <activity android:name=".ui.recharge.RechargeRuleActivity" />
+        <activity android:name=".ui.account.ShippingAddressManagerActivity" />
+        <activity android:name=".ui.goods.CollectionGoodsListActivity" />
+        <activity android:name=".ui.account.InvoiceInformationActivity" />
+        <activity android:name=".ui.order.AllOrderActivity" />
+        <activity android:name=".ui.account.LoginActivity" />
+        <activity android:name=".ui.SettingActivity" />
+        <activity android:name=".ui.base.WebViewActivity" />
     </application>
 
 </manifest>

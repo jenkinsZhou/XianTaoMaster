@@ -271,5 +271,9 @@ public class SuperEditText extends AppCompatEditText {
         final float scale = getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
     }
+
+    public void setLeftDrable(Drawable drawable) {
+        ic_left_click = drawable;
+    }
 }
 

@@ -3,7 +3,7 @@ package com.tourcoo.xiantao.adapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.tourcoo.xiantao.R;
-import com.tourcoo.xiantao.entity.GoodsEntity;
+import com.tourcoo.xiantao.entity.goods.GoodsEntity;
 
 import java.util.List;
 
@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
  * @Email: 971613168@qq.com
  */
 public abstract class BaseShoppingCartAdapter2 extends BaseQuickAdapter<GoodsEntity, BaseViewHolder> {
+
     public BaseShoppingCartAdapter2(@Nullable List<GoodsEntity> data) {
         super(R.layout.item_goods_cart_version2, data);
     }

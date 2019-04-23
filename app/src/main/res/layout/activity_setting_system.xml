@@ -52,6 +52,7 @@
                 app:sUseRipple="false" />
 
             <com.allen.library.SuperTextView
+                android:id="@+id/stvClearCache"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_18"
                 android:layout_marginTop="@dimen/dp_12"
@@ -91,7 +92,7 @@
             android:layout_marginLeft="@dimen/dp_10"
             android:layout_marginRight="@dimen/dp_10"
             android:layout_marginBottom="@dimen/dp_36"
-            android:background="@drawable/selector_bg_radius_16_green_hollow"
+            android:background="@drawable/selector_bg_radius_20_green_hollow"
             android:gravity="center"
             android:paddingTop="@dimen/dp_12"
             android:paddingBottom="@dimen/dp_12"

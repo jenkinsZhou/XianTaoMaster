@@ -2,12 +2,18 @@ package com.tourcoo.xiantao.core.module;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.ViewFlipper;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -20,14 +26,25 @@ import com.tourcoo.xiantao.XianTaoApplication;
 import com.tourcoo.xiantao.adapter.GoodsGridAdapter;
 import com.tourcoo.xiantao.core.frame.base.fragment.BaseTitleFragment;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
+import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
+import com.tourcoo.xiantao.core.frame.util.NetworkUtil;
 import com.tourcoo.xiantao.core.frame.util.SizeUtil;
 import com.tourcoo.xiantao.core.helper.TitleBarViewHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.util.StatusBarUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
-import com.tourcoo.xiantao.entity.GoodsEntity;
-import com.tourcoo.xiantao.helper.ShoppingCarInstance;
+import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.banner.BannerBean;
+import com.tourcoo.xiantao.entity.goods.GoodsEntity;
+import com.tourcoo.xiantao.entity.HomeInfoBean;
+import com.tourcoo.xiantao.entity.banner.BannerDetail;
+import com.tourcoo.xiantao.entity.goods.GoodsBean;
+import com.tourcoo.xiantao.entity.news.NewsBean;
+import com.tourcoo.xiantao.helper.ShoppingCar;
+import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
+import com.tourcoo.xiantao.ui.base.WebViewActivity;
+import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +52,11 @@ import java.util.List;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import cn.bingoogolapple.bgabanner.BGABanner;
+import me.bakumon.statuslayoutmanager.library.OnStatusChildClickListener;
+import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
+
+import static com.tourcoo.xiantao.core.common.RequestConfig.BASE_URL;
+import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 
 /**
  * @author :zhoujian
@@ -45,18 +67,24 @@ import cn.bingoogolapple.bgabanner.BGABanner;
  */
 public class HomeFragment extends BaseTitleFragment implements View.OnClickListener, OnRefreshListener, OnLoadMoreListener {
     private SmartRefreshLayout mRefreshLayout;
+    private Handler mHandler = new Handler();
     private BGABanner banner;
     private RecyclerView rvHome;
     private GoodsGridAdapter mGoodsGridAdapter;
-    private List<GoodsEntity> mGuessLikeGoodsList = new ArrayList<>();
+    private List<GoodsBean> mGuessLikeGoodsList = new ArrayList<>();
 
     private MainTabActivity mMainTabActivity;
+    private StatusLayoutManager statusLayoutManager;
+    private List<String> bannerImageList = new ArrayList<>();
+    private List<BannerBean> mBannerBeanList = new ArrayList<>();
 
+    private LinearLayout rlContentView;
 
     /**
      * 没有更多数据足布局
      */
     private View footView;
+    private ViewFlipper homeViewFlipper;
 
     public static HomeFragment newInstance() {
         Bundle args = new Bundle();
@@ -73,8 +101,18 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
     @Override
     public void initView(Bundle savedInstanceState) {
         initView();
+        initBanner();
         initAdapter();
-        setBanner();
+        initTitle();
+        statusLayoutManager.showLoadingLayout();
+        getHomeInfo();
+    }
+
+
+    private void initLayLoutManager() {
+    }
+
+    private void initTitle() {
         RelativeLayout rlSearch = mContentView.findViewById(R.id.rlSearch);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(rlSearch.getLayoutParams());
         //4个参数按顺序分别是左上右下
@@ -86,7 +124,6 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
                 .setMinHeight(0)
                 .setMaxHeight(mMaxHeight);
     }
-
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
@@ -104,6 +141,8 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
 
     private void initView() {
         mMainTabActivity = (MainTabActivity) mContext;
+        homeViewFlipper = mContentView.findViewById(R.id.homeViewFlipper);
+        rlContentView = mContentView.findViewById(R.id.rlContentView);
         rvHome = mContentView.findViewById(R.id.rvHome);
         footView = LayoutInflater.from(mContext).inflate(R.layout.item_view, null);
         rvHome.setLayoutManager(new GridLayoutManager(mContext, 3));
@@ -112,6 +151,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
         mRefreshLayout.setOnRefreshListener(this);
         mRefreshLayout.setOnLoadMoreListener(this);
         mRefreshLayout.setRefreshHeader(new ClassicsHeader(mContext).setSpinnerStyle(SpinnerStyle.Translate));
+        setupStatusLayoutManager();
     }
 
     /**
@@ -123,24 +163,28 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
         mGoodsGridAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                doAddGoods(mGoodsGridAdapter.getData().get(position));
+//                doAddGoods(mGoodsGridAdapter.getData().get(position));
                 TourCooLogUtil.i(TAG, "点击了:" + position);
             }
         });
-        mRefreshLayout.setEnableLoadMore(true);
-        loadGuessLike();
     }
 
-    private void setBanner() {
-        List<String> images = new ArrayList<>();
+    /**
+     * 初始化banner
+     */
+    private void initBanner() {
+     /*   List<String> images = new ArrayList<>();
         images.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1555429289379&di=203535d4bccdb92b0d491e1b17fe5dbc&imgtype=0&src=http%3A%2F%2Fimg.19yxw.com%2Fwy%2Fupdate%2F20151012%2F2015101213124051007.jpg");
         images.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1555429511329&di=dbf86bef50e98ebd74969f414f64c8d9&imgtype=0&src=http%3A%2F%2Fpic62.nipic.com%2Ffile%2F20150318%2F5624330_150949597000_2.jpg");
         images.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1555429548089&di=093619d985005df0606ec6840c21a2f6&imgtype=0&src=http%3A%2F%2Fi3.17173.itc.cn%2F2011%2Fnews%2F2011%2F07%2F26%2Fy0726db06s.jpg");
         images.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1555429569807&di=02b9a0d6ed0f6411782d4b2d3917507c&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2F7a4a58f9735639e155b0055d024ede1270b31e4f16842-Ymvyre_fw658");
         images.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1555429569807&di=02b9a0d6ed0f6411782d4b2d3917507c&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2F7a4a58f9735639e155b0055d024ede1270b31e4f16842-Ymvyre_fw658");
-        images.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1555429569807&di=02b9a0d6ed0f6411782d4b2d3917507c&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2F7a4a58f9735639e155b0055d024ede1270b31e4f16842-Ymvyre_fw658");
+        images.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1555429569807&di=02b9a0d6ed0f6411782d4b2d3917507c&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2F7a4a58f9735639e155b0055d024ede1270b31e4f16842-Ymvyre_fw658");*/
         if (banner == null) {
             banner = mContentView.findViewById(R.id.bgaBanner);
+            if (banner == null) {
+                return;
+            }
             banner.setAdapter(new BGABanner.Adapter() {
                 @Override
                 public void fillBannerItem(BGABanner banner, View itemView, Object model, int position) {
@@ -150,10 +194,15 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
             banner.setDelegate(new BGABanner.Delegate() {
                 @Override
                 public void onBannerItemClick(BGABanner banner, View itemView, Object model, int position) {
-                    ToastUtil.show("点击了");
+                    if (mBannerBeanList.size() <= position) {
+                        return;
+                    }
+                    BannerBean bannerBean = mBannerBeanList.get(position);
+                    if (bannerBean != null) {
+                        getBannerDetail(bannerBean.getId() + "");
+                    }
                 }
             });
-            banner.setData(images, null);
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) banner.getLayoutParams();
             params.height = XianTaoApplication.getImageHeight();
             TourCooLogUtil.i(TAG, "banner:" + params.height + ";width:" + SizeUtil.getScreenWidth());
@@ -161,19 +210,19 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
     }
 
 
-    private void loadGuessLike() {
-        int size = 6;
+ /*   private void loadGuessLike() {
+        int size = 21;
         GoodsEntity goodsEntity;
         for (int i = 0; i < size; i++) {
             goodsEntity = new GoodsEntity(System.currentTimeMillis() + i);
             goodsEntity.goodsSpec = "10" + i + "g";
             goodsEntity.goodsCurrentPrice = 10 + i + 0.9;
             goodsEntity.goodsLabels = "维生素C 很甜";
-            goodsEntity.goodsName = "西班牙新鲜杻丁橙"+i;
+            goodsEntity.goodsName = "西班牙新鲜杻丁橙" + i;
             mGuessLikeGoodsList.add(goodsEntity);
         }
         mGoodsGridAdapter.notifyDataSetChanged();
-    }
+    }*/
 
     @Override
     public void onClick(View v) {
@@ -191,7 +240,6 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
      */
     private void doRefresh() {
         mGoodsGridAdapter.getData().clear();
-        loadGuessLike();
         mRefreshLayout.finishRefresh();
         mGoodsGridAdapter.notifyDataSetChanged();
         mRefreshLayout.setEnableLoadMore(true);
@@ -209,7 +257,6 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
      * 执行加载更多逻辑
      */
     private void doLoadMore() {
-        loadGuessLike();
         mGoodsGridAdapter.notifyDataSetChanged();
         mRefreshLayout.finishLoadMore();
         if (mGoodsGridAdapter.getData().size() > 30) {
@@ -230,8 +277,8 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
             TourCooLogUtil.e(TAG, "商品为null");
             return;
         }
-        ShoppingCarInstance.getInstance().addGoods(goodsEntity);
-        showGoodsCount( ShoppingCarInstance.getInstance().getGoodsCount());
+        ShoppingCar.getInstance().addGoods(goodsEntity);
+        showGoodsCount(ShoppingCar.getInstance().getGoodsCount());
     }
 
     /**
@@ -242,6 +289,221 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
     private void showGoodsCount(int count) {
         if (mMainTabActivity != null) {
             mMainTabActivity.mTabLayout.showMsg(2, count);
+        }
+    }
+
+
+    private void getHomeInfo() {
+        if (!NetworkUtil.isConnected(mContext)) {
+            statusLayoutManager.showCustomLayout(R.layout.custom_error_layout, R.id.custom_root);
+            return;
+        }
+        ApiRepository.getInstance().getHomeBanner().compose(bindUntilEvent(FragmentEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity == null) {
+                            ToastUtil.showFailed("服务器异常");
+                            statusLayoutManager.showErrorLayout();
+                            return;
+                        }
+                        if (entity.code == CODE_REQUEST_SUCCESS) {
+                            statusLayoutManager.showSuccessLayout();
+                            //todo 显示主页
+                            showHomeInfo(parseHomeInfo(entity.data));
+                        } else {
+                            ToastUtil.showFailed(entity.msg);
+                        }
+                    }
+
+                    @Override
+                    public void onRequestError(Throwable e) {
+                        super.onRequestError(e);
+                        statusLayoutManager.showErrorLayout();
+                    }
+                });
+    }
+
+
+    private HomeInfoBean parseHomeInfo(Object object) {
+        if (object == null) {
+            return null;
+        }
+        try {
+            String homeInfo = JSONObject.toJSONString(object);
+            TourCooLogUtil.i(TAG, "准备解析:" + homeInfo);
+            return JSON.parseObject(homeInfo, HomeInfoBean.class);
+        } catch (Exception e) {
+            TourCooLogUtil.e(TAG, "解析异常:" + e.toString());
+            return null;
+        }
+    }
+
+
+    private void showHomeInfo(HomeInfoBean homeInfoBean) {
+        boolean loadFailed = homeInfoBean == null || homeInfoBean.getBanner() == null ||
+                homeInfoBean.getGoods() == null || homeInfoBean.getNews() == null;
+        if (loadFailed) {
+            return;
+        }
+        bannerImageList.clear();
+        mBannerBeanList.clear();
+        List<BannerBean> bannerBeanList = homeInfoBean.getBanner();
+        mBannerBeanList.addAll(bannerBeanList);
+        String url;
+        for (BannerBean bannerBean : bannerBeanList) {
+            url = BASE_URL + bannerBean.getImage();
+            TourCooLogUtil.i(TAG, "bannerImageList:" + url);
+            bannerImageList.add(url);
+        }
+        mGuessLikeGoodsList.addAll(homeInfoBean.getGoods());
+        mGoodsGridAdapter.notifyDataSetChanged();
+        banner.setData(bannerImageList, null);
+        loadHomeViewFlipperData(homeInfoBean.getNews());
+    }
+
+
+    private void setupStatusLayoutManager() {
+        statusLayoutManager = new StatusLayoutManager.Builder(rlContentView)
+                // 设置默认布局属性
+//                .setDefaultEmptyText("空白了，哈哈哈哈")
+//                .setDefaultEmptyImg(R.mipmap.ic_launcher)
+//                .setDefaultEmptyClickViewText("retry")
+//                .setDefaultEmptyClickViewTextColor(getResources().getColor(R.color.colorAccent))
+//                .setDefaultEmptyClickViewVisible(false)
+//
+//                .setDefaultErrorText(R.string.app_name)
+//                .setDefaultErrorImg(R.mipmap.ic_launcher)
+//                .setDefaultErrorClickViewText("重试一波")
+//                .setDefaultErrorClickViewTextColor(getResources().getColor(R.color.colorPrimaryDark))
+//                .setDefaultErrorClickViewVisible(true)
+//
+//                .setDefaultLayoutsBackgroundColor(Color.WHITE)
+
+                // 自定义布局
+                .setLoadingLayout(getLoadingLayout())
+//                .setEmptyLayout(inflate(R.layout.layout_empty))
+                .setErrorLayout(inflate(R.layout.custom_error_layout))
+                .setErrorClickViewID(R.id.custom_root)
+//
+//                .setLoadingLayout(R.layout.layout_loading)
+//                .setEmptyLayout(R.layout.layout_empty)
+//                .setErrorLayout(R.layout.layout_error)
+//
+//                .setEmptyClickViewID(R.id.tv_empty)
+//                .setErrorClickViewID(R.id.tv_error)
+
+                // 设置重试事件监听器
+                .setOnStatusChildClickListener(new OnStatusChildClickListener() {
+                    @Override
+                    public void onEmptyChildClick(View view) {
+                        statusLayoutManager.showLoadingLayout();
+                        ToastUtil.showSuccess("点击了Empty");
+//                        statusLayoutManager.showLoadingLayout();
+//                        getData(1000);
+                    }
+
+                    @Override
+                    public void onErrorChildClick(View view) {
+                        ToastUtil.showSuccess("点击了Error");
+                        statusLayoutManager.showLoadingLayout();
+                        getHomeInfoDelay();
+                    }
+
+                    @Override
+                    public void onCustomerChildClick(View view) {
+                        statusLayoutManager.showLoadingLayout();
+                        getHomeInfoDelay();
+                     /*   if (view.getId() == R.id.tv_customer) {
+                            Toast.makeText(MainActivity.this, R.string.request_access, Toast.LENGTH_SHORT).show();
+                        } else if (view.getId() == R.id.tv_customer1) {
+                            Toast.makeText(MainActivity.this, R.string.switch_account, Toast.LENGTH_SHORT).show();
+                        }*/
+
+                    }
+                })
+                .build();
+    }
+
+
+    private View inflate(int layoutId) {
+        return LayoutInflater.from(mContext).inflate(layoutId, null);
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mHandler != null) {
+            mHandler.removeCallbacksAndMessages(null);
+        }
+        super.onDestroy();
+    }
+
+    private void getHomeInfoDelay() {
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getHomeInfo();
+            }
+        }, 1000);
+    }
+
+
+    /**
+     * 获取banner详情
+     */
+    private void getBannerDetail(String id) {
+        ApiRepository.getInstance().getBannerDetail(id).compose(bindUntilEvent(FragmentEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity<BannerDetail>>() {
+                    @Override
+                    public void onRequestNext(BaseEntity<BannerDetail> entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                doSkipBannerDetail(entity.data);
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 跳转banner详情
+     */
+    private void doSkipBannerDetail(BannerDetail bannerDetail) {
+        if (bannerDetail == null) {
+            ToastUtil.showFailed("未获取到图片信息");
+            return;
+        }
+        String url = BASE_URL + bannerDetail.getImage();
+        WebViewActivity.start(mContext, url, false);
+    }
+
+
+    /**
+     * 加载新闻
+     *
+     * @param newsBeanList
+     */
+    private void loadHomeViewFlipperData(List<NewsBean> newsBeanList) {
+        if (newsBeanList == null || newsBeanList.isEmpty()) {
+            return;
+        }
+        View contentLayout;
+        View test = View.inflate(mContext, R.layout.layout_news, null);
+//        ImageView ivNewsIcon;
+        TextView tvNewsContent;
+        for (NewsBean newsBean : newsBeanList) {
+            if (newsBean == null || TextUtils.isEmpty(newsBean.getName())) {
+                continue;
+            }
+            contentLayout = View.inflate(mContext, R.layout.layout_news, null);
+//            ivNewsIcon = contentLayout.findViewById(R.id.icBulletin);
+            tvNewsContent = contentLayout.findViewById(R.id.tvNewsContent);
+            tvNewsContent.setText(newsBean.getName());
+            homeViewFlipper.addView(contentLayout);
+            //todo
+            homeViewFlipper.addView(test);
         }
     }
 }

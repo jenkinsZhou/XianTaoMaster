@@ -7,143 +7,147 @@
     android:orientation="vertical">
 
     <include layout="@layout/layout_title_bar" />
-    <RelativeLayout
-        android:layout_marginTop="@dimen/dp_10"
-        android:id="@+id/rlSearch"
+
+    <LinearLayout
+        android:id="@+id/rlContentView"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_40"
-        >
-        <TextView
-            android:id="@+id/tvCity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/dp_10"
-            android:text="合肥"
-            android:textColor="@color/greenCommon" />
-
-        <ImageView
-            android:id="@+id/ivLocate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/dp_3"
-            android:layout_toRightOf="@id/tvCity"
-            android:src="@mipmap/ic_area_location"
-            android:textColor="@color/greenCommon" />
-
-
-        <ImageView
-            android:id="@+id/ivMsg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/dp_10"
-            android:src="@mipmap/ic_information" />
-
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/dp_15"
-            android:layout_marginRight="@dimen/dp_15"
-            android:layout_toLeftOf="@id/ivMsg"
-            android:layout_toRightOf="@id/ivLocate"
-            android:background="@drawable/bg_radius_20_solid_gray_deep">
+            android:id="@+id/rlSearch"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_40"
+            android:layout_marginTop="@dimen/dp_10">
 
-            <ImageView
-                android:id="@+id/ivSearch"
+            <TextView
+                android:id="@+id/tvCity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/dp_20"
-                android:src="@mipmap/ic_search" />
+                android:layout_marginLeft="@dimen/dp_10"
+                android:text="合肥"
+                android:textColor="@color/greenCommon" />
 
-            <View
-                android:id="@+id/rightFlag"
-                android:layout_width="@dimen/dp_1"
+            <ImageView
+                android:id="@+id/ivLocate"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true">
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/dp_3"
+                android:layout_toRightOf="@id/tvCity"
+                android:src="@mipmap/ic_area_location"
+                android:textColor="@color/greenCommon" />
 
-            </View>
 
-            <EditText
+            <ImageView
+                android:id="@+id/ivMsg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/dp_10"
+                android:src="@mipmap/ic_information" />
+
+
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/dp_10"
-                android:layout_toLeftOf="@id/rightFlag"
-                android:layout_toRightOf="@id/ivSearch"
-                android:background="@null"
-                android:hint="输入商品"
-                android:textColor="#999999"
-                android:textSize="@dimen/sp_12" />
+                android:layout_marginLeft="@dimen/dp_15"
+                android:layout_marginRight="@dimen/dp_15"
+                android:layout_toLeftOf="@id/ivMsg"
+                android:layout_toRightOf="@id/ivLocate"
+                android:background="@drawable/bg_radius_20_solid_gray_deep">
+
+                <ImageView
+                    android:id="@+id/ivSearch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/dp_20"
+                    android:src="@mipmap/ic_search" />
+
+                <View
+                    android:id="@+id/rightFlag"
+                    android:layout_width="@dimen/dp_1"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true">
+
+                </View>
+
+                <TextView
+                    android:id="@+id/tvSearchGoods"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/dp_10"
+                    android:layout_toLeftOf="@id/rightFlag"
+                    android:layout_toRightOf="@id/ivSearch"
+                    android:gravity="center_vertical"
+                    android:text="输入商品"
+                    android:textColor="#999999"
+                    android:textSize="@dimen/sp_12" />
+            </RelativeLayout>
         </RelativeLayout>
-    </RelativeLayout>
-    <com.scwang.smartrefresh.layout.SmartRefreshLayout
-        android:id="@+id/refreshLayoutHome"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <androidx.core.widget.NestedScrollView
-            android:minHeight="@dimen/dp_500"
+
+        <RelativeLayout
+
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:orientation="vertical"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/dp_500">
+
+            <com.scwang.smartrefresh.layout.SmartRefreshLayout
+                android:id="@+id/refreshLayoutHome"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <cn.bingoogolapple.bgabanner.BGABanner
-                    android:id="@+id/bgaBanner"
+
+                <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_187"
-                    app:banner_pointAutoPlayAble="true"
-                    app:banner_indicatorGravity="bottom|center_horizontal"
-                    app:banner_placeholderDrawable="@color/transparent"
-                    app:banner_pointContainerBackground="@android:color/transparent"
-                    app:banner_pointContainerLeftRightPadding="@dimen/dp_2"
-                    app:banner_pointDrawable="@drawable/selector_banner_point" />
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/dp_500">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_35"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:id="@+id/icBulletin"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="@dimen/dp_10"
-                        android:src="@mipmap/ic_wall_bulletin" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="@dimen/dp_5"
-                        android:text="快报"
-                        android:textColor="@color/greenCommon" />
-                    <TextView
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="@dimen/dp_20"
-                        android:text="营业资质公布 点击此处查询资质结果" />
-                </LinearLayout>
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvHome"
-                    android:minHeight="@dimen/dp_300"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                        android:orientation="vertical">
 
-                </androidx.recyclerview.widget.RecyclerView>
+                        <cn.bingoogolapple.bgabanner.BGABanner
+                            android:id="@+id/bgaBanner"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/dp_187"
+                            app:banner_indicatorGravity="bottom|center_horizontal"
+                            app:banner_placeholderDrawable="@color/transparent"
+                            app:banner_pointAutoPlayAble="true"
+                            app:banner_pointContainerBackground="@android:color/transparent"
+                            app:banner_pointContainerLeftRightPadding="@dimen/dp_2"
+                            app:banner_pointDrawable="@drawable/selector_banner_point" />
+
+                        <!-- 滚动轮播广告条 !-->
+                        <ViewFlipper
+                            android:id="@+id/homeViewFlipper"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:autoStart="true"
+                            android:flipInterval="3000"
+                            android:inAnimation="@anim/anim_marquee_in"
+                            android:outAnimation="@anim/anim_marquee_out">
+                        </ViewFlipper>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvHome"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="@dimen/dp_300">
+
+                        </androidx.recyclerview.widget.RecyclerView>
 
 
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
+                    </LinearLayout>
+                </androidx.core.widget.NestedScrollView>
 
-    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+            </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+        </RelativeLayout>
 
+    </LinearLayout>
 
 
 </LinearLayout>

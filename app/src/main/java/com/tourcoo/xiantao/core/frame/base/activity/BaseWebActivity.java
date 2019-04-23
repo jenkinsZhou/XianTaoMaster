@@ -71,7 +71,6 @@ public abstract class BaseWebActivity extends BaseTitleActivity {
 
     /**
      * 设置进度条高度 注意此处最终AgentWeb会将其作为float 转dp2px
-     * {@link DefaultWebCreator#createWebView()}   height_dp}
      *
      * @return
      */
@@ -87,7 +86,7 @@ public abstract class BaseWebActivity extends BaseTitleActivity {
 
     @Override
     public void beforeInitView(Bundle savedInstanceState) {
-        mContainer = findViewById(R.id.lLayout_containerFastWeb);
+        mContainer = findViewById(R.id.lLayout_containerWeb);
         url = getIntent().getStringExtra("url");
         mCurrentUrl = url;
         initAgentWeb();

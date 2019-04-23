@@ -11,17 +11,20 @@ import com.tourcoo.xiantao.core.frame.base.activity.BaseTitleActivity;
 import com.tourcoo.xiantao.core.frame.manager.RxJavaManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.frame.util.StackUtil;
+import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.core.util.StatusBarUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
+import com.tourcoo.xiantao.entity.user.UserInfo;
+import com.tourcoo.xiantao.ui.account.LoginActivity;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
 import androidx.core.content.ContextCompat;
 
 /**
  * @author :zhoujian
- * @description : zj
+ * @description : 引导页
  * @company :途酷科技
  * @date 2019年03月06日上午 11:43
  * @Email: 971613168@qq.com
@@ -88,5 +91,18 @@ public class SplashActivity extends BaseTitleActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+
+    private void checkLogin() {
+        UserInfo userInfo = AccountInfoHelper.getInstance().getUserInfo();
+        boolean isLogin = userInfo != null;
+        if (isLogin) {
+            AccountInfoHelper.getInstance().setToken(userInfo.getToken());
+            TourCoolUtil.startActivity(mContext, MainTabActivity.class);
+        } else {
+            TourCoolUtil.startActivity(mContext, LoginActivity.class);
+        }
+        finish();
     }
 }

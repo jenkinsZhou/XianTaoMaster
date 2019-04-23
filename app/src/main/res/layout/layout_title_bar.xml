@@ -5,10 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/dp_40"
     android:background="@color/colorTitle"
-    app:title_actionTextColor="@color/colorTextBlack"
-    app:title_actionTint="@color/colorTextBlack"
-
-    app:title_dividerHeight="@dimen/dp_line_size"
     app:title_leftTextColor="@color/colorTextBlack"
     app:title_leftTextDrawable="@drawable/ic_arrow_left_black"
     app:title_leftTextDrawableHeight="32dp"

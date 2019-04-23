@@ -10,12 +10,14 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.widget.Toast;
 
+
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.common.ExceptionConstant;
 import com.tourcoo.xiantao.core.frame.UiConfigManager;
 import com.tourcoo.xiantao.core.frame.interfaces.ToastControl;
+import com.tourcoo.xiantao.core.frame.util.SizeUtil;
 import com.tourcoo.xiantao.core.widget.core.util.RomUtil;
-import com.tourcoo.xiantao.core.widget.core.util.SizeUtil;
+import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.radius.RadiusTextView;
 
 import androidx.annotation.ColorInt;
@@ -25,24 +27,21 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DefaultObserver;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.tourcoo.xiantao.core.common.CommonConfig.TOAST_DURATION;
-
 
 /**
  * @author :zhoujian
  * @description : 自定义吐司（解决个别手机厂商修改底层ROM吐司额外添加应用名问题）
- * @company :途酷科技
+ * @company :翼迈科技
  * @date 2018年12月29日下午 02:34
  * @Email: 971613168@qq.com
  */
 
 
 public class ToastUtil {
-    private static final long SHORT_DURATION_TIMEOUT = 4000L;
-    private static final long LONG_DURATION_TIMEOUT = 6000L;
     private static Context sContext;
     private static Toast sSystemToast;
     private static RadiusTextView sTextView;
+    private static Handler sHandler = new Handler(Looper.getMainLooper());
     /**
      * 是否前台运行才显示toast
      */
@@ -195,8 +194,10 @@ public class ToastUtil {
         if (control != null) {
             control.setToast(sSystemToast, sTextView);
         }
+        boolean showEnable = !isShowRunningForeground || (TourCooUtil.isRunningForeground(sContext));
+        if (showEnable) {
             sSystemToast.show();
-
+        }
     }
 
     public static void showSuccess(CharSequence msg) {
@@ -264,19 +265,19 @@ public class ToastUtil {
                 .setElevation(8)
                 .setTextDrawable(ContextCompat.getDrawable(sContext, res))
                 .setTextDrawableGravity(Gravity.TOP)
-                .setTextDrawablePadding(SizeUtil.dp2px(10))
-                .setTextDrawableWidth(SizeUtil.dp2px(36))
-                .setTextDrawableHeight(SizeUtil.dp2px(36))
+                .setTextDrawablePadding(SizeUtil.dp2px(5))
+                .setTextDrawableWidth(SizeUtil.dp2px(18))
+                .setTextDrawableHeight(SizeUtil.dp2px(18))
                 .setTextGravity(Gravity.CENTER)
-                .setPaddingLeft(SizeUtil.dp2px(24))
-                .setPaddingTop(SizeUtil.dp2px(20))
-                .setPaddingRight(SizeUtil.dp2px(24))
-                .setPaddingBottom(SizeUtil.dp2px(20))
-                .setRadius(SizeUtil.dp2px(8))
-                .setTextSize(SizeUtil.dp2px(16))
+                .setPaddingLeft(SizeUtil.dp2px(15))
+                .setPaddingTop(SizeUtil.dp2px(10))
+                .setPaddingRight(SizeUtil.dp2px(15))
+                .setPaddingBottom(SizeUtil.dp2px(10))
+                .setRadius(SizeUtil.dp2px(4))
+                .setTextSize(SizeUtil.dp2px(14))
                 .setGravityYOffset(0)
                 .setGravity(Gravity.CENTER)
-                .setMinWidth(SizeUtil.dp2px(140));
+                .setMinWidth(SizeUtil.dp2px(50));
 
     }
 
@@ -333,9 +334,9 @@ public class ToastUtil {
                     .setTextDrawableHeight(-1)
                     .setTextDrawablePadding(SizeUtil.dp2px(2))
                     .setTextDrawableGravity(Gravity.LEFT)
-                    .setPaddingLeft(SizeUtil.dp2px(16))
+                    .setPaddingLeft(SizeUtil.dp2px(2))
                     .setPaddingTop(SizeUtil.dp2px(10))
-                    .setPaddingRight(SizeUtil.dp2px(16))
+                    .setPaddingRight(SizeUtil.dp2px(2))
                     .setPaddingBottom(SizeUtil.dp2px(10))
                     .setBackground(null)
                     .setBackgroundColor(Color.argb(187, 0, 0, 0))

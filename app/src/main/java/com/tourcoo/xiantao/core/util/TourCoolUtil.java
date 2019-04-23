@@ -40,6 +40,11 @@ public class TourCoolUtil {
     private static final String STRING_EMPTY = "";
     private static int ACTIVITY_SINGLE_FLAG = Intent.FLAG_ACTIVITY_SINGLE_TOP;
 
+
+    public static Drawable getDrawable(int drawableId) {
+        return ContextCompat.getDrawable(XianTaoApplication.getInstance(), drawableId);
+    }
+
     /**
      * 获取应用名称
      *

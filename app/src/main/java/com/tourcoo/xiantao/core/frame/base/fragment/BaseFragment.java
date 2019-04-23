@@ -2,12 +2,14 @@ package com.tourcoo.xiantao.core.frame.base.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.UiConfigManager;
 import com.tourcoo.xiantao.core.frame.interfaces.IBaseView;
 import com.tourcoo.xiantao.core.frame.interfaces.IRefreshLoadView;
@@ -15,10 +17,14 @@ import com.tourcoo.xiantao.core.frame.manager.RxJavaManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.tourcoo.xiantao.widget.custom.BounceLoadingView;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 import com.trello.rxlifecycle3.components.support.RxFragment;
 
 import org.simple.eventbus.EventBus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.fragment.app.FragmentManager;
 
@@ -38,6 +44,7 @@ public abstract class BaseFragment extends RxFragment implements IBaseView {
     protected boolean mIsVisibleChanged = false;
     private boolean mIsInViewPager;
     protected Bundle mSavedInstanceState;
+    private List<BounceLoadingView> mBounceLoadingViewList = new ArrayList<>();
 
     @Override
     public boolean isEventBusEnable() {
@@ -86,7 +93,6 @@ public abstract class BaseFragment extends RxFragment implements IBaseView {
         }
         beforeInitView(savedInstanceState);
         initView(savedInstanceState);
-
         if (isSingleFragment() && !mIsVisibleChanged) {
             if (getUserVisibleHint() || isVisible() || !isHidden()) {
                 onVisibleChanged(true);
@@ -118,6 +124,16 @@ public abstract class BaseFragment extends RxFragment implements IBaseView {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        BounceLoadingView bounceLoadingView;
+        for (int i = mBounceLoadingViewList.size() - 1; i >= 0; i--) {
+            bounceLoadingView = mBounceLoadingViewList.get(i);
+            if (bounceLoadingView != null) {
+                bounceLoadingView.stop();
+                mBounceLoadingViewList.remove(bounceLoadingView);
+                bounceLoadingView = null;
+            }
+        }
+        System.gc();
     }
 
     @Override
@@ -233,5 +249,45 @@ public abstract class BaseFragment extends RxFragment implements IBaseView {
             mIsFirstShow = false;
             loadData();
         }
+    }
+
+    protected View inflateLayout(int layoutId) {
+        return LayoutInflater.from(mContext).inflate(layoutId, null);
+    }
+
+
+    private BounceLoadingView getLoadingView(View rootView) {
+        if (rootView == null) {
+            return null;
+        }
+        BounceLoadingView bounceLoadingView;
+        bounceLoadingView = rootView.findViewById(R.id.bounceLoadingView);
+        if (bounceLoadingView == null) {
+            return null;
+        }
+        bounceLoadingView.addBitmap(R.mipmap.v4);
+        bounceLoadingView.addBitmap(R.mipmap.v5);
+        bounceLoadingView.addBitmap(R.mipmap.v6);
+        bounceLoadingView.addBitmap(R.mipmap.v7);
+        bounceLoadingView.addBitmap(R.mipmap.v8);
+        bounceLoadingView.addBitmap(R.mipmap.v9);
+        bounceLoadingView.setShadowColor(Color.LTGRAY);
+        bounceLoadingView.setDuration(700);
+        mBounceLoadingViewList.add(bounceLoadingView);
+        return bounceLoadingView;
+    }
+
+
+    protected View getLoadingLayout() {
+        View loadingLayout;
+        loadingLayout = inflateLayout(R.layout.custom_loading_layout);
+        if (loadingLayout == null) {
+            return null;
+        }
+        BounceLoadingView bounceLoadingView = getLoadingView(loadingLayout);
+        if (bounceLoadingView != null) {
+            bounceLoadingView.start();
+        }
+        return loadingLayout;
     }
 }

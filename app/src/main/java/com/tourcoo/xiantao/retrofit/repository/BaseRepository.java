@@ -2,25 +2,24 @@ package com.tourcoo.xiantao.retrofit.repository;
 
 import android.accounts.NetworkErrorException;
 
-
 import com.tourcoo.xiantao.core.frame.retrofit.RetryWhen;
-import com.tourcoo.xiantao.core.frame.retrofit.TourCooTransformer;
+import com.tourcoo.xiantao.core.frame.retrofit.TourCoolTransformer;
 import com.tourcoo.xiantao.entity.BaseEntity;
-
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.functions.Function;
 
-
 /**
  * @author :JenkinsZhou
- * @description : retrofit使用基类封装
+ * @description :
  * @company :途酷科技
- * @date 2019年03月27日15:48
- * @E-Mail: 971613168@qq.com
+ * @date 2019年04月02日18:52
+ * @Email: 971613168@qq.com
  */
-public abstract class BaseRepository {
+public class BaseRepository {
+
+
 
     /**
      * @param observable 用于解析 统一返回实体统一做相应的错误码--如登录失效
@@ -28,8 +27,7 @@ public abstract class BaseRepository {
      * @return
      */
     protected <T> Observable<T> transform(Observable<BaseEntity<T>> observable) {
-//        io.reactivex.functions;
-        return TourCooTransformer.switchSchedulers(
+        return TourCoolTransformer.switchSchedulersIo(
                 observable.retryWhen(new RetryWhen())
                         .flatMap((Function<BaseEntity<T>, ObservableSource<T>>) result -> {
                             if (result == null) {

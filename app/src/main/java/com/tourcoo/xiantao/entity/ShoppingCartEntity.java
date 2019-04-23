@@ -1,5 +1,7 @@
 package com.tourcoo.xiantao.entity;
 
+import com.tourcoo.xiantao.entity.goods.GoodsEntity;
+
 import java.util.List;
 
 /**

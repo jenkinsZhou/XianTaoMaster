@@ -13,7 +13,7 @@ import com.tourcoo.xiantao.core.frame.impl.ActivityControlImpl;
 import com.tourcoo.xiantao.core.frame.impl.HttpRequestControlImpl;
 import com.tourcoo.xiantao.core.frame.impl.SwipeBackControlImpl;
 import com.tourcoo.xiantao.core.frame.impl.UiConfigImpl;
-import com.tourcoo.xiantao.core.frame.retrofit.TourcoolRetrofit;
+import com.tourcoo.xiantao.core.frame.retrofit.TourCoolRetrofit;
 import com.tourcoo.xiantao.core.frame.util.SizeUtil;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.log.widget.LogFileEngineFactory;
@@ -21,6 +21,7 @@ import com.tourcoo.xiantao.core.log.widget.config.LogLevel;
 import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.squareup.leakcanary.LeakCanary;
+import com.tourcoo.xiantao.util.AddressHelper;
 
 import org.litepal.LitePalApplication;
 
@@ -29,6 +30,8 @@ import androidx.multidex.MultiDex;
 import static com.tourcoo.xiantao.core.common.CommonConfig.BUGLY_APPID;
 import static com.tourcoo.xiantao.core.common.CommonConfig.DEBUG_MODE;
 import static com.tourcoo.xiantao.core.common.CommonConstant.TAG_PRE_SUFFIX;
+import static com.tourcoo.xiantao.core.common.RequestConfig.BASE_URL;
+import static com.tourcoo.xiantao.core.common.RequestConfig.BASE_URL_API;
 
 /**
  * @author :zhoujian
@@ -40,11 +43,13 @@ import static com.tourcoo.xiantao.core.common.CommonConstant.TAG_PRE_SUFFIX;
 public class XianTaoApplication extends LitePalApplication {
     private static Application mContext;
     private static int imageHeight = 0;
+
     @Override
     public void onCreate() {
         super.onCreate();
         mContext = this;
         initLog();
+        AddressHelper.getInstance().initAddressData();
         initCrashHandle();
         ToastUtil.init(mContext);
         //最简单UI配置模式-必须进行初始化
@@ -81,10 +86,10 @@ public class XianTaoApplication extends LitePalApplication {
                 .setToastControl(impl);
 
         //初始化Retrofit配置
-        TourcoolRetrofit.getInstance()
+        TourCoolRetrofit.getInstance()
                 //配置全局网络请求BaseUrl
                 //todo
-                .setBaseUrl("https://api.douban.com/")
+                .setBaseUrl(BASE_URL_API)
                 //信任所有证书--也可设置setCertificates(单/双向验证)
                 .setCertificates()
                 //设置统一请求头
@@ -96,26 +101,6 @@ public class XianTaoApplication extends LitePalApplication {
                 //设置统一超时--也可单独调用read/write/connect超时(可以设置时间单位TimeUnit)
                 //默认20 s
                 .setTimeout(10);
-
-        //注意设置baseUrl要以/ 结尾 service 里的方法不要以/打头不然拦截到的url会有问题
-        //以下为配置多BaseUrl--默认方式一优先级高 可通过FastRetrofit.getInstance().setHeaderPriorityEnable(true);设置方式二优先级
-        //方式一 通过Service 里的method-(如:) 设置 推荐 使用该方式不需设置如方式二的额外Header
-        TourcoolRetrofit.getInstance()
-                .putBaseUrl("update", "https://raw.githubusercontent.com/AriesHoo/FastLib/master/apk/");
-
-        //方式二 通过 Service 里添加特定header设置
-        //step1
-        TourcoolRetrofit.getInstance()
-                //设置Header模式优先-默认Method方式优先
-                .setHeaderPriorityEnable(true)
-                .putHeaderBaseUrl("update", "https://raw.githubusercontent.com/AriesHoo/FastLib/master/apk/");
-        //step2
-        // 需要step1中baseUrl的方法需要在对应service里增加
-        // @Headers({FastRetrofit.BASE_URL_NAME_HEADER + ApiConstant.API_UPDATE_APP_KEY})
-        //增加一个Header配置注意FastRetrofit.BASE_URL_NAME_HEADER是必须为step1调用putHeaderBaseUrl方法设置的key
-        // 参考com.aries.library.fast.demo.retrofit.service.ApiService#updateApp
-
-
         if (LeakCanary.isInAnalyzerProcess(mContext)) {
             return;
         }

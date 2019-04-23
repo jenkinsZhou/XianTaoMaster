@@ -49,6 +49,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project (':swipemenulib')
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
@@ -128,4 +129,9 @@ dependencies {
     implementation 'com.tencent.bugly:nativecrashreport:3.6.0.1'
     implementation 'com.google.android:flexbox:1.0.0'
     implementation 'org.greenrobot:eventbus:3.1.1'
+    implementation 'pub.devrel:easypermissions:2.0.0'
+    //webView库
+    implementation 'com.just.agentweb:agentweb:4.0.2'
+    //webView提供下载功能
+    implementation 'com.just.agentweb:download:4.0.2'
 }

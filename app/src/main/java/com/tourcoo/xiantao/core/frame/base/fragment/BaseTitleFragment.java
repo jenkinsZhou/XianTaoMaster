@@ -7,6 +7,8 @@ import com.tourcoo.xiantao.core.frame.interfaces.ITitleView;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 
+import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
+
 /**
  * @author :zhoujian
  * @description :设置有TitleBar的BaseFragment
@@ -18,6 +20,9 @@ public abstract class BaseTitleFragment extends BaseFragment implements ITitleVi
 
     protected TitleBarDelegate mFastTitleDelegate;
     protected TitleBarView mTitleBar;
+    protected StatusLayoutManager layoutManager;
+
+
 
     @Override
     public void beforeSetTitleBar(TitleBarView titleBar) {

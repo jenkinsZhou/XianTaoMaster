@@ -1,13 +1,19 @@
 package com.tourcoo.xiantao.retrofit.service;
 
 
+import com.tourcoo.xiantao.entity.AddressInfoEntity;
+import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.TokenInfo;
 import com.tourcoo.xiantao.entity.UpdateEntity;
+import com.tourcoo.xiantao.entity.banner.BannerDetail;
 
+import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
+import retrofit2.http.POST;
 import retrofit2.http.QueryMap;
 
 /**
@@ -20,12 +26,86 @@ import retrofit2.http.QueryMap;
 public interface ApiService {
 
     /**
-     * 检查应用更新--同时设置了Method及Header模式重定向请求Url,默认Method优先;
+     * 发送验证码
      *
      * @param map
      * @return
      */
-    @GET("update")
-    @Headers({"BASE_URL_NAME: " + "update"})
-    Observable<UpdateEntity> updateApp(@QueryMap Map<String, Object> map);
+    @GET("sms/send")
+    Observable<BaseEntity> sendVCode(@QueryMap Map<String, Object> map);
+
+
+    /**
+     * 会员注册
+     *
+     * @param map
+     * @return
+     */
+    @POST("user/register")
+    Observable<BaseEntity> register(@QueryMap Map<String, Object> map);
+
+
+    /**
+     * 会员密码登录
+     *
+     * @param map
+     * @return
+     */
+    @POST("user/login")
+    Observable<BaseEntity> login(@QueryMap Map<String, Object> map);
+
+    /**
+     * 验证码登录
+     *
+     * @param map
+     * @return
+     */
+    @POST("user/mobilelogin")
+    Observable<BaseEntity> mobileLogin(@QueryMap Map<String, Object> map);
+
+
+    /**
+     * 注销登录
+     *
+     * @param
+     * @return
+     */
+    @POST("user/logout")
+    Observable<BaseEntity> logout();
+
+    /**
+     * 首页的banner
+     *
+     * @return
+     */
+    @POST("index/index")
+    Observable<BaseEntity> homeBanner();
+
+    /**
+     * 检测token是否失效
+     *
+     * @return
+     */
+    @POST("token/check")
+    Observable<BaseEntity<TokenInfo>> checkToken();
+
+
+    /**
+     * banner详情
+     *
+     * @param map
+     * @return
+     */
+    @POST("banner/detail")
+    Observable<BaseEntity<BannerDetail>> bannerDetail(@QueryMap Map<String, Object> map);
+
+    /**
+     * 地址列表
+     *
+     * @return
+     */
+    @POST("adress/lists")
+    Observable<BaseEntity<List<AddressInfoEntity>>> myAddressList();
+
+
 }

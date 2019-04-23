@@ -2,6 +2,7 @@ package com.tourcoo.xiantao.core.frame.base.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -20,6 +21,9 @@ import com.tourcoo.xiantao.core.frame.manager.RxJavaManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.frame.util.StackUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
+import com.tourcoo.xiantao.core.widget.dialog.alert.TourCooAlertDialog;
+import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 import com.trello.rxlifecycle3.components.support.RxAppCompatActivity;
 
@@ -300,6 +304,50 @@ public abstract class BaseActivity extends RxAppCompatActivity implements IBaseV
                             mIsFirstBack = true;
                         }
                     });
+        }
+    }
+
+
+    /**
+     * 确认弹窗
+     *
+     * @param builder
+     */
+    protected void showConfirmDialog(ConfirmDialog.Builder builder) {
+        if (!BaseActivity.this.isFinishing() && builder != null) {
+            builder.create().show();
+        }
+    }
+
+    /**
+     * 显示弹窗
+     *
+     * @param title
+     * @param message
+     * @param buttonText
+     */
+    protected void showAlertDialog(String title, String message, String buttonText) {
+        if (!BaseActivity.this.isFinishing()) {
+            TourCooAlertDialog.Builder builder = new TourCooAlertDialog.Builder(this);
+            builder.setTitle(title).setMessage(message);
+            builder.setPositiveButton(buttonText,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            finish();
+                        }
+                    });
+            builder.create().show();
+        }
+    }
+
+    protected void showAlertDialog(String title, String message, String buttonText, DialogInterface.OnClickListener clickListener) {
+        if (!BaseActivity.this.isFinishing()) {
+            TourCooAlertDialog.Builder builder = new TourCooAlertDialog.Builder(this);
+            builder.setTitle(title).setMessage(message);
+            builder.setPositiveButton(buttonText, clickListener);
+            builder.create().show();
         }
     }
 }

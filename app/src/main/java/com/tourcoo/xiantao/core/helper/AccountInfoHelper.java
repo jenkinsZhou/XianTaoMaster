@@ -1,0 +1,104 @@
+package com.tourcoo.xiantao.core.helper;
+
+
+import android.text.TextUtils;
+
+import com.tourcoo.xiantao.entity.user.UserInfo;
+
+import org.litepal.LitePal;
+
+import java.util.List;
+
+/**
+ * @author :zhoujian
+ * @description :账户信息帮助类
+ * @company :途酷科技
+ * @date 2019年 04月 3日 16时52分
+ * @Email: 971613168@qq.com
+ */
+public class AccountInfoHelper {
+    private static final String TAG = "AccountInfoHelper";
+    private String openId = "";
+    private String token = "";
+
+    public String getToken() {
+        if (TextUtils.isEmpty(token)) {
+            if (userInfo != null) {
+                token = userInfo.getToken();
+            }
+        }
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    private static class SingletonInstance {
+        private static final AccountInfoHelper INSTANCE = new AccountInfoHelper();
+    }
+
+    public static AccountInfoHelper getInstance() {
+        return SingletonInstance.INSTANCE;
+    }
+
+
+    private UserInfo userInfo;
+
+
+    /**
+     * 将用户数据保存到本地
+     *
+     * @param userInfo
+     */
+    public void saveUserInfoToSq(UserInfo userInfo) {
+        if (userInfo == null) {
+            return;
+        }
+        //先删除旧数据
+        LitePal.deleteAll(UserInfo.class);
+        userInfo.save();
+    }
+
+
+    public void setUserInfo(UserInfo userInfo) {
+        token = userInfo.getToken();
+        this.userInfo = userInfo;
+    }
+
+    public UserInfo getUserInfo() {
+        if (userInfo == null) {
+            userInfo = getUserInfoFromSq();
+        }
+        return userInfo;
+    }
+
+
+    public UserInfo getUserInfoFromSq() {
+        List<UserInfo> userInfoList = LitePal.findAll(UserInfo.class);
+        if (userInfoList != null && !userInfoList.isEmpty()) {
+            return userInfoList.get(0);
+        }
+        return null;
+    }
+
+    /**
+     * 删除用户数据
+     */
+    public void deleteUserAccount() {
+        LitePal.deleteAll(UserInfo.class);
+        userInfo = null;
+        token = "";
+    }
+
+    /**
+     * 判断用户是否登录
+     *
+     * @return
+     */
+    public boolean isLogin() {
+        return AccountInfoHelper.getInstance().getUserInfo() != null;
+    }
+
+
+}

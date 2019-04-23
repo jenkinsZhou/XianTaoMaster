@@ -6,7 +6,7 @@ import android.text.TextUtils;
 
 import com.tourcoo.xiantao.core.frame.base.activity.BaseActivity;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseDownloadObserver;
-import com.tourcoo.xiantao.core.frame.retrofit.TourcoolRetrofit;
+import com.tourcoo.xiantao.core.frame.retrofit.TourCoolRetrofit;
 import com.tourcoo.xiantao.core.frame.util.FileUtil;
 import com.tourcoo.xiantao.core.frame.util.FormatUtil;
 import com.tourcoo.xiantao.core.frame.util.StackUtil;
@@ -165,7 +165,7 @@ public class VersionCheckHelper {
                 finalMProgressDialog.setProgress((int) current);
             }
         };
-        TourcoolRetrofit.getInstance().downloadFile(entity.url, header)
+        TourCoolRetrofit.getInstance().downloadFile(entity.url, header)
                 .compose(((RxAppCompatActivity) activity).bindUntilEvent(ActivityEvent.DESTROY))
                 //可自定义保存路径默认//storage/emulated/0/Android/data/<package-name>/cache/xxx/
                 .subscribe(mDownloadObserver);

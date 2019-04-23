@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">鲜淘网</string>
-
+    <string name="cancel">取消</string>
     <string name="customer_service_telephone_numbers">400-628-8382</string>
 
     <string name="custom_activityoncrash_error_activity_error_occurred_explanation">抱歉，出现了不可预期的错误，您可重新启动应用，或者将错误信息反馈给我们，感谢您的理解与支持！</string>
@@ -47,7 +47,7 @@
     <string name="copy_success">Copy Successful</string>
 
 
-    <string name="exception_network_not_connected">Network Not Connected Exception</string>
+    <string name="exception_network_not_connected">未检测到网络</string>
     <string name="exception_network_error">Network Error Exception</string>
     <string name="exception_accounts">Account Exception</string>
     <string name="exception_connect">Connect Exception</string>
@@ -58,7 +58,19 @@
     <string name="exception_time_out">Time Out Exception</string>
     <string name="exception_class_cast">Class Cast Exception</string>
     <string name="exception_other_error">Other Exception</string>
-    <string name="cancel">取消</string>
+
+    <string name="ensure">确定</string>
     <string name="load_more_loading">加载中...</string>
     <string name="quit_app">再按一次退出</string>
+
+
+
+    <string name="pickerview_cancel">取消</string>
+    <string name="pickerview_submit">确定</string>
+    <string name="pickerview_year">年</string>
+    <string name="pickerview_month">月</string>
+    <string name="pickerview_day">日</string>
+    <string name="pickerview_hours">时</string>
+    <string name="pickerview_minutes">分</string>
+    <string name="pickerview_seconds">秒</string>
 </resources>

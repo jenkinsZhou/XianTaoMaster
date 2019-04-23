@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E4E6E5"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_title_bar" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="centerInside"
+            android:src="@mipmap/img_logo" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/logo"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_17"
+                android:layout_marginRight="@dimen/dp_15"
+                android:background="@drawable/select_bg_radius_white_12"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/dp_16"
+                android:paddingRight="@dimen/dp_16">
+
+                <com.tourcoo.xiantao.core.widget.custom.SuperEditText
+                    android:id="@+id/setPhone"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_50"
+                    android:drawableLeft="@mipmap/ic_mobile_phone"
+                    android:drawableRight="@mipmap/ic_confirm"
+                    android:drawablePadding="@dimen/dp_15"
+                    android:hint="请输入手机号"
+                    android:textSize="@dimen/sp_15" />
+
+                <!-- <androidx.appcompat.widget.AppCompatEditText
+                     android:layout_width="match_parent"
+                     android:layout_height="@dimen/dp_50"
+                     android:background="@null"
+                     android:drawableLeft="@mipmap/ic_mobile_phone"
+                     android:drawableRight="@mipmap/ic_checked"
+                     android:drawablePadding="@dimen/dp_20"
+                     android:hint="请输入手机号"
+                     android:inputType="number"
+                     android:maxLength="11"
+                     android:textSize="@dimen/sp_15" />-->
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_50"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <com.tourcoo.xiantao.core.widget.custom.SuperEditText
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/dp_50"
+                        android:layout_weight="1"
+                        android:drawableStart="@mipmap/ic_login_password"
+                        android:drawableLeft="@mipmap/ic_login_password"
+                        android:drawablePadding="@dimen/dp_15"
+                        android:hint="请输入验证码"
+                        android:textSize="@dimen/sp_15"
+                        app:lineEnable="false" />
+                    <!--   <androidx.appcompat.widget.AppCompatEditText
+                           android:layout_width="0dp"
+                           android:layout_height="match_parent"
+                           android:layout_weight="1"
+                           android:background="@null"
+                           android:drawableLeft="@mipmap/ic_login_password"
+                           android:drawablePadding="@dimen/dp_20"
+                           android:hint="请输入验证码"
+                           android:inputType="number"
+                           android:maxLength="6"
+                           android:textSize="@dimen/sp_15" />-->
+
+
+                    <TextView
+                        android:layout_width="@dimen/dp_90"
+                        android:layout_height="@dimen/dp_30"
+                        android:layout_marginLeft="@dimen/dp_20"
+                        android:background="@drawable/selector_bg_radius_16_green"
+                        android:clickable="true"
+                        android:gravity="center"
+                        android:text="获取验证码"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/sp_12" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_1"
+                    android:background="@color/lineColor_unclick" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_50"
+                    android:orientation="horizontal">
+
+                    <!--   <androidx.appcompat.widget.AppCompatEditText
+                           android:layout_width="0dp"
+                           android:layout_height="match_parent"
+                           android:layout_weight="1"
+                           android:background="@null"
+                           android:drawableLeft="@mipmap/ic_login_password"
+                           android:drawablePadding="@dimen/dp_20"
+                           android:hint="请输入登录密码"
+                           android:inputType="number"
+                           android:maxLength="6"
+                           android:textSize="@dimen/sp_15" />-->
+
+                    <com.tourcoo.xiantao.core.widget.custom.SuperEditText
+                        android:id="@+id/superEtPassword"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/dp_50"
+                        android:layout_marginRight="@dimen/dp_5"
+                        android:layout_weight="1"
+                        android:drawableStart="@mipmap/ic_login_password"
+                        android:drawableLeft="@mipmap/ic_login_password"
+                        android:drawablePadding="@dimen/dp_15"
+                        android:hint="请输入登录密码"
+                        android:textSize="@dimen/sp_15"
+                        app:lineEnable="false" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@mipmap/ic_eye_hide" />
+
+                </LinearLayout>
+                <!--  <com.tourcoo.xiantao.core.widget.custom.SuperEditText
+                      android:layout_width="match_parent"
+                      android:layout_height="@dimen/dp_50"
+                      app:ic_left_click="@mipmap/ic_login_password"
+                      app:ic_left_unclick="@mipmap/ic_login_password"
+                      app:lineColor_unclick="@color/blackCommon"
+                      app:left_x="-10"
+                      app:lineEnable="false" />-->
+                <!--<com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilPassword"
+                    android:layout_width="match_parent"
+                    android:background="@null"
+                    android:layout_height="@dimen/dp_50"
+                    app:passwordToggleDrawable="@mipmap/ic_eye_hide"
+                    app:passwordToggleEnabled="true">
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@null"
+                        android:drawableLeft="@mipmap/ic_login_password"
+                        android:drawablePadding="@dimen/dp_20"
+                        android:hint="请输入密码"
+                        android:inputType="textPassword"
+                        android:maxLength="11"
+                        android:textSize="@dimen/sp_13" />
+
+
+                </com.google.android.material.textfield.TextInputLayout>-->
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_1"
+                    android:background="@color/lineColor_unclick" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_50"
+                    android:orientation="horizontal">
+
+                    <!--   <androidx.appcompat.widget.AppCompatEditText
+                           android:layout_width="0dp"
+                           android:layout_height="match_parent"
+                           android:layout_weight="1"
+                           android:background="@null"
+                           android:drawableLeft="@mipmap/ic_login_password"
+                           android:drawablePadding="@dimen/dp_20"
+                           android:hint="请输入登录密码"
+                           android:inputType="number"
+                           android:maxLength="6"
+                           android:textSize="@dimen/sp_15" />-->
+
+                    <com.tourcoo.xiantao.core.widget.custom.SuperEditText
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/dp_50"
+                        android:layout_marginRight="@dimen/dp_5"
+                        android:layout_weight="1"
+                        android:drawableStart="@mipmap/ic_login_password"
+                        android:drawableLeft="@mipmap/ic_login_password"
+                        android:drawablePadding="@dimen/dp_15"
+                        android:hint="请输入登录密码"
+                        android:textSize="@dimen/sp_15"
+                        app:lineEnable="false" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@mipmap/ic_eye_hide" />
+
+                </LinearLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_1"
+                    android:background="@color/lineColor_unclick" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:layout_marginBottom="@dimen/dp_20"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        style="@style/CustomCheckBoxTheme"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:checked="true"
+                        android:drawablePadding="@dimen/dp_5"
+                        android:text="我已阅读并同意注册条例"
+                        android:textColor="#B2B2B2"
+                        android:textSize="@dimen/sp_12" />
+
+
+                    <TextView
+                        android:id="@+id/tvLicensing"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:text="《鲜淘网注册协议》"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/sp_13" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+            <TextView
+                style="@style/TextViewButtonBlueBgMatchParentStyleBase"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="@dimen/dp_17"
+                android:layout_marginTop="@dimen/dp_15"
+                android:layout_marginRight="@dimen/dp_15"
+                android:text="注册"
+                android:textColor="#ffffffff"
+                android:textSize="@dimen/sp_13"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/dp_12"
+                android:text="已有账户,去登陆"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/sp_12" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_12"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:visibility="visible">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/dp_10"
+                    android:src="@mipmap/ic_wechat"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dp_10"
+                    android:layout_marginRight="@dimen/dp_10"
+                    android:src="@mipmap/ic_wechat" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dp_10"
+                    android:src="@mipmap/ic_wechat"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/dp_5"
+                android:text="微信号注册"
+                android:textSize="@dimen/sp_12" />
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>

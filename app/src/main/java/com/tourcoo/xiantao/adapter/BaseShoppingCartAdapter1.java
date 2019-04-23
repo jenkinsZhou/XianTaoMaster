@@ -3,7 +3,7 @@ package com.tourcoo.xiantao.adapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.tourcoo.xiantao.R;
-import com.tourcoo.xiantao.entity.GoodsEntity;
+import com.tourcoo.xiantao.entity.goods.GoodsEntity;
 
 import java.util.List;
 
