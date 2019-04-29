@@ -364,12 +364,12 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
                 closeHudProgressDialog();
                 BaseEntity<List> resp = response.body();
                 if (resp != null) {
+                    TourCooLogUtil.i("上传图片回调",response );
                     if (resp.code == CODE_REQUEST_SUCCESS && resp.data != null) {
                         List<String> imageUrl = new ArrayList<>();
-
                         mImages = StringUtils.join(imageUrl, ",");
                         //todo
-
+                         TourCooLogUtil.i(TAG,response );
                     } else {
                         ToastUtil.showFailed(resp.msg);
                     }

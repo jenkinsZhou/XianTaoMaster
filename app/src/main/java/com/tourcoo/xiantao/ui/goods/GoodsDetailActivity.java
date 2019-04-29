@@ -29,8 +29,6 @@ import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
 import com.tourcoo.xiantao.ui.base.WebViewActivity;
 import com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity;
-import com.tourcoo.xiantao.widget.sku.ProductSkuDialog;
-import com.tourcoo.xiantao.widget.sku.Sku;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
 import java.util.ArrayList;
@@ -56,7 +54,6 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private List<String> imageList = new ArrayList<>();
     private TextView tvComment;
     private GoodsEntity mGoodsEntity;
-    private ProductSkuDialog dialog;
 
     /**
      * 结算明细实体
@@ -394,18 +391,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     }
 
 
-    private void showSkuDialog(GoodsEntity goodsEntity) {
-        if (dialog == null) {
-            dialog = new ProductSkuDialog(mContext);
-            dialog.setData(goodsEntity, new ProductSkuDialog.Callback() {
-                @Override
-                public void onAdded(Sku sku, int quantity) {
 
-                }
-            });
-        }
-        dialog.show();
-    }
 
     /**
      * 请求添加商品接口
