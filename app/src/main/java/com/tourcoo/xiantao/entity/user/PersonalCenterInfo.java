@@ -2,6 +2,8 @@ package com.tourcoo.xiantao.entity.user;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.litepal.crud.LitePalSupport;
+
 /**
  * @author :JenkinsZhou
  * @description :个人中心实体
@@ -9,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
  * @date 2019年04月27日17:01
  * @Email: 971613168@qq.com
  */
-public class PensonalCenterBean {
+public class PersonalCenterInfo extends LitePalSupport {
 
     /**
      * ag : 1

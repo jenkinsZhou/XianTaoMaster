@@ -7,10 +7,13 @@ import com.tourcoo.xiantao.core.frame.retrofit.RetryWhen;
 import com.tourcoo.xiantao.core.frame.retrofit.TourCoolRetrofit;
 import com.tourcoo.xiantao.core.frame.retrofit.TourCoolTransformer;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
+import com.tourcoo.xiantao.entity.message.MessageBean;
+import com.tourcoo.xiantao.entity.message.MessageEntity;
 import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.TokenInfo;
 import com.tourcoo.xiantao.entity.banner.BannerDetail;
+import com.tourcoo.xiantao.entity.user.CashEntity;
 import com.tourcoo.xiantao.helper.GoodsCount;
 import com.tourcoo.xiantao.retrofit.service.ApiService;
 
@@ -468,4 +471,80 @@ public class ApiRepository extends BaseRepository {
         TourCooLogUtil.i(TAG, TAG + ":" + params);
         return TourCoolTransformer.switchSchedulersIo(getApiService().collectAdd(params).retryWhen(new RetryWhen()));
     }
+
+    /**
+     * 修改个人信息
+     *
+     * @param avatarUrl
+     * @param nickname
+     * @param gender
+     * @param birthday
+     * @return
+     */
+    public Observable<BaseEntity> editUserInfo(String avatarUrl, String nickname, int gender, String birthday) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("avatar", avatarUrl);
+        params.put("nickname", nickname);
+        params.put("gender", gender);
+        params.put("birthday", birthday);
+        TourCooLogUtil.i(TAG, TAG + ":" + params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().editUserInfo(params).retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 充值
+     *
+     * @return
+     */
+    public Observable<BaseEntity> recharge(String amount, int payType) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("amount", amount);
+        String payTypeString;
+        switch (payType) {
+            case PAY_TYPE_ALI:
+                payTypeString = "ali";
+                break;
+            case PAY_TYPE_WE_XIN:
+                payTypeString = "wx";
+                break;
+            default:
+                payTypeString = "ali";
+                break;
+        }
+        params.put("pay_type", payTypeString);
+        TourCooLogUtil.i(TAG, TAG + ":" + params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().recharge(params).retryWhen(new RetryWhen()));
+    }
+
+    /**
+     * 账户查询
+     *
+     * @return
+     */
+    public Observable<BaseEntity<CashEntity>> requestBalance() {
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestBalance().retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 消息列表
+     *
+     * @return
+     */
+    public Observable<BaseEntity<MessageEntity>> requestMessageList(int index) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("p", index);
+        TourCooLogUtil.i(TAG, TAG + ":" + params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestMessageList(params).retryWhen(new RetryWhen()));
+    }
+
+    /**
+     * 未读消息数量
+     * @return
+     */
+    public Observable<BaseEntity<MessageBean>> requestMessageNoReadCount() {
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestMessageNoReadCount().retryWhen(new RetryWhen()));
+    }
+
 }

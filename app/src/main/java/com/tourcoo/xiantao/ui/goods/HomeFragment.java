@@ -36,6 +36,7 @@ import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.module.MainTabActivity;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.util.StatusBarUtil;
+import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.BaseEntity;
@@ -55,6 +56,7 @@ import java.util.List;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import cn.bingoogolapple.bgabanner.BGABanner;
 import me.bakumon.statuslayoutmanager.library.OnStatusChildClickListener;
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
@@ -369,7 +371,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
         mBannerBeanList.addAll(bannerBeanList);
         String url;
         for (BannerBean bannerBean : bannerBeanList) {
-            url = BASE_URL + bannerBean.getImage();
+            url = TourCooUtil.getUrl(bannerBean.getImage());
             TourCooLogUtil.i(TAG, "bannerImageList:" + url);
             bannerImageList.add(url);
         }
@@ -592,8 +594,6 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
         }
         return addressBeanList.get(0);
     }
-
-
 
 
 }

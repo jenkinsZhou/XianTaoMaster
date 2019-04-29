@@ -118,4 +118,7 @@ public class RechargeDetailActivity extends BaseTourCooRefreshLoadActivity<Recha
     }
 
 
+
+
+
 }

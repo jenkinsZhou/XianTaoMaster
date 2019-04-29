@@ -1,11 +1,14 @@
 package com.tourcoo.xiantao.retrofit.service;
 
 
+import com.tourcoo.xiantao.entity.message.MessageBean;
+import com.tourcoo.xiantao.entity.message.MessageEntity;
 import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.TokenInfo;
 import com.tourcoo.xiantao.entity.banner.BannerDetail;
 import com.tourcoo.xiantao.entity.upload.UploadEntity;
+import com.tourcoo.xiantao.entity.user.CashEntity;
 import com.tourcoo.xiantao.helper.GoodsCount;
 
 import java.util.List;
@@ -87,6 +90,7 @@ public interface ApiService {
 
     /**
      * 修改密码
+     *
      * @param map
      * @return
      */
@@ -279,7 +283,6 @@ public interface ApiService {
     Observable<BaseEntity> requestOrderInfo(@QueryMap Map<String, Object> map);
 
 
-
     /**
      * 订单详情
      *
@@ -291,6 +294,7 @@ public interface ApiService {
 
     /**
      * 取消订单
+     *
      * @param map
      * @return
      */
@@ -300,6 +304,7 @@ public interface ApiService {
 
     /**
      * 退货
+     *
      * @param map
      * @return
      */
@@ -308,11 +313,66 @@ public interface ApiService {
 
     /**
      * 添加收藏
+     *
      * @param map
      * @return
      */
     @POST("collect/add")
     Observable<BaseEntity> collectAdd(@QueryMap Map<String, Object> map);
 
+    /**
+     * 修改个人信息
+     *
+     * @param map
+     * @return
+     */
+    @POST("user/profile")
+    Observable<BaseEntity> editUserInfo(@QueryMap Map<String, Object> map);
 
+    /**
+     * 充值
+     *
+     * @param map
+     * @return
+     */
+    @POST("cash/recharge")
+    Observable<BaseEntity> recharge(@QueryMap Map<String, Object> map);
+
+
+    /**
+     * 查询账户余额信息
+     *
+     * @return
+     */
+    @POST("cash/index")
+    Observable<BaseEntity<CashEntity>> requestBalance();
+
+
+    /**
+     * 充值记录列表
+     *
+     * @return
+     */
+    @POST("cash/lists")
+    Observable<BaseEntity> requestRechargeList();
+
+
+    /**
+     * 消息列表
+     *
+     * @param map
+     * @return
+     */
+    @POST("msg/index")
+    Observable<BaseEntity<MessageEntity>> requestMessageList(@QueryMap Map<String, Object> map);
+
+
+    /**
+     * 未读消息数量
+     *
+     * @param
+     * @return
+     */
+    @POST("msg/num")
+    Observable<BaseEntity<MessageBean>> requestMessageNoReadCount();
 }

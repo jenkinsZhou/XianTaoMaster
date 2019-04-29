@@ -4,6 +4,7 @@ package com.tourcoo.xiantao.core.helper;
 import android.text.TextUtils;
 
 import com.tourcoo.xiantao.entity.address.AddressEntity;
+import com.tourcoo.xiantao.entity.user.PersonalCenterInfo;
 import com.tourcoo.xiantao.entity.user.UserInfo;
 
 import org.litepal.LitePal;
@@ -22,6 +23,7 @@ public class AccountInfoHelper {
     private String openId = "";
     private String token = "";
     private AddressEntity defaultAddress;
+    private PersonalCenterInfo mPersonalCenterInfo;
 
     public String getToken() {
         if (TextUtils.isEmpty(token)) {
@@ -134,5 +136,24 @@ public class AccountInfoHelper {
             return "";
         }
         return defaultAddress.getName();
+    }
+
+
+    public void savePersonalCenter(PersonalCenterInfo personalCenterInfo) {
+        if (personalCenterInfo == null) {
+            return;
+        }
+        //先删除旧数据
+        LitePal.deleteAll(PersonalCenterInfo.class);
+        personalCenterInfo.save();
+        mPersonalCenterInfo = personalCenterInfo;
+    }
+
+
+    /**
+     * 修改个人信息
+     */
+    public PersonalCenterInfo getPersonalCenter() {
+        return mPersonalCenterInfo;
     }
 }

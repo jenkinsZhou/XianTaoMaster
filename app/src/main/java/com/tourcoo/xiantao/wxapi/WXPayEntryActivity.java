@@ -12,10 +12,12 @@ import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
+import com.tourcoo.xiantao.entity.event.BaseEvent;
 
 import org.greenrobot.eventbus.EventBus;
 
 import static com.tourcoo.xiantao.constant.WxConfig.APP_ID;
+import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_SUCCESS;
 
 
 /**
@@ -68,7 +70,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
                 //success
                 case 0:
                     ToastUtil.showSuccess("支付成功");
-//                    EventBus.getDefault().post(new BaseEvent(EVENT_ACTION_PAY_FRESH_SUCCESS));
+                    EventBus.getDefault().post(new BaseEvent(EVENT_ACTION_PAY_FRESH_SUCCESS));
                     break;
                 case -1:
                     ToastUtil.showFailed("支付失败，请重新尝试支付");

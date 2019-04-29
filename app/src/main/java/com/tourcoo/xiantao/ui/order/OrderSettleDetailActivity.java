@@ -65,10 +65,10 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     private IWXAPI api;
     public static final int USE_COIN = 1;
     private static final String TAG = "OrderDetailActivity";
-    private static final int SDK_PAY_FLAG = 1001;
+    public static final int SDK_PAY_FLAG = 1001;
     public static final int NOT_USE_COIN = 0;
-    private static final String PAY_STATUS = "resultStatus";
-    private static final String PAY_STATUS_SUCCESS = "9000";
+    public static final String PAY_STATUS = "resultStatus";
+    public static final String PAY_STATUS_SUCCESS = "9000";
     private PaymentHandler mHandler = new PaymentHandler(OrderSettleDetailActivity.this);
     /**
      * 获取权限使用的 RequestCode
@@ -475,4 +475,9 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         }
         super.onDestroy();
     }
+
+
+
+
+
 }

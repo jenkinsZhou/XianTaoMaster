@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @date 2019年 04月 20日 17时24分
  * @Email: 971613168@qq.com
  */
-public class UserInfo extends LitePalSupport implements Serializable  {
+public class UserInfo extends LitePalSupport implements Serializable {
 
     /**
      * id : 1
@@ -38,7 +38,52 @@ public class UserInfo extends LitePalSupport implements Serializable  {
     private int createtime;
     private int expiretime;
     private int expires_in;
+    private String birthday;
+    private double ag;
+    private int gender;
 
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public double getAg() {
+        return ag;
+    }
+
+    public void setAg(double ag) {
+        this.ag = ag;
+    }
+
+    public int getGender() {
+        return gender;
+    }
+
+    public void setGender(int gender) {
+        this.gender = gender;
+    }
+
+    public double getAu() {
+        return au;
+    }
+
+    public void setAu(double au) {
+        this.au = au;
+    }
+
+    public double getCash() {
+        return cash;
+    }
+
+    public void setCash(double cash) {
+        this.cash = cash;
+    }
+
+    private double au;
+    private double cash;
     public long getId() {
         return id;
     }

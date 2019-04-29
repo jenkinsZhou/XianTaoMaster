@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -15,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.FrameLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +31,7 @@ import com.tourcoo.xiantao.MainActivity;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.common.RequestConfig;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
+import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.UploadRequestListener;
 import com.tourcoo.xiantao.core.frame.util.SizeUtil;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
@@ -38,6 +42,7 @@ import com.tourcoo.xiantao.core.widget.core.view.radius.RadiusEditText;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.upload.UploadEntity;
+import com.tourcoo.xiantao.entity.user.PersonalCenterInfo;
 import com.tourcoo.xiantao.entity.user.UserInfo;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.retrofit.repository.UploadProgressBody;
@@ -47,6 +52,7 @@ import com.tourcoo.xiantao.widget.bigkoo.pickerview.listener.OnTimeSelectChangeL
 import com.tourcoo.xiantao.widget.bigkoo.pickerview.listener.OnTimeSelectListener;
 import com.tourcoo.xiantao.widget.bigkoo.pickerview.view.TimePickerView;
 import com.tourcoo.xiantao.widget.dialog.EmiAlertDialog;
+import com.trello.rxlifecycle3.android.ActivityEvent;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -84,13 +90,15 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
     private TextView tvNickName;
     private TextView tvBirthday;
     private TextView tvMobile;
+    private TextView tvSaveData;
     private TimePickerView pvTime;
     /**
-     * 回调回来的图片ur集合
+     * 用户之前的头像url
      */
-    private String imageUrl = "";
+    private String headerUrl = "";
     private MyHandler mHandler = new MyHandler(this);
     private Message message;
+    private RadioGroup radioGroupGender;
 
     @Override
     public int getContentLayout() {
@@ -99,19 +107,25 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
 
     @Override
     public void initView(Bundle savedInstanceState) {
+        radioGroupGender = findViewById(R.id.radioGroupGender);
         crvAvatar = findViewById(R.id.crvAvatar);
         tvNickName = findViewById(R.id.tvNickName);
         tvBirthday = findViewById(R.id.tvBirthday);
         tvMobile = findViewById(R.id.tvMobile);
+        tvSaveData = findViewById(R.id.tvSaveData);
+        findViewById(R.id.rlUserBirthDate).setOnClickListener(this);
         crvAvatar.setOnClickListener(this);
+        tvNickName.setOnClickListener(this);
         tvBirthday.setOnClickListener(this);
+        tvSaveData.setOnClickListener(this);
+        tvMobile.setOnClickListener(this);
         initTimePicker();
     }
 
     @Override
     public void loadData() {
         super.loadData();
-        showCurrentInfo(AccountInfoHelper.getInstance().getUserInfo());
+        showCurrentInfo(AccountInfoHelper.getInstance().getPersonalCenter());
     }
 
     @Override
@@ -129,8 +143,13 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
             case R.id.tvNickName:
                 showNickNameAlert();
                 break;
-            case R.id.tvBirthday:
+            case R.id.rlUserBirthDate:
                 pvTime.show();
+                break;
+            case R.id.tvMobile:
+                break;
+            case R.id.tvSaveData:
+                doEditUserInfo();
                 break;
             default:
                 break;
@@ -188,26 +207,29 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
     /**
      * 显示当前信息
      */
-    private void showCurrentInfo(UserInfo userInfo) {
-        if (userInfo == null) {
+    private void showCurrentInfo(PersonalCenterInfo personalCenterInfo) {
+        if (personalCenterInfo == null) {
             TourCooLogUtil.e(TAG, "用户信息为null");
-            userInfo = new UserInfo();
+            personalCenterInfo = new PersonalCenterInfo();
         }
-        if (TextUtils.isEmpty(userInfo.getNickname())) {
+        if (TextUtils.isEmpty(personalCenterInfo.getNickname())) {
             tvNickName.setText("未填写");
         } else {
-            tvNickName.setText(userInfo.getNickname());
+            tvNickName.setText(personalCenterInfo.getNickname());
         }
-        if (TextUtils.isEmpty(userInfo.getMobile())) {
+        setText(tvBirthday, personalCenterInfo.getBirthday());
+        showGender(personalCenterInfo.getGender());
+        if (TextUtils.isEmpty(personalCenterInfo.getMobile())) {
             tvMobile.setText("未填写");
         } else {
-            String maskNumber = userInfo.getMobile();
-            if (TourCooUtil.isMobileNumber(userInfo.getMobile())) {
-                maskNumber = userInfo.getMobile().substring(0, 3) + "****" + maskNumber.substring(7, userInfo.getMobile().length());
+            String maskNumber = personalCenterInfo.getMobile();
+            if (TourCooUtil.isMobileNumber(personalCenterInfo.getMobile())) {
+                maskNumber = personalCenterInfo.getMobile().substring(0, 3) + "****" + maskNumber.substring(7, personalCenterInfo.getMobile().length());
             }
             tvMobile.setText(maskNumber);
         }
-        String url = TourCooUtil.getUrl(userInfo.getAvatar());
+        headerUrl = personalCenterInfo.getAvatar();
+        String url = TourCooUtil.getUrl(personalCenterInfo.getAvatar());
         showAvatar(url);
     }
 
@@ -224,26 +246,12 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
         pvTime = new TimePickerBuilder(this, new OnTimeSelectListener() {
             @Override
             public void onTimeSelect(Date date, View v) {
-                Toast.makeText(PersonalDataActivity.this, getTime(date), Toast.LENGTH_SHORT).show();
-                Log.i("pvTime", "onTimeSelect");
-
+                setText(tvBirthday, getTime(date));
             }
         })
-                .setTimeSelectChangeListener(new OnTimeSelectChangeListener() {
-                    @Override
-                    public void onTimeSelectChanged(Date date) {
-                        Log.i("pvTime", "onTimeSelectChanged");
-                    }
-                })
                 .setType(new boolean[]{true, true, true, false, false, false})
                 //默认设置false ，内部实现将DecorView 作为它的父控件。
                 .isDialog(true)
-                .addOnCancelClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Log.i("pvTime", "onCancelClickListener");
-                    }
-                })
                 .build();
 
         Dialog mDialog = pvTime.getDialog();
@@ -287,6 +295,8 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
                 .setStrokeColor(Color.GRAY)
                 .setStrokeWidth(SizeUtil.dp2px(0.5f));
         editText.setMinHeight(SizeUtil.dp2px(40));
+        //最大输入长度
+        editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(10)});
         editText.setGravity(Gravity.CENTER_VERTICAL);
         editText.setPadding(SizeUtil.dp2px(12), 0, SizeUtil.dp2px(12), 0);
         editText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
@@ -302,10 +312,7 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String text = editText.getText().toString().trim();
-                        if (TextUtils.isEmpty(text)) {
-                            return;
-                        }
-
+                        setText(tvNickName, text);
                     }
                 })
                 .create()
@@ -364,8 +371,8 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
                 if (entity != null) {
                     if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
                         //todo
-                        TourCooLogUtil.i(TAG, JSON.toJSONString(entity));
                         TourCooLogUtil.i("图片URL：", entity.data.getUrl());
+                        headerUrl = entity.data.getUrl();
                     } else {
                         ToastUtil.showFailed(entity.msg);
                     }
@@ -453,8 +460,10 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
                         imageList.add(localMedia.getCompressPath());
                     }
                     //todo
-                    for (String s : imageList) {
-                        TourCooLogUtil.i(TAG, "图片:" + s);
+                    String url;
+                    if (!imageList.isEmpty()) {
+                        url = imageList.get(0);
+                        GlideManager.loadImg(url, crvAvatar);
                     }
                     uploadImage(imageList);
                     break;
@@ -463,4 +472,83 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
             }
         }
     }
+
+
+    private int getGender() {
+        RadioButton radioButton0 = (RadioButton) radioGroupGender.getChildAt(0);
+        if (radioButton0.isChecked()) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+
+
+    private void doEditUserInfo() {
+        if (TextUtils.isEmpty(headerUrl)) {
+            headerUrl = "";
+        }
+        if (TextUtils.isEmpty(getNickName())) {
+            ToastUtil.show("请输入昵称");
+            return;
+        }
+        if (TextUtils.isEmpty(getTextValue(tvBirthday))) {
+            ToastUtil.show("请选择生日");
+            return;
+        }
+        if (TextUtils.isEmpty(getTextValue(tvMobile))) {
+            ToastUtil.show("请输入手机号");
+            return;
+        }
+        requestEditUserInfo();
+    }
+
+
+    private void setText(TextView textView, String value) {
+        textView.setText(value);
+    }
+
+
+    private String getTextValue(TextView textView) {
+        String defaultValue = "未填写";
+        boolean empty = defaultValue.equals(textView.getText().toString());
+        if (empty) {
+            return "";
+        } else {
+            return textView.getText().toString();
+        }
+    }
+
+
+    private void requestEditUserInfo() {
+        ApiRepository.getInstance().editUserInfo(headerUrl, getTextValue(tvNickName), getGender(), getTextValue(tvBirthday)).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseLoadingObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                ToastUtil.showSuccess("保存成功");
+                                setResult(RESULT_OK);
+                                finish();
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+                });
+    }
+
+
+    private void showGender(int gender) {
+        RadioButton radioButton = (RadioButton) radioGroupGender.getChildAt(0);
+        RadioButton radioButton1 = (RadioButton) radioGroupGender.getChildAt(1);
+        if (gender == 1) {
+            radioButton.setChecked(true);
+            radioButton1.setChecked(false);
+        }else {
+            radioButton.setChecked(false);
+            radioButton1.setChecked(true);
+        }
+    }
+
 }

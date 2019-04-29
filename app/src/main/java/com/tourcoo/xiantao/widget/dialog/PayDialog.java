@@ -9,6 +9,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.tourcoo.xiantao.R;
@@ -36,6 +37,7 @@ public class PayDialog extends Dialog implements View.OnClickListener {
     private Context context;
     private double money;
     private PayListener mPayListener;
+    private boolean showBalancePay = true;
 
     public PayDialog(Context context, double money, PayListener payListener) {
         super(context, R.style.PayDialogStyle);
@@ -43,7 +45,13 @@ public class PayDialog extends Dialog implements View.OnClickListener {
         this.money = money;
         this.mPayListener = payListener;
     }
-
+    public PayDialog(Context context, double money, PayListener payListener,boolean showBalancePay) {
+        super(context, R.style.PayDialogStyle);
+        this.context = context;
+        this.money = money;
+        this.mPayListener = payListener;
+        this.showBalancePay = showBalancePay;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +61,14 @@ public class PayDialog extends Dialog implements View.OnClickListener {
         findViewById(R.id.rlWeChatPay).setOnClickListener(this);
         findViewById(R.id.rlAliPay).setOnClickListener(this);
         ivBalancePayCheckBox = findViewById(R.id.ivBalancePayCheckBox);
+        RelativeLayout rlBalancePay = findViewById(R.id.rlBalancePay);
         ivAliAPayCheckBox = findViewById(R.id.ivAliAPayCheckBox);
         ivWeChatPayCheckBox = findViewById(R.id.ivWeChatPayCheckBox);
+        if (showBalancePay) {
+            rlBalancePay.setVisibility(View.VISIBLE);
+        } else {
+            rlBalancePay.setVisibility(View.GONE);
+        }
         tvMoney = findViewById(R.id.tvMoney);
         tvMoney.setText("￥" + money);
         Window dialogWindow = getWindow();
