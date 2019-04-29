@@ -80,7 +80,7 @@ public class PayDialog extends Dialog implements View.OnClickListener {
         //设置Dialog距离底部的距离
         lp.y = 0;
         dialogWindow.setAttributes(lp);
-        usePayWeiChat();
+        usePayAli();
     }
 
 

@@ -24,6 +24,7 @@ import com.tourcoo.xiantao.adapter.RechargeAmountAdapter;
 import com.tourcoo.xiantao.constant.OrderConstant;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
+import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.threadpool.ThreadPoolManager;
 import com.tourcoo.xiantao.core.util.ToastUtil;
@@ -384,7 +385,7 @@ public class AccountBalanceActivity extends BaseTourCooTitleActivity implements 
      */
     private void requestBalance() {
         ApiRepository.getInstance().requestBalance().compose(bindUntilEvent(ActivityEvent.DESTROY)).
-                subscribe(new BaseLoadingObserver<BaseEntity<CashEntity>>() {
+                subscribe(new BaseObserver<BaseEntity<CashEntity>>() {
                     @Override
                     public void onRequestNext(BaseEntity<CashEntity> entity) {
                         if (entity != null) {
@@ -415,6 +416,7 @@ public class AccountBalanceActivity extends BaseTourCooTitleActivity implements 
                 break;
         }
     }
+
 
 
 }
