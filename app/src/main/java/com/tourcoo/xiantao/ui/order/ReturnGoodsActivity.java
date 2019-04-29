@@ -231,24 +231,7 @@ public class ReturnGoodsActivity extends BaseTourCooTitleActivity implements Vie
             }
         });
 
-      /*  mGoodsAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                switch (view.getId()) {
-                    case R.id.vCBox:
-                        Goods goods = mGoodsAdapter.getData().get(position);
-                        if (goods.isSelect()) {
-                            goods.setSelect(false);
-                        } else {
-                            goods.setSelect(true);
-                        }
-                        mGoodsAdapter.notifyDataSetChanged();
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });*/
+
     }
 
 
@@ -269,12 +252,7 @@ public class ReturnGoodsActivity extends BaseTourCooTitleActivity implements Vie
                     public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS) {
-                                if (entity.data != null) {
-                                    ToastUtil.showSuccess(entity.data.toString());
-                                    TourCooLogUtil.i(TAG, TAG + "回调结果:" + JSON.toJSONString(entity.data.toString()));
-                                }else {
-                                   ToastUtil.showFailed(entity.msg);
-                                }
+                                ToastUtil.showSuccess(entity.msg);
                             } else {
                                 ToastUtil.showFailed(entity.msg);
                             }

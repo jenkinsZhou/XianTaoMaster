@@ -72,6 +72,8 @@
         <activity android:name=".ui.order.ReturnGoodsActivity" />
         <activity android:name=".ui.account.EditPasswordActivity" />
         <activity android:name=".ui.account.ForgetPasswordActivity" />
+        <activity android:name=".ui.msg.MsgSystemActivity" />
+        <activity android:name=".ui.msg.MessageDetailActivity" />
     </application>
 
 </manifest>

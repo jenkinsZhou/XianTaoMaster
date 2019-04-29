@@ -106,7 +106,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:text="1992-03-27" />
+                    android:drawableRight="@mipmap/ic_arrow_right"
+                    android:text="" />
             </RelativeLayout>
 
             <!--  性别-->

@@ -22,6 +22,7 @@ import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.OrderGoodsSettleAdapter;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
+import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.threadpool.ThreadPoolManager;
@@ -32,6 +33,7 @@ import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.goods.Spec;
 import com.tourcoo.xiantao.entity.pay.WeiXinPay;
 import com.tourcoo.xiantao.entity.settle.SettleEntity;
+import com.tourcoo.xiantao.entity.user.CashEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
 import com.tourcoo.xiantao.widget.dialog.PayDialog;
@@ -118,6 +120,10 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
 
     private int mPayType;
 
+    /**
+     * 账户余额
+     */
+    private double cash;
 
     @Override
     protected IMultiStatusView getMultiStatusView() {
@@ -159,6 +165,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     public void loadData() {
         super.loadData();
         initAdapter();
+        requestBalance();
         //显示结算页面
         showSettleInfo(mSettleEntity);
     }
@@ -214,7 +221,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         switch (v.getId()) {
             case R.id.tvSettleAccounts:
                 //弹出支付宝/微信
-                showPayDialog(mSettleEntity.getOrder_pay_price());
+                showPayDialog(mSettleEntity.getOrder_pay_price(), cash);
                 break;
             default:
                 break;
@@ -268,8 +275,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     }
 
 
-    private void showPayDialog(double money) {
-        PayDialog payDialog = new PayDialog(mContext, money, new PayDialog.PayListener() {
+    private void showPayDialog(double money, double blalance) {
+        PayDialog payDialog = new PayDialog(mContext, money, blalance, new PayDialog.PayListener() {
             @Override
             public void pay(int payType, Dialog dialog) {
                 mPayType = payType;
@@ -322,7 +329,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                 }
 
                 // 所需的权限均正常获取
-                ToastUtil.show(getString(R.string.permission_granted));
+//                ToastUtil.show(getString(R.string.permission_granted));
             }
             default:
                 break;
@@ -366,6 +373,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                                                 aliPay(entity.data.toString());
                                                 break;
                                             case PAY_TYPE_BALANCE:
+                                                TourCooLogUtil.i("支付结果", entity);
                                                 break;
                                             default:
                                                 break;
@@ -462,6 +470,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         }
     }
 
+
     private String getRemark() {
         return etRemark.getText().toString();
     }
@@ -477,7 +486,25 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     }
 
 
-
+    /**
+     * 查询账户信息
+     */
+    private void requestBalance() {
+        ApiRepository.getInstance().requestBalance().compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity<CashEntity>>() {
+                    @Override
+                    public void onRequestNext(BaseEntity<CashEntity> entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
+                                TourCooLogUtil.i(TAG, entity.data);
+                                cash = entity.data.getCash();
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+                });
+    }
 
 
 }

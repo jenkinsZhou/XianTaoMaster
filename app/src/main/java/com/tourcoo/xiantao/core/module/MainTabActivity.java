@@ -259,4 +259,8 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
         }
     }
 
+
+
+
+
 }

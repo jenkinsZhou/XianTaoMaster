@@ -124,7 +124,7 @@ public class OrderEntity {
         private int order_status;
         private String transaction_id;
         private int user_id;
-        private int createtime;
+        private long createtime;
         private int updatetime;
         private int coin;
         private int coin_status;
@@ -271,11 +271,11 @@ public class OrderEntity {
             this.user_id = user_id;
         }
 
-        public int getCreatetime() {
+        public long getCreatetime() {
             return createtime;
         }
 
-        public void setCreatetime(int createtime) {
+        public void setCreatetime(long createtime) {
             this.createtime = createtime;
         }
 

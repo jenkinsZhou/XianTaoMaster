@@ -437,6 +437,8 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                                 if (isLogin) {
                                     TourCooLogUtil.i(TAG, TAG + ":" + "执行了");
                                     getPersonalCenter();
+                                    //获取未读消息数量
+                                    requestMessageNoReadCount();
                                 } else {
                                     showUnLoginUI();
                                 }
@@ -471,17 +473,21 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     }
 
 
+
+
+
     /**
-     * 查询账户信息
+     * 查询消息列表
      */
     private void requestMessageNoReadCount() {
         ApiRepository.getInstance().requestMessageNoReadCount().compose(bindUntilEvent(FragmentEvent.DESTROY)).
-                subscribe(new BaseLoadingObserver<BaseEntity<MessageBean>>() {
+                subscribe(new BaseObserver<BaseEntity<MessageBean>>() {
                     @Override
                     public void onRequestNext(BaseEntity<MessageBean> entity) {
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
-                                TourCooLogUtil.i(TAG, entity.data);
+                                TourCooLogUtil.i(TAG, "未读消息数量:"+entity.data.getNum());
+                                showMsg(entity.data.getNum());
                             } else {
                                 ToastUtil.showFailed(entity.msg);
                             }

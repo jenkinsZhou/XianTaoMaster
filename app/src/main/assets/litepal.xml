@@ -5,5 +5,8 @@
     <list>
         <mapping class="com.tourcoo.xiantao.entity.user.UserInfo" />
     </list>
+    <list>
+        <mapping class="com.tourcoo.xiantao.entity.user.PersonalCenterInfo" />
+    </list>
 </litepal>
 

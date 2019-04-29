@@ -26,6 +26,7 @@ import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.log.widget.utils.DateUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
+import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.address.AddressEntity;
@@ -112,6 +113,13 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     @Override
     public int getContentLayout() {
         return R.layout.activity_order_details;
+    }
+
+
+    @Override
+    public void setTitleBar(TitleBarView titleBar) {
+        super.setTitleBar(titleBar);
+        titleBar.setTitleMainText("订单详情");
     }
 
     @Override
@@ -333,7 +341,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         tvGoodsTypeCount.setText(amount);
         List<OrderDetailEntity.OrderBean.GoodsBean> goodsList = orderBean.getGoods();
         mGoodsAdapter.setNewData(goodsList);
-        loadBottomButtonFuction(orderBean);
+        loadBottomButtonFunction(orderBean);
     }
 
 
@@ -386,7 +394,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         }
     }
 
-    private void loadBottomButtonFuction(OrderDetailEntity.OrderBean orderBean) {
+    private void loadBottomButtonFunction(OrderDetailEntity.OrderBean orderBean) {
         if (orderBean == null) {
             return;
         }

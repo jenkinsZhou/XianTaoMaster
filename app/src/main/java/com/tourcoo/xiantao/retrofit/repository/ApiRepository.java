@@ -447,6 +447,7 @@ public class ApiRepository extends BaseRepository {
     public Observable<BaseEntity> requestCancelOrder(int orderId) {
         Map<String, Object> params = new HashMap<>(1);
         params.put("id", orderId);
+         TourCooLogUtil.i(TAG,TAG + "参数:"+params);
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestCancelOrder(params).retryWhen(new RetryWhen()));
     }
 

@@ -299,7 +299,7 @@ public interface ApiService {
      * @return
      */
     @POST("order/cancel")
-    Observable<BaseEntity> requestCancelOrder(@QueryMap Map<String, Object> map);
+    Observable<BaseEntity> requestCancelOrder(@Body Map<String, Object> map);
 
 
     /**

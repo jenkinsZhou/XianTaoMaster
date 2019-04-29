@@ -58,6 +58,7 @@ public class DateUtil {
     }
 
     public static String parseDate(long timeMillis) {
+        timeMillis = timeMillis*1000;
         final FastDateFormat df = FastDateFormat.getInstance(PATTERN);
         try {
             return df.format(new Date(timeMillis));

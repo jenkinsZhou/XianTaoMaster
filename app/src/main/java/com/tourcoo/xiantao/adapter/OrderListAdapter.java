@@ -13,6 +13,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.constant.OrderConstant;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
+import com.tourcoo.xiantao.core.log.widget.utils.DateUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.entity.goods.Goods;
@@ -52,7 +53,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
 
-        helper.setText(R.id.tvPrice,"￥"+orderInfo.getPay_price() );
+        helper.setText(R.id.tvPrice, "￥" + orderInfo.getPay_price());
         commentImageRecyclerView.setLayoutManager(layoutManager);
         List<Goods> goodsList = orderInfo.getGoods();
         List<String> imageList = new ArrayList<>();
@@ -66,7 +67,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
         helper.getView(R.id.tvOrderNumber);
         helper.setText(R.id.tvNum, orderInfo.getGoods().size() + "");
         helper.setText(R.id.tvOrderNumber, orderInfo.getOrder_no());
-        helper.setText(R.id.tvCreateTime, orderInfo.getCreatetime() + "");
+        helper.setText(R.id.tvCreateTime, DateUtil.parseDate(orderInfo.getCreatetime()) + "");
         TextView tvOrderStatus = helper.getView(R.id.tvOrderStatus);
         TextView btnOne = helper.getView(R.id.btnOne);
         TextView btnTwo = helper.getView(R.id.btnTwo);
@@ -87,7 +88,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
             hindView(btnTwo);
             setTextGray(btnThree, "取消订单");
             setTextGray(btnFour, "立即支付");
-            TourCooLogUtil.i(TAG,TAG+"订单id:"+ orderInfo.getId());
+            TourCooLogUtil.i(TAG, TAG + "订单id:" + orderInfo.getId());
         } else {
             //判断 待发货
             switch (orderInfo.getFreight_status()) {
@@ -99,7 +100,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                     hindView(btnTwo);
                     hindView(btnThree);
                     setTextGray(btnFour, "申请退货");
-                    TourCooLogUtil.i(TAG,TAG+"订单id:"+ orderInfo.getId());
+                    TourCooLogUtil.i(TAG, TAG + "订单id:" + orderInfo.getId());
                     break;
                 case FINISH:
                     //已经发货 判断待收货状态
@@ -110,7 +111,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                         setTextGray(btnTwo, "申请退货");
                         setTextGray(btnThree, "查看物流");
                         setTextGray(btnFour, "确认收货");
-                        TourCooLogUtil.i(TAG,TAG+"订单id:"+ orderInfo.getId());
+                        TourCooLogUtil.i(TAG, TAG + "订单id:" + orderInfo.getId());
                     } else {
                         //已经收货 判断 是否评论
                         if (orderInfo.getComment_status() == NOT_FINISH) {
@@ -124,7 +125,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                           /*  setTextGray(btnTwo, "申请退货");
                             setTextGray(btnThree, "查看物流");*/
                             setTextGray(btnFour, "立即评价");
-                            TourCooLogUtil.i(TAG,TAG+"订单id:"+ orderInfo.getId());
+                            TourCooLogUtil.i(TAG, TAG + "订单id:" + orderInfo.getId());
                         } else {
                             //已经评价
                             //todo 已完成
@@ -135,7 +136,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                             hindView(btnThree);
                             hindView(btnFour);
 //                            setTextGray(btnFour, "立即评价");
-                            TourCooLogUtil.i(TAG,TAG+"订单id:"+ orderInfo.getId());
+                            TourCooLogUtil.i(TAG, TAG + "订单id:" + orderInfo.getId());
                         }
                     }
                     break;
@@ -200,10 +201,6 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
     private void showView(View view) {
         view.setVisibility(View.INVISIBLE);
     }
-
-
-
-
 
 
 }

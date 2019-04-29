@@ -1,8 +1,11 @@
 package com.tourcoo.xiantao.ui.msg;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -81,7 +84,9 @@ public class MsgSystemActivity extends BaseRefreshLoadActivity<MessageEntity> {
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
-        titleBar.setTitleMainText("系统消息");
+        TextView textView = titleBar.getTextView(Gravity.CENTER | Gravity.TOP);
+        textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+        titleBar.setTitleMainText("消息中心");
     }
 
     /**
