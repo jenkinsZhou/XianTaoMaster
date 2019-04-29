@@ -61,7 +61,7 @@ public class HttpRequestControlImpl implements HttpRequestControl {
         adapter.loadMoreComplete();
         if (list == null || list.size() == 0) {
             //第一页没有
-            if (page == 1) {
+            if (page == 1 || page == 0) {
                 adapter.setNewData(new ArrayList());
                 statusLayoutManager.showEmptyLayout();
                 if (listener != null) {
@@ -76,7 +76,7 @@ public class HttpRequestControlImpl implements HttpRequestControl {
             return;
         }
         statusLayoutManager.showSuccessLayout();
-        boolean refresh = smartRefreshLayout != null && (smartRefreshLayout.isRefreshing() || page == 0);
+        boolean refresh = smartRefreshLayout != null && (smartRefreshLayout.isRefreshing() || page == 1);
         if (refresh) {
             adapter.setNewData(new ArrayList());
         }
@@ -95,6 +95,7 @@ public class HttpRequestControlImpl implements HttpRequestControl {
     @Override
     public void httpRequestError(IRequestControl requestControl, Throwable e) {
         int reason = R.string.exception_other_error;
+        TourCooLogUtil.e(TAG, TAG + ":" + e.toString());
 //        int code = FastError.EXCEPTION_OTHER_ERROR;
         if (!NetworkUtil.isConnected(XianTaoApplication.getContext())) {
             reason = R.string.exception_network_not_connected;
@@ -145,7 +146,7 @@ public class HttpRequestControlImpl implements HttpRequestControl {
                 return;
             }
             //初始页
-            if (page == 1) {
+            if (page == 1 || page == 0) {
                 if (!NetworkUtil.isConnected(XianTaoApplication.getContext())) {
                     //可自定义网络错误页面展示
                     statusLayoutManager.showCustomLayout(R.layout.layout_status_layout_manager_error);

@@ -3,6 +3,7 @@ package com.tourcoo.xiantao.core.widget.dialog.alert;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -50,6 +51,12 @@ public class ConfirmDialog extends Dialog {
         private OnClickListener positiveButtonClickListener;
         private OnClickListener negativeButtonClickListener;
         private float firstMsgTextSize = 12;
+        private int firstMsgTextColor = R.color.black;
+        private int firstMsgGravity;
+        /**
+         * 文字加粗
+         */
+        private boolean negativeButtonBold = false;
 
         public Builder(Context context) {
             this.context = context;
@@ -60,6 +67,10 @@ public class ConfirmDialog extends Dialog {
             return this;
         }
 
+        public Builder setNegativeButtonButtonBold(boolean isBold) {
+            this.negativeButtonBold = isBold;
+            return this;
+        }
         public Builder setSecondMessage(String message) {
             this.secondMessage = message;
             return this;
@@ -106,11 +117,19 @@ public class ConfirmDialog extends Dialog {
             return this;
         }
 
+        /**
+         * 设置第一行文本字体大小
+         * @param textSize
+         * @return
+         */
         public Builder setFirstMsgSize(float textSize) {
             this.firstMsgTextSize = textSize;
             return this;
         }
-
+        public Builder setFirstTextColor(int  color) {
+            this.firstMsgTextColor = color;
+            return this;
+        }
         /**
          * 设置确定点击事件监听
          *
@@ -154,6 +173,9 @@ public class ConfirmDialog extends Dialog {
             if (!TextUtils.isEmpty(firstMessage)) {
                 ((TextView) layout.findViewById(R.id.messageFirst)).setTextSize(TypedValue.COMPLEX_UNIT_SP, firstMsgTextSize);
             }
+            if (firstMsgTextColor != -1) {
+                ((TextView) layout.findViewById(R.id.messageFirst)).setTextColor(firstMsgTextColor);
+            }
             // button position
             LinearLayout positiveButton_left = (LinearLayout) layout.findViewById(R.id.positiveButton_left);
             LinearLayout positiveButton_right = (LinearLayout) layout.findViewById(R.id.positiveButton_right);
@@ -181,6 +203,10 @@ public class ConfirmDialog extends Dialog {
                 }
                 // set the cancel button
                 ((Button) layout.findViewById(R.id.negativeButtonRight)).setText(negativeButtonText);
+                if (negativeButtonBold) {
+                    Button negative = (Button) layout.findViewById(R.id.negativeButtonRight);
+                    negative.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+                }
                 if (negativeButtonClickListener != null) {
                     ((Button) layout.findViewById(R.id.negativeButtonRight)).setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -193,7 +219,7 @@ public class ConfirmDialog extends Dialog {
                 // set the confirm button
                 ((Button) layout.findViewById(R.id.positiveButtonRight)).setText(positiveButtonText);
                 if (positiveButtonClickListener != null) {
-                    ((Button) layout.findViewById(R.id.positiveButtonRight)).setOnClickListener(new View.OnClickListener() {
+                    (layout.findViewById(R.id.positiveButtonRight)).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             positiveButtonClickListener.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
@@ -202,6 +228,10 @@ public class ConfirmDialog extends Dialog {
                 }
                 // set the cancel button
                 ((Button) layout.findViewById(R.id.negativeButtonLeft)).setText(negativeButtonText);
+                if (negativeButtonBold) {
+                    Button negative = (Button) layout.findViewById(R.id.negativeButtonLeft);
+                    negative.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+                }
                 if (negativeButtonClickListener != null) {
                     ((Button) layout.findViewById(R.id.negativeButtonLeft)).setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -219,8 +249,8 @@ public class ConfirmDialog extends Dialog {
             // 设置第二行内容
             if (StringUtils.isNotBlank(secondMessage)) {
                 ((TextView) layout.findViewById(R.id.messageSecond)).setText(secondMessage);
-            } else {
-                layout.findViewById(R.id.messageSecond).setVisibility(View.GONE);
+            }else {
+                ((TextView) layout.findViewById(R.id.messageSecond)).setVisibility(View.GONE);
             }
             if (gravity != 0) {
                 ((TextView) layout.findViewById(R.id.messageFirst)).setGravity(gravity);

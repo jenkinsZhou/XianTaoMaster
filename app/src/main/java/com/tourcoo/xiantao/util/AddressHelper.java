@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import com.tourcoo.xiantao.XianTaoApplication;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.threadpool.ThreadPoolManager;
-import com.tourcoo.xiantao.entity.AddressBean;
+import com.tourcoo.xiantao.entity.AddressPickerBean;
 
 import org.json.JSONArray;
 
@@ -23,7 +23,7 @@ public class AddressHelper {
     private static final String TAG = "AddressHelper";
     private static volatile AddressHelper singleton;
 
-    private ArrayList<AddressBean> mAddressBean = new ArrayList<>();
+    private ArrayList<AddressPickerBean> mAddressPickerBean = new ArrayList<>();
     /**
      * 省份
      */
@@ -86,8 +86,8 @@ public class AddressHelper {
                 String addressInfo = new GetJsonDataUtil().getJson(XianTaoApplication.getContext(), "province.json");
                 //获取assets目录下的json文件数据
                 //转成实体
-                mAddressBean.addAll(parseData(addressInfo));
-                loadAddress(mAddressBean);
+                mAddressPickerBean.addAll(parseData(addressInfo));
+                loadAddress(mAddressPickerBean);
                 /**
                  * 添加省份数据
                  * 注意：如果是添加的JavaBean实体，则实体类需要实现 IPickerViewData 接口，
@@ -98,13 +98,13 @@ public class AddressHelper {
     }
 
 
-    private ArrayList<AddressBean> parseData(String result) {
-        ArrayList<AddressBean> detail = new ArrayList<>();
+    private ArrayList<AddressPickerBean> parseData(String result) {
+        ArrayList<AddressPickerBean> detail = new ArrayList<>();
         try {
             JSONArray data = new JSONArray(result);
             Gson gson = new Gson();
             for (int i = 0; i < data.length(); i++) {
-                AddressBean entity = gson.fromJson(data.optJSONObject(i).toString(), AddressBean.class);
+                AddressPickerBean entity = gson.fromJson(data.optJSONObject(i).toString(), AddressPickerBean.class);
                 detail.add(entity);
             }
         } catch (Exception e) {
@@ -115,23 +115,23 @@ public class AddressHelper {
     }
 
 
-    public List<AddressBean> getAddressInfo() {
-        return mAddressBean;
+    public List<AddressPickerBean> getAddressInfo() {
+        return mAddressPickerBean;
     }
 
 
-    private void loadAddress(List<AddressBean> addressBeanList) {
-        if (addressBeanList == null) {
+    private void loadAddress(List<AddressPickerBean> addressPickerBeanList) {
+        if (addressPickerBeanList == null) {
             return;
         }
         //遍历省份
         cityList.clear();
-        for (int i = 0; i < addressBeanList.size(); i++) {
+        for (int i = 0; i < addressPickerBeanList.size(); i++) {
             //该省的城市列表（第二级）
             //该省的所有地区列表（第三极）
-            for (int c = 0; c < addressBeanList.get(i).getCityList().size(); c++) {
+            for (int c = 0; c < addressPickerBeanList.get(i).getCityList().size(); c++) {
                 //遍历该省份的所有城市
-                String cityName = addressBeanList.get(i).getCityList().get(c).getName();
+                String cityName = addressPickerBeanList.get(i).getCityList().get(c).getName();
                 //添加城市
                 cityList.add(cityName);
                 //该城市的所有地区列表
@@ -144,7 +144,7 @@ public class AddressHelper {
                 }*/
 
                 //区
-                areaList.addAll(addressBeanList.get(i).getCityList().get(c).getArea());
+                areaList.addAll(addressPickerBeanList.get(i).getCityList().get(c).getArea());
                 //添加该省所有地区数据
                 wholeAddressInfo.add(areaList);
             }

@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 
 
 import com.tourcoo.xiantao.XianTaoApplication;
+import com.tourcoo.xiantao.core.common.RequestConfig;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 
 import java.util.List;
@@ -39,7 +40,8 @@ import androidx.core.graphics.drawable.DrawableCompat;
 public class TourCooUtil {
     public static final String TAG = "TourCooUtil";
     private static int ACTIVITY_SINGLE_FLAG = Intent.FLAG_ACTIVITY_SINGLE_TOP;
-
+    private static final String STRING_EMPTY = "";
+    private static final String URL_TAG = "http";
     /**
      * 获取应用名称
      *
@@ -368,7 +370,12 @@ public class TourCooUtil {
         }
         return value;
     }
-
+    public static String getNotNullValue(Object value) {
+        if (value == null) {
+            return "";
+        }
+        return value.toString();
+    }
 
     /**
      * 车牌号格式：汉字 + A-Z + 5位A-Z或0-9
@@ -383,5 +390,16 @@ public class TourCooUtil {
         }
     }
 
+
+    public static String getUrl(String url) {
+        if (TextUtils.isEmpty(url)) {
+            return STRING_EMPTY;
+        }
+        if(url.contains(URL_TAG)){
+            return url;
+        }else {
+            return RequestConfig.BASE_URL + url;
+        }
+    }
 
 }

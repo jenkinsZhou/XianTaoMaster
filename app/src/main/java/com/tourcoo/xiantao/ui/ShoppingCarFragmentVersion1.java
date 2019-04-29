@@ -28,8 +28,8 @@ import com.tourcoo.xiantao.core.widget.button.AnimShopButton;
 import com.tourcoo.xiantao.core.widget.button.IOnAddDelListener;
 import com.tourcoo.xiantao.core.widget.core.util.SizeUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
-import com.tourcoo.xiantao.entity.goods.GoodsEntity;
-import com.tourcoo.xiantao.entity.goods.GoodsBean;
+import com.tourcoo.xiantao.entity.goods.GoodsDetailEntity;
+import com.tourcoo.xiantao.entity.goods.HomeGoodsBean;
 import com.tourcoo.xiantao.event.TabChangeEvent;
 import com.tourcoo.xiantao.helper.ShoppingCar;
 
@@ -57,9 +57,9 @@ import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 public class ShoppingCarFragmentVersion1 extends BaseTitleTourCoolFragment implements View.OnClickListener, OnRefreshListener, OnLoadMoreListener {
     private RecyclerView rvGuessLike;
     private RecyclerView mGoodsRecyclerView;
-    private List<GoodsEntity> mGoodsList = new ArrayList<>();
+    private List<GoodsDetailEntity> mGoodsList = new ArrayList<>();
     private BaseShoppingCartAdapter1 mShoppingCartAdapter;
-    private List<GoodsBean> mGuessLikeGoodsList = new ArrayList<>();
+    private List<HomeGoodsBean> mGuessLikeGoodsList = new ArrayList<>();
     private GoodsGridAdapter mGoodsGridAdapter;
     private SmartRefreshLayout refreshLayout;
     private View footView;
@@ -187,23 +187,24 @@ public class ShoppingCarFragmentVersion1 extends BaseTitleTourCoolFragment imple
     private void initAdapter() {
         mShoppingCartAdapter = new BaseShoppingCartAdapter1(mGoodsList) {
             @Override
-            protected void convert(BaseViewHolder helper, GoodsEntity item) {
+            protected void convert(BaseViewHolder helper, GoodsDetailEntity item) {
                 helper.setImageResource(R.id.ivGoodsIcon, R.mipmap.ic_orange);
-                helper.setText(R.id.tvGoodsName, TourCoolUtil.getStringNotNull(item.goodsName));
+                /*helper.setText(R.id.tvGoodsName, TourCoolUtil.getStringNotNull(item.goodsName));
                 helper.setText(R.id.tvGoodsLabel, TourCoolUtil.getStringNotNull(item.goodsLabels));
                 helper.setText(R.id.tvGoodsPrice, "￥" + item.goodsCurrentPrice);
                 helper.setChecked(R.id.cBoxGoods, item.select);
                 helper.setText(R.id.tvGoodsSpec, TourCoolUtil.getStringNotNull(item.goodsSpec));
                 helper.addOnClickListener(R.id.tvCBox);
+               */
                 AnimShopButton addGoodsButton = helper.getView(R.id.addGoodsButton);
-                addGoodsButton.setCount(item.goodsCount);
+//                addGoodsButton.setCount(item.goodsCount);
                 addGoodsButton.setOnAddDelListener(new IOnAddDelListener() {
                     @Override
                     public void onAddSuccess(int count) {
                         int position = helper.getLayoutPosition();
-                        GoodsEntity goodsEntity = mShoppingCartAdapter.getData().get(position);
+                        GoodsDetailEntity goodsDetailEntity = mShoppingCartAdapter.getData().get(position);
                         TourCooLogUtil.i("点击了位置:" + position + "的+");
-                        shoppingCar.addGoods(goodsEntity);
+                        shoppingCar.addGoods(goodsDetailEntity);
                         showGoodsCount(shoppingCar.getGoodsCount());
                         TourCooLogUtil.i(TAG, "当前选中的总金额:" + shoppingCar.getTotalMoneyBySelect(mShoppingCartAdapter.getData()));
                         //显示顶部和底部金额相关信息
@@ -218,10 +219,10 @@ public class ShoppingCarFragmentVersion1 extends BaseTitleTourCoolFragment imple
                     @Override
                     public void onDelSuccess(int count) {
                         int position = helper.getLayoutPosition();
-                        GoodsEntity goodsEntity = mShoppingCartAdapter.getData().get(position);
+                        GoodsDetailEntity goodsDetailEntity = mShoppingCartAdapter.getData().get(position);
                         //先设置当前适配器中商品数量然后同步到购物车
-                        goodsEntity.setGoosCount(count);
-                        shoppingCar.setGoodsCount(goodsEntity);
+//                        goodsDetailEntity.setGoosCount(count);
+                        shoppingCar.setGoodsCount(goodsDetailEntity);
                         //显示购物车中数量
                         showGoodsCount(shoppingCar.getGoodsCount());
                         TourCooLogUtil.d(TAG, "当前选中的总金额:" + shoppingCar.getTotalMoneyBySelect(mShoppingCartAdapter.getData()));
@@ -238,7 +239,7 @@ public class ShoppingCarFragmentVersion1 extends BaseTitleTourCoolFragment imple
         };
         mShoppingCartAdapter.setEmptyView(emptyGoodsView);
         mShoppingCartAdapter.bindToRecyclerView(mGoodsRecyclerView);
-        mGoodsGridAdapter = new GoodsGridAdapter(mGuessLikeGoodsList);
+        mGoodsGridAdapter = new GoodsGridAdapter();
         mGoodsGridAdapter.bindToRecyclerView(rvGuessLike);
         footView = LayoutInflater.from(mContext).inflate(R.layout.item_view, null);
         refreshLayout.setEnableLoadMore(true);
@@ -521,9 +522,9 @@ public class ShoppingCarFragmentVersion1 extends BaseTitleTourCoolFragment imple
      * 全选
      */
     private void doSelectAll() {
-        List<GoodsEntity> goodsEntityList = mShoppingCartAdapter.getData();
-        for (GoodsEntity goodsEntity : goodsEntityList) {
-            goodsEntity.setSelect(true);
+        List<GoodsDetailEntity> goodsDetailEntityList = mShoppingCartAdapter.getData();
+        for (GoodsDetailEntity goodsDetailEntity : goodsDetailEntityList) {
+//            goodsDetailEntity.setSelect(true);
         }
         mShoppingCartAdapter.notifyDataSetChanged();
     }
@@ -532,9 +533,9 @@ public class ShoppingCarFragmentVersion1 extends BaseTitleTourCoolFragment imple
      * 全不选
      */
     private void doNotSelectAll() {
-        List<GoodsEntity> goodsEntityList = mShoppingCartAdapter.getData();
-        for (GoodsEntity goodsEntity : goodsEntityList) {
-            goodsEntity.setSelect(false);
+        List<GoodsDetailEntity> goodsDetailEntityList = mShoppingCartAdapter.getData();
+        for (GoodsDetailEntity goodsDetailEntity : goodsDetailEntityList) {
+//            goodsDetailEntity.setSelect(false);
         }
         mShoppingCartAdapter.notifyDataSetChanged();
     }
@@ -543,12 +544,12 @@ public class ShoppingCarFragmentVersion1 extends BaseTitleTourCoolFragment imple
     /**
      * 添加商品并显示
      */
-    private void doAddGoods(GoodsEntity goodsEntity) {
-        if (goodsEntity == null) {
+    private void doAddGoods(GoodsDetailEntity goodsDetailEntity) {
+        if (goodsDetailEntity == null) {
             TourCooLogUtil.e(TAG, "商品为null");
             return;
         }
-        ShoppingCar.getInstance().addGoods(goodsEntity);
+        ShoppingCar.getInstance().addGoods(goodsDetailEntity);
         showGoodsCount(ShoppingCar.getInstance().getGoodsCount());
     }
 
@@ -566,15 +567,15 @@ public class ShoppingCarFragmentVersion1 extends BaseTitleTourCoolFragment imple
     /**
      * 设置某商品是否选中
      *
-     * @param goodsEntity
+     * @param goodsDetailEntity
      * @param select
      */
-    private void setGoodsSelect(GoodsEntity goodsEntity, boolean select) {
-        if (goodsEntity == null) {
+    private void setGoodsSelect(GoodsDetailEntity goodsDetailEntity, boolean select) {
+        if (goodsDetailEntity == null) {
             TourCooLogUtil.e(TAG, "商品为null");
             return;
         }
-        goodsEntity.select = select;
+//        goodsDetailEntity.select = select;
     }
 
     /**

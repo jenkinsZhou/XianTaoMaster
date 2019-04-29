@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tourcoo.xiantao.XianTaoApplication;
+import com.tourcoo.xiantao.core.common.RequestConfig;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 
 import java.util.List;
@@ -39,7 +40,7 @@ import static com.tourcoo.xiantao.core.log.widget.config.LogConstant.TAG;
 public class TourCoolUtil {
     private static final String STRING_EMPTY = "";
     private static int ACTIVITY_SINGLE_FLAG = Intent.FLAG_ACTIVITY_SINGLE_TOP;
-
+    private static final String URL_TAG = "http";
 
     public static Drawable getDrawable(int drawableId) {
         return ContextCompat.getDrawable(XianTaoApplication.getInstance(), drawableId);
@@ -360,5 +361,8 @@ public class TourCoolUtil {
         }
         return string;
     }
+
+
+
 
 }

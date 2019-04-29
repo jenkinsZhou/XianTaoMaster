@@ -17,6 +17,7 @@ import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
+import com.tourcoo.xiantao.ui.account.EditPasswordActivity;
 import com.tourcoo.xiantao.ui.account.LoginActivity;
 import com.tourcoo.xiantao.util.DataCleanManager;
 import com.trello.rxlifecycle3.android.ActivityEvent;
@@ -27,7 +28,7 @@ import static com.tourcoo.xiantao.util.DataCleanManager.EMPTY_CACHE;
 
 /**
  * @author :zhoujian
- * @description :设置
+ * @description :设置页面
  * @company :翼迈科技
  * @date 2019年 04月 20日 18时56分
  * @Email: 971613168@qq.com
@@ -44,8 +45,8 @@ public class SettingActivity extends BaseTourCooTitleActivity implements View.On
     public void initView(Bundle savedInstanceState) {
         stvClearCache = findViewById(R.id.stvClearCache);
         findViewById(R.id.btnExitLogin).setOnClickListener(this);
+        findViewById(R.id.stvResetPassword).setOnClickListener(this);
     }
-
 
 
     @Override
@@ -62,6 +63,9 @@ public class SettingActivity extends BaseTourCooTitleActivity implements View.On
                 } else {
                     ToastUtil.show("您还未登录");
                 }
+                break;
+            case R.id.stvResetPassword:
+                TourCooUtil.startActivity(mContext, EditPasswordActivity.class);
                 break;
             default:
                 break;

@@ -3,7 +3,9 @@ package com.tourcoo.xiantao.adapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.tourcoo.xiantao.R;
-import com.tourcoo.xiantao.entity.goods.GoodsEntity;
+import com.tourcoo.xiantao.entity.goods.Goods;
+import com.tourcoo.xiantao.entity.goods.GoodsDetailEntity;
+import com.tourcoo.xiantao.listener.OnAddDelCallback;
 
 import java.util.List;
 
@@ -16,9 +18,23 @@ import androidx.annotation.Nullable;
  * @date 2019年04月18日12:34
  * @Email: 971613168@qq.com
  */
-public abstract class BaseShoppingCartAdapter2 extends BaseQuickAdapter<GoodsEntity, BaseViewHolder> {
+public abstract class BaseShoppingCartAdapter2 extends BaseQuickAdapter<Goods, BaseViewHolder> {
+    private OnAddDelCallback mOnAddDelCallback;
 
-    public BaseShoppingCartAdapter2(@Nullable List<GoodsEntity> data) {
-        super(R.layout.item_goods_cart_version2, data);
+    public OnAddDelCallback getOnAddDelCallback() {
+        return mOnAddDelCallback;
     }
+
+    public void setOnAddDelCallback(OnAddDelCallback onAddDelCallback) {
+        mOnAddDelCallback = onAddDelCallback;
+    }
+
+    public BaseShoppingCartAdapter2() {
+        super(R.layout.item_goods_cart_version2);
+    }
+
+
+
+
+
 }

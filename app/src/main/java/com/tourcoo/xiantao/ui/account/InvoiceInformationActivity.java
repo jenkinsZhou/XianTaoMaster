@@ -11,7 +11,7 @@ import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.InvoiceInformationAdapter;
 import com.tourcoo.xiantao.core.widget.divider.TourCoolRecycleViewDivider;
 import com.tourcoo.xiantao.entity.InvoiceInfomationEntity;
-import com.tourcoo.xiantao.ui.BaseTourcooRefreshLoadActivity;
+import com.tourcoo.xiantao.ui.BaseTourCooRefreshLoadActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
  * @date 2019年03月29日20:19
  * @Email: 971613168@qq.com
  */
-public class InvoiceInformationActivity extends BaseTourcooRefreshLoadActivity<InvoiceInfomationEntity> {
+public class InvoiceInformationActivity extends BaseTourCooRefreshLoadActivity<InvoiceInfomationEntity> {
     private InvoiceInformationAdapter mInvoiceInformationAdapter;
     private List<InvoiceInfomationEntity> mInvoiceInformationList = new ArrayList<>();
 

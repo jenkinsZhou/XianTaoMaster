@@ -15,7 +15,6 @@ public class RequestConfig {
     /**
      * 鲜淘网
      */
-//    public static final String BASE_URL = "http://app.ahxtao.com/";
 
     public static final String BASE_URL = "http://ahxtao.hfcoco.top/";
 

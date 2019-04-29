@@ -1,7 +1,7 @@
 package com.tourcoo.xiantao.helper;
 
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
-import com.tourcoo.xiantao.entity.goods.GoodsEntity;
+import com.tourcoo.xiantao.entity.goods.GoodsDetailEntity;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class ShoppingCar {
     /**
      * 购物车
      */
-    private List<GoodsEntity> shoppingCar = new ArrayList<>();
+    private List<GoodsDetailEntity> shoppingCar = new ArrayList<>();
 
     private ShoppingCar() {
     }
@@ -36,28 +36,28 @@ public class ShoppingCar {
     /**
      * 添加商品
      *
-     * @param goodsEntity
+     * @param goodsDetailEntity
      */
-    public void addGoods(GoodsEntity goodsEntity) {
-        if (goodsEntity == null) {
+    public void addGoods(GoodsDetailEntity goodsDetailEntity) {
+        if (goodsDetailEntity == null) {
             TourCooLogUtil.e(TAG, "商品为null");
             return;
         }
         //先判断购物车内是否有此类商品(根据商品id判断)
-        int index = goodsHasExist(goodsEntity);
+        int index = goodsHasExist(goodsDetailEntity);
         if (index >= 0) {
             //已存在，直接将购物车该商品的数量+1
-            GoodsEntity current = shoppingCar.get(index);
+            GoodsDetailEntity current = shoppingCar.get(index);
             //设为选中状态
-            current.select = true;
-            current.goodsCount++;
-            TourCooLogUtil.d(TAG, "商品已经存在,执行++ 当前数量:" + shoppingCar.get(index).goodsCount);
+        /*    current.select = true;
+            current.goodsCount++;*/
+//            TourCooLogUtil.d(TAG, "商品已经存在,执行++ 当前数量:" + shoppingCar.get(index).goodsCount);
         } else {
             //不存在，则直接添加,并将值数量置为1
-            goodsEntity.goodsCount = 1;
+//            goodsDetailEntity.goodsCount = 1;
             //设为选中状态
-            goodsEntity.select = true;
-            shoppingCar.add(goodsEntity);
+//            goodsDetailEntity.select = true;
+            shoppingCar.add(goodsDetailEntity);
             TourCooLogUtil.i(TAG, "商品不存在,直接添加");
         }
     }
@@ -69,8 +69,8 @@ public class ShoppingCar {
      */
     public int getGoodsCount() {
         int count = 0;
-        for (GoodsEntity goodsEntity : shoppingCar) {
-            count += goodsEntity.goodsCount;
+        for (GoodsDetailEntity goodsDetailEntity : shoppingCar) {
+//            count += goodsDetailEntity.goodsCount;
         }
         return count;
     }
@@ -93,7 +93,7 @@ public class ShoppingCar {
      *
      * @return
      */
-    public List<GoodsEntity> getShoppingCar() {
+    public List<GoodsDetailEntity> getShoppingCar() {
         return shoppingCar;
     }
 
@@ -102,16 +102,17 @@ public class ShoppingCar {
      *
      * @return
      */
-    private int goodsHasExist(GoodsEntity goodsEntity) {
-        if (goodsEntity == null) {
+    private int goodsHasExist(GoodsDetailEntity goodsDetailEntity) {
+        if (goodsDetailEntity == null) {
             return -1;
         }
         for (int i = 0; i < shoppingCar.size(); i++) {
-            TourCooLogUtil.i(TAG, "商品id:" + goodsEntity.goodsId);
+          /*  TourCooLogUtil.i(TAG, "商品id:" + goodsDetailEntity.goodsId);
             TourCooLogUtil.d(TAG, "购物车中商品id:" + shoppingCar.get(i).goodsId);
-            if (goodsEntity.goodsId == shoppingCar.get(i).goodsId) {
+            if (goodsDetailEntity.goodsId == shoppingCar.get(i).goodsId) {
+
                 return i;
-            }
+            }*/
         }
         return -1;
     }
@@ -119,11 +120,11 @@ public class ShoppingCar {
 
     private int goodsExsits(long goodsEntityId) {
         for (int i = 0; i < shoppingCar.size(); i++) {
-            TourCooLogUtil.i(TAG, "商品id:" + goodsEntityId);
+           /* TourCooLogUtil.i(TAG, "商品id:" + goodsEntityId);
             TourCooLogUtil.d(TAG, "购物车中商品id:" + shoppingCar.get(i).goodsId);
             if (goodsEntityId == shoppingCar.get(i).goodsId) {
                 return i;
-            }
+            }*/
         }
         return -1;
     }
@@ -131,21 +132,21 @@ public class ShoppingCar {
     /**
      * 移除某商品
      *
-     * @param goodsEntity
+     * @param goodsDetailEntity
      */
-    public void removeGoods(GoodsEntity goodsEntity) {
-        if (goodsEntity == null || shoppingCar == null || shoppingCar.isEmpty()) {
+    public void removeGoods(GoodsDetailEntity goodsDetailEntity) {
+        if (goodsDetailEntity == null || shoppingCar == null || shoppingCar.isEmpty()) {
             TourCooLogUtil.e(TAG, "商品无法移除");
             return;
         }
         for (int i = shoppingCar.size() - 1; i >= 0; i--) {
             //表示该商品在购物车中的位置(小于0表示购物车中不存在该商品)index指的是商品在购物车中的索引
-            int index = goodsHasExist(goodsEntity);
+            int index = goodsHasExist(goodsDetailEntity);
             if (index >= 0) {
                 //先拿到购物车中对应的该商品
-                GoodsEntity currentGoods = shoppingCar.get(index);
+                GoodsDetailEntity currentGoods = shoppingCar.get(index);
                 //该商品在购物车中数量
-                int count = currentGoods.goodsCount;
+            /*    int count = currentGoods.goodsCount;
                 TourCooLogUtil.w(TAG, "当前商品数量:" + count);
                 if (count <= 0) {
                     TourCooLogUtil.e(TAG, "商品移除失败(因为商品数量为0)");
@@ -155,7 +156,7 @@ public class ShoppingCar {
                 } else {
                     currentGoods.goodsCount = currentGoods.goodsCount--;
                     TourCooLogUtil.d(TAG, "商品移除成功(数量减了，但购物车内仍然存在,当前剩余数量:" + currentGoods.goodsCount);
-                }
+                }*/
                 //找到商品后必须break
                 break;
             }
@@ -163,10 +164,10 @@ public class ShoppingCar {
     }
 
     private boolean hasGoods(long goodsId) {
-        for (GoodsEntity goodsEntity : shoppingCar) {
-            if (goodsId == goodsEntity.goodsId) {
+        for (GoodsDetailEntity goodsDetailEntity : shoppingCar) {
+          /*  if (goodsId == goodsDetailEntity.goodsId) {
                 return true;
-            }
+            }*/
         }
         return false;
     }
@@ -181,8 +182,8 @@ public class ShoppingCar {
             //表示该商品在购物车中的位置(小于0表示购物车中不存在该商品)index指的是商品在购物车中的索引
             int index = goodsExsits(goodsId);
             if (index > -1) {
-                GoodsEntity goodsEntity = shoppingCar.get(index);
-                goodsEntity.goodsCount = goodsEntity.goodsCount--;
+             /*   GoodsDetailEntity goodsDetailEntity = shoppingCar.get(index);
+                goodsDetailEntity.goodsCount = goodsDetailEntity.goodsCount--;*/
             }
         }
     }
@@ -192,7 +193,7 @@ public class ShoppingCar {
      *
      * @param goods
      */
-    public void setGoodsCount(GoodsEntity goods) {
+    public void setGoodsCount(GoodsDetailEntity goods) {
         if (goods == null || shoppingCar.isEmpty()) {
             return;
         }
@@ -200,7 +201,7 @@ public class ShoppingCar {
         if (index < 0) {
             shoppingCar.add(goods);
         } else {
-            shoppingCar.get(index).setGoosCount(goods.goodsCount);
+//            shoppingCar.get(index).setGoosCount(goods.goodsCount);
         }
     }
 
@@ -208,31 +209,31 @@ public class ShoppingCar {
     /**
      * 计算商品总金额(不根据是否选中状态)
      *
-     * @param goodsEntityList
+     * @param goodsDetailEntityList
      * @return
      */
-    public double getTotalMoney(List<GoodsEntity> goodsEntityList) {
+    public double getTotalMoney(List<GoodsDetailEntity> goodsDetailEntityList) {
         double totalMoney = 0.0;
-        if (goodsEntityList == null) {
+        if (goodsDetailEntityList == null) {
             return totalMoney;
         }
-        for (GoodsEntity goodsEntity : goodsEntityList) {
-            totalMoney += goodsEntity.goodsCurrentPrice * goodsEntity.goodsCount;
+        for (GoodsDetailEntity goodsDetailEntity : goodsDetailEntityList) {
+//            totalMoney += goodsDetailEntity.goodsCurrentPrice * goodsDetailEntity.goodsCount;
         }
         return totalMoney;
     }
 
 
-    public double getTotalMoneyBySelect(List<GoodsEntity> goodsEntityList) {
+    public double getTotalMoneyBySelect(List<GoodsDetailEntity> goodsDetailEntityList) {
         double totalMoney = 0.0;
-        if (goodsEntityList == null) {
+        if (goodsDetailEntityList == null) {
             return totalMoney;
         }
-        for (GoodsEntity goodsEntity : goodsEntityList) {
-            if (goodsEntity.select) {
-                totalMoney += goodsEntity.goodsCurrentPrice * goodsEntity.goodsCount;
+        for (GoodsDetailEntity goodsDetailEntity : goodsDetailEntityList) {
+        /*    if (goodsDetailEntity.select) {
+                totalMoney += goodsDetailEntity.goodsCurrentPrice * goodsDetailEntity.goodsCount;
                 TourCooLogUtil.i(TAG, "计算了一次:" + totalMoney);
-            }
+            }*/
         }
         BigDecimal bd = new BigDecimal(totalMoney);
         totalMoney = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
@@ -241,13 +242,13 @@ public class ShoppingCar {
 
     /**
      * 从购物车中删除某个商品
-     * @param goodsEntity
+     * @param goodsDetailEntity
      */
-    public void deleteGoods(GoodsEntity goodsEntity) {
-        if (goodsEntity == null) {
+    public void deleteGoods(GoodsDetailEntity goodsDetailEntity) {
+        if (goodsDetailEntity == null) {
             return;
         }
-        int index = goodsHasExist(goodsEntity);
+        int index = goodsHasExist(goodsDetailEntity);
         if (index < 0) {
             return;
         }

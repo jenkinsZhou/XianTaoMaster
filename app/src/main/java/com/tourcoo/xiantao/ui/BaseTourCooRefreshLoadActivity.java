@@ -14,7 +14,7 @@ import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
  * @date 2019年03月26日19:30
  * @Email: 971613168@qq.com
  */
-public abstract class BaseTourcooRefreshLoadActivity<T> extends BaseRefreshLoadActivity<T> {
+public abstract class BaseTourCooRefreshLoadActivity<T> extends BaseRefreshLoadActivity<T> {
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {

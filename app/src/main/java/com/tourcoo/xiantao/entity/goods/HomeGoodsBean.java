@@ -4,12 +4,27 @@ import java.util.List;
 
 /**
  * @author :zhoujian
- * @description :商品实体类
+ * @description :首页商品实体类
  * @company :翼迈科技
  * @date 2019年 04月 20日 19时54分
  * @Email: 971613168@qq.com
  */
-public class GoodsBean {
+public class HomeGoodsBean {
+    public HomeGoodsBean() {
+    }
+
+    /**
+     * 选中
+     */
+    private boolean select;
+
+    public boolean isSelect() {
+        return select;
+    }
+
+    public void setSelect(boolean select) {
+        this.select = select;
+    }
 
     /**
      * goods_id : 24
@@ -60,10 +75,10 @@ public class GoodsBean {
     private String deduct_stock_type_text;
     private String goods_status_text;
     private String is_delete_text;
-    private boolean tuan_rule;
+    private Object tuan_rule;
     private boolean tuan;
     private String image;
-    private List<SpecBean> spec;
+    private List<Spec> mSpec;
 
     public int getGoods_id() {
         return goods_id;
@@ -233,11 +248,11 @@ public class GoodsBean {
         this.is_delete_text = is_delete_text;
     }
 
-    public boolean isTuan_rule() {
+    public Object isTuan_rule() {
         return tuan_rule;
     }
 
-    public void setTuan_rule(boolean tuan_rule) {
+    public void setTuan_rule(String tuan_rule) {
         this.tuan_rule = tuan_rule;
     }
 
@@ -257,11 +272,11 @@ public class GoodsBean {
         this.image = image;
     }
 
-    public List<SpecBean> getSpec() {
-        return spec;
+    public List<Spec> getSpecBean() {
+        return mSpec;
     }
 
-    public void setSpec(List<SpecBean> spec) {
-        this.spec = spec;
+    public void setSpecBean(List<Spec> spec) {
+        this.mSpec = spec;
     }
 }

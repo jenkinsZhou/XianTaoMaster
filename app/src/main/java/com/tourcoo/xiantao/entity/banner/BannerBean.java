@@ -8,11 +8,15 @@ package com.tourcoo.xiantao.entity.banner;
  * @Email: 971613168@qq.com
  */
 public class BannerBean {
+    public BannerBean() {
+    }
+
     /**
      * id : 1
      * image : /uploads/20190416/3ff61d64e13e64af937b785462f5fe13.png
      * status_text :
      */
+
 
     private int id;
     private String image;

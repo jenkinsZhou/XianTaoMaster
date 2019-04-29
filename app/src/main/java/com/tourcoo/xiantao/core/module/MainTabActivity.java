@@ -2,7 +2,6 @@ package com.tourcoo.xiantao.core.module;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.TextUtils;
 
 import com.aries.ui.view.tab.CommonTabLayout;
 import com.aries.ui.view.tab.listener.OnTabSelectListener;
@@ -10,7 +9,6 @@ import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.base.activity.BaseMainActivity;
 import com.tourcoo.xiantao.core.frame.delegate.MainTabDelegate;
 import com.tourcoo.xiantao.core.frame.entity.TabEntity;
-import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.frame.util.NetworkUtil;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
@@ -20,6 +18,7 @@ import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.TokenInfo;
 import com.tourcoo.xiantao.event.TabChangeEvent;
+import com.tourcoo.xiantao.helper.GoodsCount;
 import com.tourcoo.xiantao.helper.ShoppingCar;
 import com.tourcoo.xiantao.permission.PermissionManager;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
@@ -27,7 +26,10 @@ import com.tourcoo.xiantao.ui.ShoppingCarFragmentVersion1;
 import com.tourcoo.xiantao.ui.ShoppingCarFragmentVersion2;
 import com.tourcoo.xiantao.ui.account.LoginActivity;
 import com.tourcoo.xiantao.ui.account.MineFragment;
+import com.tourcoo.xiantao.ui.goods.ClassifyGoodsFragment;
+import com.tourcoo.xiantao.ui.goods.HomeFragment;
 import com.trello.rxlifecycle3.android.ActivityEvent;
+import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -35,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
@@ -50,6 +53,10 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
     private TabChangeEvent mTabChangeEvent;
     public CommonTabLayout mTabLayout;
     private boolean isFirstLoad = true;
+    /**
+     * 当前购物车中商品数量
+     */
+    private int currentGoodsCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +79,7 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
     public List<TabEntity> getTabList() {
         ArrayList<TabEntity> tabEntities = new ArrayList<>();
         tabEntities.add(new TabEntity("首页", R.mipmap.tab_home_normal, R.mipmap.tab_home_selected, HomeFragment.newInstance()));
-        tabEntities.add(new TabEntity("分类", R.mipmap.tab_classification_normal, R.mipmap.tab_classification_selected, ShoppingCarFragmentVersion1.newInstance()));
+        tabEntities.add(new TabEntity("分类", R.mipmap.tab_classification_normal, R.mipmap.tab_classification_selected, ClassifyGoodsFragment.newInstance()));
         tabEntities.add(new TabEntity("购物车", R.mipmap.tab_shopping_cart_normal, R.mipmap.tab_shopping_cart_selected, ShoppingCarFragmentVersion2.newInstance()));
         tabEntities.add(new TabEntity("个人中心", R.mipmap.tab_personal_center_normal, R.mipmap.tab_personal_center_selected, MineFragment.newInstance()));
         return tabEntities;
@@ -115,6 +122,10 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
                     TourCooLogUtil.i(TAG, "当前位置:" + position);
                     mTabChangeEvent.currentPosition = position;
                     EventBus.getDefault().postSticky(mTabChangeEvent);
+                    if (AccountInfoHelper.getInstance().isLogin()) {
+                        //获取购物车中商品数量
+                        getTotalNum();
+                    }
                 }
 
                 @Override
@@ -215,4 +226,37 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
             finish();
         }
     }
+
+
+    /**
+     * 获取当前购物车中商品数量
+     */
+    public void getTotalNum() {
+        ApiRepository.getInstance().getTotalNum().compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity<GoodsCount>>() {
+                    @Override
+                    public void onRequestNext(BaseEntity<GoodsCount> entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                if (entity.data != null) {
+                                    currentGoodsCount = entity.data.getCart_total_num();
+                                    showRedDot(currentGoodsCount);
+                                }
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+                });
+    }
+
+
+    public void showRedDot(int count) {
+        if (count <= 0) {
+            mTabLayout.hideMsg(2);
+        } else {
+            mTabLayout.showMsg(2, count);
+        }
+    }
+
 }

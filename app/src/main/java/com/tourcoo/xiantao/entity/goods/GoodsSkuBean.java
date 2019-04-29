@@ -1,16 +1,18 @@
 package com.tourcoo.xiantao.entity.goods;
 
+import java.io.Serializable;
+
 /**
- * @author :zhoujian
- * @description :
- * @company :翼迈科技
- * @date 2019年 04月 20日 19时55分
+ * @author :JenkinsZhou
+ * @description :商品SKU
+ * @company :途酷科技
+ * @date 2019年04月25日15:36
  * @Email: 971613168@qq.com
  */
-public class SpecBean {
+public class GoodsSkuBean implements Serializable {
 
     /**
-     * goods_spec_id : 125
+     * goods_spec_id : 160
      * goods_id : 24
      * goods_no : CHE001
      * goods_price : 258.00
@@ -20,8 +22,9 @@ public class SpecBean {
      * goods_weight : 1
      * spec_sku_id :
      * spec_image :
-     * create_time : 1555318910
-     * update_time : 1555318910
+     * create_time : 1556098800
+     * update_time : 1556098800
+     * goods_attr :
      */
 
     private int goods_spec_id;
@@ -36,6 +39,7 @@ public class SpecBean {
     private String spec_image;
     private int create_time;
     private int update_time;
+    private String goods_attr;
 
     public int getGoods_spec_id() {
         return goods_spec_id;
@@ -131,5 +135,13 @@ public class SpecBean {
 
     public void setUpdate_time(int update_time) {
         this.update_time = update_time;
+    }
+
+    public String getGoods_attr() {
+        return goods_attr;
+    }
+
+    public void setGoods_attr(String goods_attr) {
+        this.goods_attr = goods_attr;
     }
 }

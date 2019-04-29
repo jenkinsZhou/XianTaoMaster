@@ -2,18 +2,26 @@ package com.tourcoo.xiantao.ui.account;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.tourcoo.xiantao.R;
+import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
+import com.tourcoo.xiantao.core.util.ToastUtil;
+import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
-import com.tourcoo.xiantao.entity.AddressBean;
+import com.tourcoo.xiantao.entity.AddressPickerBean;
+import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
 import com.tourcoo.xiantao.util.AddressHelper;
 import com.tourcoo.xiantao.widget.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.tourcoo.xiantao.widget.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.tourcoo.xiantao.widget.bigkoo.pickerview.view.OptionsPickerView;
+import com.trello.rxlifecycle3.android.ActivityEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +34,16 @@ import java.util.List;
  * @Email: 971613168@qq.com
  */
 public class AddNewAddressActivity extends BaseTourCooTitleActivity implements View.OnClickListener {
-    private List<AddressBean> options1Items = new ArrayList<>();
+    private List<AddressPickerBean> options1Items = new ArrayList<>();
     private ArrayList<ArrayList<String>> options2Items = new ArrayList<>();
     private ArrayList<ArrayList<ArrayList<String>>> options3Items = new ArrayList<>();
     private TextView tvSelectAddress;
+    private EditText etName;
+    private EditText etPhone;
+    private EditText edAddressDetail;
+    private OptionsPickerView pvOptions;
+    private String region;
+    public static final int RESULT_SUCCESS_ADDRESS = 2;
 
     @Override
     public int getContentLayout() {
@@ -39,22 +53,26 @@ public class AddNewAddressActivity extends BaseTourCooTitleActivity implements V
     @Override
     public void initView(Bundle savedInstanceState) {
         tvSelectAddress = findViewById(R.id.tvSelectAddress);
+        etName = findViewById(R.id.etName);
+        etPhone = findViewById(R.id.etPhone);
+        edAddressDetail = findViewById(R.id.edAddressDetail);
         tvSelectAddress.setOnClickListener(this);
+        findViewById(R.id.tvSaveAddress).setOnClickListener(this);
         loadAddress();
-
+        initPickerView();
     }
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         super.setTitleBar(titleBar);
-        titleBar.setTitleMainText("新增地址");
+        titleBar.setTitleMainText("添加新地址");
     }
 
     /**
      * 弹出选择器
      */
-    private void showPickerView() {
-        OptionsPickerView pvOptions = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
+    private void initPickerView() {
+        pvOptions = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
             @Override
             public void onOptionsSelect(int options1, int options2, int options3, View v) {
                 //返回的分别是三个级别的选中位置
@@ -71,14 +89,17 @@ public class AddNewAddressActivity extends BaseTourCooTitleActivity implements V
                         options3Items.get(options1).get(options2).get(options3) : "";
 
                 String tx = opt1tx + opt2tx + opt3tx;
-                Toast.makeText(mContext, tx, Toast.LENGTH_SHORT).show();
+                //显示选中
+                region = opt1tx + "," + opt2tx + "," + opt3tx;
+                setSelect(tx);
             }
         })
-
                 .setTitleText("城市选择")
+                .setCancelColor(TourCooUtil.getColor(R.color.colorPrimary))
+                .setSubmitColor(TourCooUtil.getColor(R.color.colorPrimary))
                 .setDividerColor(Color.BLACK)
                 //设置选中项文字颜色
-                .setTextColorCenter(Color.BLACK)
+                .setTextColorCenter(TourCooUtil.getColor(R.color.colorPrimary))
                 .setContentTextSize(20)
                 .build();
 
@@ -86,7 +107,7 @@ public class AddNewAddressActivity extends BaseTourCooTitleActivity implements V
         pvOptions.setPicker(options1Items, options2Items);//二级选择器*/
         //三级选择器
         pvOptions.setPicker(options1Items, options2Items, options3Items);
-        pvOptions.show();
+
     }
 
 
@@ -94,7 +115,10 @@ public class AddNewAddressActivity extends BaseTourCooTitleActivity implements V
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tvSelectAddress:
-                showPickerView();
+                pvOptions.show();
+                break;
+            case R.id.tvSaveAddress:
+                doAddAddress();
                 break;
             default:
                 break;
@@ -103,17 +127,17 @@ public class AddNewAddressActivity extends BaseTourCooTitleActivity implements V
 
 
     private void loadAddress() {
-        List<AddressBean> addressBeans = AddressHelper.getInstance().getAddressInfo();
-        options1Items = addressBeans;
-        for (int i = 0; i < addressBeans.size(); i++) {
+        List<AddressPickerBean> addressPickerBeans = AddressHelper.getInstance().getAddressInfo();
+        options1Items = addressPickerBeans;
+        for (int i = 0; i < addressPickerBeans.size(); i++) {
             //遍历省份
             ArrayList<String> cityList = new ArrayList<>();
             //该省的城市列表（第二级）
             ArrayList<ArrayList<String>> province_AreaList = new ArrayList<>();
             //该省的所有地区列表（第三极）
-            for (int c = 0; c < addressBeans.get(i).getCityList().size(); c++) {
+            for (int c = 0; c < addressPickerBeans.get(i).getCityList().size(); c++) {
                 //遍历该省份的所有城市
-                String cityName = addressBeans.get(i).getCityList().get(c).getName();
+                String cityName = addressPickerBeans.get(i).getCityList().get(c).getName();
                 //添加城市
                 cityList.add(cityName);
                 //该城市的所有地区列表
@@ -126,7 +150,7 @@ public class AddNewAddressActivity extends BaseTourCooTitleActivity implements V
                 } else {
                     city_AreaList.addAll(jsonBean.get(i).getCityList().get(c).getArea());
                 }*/
-                city_AreaList.addAll(addressBeans.get(i).getCityList().get(c).getArea());
+                city_AreaList.addAll(addressPickerBeans.get(i).getCityList().get(c).getArea());
                 province_AreaList.add(city_AreaList);//添加该省所有地区数据
             }
 
@@ -140,5 +164,76 @@ public class AddNewAddressActivity extends BaseTourCooTitleActivity implements V
              */
             options3Items.add(province_AreaList);
         }
+    }
+
+    private String getName() {
+        return etName.getText().toString();
+    }
+
+    private String getRegion() {
+        return tvSelectAddress.getText().toString();
+    }
+
+    private String getPhone() {
+        return etPhone.getText().toString();
+    }
+
+    private String getAddressDetail() {
+        return edAddressDetail.getText().toString();
+    }
+
+    private void setSelect(String info) {
+        tvSelectAddress.setText(info);
+    }
+
+
+    /**
+     * 新增收货地址
+     */
+
+    private void addAddress(String region, String name, String phone, String detail) {
+        ApiRepository.getInstance().addAddress(region, name, phone, detail).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            ToastUtil.showSuccess(entity.msg);
+                            setResult(RESULT_SUCCESS_ADDRESS);
+                            finish();
+                        }
+                    }
+
+                    @Override
+                    public void onRequestError(Throwable e) {
+                        super.onRequestError(e);
+                        TourCooLogUtil.e(TAG, TAG + "异常:" + e.toString());
+                    }
+                });
+    }
+
+
+    private void doAddAddress() {
+        if (TextUtils.isEmpty(getName())) {
+            ToastUtil.show("请填写收货人姓名");
+            return;
+        }
+        if (TextUtils.isEmpty(getPhone())) {
+            ToastUtil.show("请填写收货人联系方式");
+            return;
+        }
+        if (TextUtils.isEmpty(getRegion())) {
+            ToastUtil.show("请选择地区");
+            return;
+        }
+        if (TextUtils.isEmpty(getAddressDetail())) {
+            ToastUtil.show("请填写详细地址地区");
+            return;
+        }
+        TourCooLogUtil.i(TAG, TAG + ":" + region);
+        TourCooLogUtil.i(TAG, TAG + ":" + getName());
+        TourCooLogUtil.i(TAG, TAG + ":" + getPhone());
+        TourCooLogUtil.i(TAG, TAG + ":" + getAddressDetail());
+        addAddress(region, getName(), getPhone(), getAddressDetail());
+
     }
 }

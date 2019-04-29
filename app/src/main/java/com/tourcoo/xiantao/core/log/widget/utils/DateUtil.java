@@ -57,6 +57,14 @@ public class DateUtil {
         }
     }
 
+    public static String parseDate(long timeMillis) {
+        final FastDateFormat df = FastDateFormat.getInstance(PATTERN);
+        try {
+            return df.format(new Date(timeMillis));
+        } catch (Exception e) {
+            return "";
+        }
+    }
 
     public static String getDateString(String timeMillis) {
         final FastDateFormat df = FastDateFormat.getInstance(PATTERN_DATE);

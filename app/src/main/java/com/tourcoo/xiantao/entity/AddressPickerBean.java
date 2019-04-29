@@ -13,7 +13,7 @@ import java.util.List;
  * @date 2019年04月023日上午 10:16
  * @Email: 971613168@qq.com
  */
-public class AddressBean implements IPickerViewData {
+public class AddressPickerBean implements IPickerViewData {
 
 
     /**

@@ -18,7 +18,7 @@ import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.core.widget.divider.TourCoolRecycleViewDivider;
 import com.tourcoo.xiantao.entity.RechargeEntity;
 import com.tourcoo.xiantao.entity.UpdateEntity;
-import com.tourcoo.xiantao.ui.BaseTourcooRefreshLoadActivity;
+import com.tourcoo.xiantao.ui.BaseTourCooRefreshLoadActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
  * @date 2019年03月26日17:49
  * @Email: 971613168@qq.com
  */
-public class RechargeDetailActivity extends BaseTourcooRefreshLoadActivity<RechargeEntity> {
+public class RechargeDetailActivity extends BaseTourCooRefreshLoadActivity<RechargeEntity> {
     private RechargeDetailAdapter adapter;
     private List<RechargeEntity> rechargeEntityList = new ArrayList<>();
 

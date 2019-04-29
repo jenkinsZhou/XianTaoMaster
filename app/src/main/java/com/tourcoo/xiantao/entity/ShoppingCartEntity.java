@@ -1,6 +1,6 @@
 package com.tourcoo.xiantao.entity;
 
-import com.tourcoo.xiantao.entity.goods.GoodsEntity;
+import com.tourcoo.xiantao.entity.goods.GoodsDetailEntity;
 
 import java.util.List;
 
@@ -13,5 +13,5 @@ import java.util.List;
  */
 public class ShoppingCartEntity {
     public double allPrice;
-    private List<GoodsEntity> mGoodsEntityList;
+    private List<GoodsDetailEntity> mGoodsDetailEntityList;
 }

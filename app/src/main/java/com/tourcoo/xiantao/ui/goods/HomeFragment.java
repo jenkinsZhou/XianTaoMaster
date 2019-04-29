@@ -1,5 +1,6 @@
-package com.tourcoo.xiantao.core.module;
+package com.tourcoo.xiantao.ui.goods;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,17 +30,20 @@ import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.frame.util.NetworkUtil;
 import com.tourcoo.xiantao.core.frame.util.SizeUtil;
+import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.helper.TitleBarViewHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
+import com.tourcoo.xiantao.core.module.MainTabActivity;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.util.StatusBarUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
+import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.banner.BannerBean;
-import com.tourcoo.xiantao.entity.goods.GoodsEntity;
+import com.tourcoo.xiantao.entity.goods.GoodsDetailEntity;
 import com.tourcoo.xiantao.entity.HomeInfoBean;
 import com.tourcoo.xiantao.entity.banner.BannerDetail;
-import com.tourcoo.xiantao.entity.goods.GoodsBean;
+import com.tourcoo.xiantao.entity.goods.HomeGoodsBean;
 import com.tourcoo.xiantao.entity.news.NewsBean;
 import com.tourcoo.xiantao.helper.ShoppingCar;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
@@ -55,6 +59,7 @@ import cn.bingoogolapple.bgabanner.BGABanner;
 import me.bakumon.statuslayoutmanager.library.OnStatusChildClickListener;
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
+import static com.tourcoo.xiantao.adapter.AddressInfoAdapter.ADDRESS_DEFAULT;
 import static com.tourcoo.xiantao.core.common.RequestConfig.BASE_URL;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 
@@ -70,8 +75,9 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
     private Handler mHandler = new Handler();
     private BGABanner banner;
     private RecyclerView rvHome;
+    public static final String EXTRA_GOODS_ID = "EXTRA_GOODS_ID";
     private GoodsGridAdapter mGoodsGridAdapter;
-    private List<GoodsBean> mGuessLikeGoodsList = new ArrayList<>();
+    private List<HomeGoodsBean> mGuessLikeGoodsList = new ArrayList<>();
 
     private MainTabActivity mMainTabActivity;
     private StatusLayoutManager statusLayoutManager;
@@ -105,11 +111,19 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
         initAdapter();
         initTitle();
         statusLayoutManager.showLoadingLayout();
+        initGoodsItemClick();
         getHomeInfo();
     }
 
-
-    private void initLayLoutManager() {
+    @Override
+    public void loadData() {
+        super.loadData();
+        //获取收货地址
+        if (AccountInfoHelper.getInstance().isLogin()) {
+            getMyAddressList();
+            //请求购物车数量
+            mMainTabActivity.getTotalNum();
+        }
     }
 
     private void initTitle() {
@@ -158,7 +172,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
      * 初始化商品适配器
      */
     private void initAdapter() {
-        mGoodsGridAdapter = new GoodsGridAdapter(mGuessLikeGoodsList);
+        mGoodsGridAdapter = new GoodsGridAdapter();
         mGoodsGridAdapter.bindToRecyclerView(rvHome);
         mGoodsGridAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -239,12 +253,10 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
      * 执行刷新逻辑
      */
     private void doRefresh() {
-        mGoodsGridAdapter.getData().clear();
-        mRefreshLayout.finishRefresh();
-        mGoodsGridAdapter.notifyDataSetChanged();
         mRefreshLayout.setEnableLoadMore(true);
         mRefreshLayout.setNoMoreData(false);
         mGoodsGridAdapter.removeFooterView(footView);
+        getHomeInfoDelay();
     }
 
     @Override
@@ -272,12 +284,12 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
     /**
      * 添加商品并显示
      */
-    private void doAddGoods(GoodsEntity goodsEntity) {
-        if (goodsEntity == null) {
+    private void doAddGoods(GoodsDetailEntity goodsDetailEntity) {
+        if (goodsDetailEntity == null) {
             TourCooLogUtil.e(TAG, "商品为null");
             return;
         }
-        ShoppingCar.getInstance().addGoods(goodsEntity);
+        ShoppingCar.getInstance().addGoods(goodsDetailEntity);
         showGoodsCount(ShoppingCar.getInstance().getGoodsCount());
     }
 
@@ -303,15 +315,18 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
                     @Override
                     public void onRequestNext(BaseEntity entity) {
                         if (entity == null) {
+                            mRefreshLayout.finishRefresh(false);
                             ToastUtil.showFailed("服务器异常");
                             statusLayoutManager.showErrorLayout();
                             return;
                         }
                         if (entity.code == CODE_REQUEST_SUCCESS) {
                             statusLayoutManager.showSuccessLayout();
+                            mRefreshLayout.finishRefresh(true);
                             //todo 显示主页
                             showHomeInfo(parseHomeInfo(entity.data));
                         } else {
+                            mRefreshLayout.finishRefresh(false);
                             ToastUtil.showFailed(entity.msg);
                         }
                     }
@@ -320,6 +335,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
                     public void onRequestError(Throwable e) {
                         super.onRequestError(e);
                         statusLayoutManager.showErrorLayout();
+                        mRefreshLayout.finishRefresh(false);
                     }
                 });
     }
@@ -344,6 +360,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
         boolean loadFailed = homeInfoBean == null || homeInfoBean.getBanner() == null ||
                 homeInfoBean.getGoods() == null || homeInfoBean.getNews() == null;
         if (loadFailed) {
+            statusLayoutManager.showErrorLayout();
             return;
         }
         bannerImageList.clear();
@@ -355,6 +372,10 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
             url = BASE_URL + bannerBean.getImage();
             TourCooLogUtil.i(TAG, "bannerImageList:" + url);
             bannerImageList.add(url);
+        }
+        List<HomeGoodsBean> homeGoodsBeanList = homeInfoBean.getGoods();
+        if (homeGoodsBeanList != null && !homeGoodsBeanList.isEmpty()) {
+            mGoodsGridAdapter.setNewData(homeGoodsBeanList);
         }
         mGuessLikeGoodsList.addAll(homeInfoBean.getGoods());
         mGoodsGridAdapter.notifyDataSetChanged();
@@ -405,7 +426,6 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
 
                     @Override
                     public void onErrorChildClick(View view) {
-                        ToastUtil.showSuccess("点击了Error");
                         statusLayoutManager.showLoadingLayout();
                         getHomeInfoDelay();
                     }
@@ -444,7 +464,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
             public void run() {
                 getHomeInfo();
             }
-        }, 1000);
+        }, 500);
     }
 
 
@@ -481,7 +501,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
 
 
     /**
-     * 加载新闻
+     * 加载滚动新闻
      *
      * @param newsBeanList
      */
@@ -503,7 +523,77 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
             tvNewsContent.setText(newsBean.getName());
             homeViewFlipper.addView(contentLayout);
             //todo
-            homeViewFlipper.addView(test);
+//            homeViewFlipper.addView(test);
         }
     }
+
+
+    private void skipGoodsDetail(int goodsId) {
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_GOODS_ID, goodsId);
+        intent.setClass(mContext, GoodsDetailActivity.class);
+        startActivity(intent);
+    }
+
+
+    private void initGoodsItemClick() {
+        mGoodsGridAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                HomeGoodsBean homeGoodsBean = mGoodsGridAdapter.getItem(position);
+                if (homeGoodsBean == null) {
+                    return;
+                }
+                skipGoodsDetail(homeGoodsBean.getGoods_id());
+            }
+        });
+    }
+
+
+    /**
+     * 获取收货地址
+     */
+
+    private void getMyAddressList() {
+        ApiRepository.getInstance().myAddressList().compose(bindUntilEvent(FragmentEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity<List<AddressEntity>>>() {
+                    @Override
+                    public void onRequestNext(BaseEntity<List<AddressEntity>> entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
+                                if (!entity.data.isEmpty()) {
+                                    AccountInfoHelper.getInstance().setDefaultAddress(getDefaultAddress(entity.data));
+                                    mRefreshLayout.finishRefresh(true);
+                                }
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onRequestError(Throwable e) {
+                        super.onRequestError(e);
+                        TourCooLogUtil.e(TAG, TAG + "异常:" + e.toString());
+                    }
+                });
+    }
+
+
+    private AddressEntity getDefaultAddress(List<AddressEntity> addressBeanList) {
+        if (addressBeanList == null || addressBeanList.isEmpty()) {
+            return null;
+        }
+        for (AddressEntity addressEntity : addressBeanList) {
+            if (addressEntity.getIsdefault().equals(ADDRESS_DEFAULT)) {
+                TourCooLogUtil.i(TAG, TAG + ":" + "默认地址设置成功");
+                return addressEntity;
+            }
+        }
+        return addressBeanList.get(0);
+    }
+
+
+
+
 }

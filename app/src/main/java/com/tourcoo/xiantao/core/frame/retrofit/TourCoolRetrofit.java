@@ -3,6 +3,7 @@ package com.tourcoo.xiantao.core.frame.retrofit;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.tourcoo.xiantao.core.frame.util.SslUtil;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
@@ -40,7 +41,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class TourCoolRetrofit {
 
-
+    private static final String TAG = "TourCoolRetrofit";
     private static volatile TourCoolRetrofit sManager;
     private static volatile Retrofit sRetrofit;
     private static volatile Retrofit.Builder sRetrofitBuilder;
@@ -181,7 +182,7 @@ public class TourCoolRetrofit {
     }
 
     /**
-     * @param fileUrl 下载全路径 配合{@link DownloadObserver}实现文件下载进度监听
+     * @param fileUrl 下载全路径 配合{@link }实现文件下载进度监听
      * @return
      */
     public Observable<ResponseBody> downloadFile(String fileUrl) {
@@ -191,7 +192,7 @@ public class TourCoolRetrofit {
     /**
      * 下载文件
      *
-     * @param fileUrl 下载全路径 配合{@link DownloadObserver}实现文件下载进度监听
+     * @param fileUrl 下载全路径 配合{@link }实现文件下载进度监听
      * @return
      */
     public Observable<ResponseBody> downloadFile(String fileUrl, Map<String, Object> header) {
@@ -421,6 +422,7 @@ public class TourCoolRetrofit {
                         if (TextUtils.isEmpty(message)) {
                             return;
                         }
+                        LogUtils.d(TAG, message);
                         //json格式使用Logger.json打印
                         boolean isJson = message.startsWith("[") || message.startsWith("{");
                         isJson = isJson && mLogJsonEnable;

@@ -1,18 +1,20 @@
 package com.tourcoo.xiantao.retrofit.service;
 
 
-import com.tourcoo.xiantao.entity.AddressInfoEntity;
+import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.TokenInfo;
-import com.tourcoo.xiantao.entity.UpdateEntity;
 import com.tourcoo.xiantao.entity.banner.BannerDetail;
+import com.tourcoo.xiantao.helper.GoodsCount;
 
 import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
-import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.QueryMap;
 
@@ -24,6 +26,15 @@ import retrofit2.http.QueryMap;
  * @E-Mail: 971613168@qq.com
  */
 public interface ApiService {
+
+    /**
+     * 多个文件上传
+     *
+     * @param files
+     * @return
+     */
+    @POST("file/uploadFiles")
+    Call<BaseEntity> uploadFiles(@Body RequestBody files);
 
     /**
      * 发送验证码
@@ -74,6 +85,14 @@ public interface ApiService {
     Observable<BaseEntity> logout();
 
     /**
+     * 修改密码
+     * @param map
+     * @return
+     */
+    @POST("user/resetpwd")
+    Observable<BaseEntity> restPassword(@QueryMap Map<String, Object> map);
+
+    /**
      * 首页的banner
      *
      * @return
@@ -105,7 +124,194 @@ public interface ApiService {
      * @return
      */
     @POST("adress/lists")
-    Observable<BaseEntity<List<AddressInfoEntity>>> myAddressList();
+    Observable<BaseEntity<List<AddressEntity>>> myAddressList();
+
+
+    /**
+     * 新增地址
+     *
+     * @param map
+     * @return
+     */
+    @POST("adress/add")
+    Observable<BaseEntity> addAddress(@Body Map<String, Object> map);
+
+    /**
+     * 删除地址
+     *
+     * @param map
+     * @return
+     */
+    @POST("adress/del")
+    Observable<BaseEntity> deleteAddress(@QueryMap Map<String, Object> map);
+
+    /**
+     * 编辑地址
+     *
+     * @param map
+     * @return
+     */
+    @POST("adress/edit")
+    Observable<BaseEntity> editAddress(@QueryMap Map<String, Object> map);
+
+
+    /**
+     * 设置默认地址
+     *
+     * @param map
+     * @return
+     */
+    @POST("adress/setdefault")
+    Observable<BaseEntity> setDefaultAddress(@QueryMap Map<String, Object> map);
+
+
+    /**
+     * 商品分类tab页
+     *
+     * @return
+     */
+    @POST("category/Showlist")
+    Observable<BaseEntity> getGoodsClassify();
+
+
+    /**
+     * 商品详请
+     *
+     * @param map
+     * @return
+     */
+    @POST("goods/detail")
+    Observable<BaseEntity> getGoodsDetail(@QueryMap Map<String, Object> map);
+
+
+    /**
+     * 商品结算
+     *
+     * @param map
+     * @return
+     */
+    @POST("order/buyNow")
+    Observable<BaseEntity> settleGoods(@QueryMap Map<String, Object> map);
+
+    /**
+     * 详情中立即购买
+     *
+     * @param map
+     * @return
+     */
+    @POST("order/buyNow_pay")
+    Observable<BaseEntity> buyNowPay(@QueryMap Map<String, Object> map);
+
+
+    /**
+     * 添加商品到购物车
+     *
+     * @param map
+     * @return
+     */
+    @POST("cart/add")
+    Observable<BaseEntity<GoodsCount>> addGoods(@QueryMap Map<String, Object> map);
+
+    /**
+     * 获取购物车中商品数量
+     *
+     * @return
+     */
+    @POST("cart/getTotalNum")
+    Observable<BaseEntity<GoodsCount>> getTotalNum();
+
+    /**
+     * 获取我的购物车商品列表
+     *
+     * @return
+     */
+    @POST("cart/getlists")
+    Observable<BaseEntity> getMyShoppingCarList();
+
+
+    /**
+     * 购物车减
+     *
+     * @param map
+     * @return
+     */
+    @POST("cart/sub")
+    Observable<BaseEntity<GoodsCount>> reduceGoods(@QueryMap Map<String, Object> map);
+
+
+    /**
+     * 删除购物车
+     *
+     * @param map
+     * @return
+     */
+    @POST("cart/delete")
+    Observable<BaseEntity<GoodsCount>> deleteGoods(@QueryMap Map<String, Object> map);
+
+
+    /**
+     * 获取分类的商品列表
+     *
+     * @param map
+     * @return
+     */
+    @POST("goods/category_list")
+    Observable<BaseEntity> getCategoryGoodsList(@QueryMap Map<String, Object> map);
+
+
+    /**
+     * 个人中心接口
+     *
+     * @return
+     */
+    @POST("user/index")
+    Observable<BaseEntity> getPersonalCenter();
+
+
+    /**
+     * 我的订单
+     *
+     * @param map
+     * @return
+     */
+    @POST("order/my")
+    Observable<BaseEntity> requestOrderInfo(@QueryMap Map<String, Object> map);
+
+
+
+    /**
+     * 订单详情
+     *
+     * @param map
+     * @return
+     */
+    @POST("order/detail")
+    Observable<BaseEntity> requestOrderDetail(@QueryMap Map<String, Object> map);
+
+    /**
+     * 取消订单
+     * @param map
+     * @return
+     */
+    @POST("order/cancel")
+    Observable<BaseEntity> requestCancelOrder(@QueryMap Map<String, Object> map);
+
+
+    /**
+     * 退货
+     * @param map
+     * @return
+     */
+    @POST("order/order_return")
+    Observable<BaseEntity> requestReturnGoods(@QueryMap Map<String, Object> map);
+
+    /**
+     * 添加收藏
+     * @param map
+     * @return
+     */
+    @POST("collect/add")
+    Observable<BaseEntity> collectAdd(@QueryMap Map<String, Object> map);
 
 
 }

@@ -1,7 +1,7 @@
 package com.tourcoo.xiantao.entity;
 
 
-import com.tourcoo.xiantao.entity.goods.GoodsEntity;
+import com.tourcoo.xiantao.entity.goods.GoodsDetailEntity;
 
 import java.util.List;
 
@@ -16,6 +16,6 @@ public class OrderEntity {
 
     private String orderNumber;
 
-    private List<GoodsEntity> mGoodsEntityList;
+    private List<GoodsDetailEntity> mGoodsDetailEntityList;
 
 }

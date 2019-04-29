@@ -1,14 +1,17 @@
 package com.tourcoo.xiantao.retrofit.repository;
 
 
+import android.text.TextUtils;
+
 import com.tourcoo.xiantao.core.frame.retrofit.RetryWhen;
 import com.tourcoo.xiantao.core.frame.retrofit.TourCoolRetrofit;
 import com.tourcoo.xiantao.core.frame.retrofit.TourCoolTransformer;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
-import com.tourcoo.xiantao.entity.AddressInfoEntity;
+import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.TokenInfo;
 import com.tourcoo.xiantao.entity.banner.BannerDetail;
+import com.tourcoo.xiantao.helper.GoodsCount;
 import com.tourcoo.xiantao.retrofit.service.ApiService;
 
 import java.util.HashMap;
@@ -16,6 +19,10 @@ import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
+
+import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_ALI;
+import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_BALANCE;
+import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
 
 /**
  * @author :JenkinsZhou
@@ -46,7 +53,7 @@ public class ApiRepository extends BaseRepository {
     }
 
 
-    private ApiService getApiService() {
+    public ApiService getApiService() {
         mApiService = TourCoolRetrofit.getInstance().createService(ApiService.class);
         return mApiService;
     }
@@ -117,6 +124,20 @@ public class ApiRepository extends BaseRepository {
 
 
     /**
+     * 重置密码
+     *
+     * @return
+     */
+    public Observable<BaseEntity> restPassword(String mobile, String password, String vCode) {
+        Map<String, Object> params = new HashMap<>(4);
+        params.put("mobile", mobile);
+        params.put("newpassword", password);
+        params.put("event", "resetpwd");
+        params.put("captcha", vCode);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().restPassword(params).retryWhen(new RetryWhen()));
+    }
+
+    /**
      * 注销登录
      *
      * @return
@@ -159,9 +180,292 @@ public class ApiRepository extends BaseRepository {
      *
      * @return
      */
-    public Observable<BaseEntity<List<AddressInfoEntity>>> myAddressList() {
+    public Observable<BaseEntity<List<AddressEntity>>> myAddressList() {
         return TourCoolTransformer.switchSchedulersIo(getApiService().myAddressList().retryWhen(new RetryWhen()));
     }
 
+    /**
+     * 地址列表
+     *
+     * @return
+     */
+    public Observable<BaseEntity> addAddress(String region, String name, String phone, String detail) {
+        Map<String, Object> params = new HashMap<>(4);
+        params.put("region", region);
+        params.put("name", name);
+        params.put("phone", phone);
+        params.put("detail", detail);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().addAddress(params).retryWhen(new RetryWhen()));
+    }
 
+    /**
+     * 删除地址
+     *
+     * @param addressId
+     * @return
+     */
+    public Observable<BaseEntity> deleteAddress(int addressId) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("id", addressId + "");
+        return TourCoolTransformer.switchSchedulersIo(getApiService().deleteAddress(params).retryWhen(new RetryWhen()));
+    }
+
+    /**
+     * 编辑地址
+     *
+     * @param addressId
+     * @return
+     */
+    public Observable<BaseEntity> editAddress(int addressId, String region, String name, String phone, String detail) {
+        Map<String, Object> params = new HashMap<>(5);
+        params.put("id", addressId + "");
+        params.put("region", region);
+        params.put("name", name);
+        params.put("phone", phone);
+        params.put("detail", detail);
+        TourCooLogUtil.i(TAG, params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().editAddress(params).retryWhen(new RetryWhen()));
+    }
+
+    /**
+     * 设置默认地址
+     *
+     * @param addressId
+     * @return
+     */
+    public Observable<BaseEntity> setDefaultAddress(int addressId) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("id", addressId + "");
+        TourCooLogUtil.i(TAG, params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().setDefaultAddress(params).retryWhen(new RetryWhen()));
+    }
+
+    /**
+     * 获取分类页面商品列表
+     *
+     * @return
+     */
+    public Observable<BaseEntity> getGoodsClassify() {
+        return TourCoolTransformer.switchSchedulersIo(getApiService().getGoodsClassify().retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 根据商品id获取商品详情
+     *
+     * @return
+     */
+    public Observable<BaseEntity> getGoodsDetail(int goodsId) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("goods_id", goodsId);
+        TourCooLogUtil.i(TAG, TAG + ":" + goodsId);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().getGoodsDetail(params).retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 直接购买结算接口
+     *
+     * @param goodsId
+     * @param goodsCount
+     * @param skuId
+     * @return
+     */
+    public Observable<BaseEntity> settleGoods(int goodsId, int goodsCount, String skuId) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("goods_id", goodsId);
+        params.put("goods_num", goodsCount);
+        params.put("goods_sku_id", skuId);
+        TourCooLogUtil.i(TAG, TAG + ":" + goodsId);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().settleGoods(params).retryWhen(new RetryWhen()));
+    }
+
+    /**
+     * 立即支付接口
+     *
+     * @param map
+     * @param payType
+     * @return
+     */
+    public Observable<BaseEntity> buyNowPay(Map<String, Object> map, int payType) {
+        Map<String, Object> params = new HashMap<>(4);
+        for (Map.Entry<String, Object> stringObjectEntry : map.entrySet()) {
+            params.put(stringObjectEntry.getKey(), stringObjectEntry.getValue());
+        }
+        String payTypeString;
+        switch (payType) {
+            case PAY_TYPE_ALI:
+                payTypeString = "ali";
+                break;
+            case PAY_TYPE_BALANCE:
+                payTypeString = "cash";
+                break;
+            case PAY_TYPE_WE_XIN:
+                payTypeString = "wx";
+                break;
+            default:
+                payTypeString = "cash";
+                break;
+        }
+        params.put("pay_type", payTypeString);
+        TourCooLogUtil.i(TAG, params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().buyNowPay(params).retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 添加购物车接口
+     *
+     * @param goodsId
+     * @param goodsCount
+     * @param skuId
+     * @return
+     */
+    public Observable<BaseEntity<GoodsCount>> addGoods(int goodsId, int goodsCount, String skuId) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("goods_id", goodsId);
+        params.put("goods_num", goodsCount);
+        params.put("goods_sku_id", skuId);
+        TourCooLogUtil.i(TAG, TAG + ":" + goodsId);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().addGoods(params).retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 获取购物车中商品数量
+     *
+     * @return
+     */
+    public Observable<BaseEntity<GoodsCount>> getTotalNum() {
+        return TourCoolTransformer.switchSchedulersIo(getApiService().getTotalNum().retryWhen(new RetryWhen()));
+    }
+
+    /**
+     * 获取我的购物车中商品列表
+     *
+     * @return
+     */
+    public Observable<BaseEntity> getMyShoppingCarList() {
+        return TourCoolTransformer.switchSchedulersIo(getApiService().getMyShoppingCarList().retryWhen(new RetryWhen()));
+    }
+
+    /**
+     * 购物车减
+     *
+     * @param goodsId
+     * @param skuId
+     * @return
+     */
+    public Observable<BaseEntity<GoodsCount>> reduceGoods(int goodsId, String skuId) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("goods_id", goodsId);
+        params.put("goods_sku_id", skuId);
+        TourCooLogUtil.i(TAG, TAG + ":" + goodsId);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().reduceGoods(params).retryWhen(new RetryWhen()));
+    }
+
+    /**
+     * 删除购物车中当前商品
+     *
+     * @param goodsId
+     * @param skuId
+     * @return
+     */
+    public Observable<BaseEntity<GoodsCount>> deleteGoods(int goodsId, String skuId) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("goods_id", goodsId);
+        params.put("goods_sku_id", skuId);
+        TourCooLogUtil.i(TAG, TAG + ":" + goodsId);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().deleteGoods(params).retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 根据商品分类id获取商品列表
+     *
+     * @param categoryId
+     * @return
+     */
+    public Observable<BaseEntity> getCategoryGoodsList(int categoryId, String categoryType, int pageIndex, String keyWord) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("types", categoryType);
+        params.put("p", pageIndex);
+        if (!TextUtils.isEmpty(keyWord)) {
+            params.put("id", -1);
+            params.put("name", keyWord);
+        } else {
+            params.put("id", categoryId);
+        }
+        TourCooLogUtil.i(TAG, TAG + ":" + params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().getCategoryGoodsList(params).retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 会员中心
+     *
+     * @return
+     */
+    public Observable<BaseEntity> getPersonalCenter() {
+        return TourCoolTransformer.switchSchedulersIo(getApiService().getPersonalCenter().retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 获取我的订单列表
+     *
+     * @return
+     */
+    public Observable<BaseEntity> requestOrderInfo(int orderStatus, int page) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("p", page);
+        params.put("status", orderStatus);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestOrderInfo(params).retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 获取订单详情
+     *
+     * @return
+     */
+    public Observable<BaseEntity> requestOrderDetail(int orderId) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("id", orderId);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestOrderDetail(params).retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 取消订单
+     *
+     * @return
+     */
+    public Observable<BaseEntity> requestCancelOrder(int orderId) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("id", orderId);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestCancelOrder(params).retryWhen(new RetryWhen()));
+    }
+
+    /**
+     * 申请退货
+     *
+     * @param orderId
+     * @return
+     */
+    public Observable<BaseEntity> requestReturnGoods(int orderId, String goodsIds) {
+        Map<String, Object> params = new HashMap<>(2);
+        params.put("id", orderId);
+        params.put("goods_id", goodsIds);
+        TourCooLogUtil.i(TAG, TAG + ":" + params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestReturnGoods(params).retryWhen(new RetryWhen()));
+    }
+
+
+    public Observable<BaseEntity> collectAdd(int goodsIds) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("goods_id", goodsIds);
+        TourCooLogUtil.i(TAG, TAG + ":" + params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().collectAdd(params).retryWhen(new RetryWhen()));
+    }
 }

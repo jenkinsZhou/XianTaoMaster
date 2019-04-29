@@ -8,13 +8,23 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.blankj.utilcode.util.LogUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
+import com.scwang.smartrefresh.layout.header.ClassicsHeader;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.MenuAdapter;
 import com.tourcoo.xiantao.core.common.RequestConfig;
 import com.tourcoo.xiantao.core.frame.base.fragment.BaseTitleFragment;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
+import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.core.util.StatusBarUtil;
@@ -22,11 +32,16 @@ import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.core.widget.divider.TourCoolRecycleViewDivider;
+import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.MenuItem;
-import com.tourcoo.xiantao.entity.user.UserInfo;
+import com.tourcoo.xiantao.entity.TokenInfo;
+import com.tourcoo.xiantao.entity.user.PensonalCenterBean;
+import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.SettingActivity;
 import com.tourcoo.xiantao.ui.goods.CollectionGoodsListActivity;
-import com.tourcoo.xiantao.ui.order.AllOrderActivity;
+import com.tourcoo.xiantao.ui.order.MyOrderListActivity;
+import com.trello.rxlifecycle3.android.ActivityEvent;
+import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +50,10 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 
 /**
  * @author :JenkinsZhou
@@ -44,17 +62,24 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * @date 2019年03月28日17:40
  * @Email: 971613168@qq.com
  */
-public class MineFragment extends BaseTitleFragment implements View.OnClickListener {
+public class MineFragment extends BaseTitleFragment implements View.OnClickListener, OnRefreshListener {
     private MenuAdapter mMenuAdapter;
     private List<MenuItem> mMenuItemList = new ArrayList<>();
     private RecyclerView rvMineMenu;
     private TextView tvUserNickName;
     private CircleImageView civUserAvatar;
+    private SmartRefreshLayout refreshLayout;
     /**
      * 账户余额
      */
     private TextView tvBalance;
     private TextView tvAccumulatePoints;
+
+    private TextView tvRedDotWaitReturn;
+    private TextView tvRedDotWaitPay;
+    private TextView tvRedDotWaitSend;
+    private TextView tvRedDotWaitReceive;
+    private TextView tvRedDotWaitEvaluate;
 
     @Override
     public int getContentLayout() {
@@ -63,9 +88,17 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
 
     @Override
     public void initView(Bundle savedInstanceState) {
+        refreshLayout = mContentView.findViewById(R.id.refreshLayout);
+        tvRedDotWaitPay = mContentView.findViewById(R.id.tvRedDotWaitPay);
+        tvRedDotWaitEvaluate = mContentView.findViewById(R.id.tvRedDotWaitEvaluate);
+        tvRedDotWaitSend = mContentView.findViewById(R.id.tvRedDotWaitSend);
+        tvRedDotWaitReceive = mContentView.findViewById(R.id.tvRedDotWaitReceive);
+        tvRedDotWaitReturn = mContentView.findViewById(R.id.tvRedDotWaitReturn);
+        refreshLayout.setRefreshHeader(new ClassicsHeader(mContext).setSpinnerStyle(SpinnerStyle.Translate));
         tvUserNickName = mContentView.findViewById(R.id.tvUserNickName);
         tvUserNickName.setOnClickListener(this);
         civUserAvatar = mContentView.findViewById(R.id.civUserAvatar);
+        civUserAvatar.setOnClickListener(this);
         tvBalance = mContentView.findViewById(R.id.tvBalance);
         tvAccumulatePoints = mContentView.findViewById(R.id.tvAccumulatePoints);
         RelativeLayout rlSearch = mContentView.findViewById(R.id.rlTitleBar);
@@ -98,7 +131,11 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     public void loadData() {
         super.loadData();
         init();
-        showUI();
+        if (AccountInfoHelper.getInstance().isLogin()) {
+            checkTokenAndRequestUserInfo();
+        } else {
+            showUnLoginUI();
+        }
     }
 
 
@@ -136,7 +173,11 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                         break;
                     case 3:
                         //收货地址
-                        TourCoolUtil.startActivity(mContext, ShippingAddressManagerActivity.class);
+                        if (!AccountInfoHelper.getInstance().isLogin()) {
+                            ToastUtil.show("您还没有登录");
+                            return;
+                        }
+                        TourCoolUtil.startActivity(mContext, AddressManagerActivity.class);
                         break;
                     case 4:
                         //客服电话
@@ -183,7 +224,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.llAllOrder:
-                TourCooUtil.startActivity(mContext, AllOrderActivity.class);
+                TourCooUtil.startActivity(mContext, MyOrderListActivity.class);
                 break;
             case R.id.llWaitPay:
                 TourCooUtil.startActivity(mContext, RegisterActivity.class);
@@ -197,18 +238,26 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                 }
                 TourCooUtil.startActivity(mContext, LoginActivity.class);
                 break;
+            case R.id.civUserAvatar:
+                if (!AccountInfoHelper.getInstance().isLogin()) {
+                    ToastUtil.show("您还未登录");
+                    return;
+                }
+                TourCooUtil.startActivity(mContext, PersonalDataActivity.class);
+                break;
             default:
                 break;
         }
     }
 
 
-    private void showUI() {
+    private void showUI(PensonalCenterBean data) {
         if (AccountInfoHelper.getInstance().isLogin()) {
-            showHasLoginUI(AccountInfoHelper.getInstance().getUserInfo());
+            showHasLoginUI(data);
         } else {
             showUnLoginUI();
         }
+
     }
 
     /**
@@ -219,22 +268,30 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         GlideManager.loadImg(TourCooUtil.getDrawable(R.mipmap.img_default_avatar), civUserAvatar);
         tvBalance.setText("_");
         tvAccumulatePoints.setText("_");
+        showRedDot(tvRedDotWaitEvaluate, 0);
+        showRedDot(tvRedDotWaitReturn, 0);
+        showRedDot(tvRedDotWaitPay, 0);
+        showRedDot(tvRedDotWaitSend, 0);
+        showRedDot(tvRedDotWaitReceive, 0);
     }
 
     /**
      * 已登录状态下显示
      *
-     * @param userInfo
+     * @param data
      */
-    private void showHasLoginUI(UserInfo userInfo) {
-        if (userInfo == null) {
+    private void showHasLoginUI(PensonalCenterBean data) {
+        if (data == null) {
             showUnLoginUI();
             return;
         }
-        tvUserNickName.setText(getNotNullValue(userInfo.getNickname()));
-        GlideManager.loadImg(RequestConfig.BASE_URL + userInfo.getAvatar(), civUserAvatar);
-        tvBalance.setText("￥" + userInfo.getScore());
-        tvAccumulatePoints.setText(userInfo.getScore() + "积分");
+        tvUserNickName.setText(getNotNullValue(data.getNickname()));
+        String url = TourCooUtil.getUrl(data.getAvatar());
+        TourCooLogUtil.i(TAG, TAG + "头像:" + url);
+        GlideManager.loadImg(url, civUserAvatar);
+        tvBalance.setText("￥" + data.getCash());
+//        tvAccumulatePoints.setText(userInfo.getScore() + "积分");
+        showMineInfo(data);
     }
 
 
@@ -243,5 +300,124 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
             return "未填写";
         }
         return value;
+    }
+
+
+    /**
+     * 获取个人中心信息
+     */
+    private void getPersonalCenter() {
+        ApiRepository.getInstance().getPersonalCenter().compose(bindUntilEvent(FragmentEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                if (entity.data != null) {
+                                    LogUtils.i(JSON.toJSONString(entity.data));
+                                    PensonalCenterBean centerBean = parseInfo(entity.data);
+                                    if (centerBean != null) {
+                                        showUI(centerBean);
+                                        refreshLayout.finishRefresh(true);
+                                    } else {
+                                        showUnLoginUI();
+                                        refreshLayout.finishRefresh(false);
+                                    }
+                                }
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                                refreshLayout.finishRefresh(false);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onRequestError(Throwable e) {
+                        super.onRequestError(e);
+                        refreshLayout.finishRefresh(false);
+                    }
+                });
+    }
+
+
+    private PensonalCenterBean parseInfo(Object object) {
+        if (object == null) {
+            return null;
+        }
+        try {
+            String info = JSONObject.toJSONString(object);
+            TourCooLogUtil.i(TAG, "准备解析:" + info);
+            return JSON.parseObject(info, PensonalCenterBean.class);
+        } catch (Exception e) {
+            TourCooLogUtil.e(TAG, "解析异常:" + e.toString());
+            return null;
+        }
+    }
+
+    /**
+     * 显示小红点
+     *
+     * @param tvDot
+     * @param count
+     */
+    private void showRedDot(TextView tvDot, int count) {
+        if (count <= 0) {
+            tvDot.setVisibility(View.GONE);
+            return;
+        }
+        tvDot.setVisibility(View.VISIBLE);
+        if (count > 99) {
+            tvDot.setText("99+");
+        } else {
+            tvDot.setText(count + "");
+        }
+    }
+
+    private void showMineInfo(PensonalCenterBean data) {
+        if (data == null) {
+            return;
+        }
+        showRedDot(tvRedDotWaitEvaluate, data.getNocomment());
+        showRedDot(tvRedDotWaitReturn, data.getReturnX());
+        showRedDot(tvRedDotWaitPay, data.getNopay());
+        showRedDot(tvRedDotWaitSend, data.getNofreight());
+        showRedDot(tvRedDotWaitReceive, data.getNoreceipt());
+    }
+
+    @Override
+    public void onRefresh(RefreshLayout refreshLayout) {
+        checkTokenAndRequestUserInfo();
+    }
+
+    /**
+     * 校验token是否失效
+     */
+    private void checkTokenAndRequestUserInfo() {
+        ApiRepository.getInstance().checkToken().compose(bindUntilEvent(FragmentEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity<TokenInfo>>() {
+                    @Override
+                    public void onRequestNext(BaseEntity<TokenInfo> entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                boolean isLogin = tokenCheckCallBack(entity.data);
+                                if (isLogin) {
+                                    getPersonalCenter();
+                                } else {
+                                    showUnLoginUI();
+                                }
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+                });
+    }
+
+
+    private boolean tokenCheckCallBack(TokenInfo tokenInfo) {
+        if (tokenInfo == null || AccountInfoHelper.getInstance().getUserInfo() == null) {
+            return false;
+        }
+        return tokenInfo.getToken().equals(AccountInfoHelper.getInstance().getToken());
     }
 }

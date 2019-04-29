@@ -16,14 +16,20 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_ALL;
+import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_COMMENT;
+import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_PAY;
+import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_RECIEVE;
+import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_SEND;
+
 /**
  * @author :JenkinsZhou
- * @description :全部订单
+ * @description :我的订单
  * @company :途酷科技
  * @date 2019年04月18日15:32
  * @Email: 971613168@qq.com
  */
-public class AllOrderActivity extends BaseTourCooTitleActivity implements ViewPager.OnPageChangeListener {
+public class MyOrderListActivity extends BaseTourCooTitleActivity implements ViewPager.OnPageChangeListener {
     private ViewPager orderViewPager;
     private TabLayout orderTabLayout;
     private String[] titles = new String[]{"全部", "待付款", "待发货", "待收货", "待评价"};
@@ -41,19 +47,19 @@ public class AllOrderActivity extends BaseTourCooTitleActivity implements ViewPa
     }
 
 
-
     @Override
     public void loadData() {
         super.loadData();
         List<Fragment> fragmentList = new ArrayList<>();
-        fragmentList.add(MineFragment.newInstance());
-        fragmentList.add(MineFragment.newInstance());
-        fragmentList.add(MineFragment.newInstance());
-        fragmentList.add(MineFragment.newInstance());
-        fragmentList.add(MineFragment.newInstance());
+        fragmentList.add(OrderListFragment.newInstance(ORDER_STATUS_ALL));
+        fragmentList.add(OrderListFragment.newInstance(ORDER_STATUS_WAIT_PAY));
+        fragmentList.add(OrderListFragment.newInstance(ORDER_STATUS_WAIT_SEND));
+        fragmentList.add(OrderListFragment.newInstance(ORDER_STATUS_WAIT_RECIEVE));
+        fragmentList.add(OrderListFragment.newInstance(ORDER_STATUS_WAIT_COMMENT));
         MyPagerAdapter pagerAdapter = new MyPagerAdapter(getSupportFragmentManager(), fragmentList);
         orderViewPager.addOnPageChangeListener(this);
         orderViewPager.setAdapter(pagerAdapter);
+        orderViewPager.setOffscreenPageLimit(5);
         orderTabLayout.setupWithViewPager(orderViewPager);
         initTabTitle();
     }
@@ -102,4 +108,6 @@ public class AllOrderActivity extends BaseTourCooTitleActivity implements ViewPa
     public void onPageScrollStateChanged(int state) {
 
     }
+
+
 }

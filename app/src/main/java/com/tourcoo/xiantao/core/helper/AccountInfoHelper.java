@@ -3,6 +3,7 @@ package com.tourcoo.xiantao.core.helper;
 
 import android.text.TextUtils;
 
+import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.user.UserInfo;
 
 import org.litepal.LitePal;
@@ -20,6 +21,7 @@ public class AccountInfoHelper {
     private static final String TAG = "AccountInfoHelper";
     private String openId = "";
     private String token = "";
+    private AddressEntity defaultAddress;
 
     public String getToken() {
         if (TextUtils.isEmpty(token)) {
@@ -101,4 +103,36 @@ public class AccountInfoHelper {
     }
 
 
+    public void setDefaultAddress(AddressEntity addressEntity) {
+        if (addressEntity == null) {
+            return;
+        }
+        defaultAddress = addressEntity;
+    }
+
+    public AddressEntity getDefaultAddress() {
+        return defaultAddress;
+    }
+
+    public String getWholeAddressInfo(AddressEntity defaultAddress) {
+        if (defaultAddress == null || defaultAddress.getArea() == null) {
+            return "";
+        }
+        AddressEntity.AreaBean areaBean = defaultAddress.getArea();
+        return areaBean.getProvince() + areaBean.getCity() + areaBean.getRegion() + defaultAddress.getDetail();
+    }
+
+    public String getPhone(AddressEntity defaultAddress) {
+        if (defaultAddress == null || defaultAddress.getArea() == null) {
+            return "";
+        }
+        return defaultAddress.getPhone();
+    }
+
+    public String getName(AddressEntity defaultAddress) {
+        if (defaultAddress == null || defaultAddress.getArea() == null) {
+            return "";
+        }
+        return defaultAddress.getName();
+    }
 }

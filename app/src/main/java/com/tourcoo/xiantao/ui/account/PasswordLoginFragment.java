@@ -66,6 +66,7 @@ public class PasswordLoginFragment extends BaseFragment implements View.OnClickL
         ivClearPhone = mContentView.findViewById(R.id.ivClearPhone);
         ivClearPass = mContentView.findViewById(R.id.ivClearPass);
         ivPass = mContentView.findViewById(R.id.ivPass);
+        mContentView.findViewById(R.id.tvForgetPassword).setOnClickListener(this);
         ivPass.setOnClickListener(this);
         listenInput(etPhoneNumber, ivClearPhone);
         listenInput(etPassword, ivClearPass);
@@ -154,6 +155,10 @@ public class PasswordLoginFragment extends BaseFragment implements View.OnClickL
                     passwordShowFlag = true;
                 }
                 visiblePassByFlag(passwordShowFlag);
+                break;
+
+            case R.id.tvForgetPassword:
+                TourCooUtil.startActivity(mContext, ForgetPasswordActivity.class);
                 break;
 
             default:

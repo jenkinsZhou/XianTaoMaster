@@ -1,7 +1,7 @@
 package com.tourcoo.xiantao.entity;
 
 import com.tourcoo.xiantao.entity.banner.BannerBean;
-import com.tourcoo.xiantao.entity.goods.GoodsBean;
+import com.tourcoo.xiantao.entity.goods.HomeGoodsBean;
 import com.tourcoo.xiantao.entity.news.NewsBean;
 
 import java.util.List;
@@ -16,14 +16,14 @@ import java.util.List;
 public class HomeInfoBean {
     private List<NewsBean> news;
     private List<BannerBean> banner;
-    private List<GoodsBean> goods;
+    private List<HomeGoodsBean> goods;
 
 
-    public List<GoodsBean> getGoods() {
+    public List<HomeGoodsBean> getGoods() {
         return goods;
     }
 
-    public void setGoods(List<GoodsBean> goods) {
+    public void setGoods(List<HomeGoodsBean> goods) {
         this.goods = goods;
     }
 

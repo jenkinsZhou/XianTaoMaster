@@ -7,8 +7,8 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.CollectionGoodsAdapter;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
-import com.tourcoo.xiantao.entity.goods.GoodsEntity;
-import com.tourcoo.xiantao.ui.BaseTourcooRefreshLoadActivity;
+import com.tourcoo.xiantao.entity.goods.GoodsDetailEntity;
+import com.tourcoo.xiantao.ui.BaseTourCooRefreshLoadActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +20,8 @@ import java.util.List;
  * @date 2019年03月29日16:21
  * @Email: 971613168@qq.com
  */
-public class CollectionGoodsListActivity extends BaseTourcooRefreshLoadActivity<GoodsEntity> {
-    private List<GoodsEntity> collectionGoodsList = new ArrayList<>();
+public class CollectionGoodsListActivity extends BaseTourCooRefreshLoadActivity<GoodsDetailEntity> {
+    private List<GoodsDetailEntity> collectionGoodsList = new ArrayList<>();
     private CollectionGoodsAdapter mCollectionGoodsAdapter;
 
     @Override
@@ -71,14 +71,14 @@ public class CollectionGoodsListActivity extends BaseTourcooRefreshLoadActivity<
     private void testLoad() {
         mStatusManager.showSuccessLayout();
         int size = 25;
-        GoodsEntity goodsEntity;
+        GoodsDetailEntity goodsDetailEntity;
         for (int i = 0; i < size; i++) {
-            goodsEntity = new GoodsEntity(3);
-            goodsEntity.goodsSpec = "10" + i + "g/包";
-            goodsEntity.goodsCurrentPrice = 10 + i + 0.9;
-            goodsEntity.goodsLabels = "维生素C 很甜";
-            goodsEntity.goodsName = "赣州脐橙";
-            collectionGoodsList.add(goodsEntity);
+//            goodsDetailEntity = new GoodsDetailEntity(3);
+         /*   goodsDetailEntity.goodsSpec = "10" + i + "g/包";
+            goodsDetailEntity.goodsCurrentPrice = 10 + i + 0.9;
+            goodsDetailEntity.goodsLabels = "维生素C 很甜";
+            goodsDetailEntity.goodsName = "赣州脐橙";*/
+//            collectionGoodsList.add(goodsDetailEntity);
         }
     }
 }
