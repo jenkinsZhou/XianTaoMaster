@@ -5,6 +5,7 @@ import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.TokenInfo;
 import com.tourcoo.xiantao.entity.banner.BannerDetail;
+import com.tourcoo.xiantao.entity.upload.UploadEntity;
 import com.tourcoo.xiantao.helper.GoodsCount;
 
 import java.util.List;
@@ -33,8 +34,8 @@ public interface ApiService {
      * @param files
      * @return
      */
-    @POST("file/uploadFiles")
-    Call<BaseEntity> uploadFiles(@Body RequestBody files);
+    @POST("common/upload")
+    Call<BaseEntity<UploadEntity>> uploadFiles(@Body RequestBody files);
 
     /**
      * 发送验证码

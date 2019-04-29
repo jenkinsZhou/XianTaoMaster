@@ -18,6 +18,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
@@ -36,6 +37,7 @@ import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.radius.RadiusEditText;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.upload.UploadEntity;
 import com.tourcoo.xiantao.entity.user.UserInfo;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.retrofit.repository.UploadProgressBody;
@@ -86,8 +88,7 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
     /**
      * 回调回来的图片ur集合
      */
-    private String mImages = "";
-
+    private String imageUrl = "";
     private MyHandler mHandler = new MyHandler(this);
     private Message message;
 
@@ -212,7 +213,6 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
 
 
     private void showAvatar(String url) {
-        TourCooLogUtil.i(TAG, "图片URL：" + url);
         GlideManager.loadImg(url, crvAvatar, TourCooUtil.getDrawable(R.mipmap.img_default_avatar));
     }
 
@@ -318,8 +318,6 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
     }
 
 
-
-
     /**
      * 上传图片
      *
@@ -337,7 +335,7 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
         for (String imagePath : imageList) {
             //这里上传的是多图
             file = new File(imagePath);
-            builder.addFormDataPart("files", file.getName(), RequestBody.create(MediaType.parse("image/*"), file));
+            builder.addFormDataPart("file", file.getName(), RequestBody.create(MediaType.parse("image/*"), file));
         }
         RequestBody requestBody = builder.build();
 
@@ -358,34 +356,30 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
             }
         });
         showHudProgressDialog();
-        ApiRepository.getInstance().getApiService().uploadFiles(uploadProgressBody).enqueue(new Callback<BaseEntity>() {
+        ApiRepository.getInstance().getApiService().uploadFiles(uploadProgressBody).enqueue(new Callback<BaseEntity<UploadEntity>>() {
             @Override
-            public void onResponse(Call<BaseEntity> call, Response<BaseEntity> response) {
+            public void onResponse(Call<BaseEntity<UploadEntity>> call, Response<BaseEntity<UploadEntity>> response) {
                 closeHudProgressDialog();
-                BaseEntity<List> resp = response.body();
-                if (resp != null) {
-                    TourCooLogUtil.i("上传图片回调",response );
-                    if (resp.code == CODE_REQUEST_SUCCESS && resp.data != null) {
-                        List<String> imageUrl = new ArrayList<>();
-                        mImages = StringUtils.join(imageUrl, ",");
+                BaseEntity<UploadEntity> entity = response.body();
+                if (entity != null) {
+                    if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
                         //todo
-                         TourCooLogUtil.i(TAG,response );
+                        TourCooLogUtil.i(TAG, JSON.toJSONString(entity));
+                        TourCooLogUtil.i("图片URL：", entity.data.getUrl());
                     } else {
-                        ToastUtil.showFailed(resp.msg);
+                        ToastUtil.showFailed(entity.msg);
                     }
                 }
 
             }
 
             @Override
-            public void onFailure(Call<BaseEntity> call, Throwable t) {
+            public void onFailure(Call<BaseEntity<UploadEntity>> call, Throwable t) {
                 Toast.makeText(mContext, "图片上传失败，稍后重试", Toast.LENGTH_SHORT).show();
                 closeHudProgressDialog();
             }
         });
     }
-
-
 
 
     private static class MyHandler extends Handler {

@@ -42,6 +42,7 @@ public class TourCooUtil {
     private static int ACTIVITY_SINGLE_FLAG = Intent.FLAG_ACTIVITY_SINGLE_TOP;
     private static final String STRING_EMPTY = "";
     private static final String URL_TAG = "http";
+
     /**
      * 获取应用名称
      *
@@ -370,6 +371,7 @@ public class TourCooUtil {
         }
         return value;
     }
+
     public static String getNotNullValue(Object value) {
         if (value == null) {
             return "";
@@ -395,10 +397,15 @@ public class TourCooUtil {
         if (TextUtils.isEmpty(url)) {
             return STRING_EMPTY;
         }
-        if(url.contains(URL_TAG)){
+        if (url.contains(URL_TAG)) {
             return url;
-        }else {
-            return RequestConfig.BASE_URL + url;
+        } else {
+            if (url.startsWith("/")) {
+                return RequestConfig.BASE_URL_NO_LINE + url;
+            } else {
+                return RequestConfig.BASE_URL + url;
+            }
+
         }
     }
 

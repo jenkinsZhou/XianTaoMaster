@@ -1,7 +1,7 @@
 package com.tourcoo.xiantao.entity.goods;
 
 import com.tourcoo.xiantao.entity.spec.SpecData;
-import com.tourcoo.xiantao.widget.sku.Sku;
+import com.tourcoo.xiantao.entity.sku.Sku;
 
 import java.io.Serializable;
 import java.util.List;
