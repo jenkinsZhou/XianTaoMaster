@@ -3,6 +3,17 @@
     <string name="cancel">取消</string>
     <string name="customer_service_telephone_numbers">400-628-8382</string>
 
+    <string name="comm_price_format">¥ %s</string>
+
+    <string name="product_detail">商品详情</string>
+    <string name="product_detail_sku_quantity">购买数量</string>
+    <string name="product_detail_sku_confirm">确定</string>
+    <string name="product_detail_sku_recommend_price">价格：¥%1$s/%2$s</string>
+    <string name="product_detail_sku_stock">(库存:%1$s)</string>
+    <string name="product_detail_sku_quantity_over">购买数量超出最大库存，请修改购买数量</string>
+    <string name="product_detail_sku_quantity_empty">购买数量不能为空</string>
+    <string name="product_detail_sku_add_succeed">商品添加成功，请前往进货单查看</string>
+
     <string name="custom_activityoncrash_error_activity_error_occurred_explanation">抱歉，出现了不可预期的错误，您可重新启动应用，或者将错误信息反馈给我们，感谢您的理解与支持！</string>
     <string name="custom_activityoncrash_error_activity_unknown_exception">未知异常</string>
     <string name="custom_activityoncrash_error_activity_restart_app">重新启动</string>
@@ -73,4 +84,9 @@
     <string name="pickerview_hours">时</string>
     <string name="pickerview_minutes">分</string>
     <string name="pickerview_seconds">秒</string>
+
+
+    <string name="permission_already_granted">支付已有所需的权限</string>
+    <string name="permission_rejected">无法获取支付所需的权限, 请到系统设置开启</string>
+    <string name="permission_granted">所需的权限已经正常获取</string>
 </resources>

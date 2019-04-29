@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+    <!--分类页面的商品item布局-->
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/ivGoodsImage"
+        android:layout_width="@dimen/dp_60"
+        android:layout_height="@dimen/dp_55"
+        app:riv_corner_radius="@dimen/dp_5"
+        android:layout_gravity="center_horizontal"
+        android:src="@mipmap/ic_orange" />
+
+    <TextView
+        android:id="@+id/tvGoodsName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textColor="#333333"
+        android:layout_marginTop="@dimen/dp_5"
+        android:text="商品名称" />
+</LinearLayout>

@@ -29,8 +29,7 @@
         android:theme="@style/AppTheme">
         <activity android:name="com.tourcoo.xiantao.MainActivity" />
         <activity android:name="com.tourcoo.xiantao.core.crash.ErrorActivity" />
-        <activity android:name="com.tourcoo.xiantao.core.module.MainTabActivity"
-            >
+        <activity android:name="com.tourcoo.xiantao.core.module.MainTabActivity">
 
         </activity>
         <activity
@@ -54,13 +53,25 @@
         <activity android:name=".ui.account.RegisterActivity" />
         <activity android:name=".ui.account.AccountBalanceActivity" />
         <activity android:name=".ui.recharge.RechargeRuleActivity" />
-        <activity android:name=".ui.account.ShippingAddressManagerActivity" />
+        <activity android:name=".ui.account.AddressManagerActivity" />
         <activity android:name=".ui.goods.CollectionGoodsListActivity" />
         <activity android:name=".ui.account.InvoiceInformationActivity" />
-        <activity android:name=".ui.order.AllOrderActivity" />
+        <activity android:name=".ui.order.MyOrderListActivity" />
         <activity android:name=".ui.account.LoginActivity" />
         <activity android:name=".ui.SettingActivity" />
         <activity android:name=".ui.base.WebViewActivity" />
+        <activity android:name=".ui.account.EditAddressActivity" />
+        <activity android:name=".ui.goods.GoodsDetailActivity" />
+        <activity android:name=".ui.order.OrderSettleDetailActivity" />
+        <activity
+            android:name=".wxapi.WXPayEntryActivity"
+            android:exported="true"
+            android:launchMode="singleTop" />
+        <activity android:name=".ui.goods.GoodsCategoryListActivity" />
+        <activity android:name=".ui.order.OrderDetailActivity" />
+        <activity android:name=".ui.order.ReturnGoodsActivity" />
+        <activity android:name=".ui.account.EditPasswordActivity" />
+        <activity android:name=".ui.account.ForgetPasswordActivity" />
     </application>
 
 </manifest>

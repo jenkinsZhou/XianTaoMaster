@@ -3,13 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#F8F8F8"
-    android:paddingBottom="@dimen/dp_5"
     android:paddingLeft="@dimen/dp_13"
+    android:paddingTop="@dimen/dp_10"
     android:paddingRight="@dimen/dp_13"
-    android:paddingTop="@dimen/dp_5">
+    android:paddingBottom="@dimen/dp_10">
 
 
     <LinearLayout
+        android:id="@+id/llOrderInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_radius_5_white"
@@ -91,6 +92,7 @@
 
 
             <TextView
+                android:id="@+id/tvPrice"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -111,10 +113,11 @@
         <include layout="@layout/line_horizontal_gray_1half_dp" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:padding="@dimen/dp_15"
             android:id="@+id/photoRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/dp_80"
+            android:padding="@dimen/dp_15">
 
         </androidx.recyclerview.widget.RecyclerView>
 
@@ -124,55 +127,58 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_50"
-            android:paddingRight="@dimen/dp_15"
-            android:weightSum="4"
-            android:paddingLeft="@dimen/dp_15"
             android:gravity="center_vertical|right"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/dp_15"
+            android:paddingRight="@dimen/dp_15"
+            android:weightSum="4">
 
             <TextView
+                android:id="@+id/btnOne"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="@dimen/dp_30"
+                android:layout_weight="1"
+                android:background="@drawable/selector_bg_radius_15_gray_hollow"
                 android:gravity="center"
                 android:text="申请退货"
-                android:background="@drawable/selector_bg_radius_15_gray_hollow"
                 android:textColor="#ff666666"
                 android:textSize="@dimen/sp_13" />
 
             <TextView
+                android:id="@+id/btnTwo"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="@dimen/dp_30"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_weight="1"
+                android:background="@drawable/selector_bg_radius_15_gray_hollow"
                 android:gravity="center"
-                android:layout_marginLeft="@dimen/dp_10"
                 android:text="查看物流"
-                android:background="@drawable/selector_bg_radius_15_gray_hollow"
                 android:textColor="#ff666666"
                 android:textSize="@dimen/sp_13" />
 
             <TextView
-                android:id="@+id/btnCancel"
+                android:id="@+id/btnThree"
                 android:layout_width="0dp"
+                android:layout_height="@dimen/dp_30"
                 android:layout_marginLeft="@dimen/dp_10"
                 android:layout_weight="1"
-                android:layout_height="@dimen/dp_30"
+                android:background="@drawable/selector_bg_radius_15_gray_hollow"
                 android:gravity="center"
                 android:text="取消订单"
-                android:background="@drawable/selector_bg_radius_15_gray_hollow"
                 android:textColor="#ff666666"
                 android:textSize="@dimen/sp_13" />
 
             <TextView
-                android:id="@+id/btnPay"
-                android:layout_marginLeft="@dimen/dp_10"
-                android:background="@drawable/selector_bg_radius_15_gray_hollow"
+                android:id="@+id/btnFour"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="@dimen/dp_30"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_weight="1"
+                android:background="@drawable/selector_bg_radius_15_gray_hollow"
                 android:gravity="center"
                 android:text="立即支付"
-                android:textColor="#ff666666" />
+                android:textColor="#ff666666"
+                android:textSize="@dimen/sp_13" />
 
         </LinearLayout>
 

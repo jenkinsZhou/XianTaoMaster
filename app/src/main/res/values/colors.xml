@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <color name="color_f6">#f6f6f6</color>
+    <color name="comm_text_gray_light">#999999</color>
+    <color name="comm_text_gray">#666666</color>
+    <color name="comm_text_gray_dark">#333333</color>
+
+    <color name="comm_transparent">#00000000</color>
+    <color name="comm_white">#FFFFFF</color>
+    <color name="comm_black">#000000</color>
+    <color name="comm_yellow">#ffd022</color>
+    <color name="comm_bg">#f6f6f6</color>
+    <color name="comm_price">#ff5c5c</color>
+
+    <color name="comm_line">#dddddd</color>
     <color name="color_black_alpha_20">#33000000</color>
     <color name="whiteCommon">#FFFFFF</color>
     <!--灰色背景通用-->
@@ -15,6 +28,7 @@
     <color name="test4">#777777</color>
     <color name="test5">#666666</color>
 
+    <color name="colorGrayCommon">#F6F6F6</color>
 
     <color name="pickerview_timebtn_nor">#057dff</color>
     <color name="pickerview_timebtn_pre">#c2daf5</color>
@@ -36,7 +50,8 @@
     <color name="text_gray_common">#999999</color>
     <color name="colorTextGray">#666666</color>
     <!--灰色字体通用-->
-    <color name="grayCommon">#666666</color>
+    <color name="grayCommon">#999999</color>
+    <color name="grayCommon999">#999999</color>
     <!--黑色字体通用-->
     <color name="blackCommon">#171717</color>
     <!--浅灰色字体通用-->

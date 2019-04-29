@@ -51,7 +51,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:src="@mipmap/ic_all" />
+                    android:src="@mipmap/ic_arrow_right" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/crvAvatar"
@@ -74,14 +74,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:text="用户头像" />
+                    android:text="我的昵称" />
 
                 <TextView
+                    android:id="@+id/tvNickName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:text="1992-03-27" />
+                    android:text="" />
 
             </RelativeLayout>
 
@@ -100,11 +101,12 @@
                     android:text="出生日期" />
 
                 <TextView
+                    android:id="@+id/tvBirthday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:text="用户头像" />
+                    android:text="1992-03-27" />
             </RelativeLayout>
 
             <!--  性别-->
@@ -163,11 +165,12 @@
                     android:text="手机号" />
 
                 <TextView
+                    android:id="@+id/tvMobile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:drawableRight="@mipmap/ic_all"
+                    android:drawableRight="@mipmap/ic_arrow_right"
                     android:drawablePadding="@dimen/dp_10"
                     android:text="189******78" />
 

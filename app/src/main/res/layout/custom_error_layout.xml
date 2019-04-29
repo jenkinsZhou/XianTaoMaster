@@ -26,7 +26,7 @@
             android:layout_below="@id/ivNetError"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center_horizontal"
-            android:text="数据开了点小差" />
+            android:text="网络开了点小差" />
     </RelativeLayout>
 
 </RelativeLayout>

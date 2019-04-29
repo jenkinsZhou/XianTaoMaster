@@ -51,6 +51,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project (':swipemenulib')
     implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.blankj:utilcode:1.18.2'
     implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
     implementation 'androidx.appcompat:appcompat:1.0.2'
@@ -134,4 +135,12 @@ dependencies {
     implementation 'com.just.agentweb:agentweb:4.0.2'
     //webView提供下载功能
     implementation 'com.just.agentweb:download:4.0.2'
+
+    implementation 'com.alibaba:fastjson:1.1.54.android'
+    // 支付宝 SDK AAR 包所需的配置
+    implementation(name: 'alipaySdk-15.6.0-20190226104053', ext: 'aar')
+    //微信支付
+    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
+    implementation 'com.kaopiz:kprogresshud:1.2.0'
+    implementation 'com.wuhenzhizao:titlebar:1.0.4'
 }

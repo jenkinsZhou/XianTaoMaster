@@ -22,6 +22,7 @@
             android:orientation="vertical">
 
             <com.allen.library.SuperTextView
+                android:id="@+id/stvResetPassword"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_18"
                 android:layout_marginTop="@dimen/dp_20"
@@ -30,7 +31,7 @@
                 app:sLeftTextColor="@color/blackCommon"
                 app:sLeftTextSize="@dimen/sp_15"
                 app:sLeftTextString="修改登录密码"
-                app:sRightIconRes="@mipmap/ic_all"
+                app:sRightIconRes="@mipmap/ic_arrow_right"
                 app:sRightTextColor="@color/grayLittleCommon"
                 app:sRightTextString="去修改"
                 app:sUseRipple="false" />
@@ -46,7 +47,7 @@
                 app:sLeftTextColor="@color/blackCommon"
                 app:sLeftTextSize="@dimen/sp_15"
                 app:sLeftTextString="关于我们"
-                app:sRightIconRes="@mipmap/ic_all"
+                app:sRightIconRes="@mipmap/ic_arrow_right"
                 app:sRightTextColor="@color/grayLittleCommon"
                 app:sRightTextString="@string/app_name"
                 app:sUseRipple="false" />
@@ -62,7 +63,7 @@
                 app:sLeftTextColor="@color/blackCommon"
                 app:sLeftTextSize="@dimen/sp_15"
                 app:sLeftTextString="清除缓存"
-                app:sRightIconRes="@mipmap/ic_all"
+                app:sRightIconRes="@mipmap/ic_arrow_right"
                 app:sRightTextColor="@color/grayLittleCommon"
                 app:sRightTextString="12M"
                 app:sUseRipple="false" />
@@ -77,7 +78,7 @@
                 app:sLeftTextColor="@color/blackCommon"
                 app:sLeftTextSize="@dimen/sp_15"
                 app:sLeftTextString="当前版本"
-                app:sRightIconRes="@mipmap/ic_all"
+                app:sRightIconRes="@mipmap/ic_arrow_right"
                 app:sRightTextColor="@color/grayLittleCommon"
                 app:sRightTextString="已经是最新版本"
                 app:sUseRipple="false" />
