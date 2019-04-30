@@ -1,7 +1,5 @@
-package com.tourcoo.xiantao.entity;
+package com.tourcoo.xiantao.entity.recharge;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 
 /**
  * @author :JenkinsZhou

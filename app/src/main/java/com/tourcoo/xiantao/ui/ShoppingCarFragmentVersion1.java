@@ -30,7 +30,7 @@ import com.tourcoo.xiantao.core.widget.core.util.SizeUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.goods.GoodsDetailEntity;
 import com.tourcoo.xiantao.entity.goods.HomeGoodsBean;
-import com.tourcoo.xiantao.event.TabChangeEvent;
+import com.tourcoo.xiantao.entity.event.TabChangeEvent;
 import com.tourcoo.xiantao.helper.ShoppingCar;
 
 import org.greenrobot.eventbus.EventBus;

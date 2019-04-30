@@ -85,7 +85,7 @@ import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS
 public class PersonalDataActivity extends BaseTourCooTitleActivity implements View.OnClickListener {
     private CircleImageView crvAvatar;
     private List<LocalMedia> selectList = new ArrayList<>();
-    private List<String> imageList = new ArrayList<>();
+    private List<String> imagePathList = new ArrayList<>();
     private KProgressHUD hud;
     private TextView tvNickName;
     private TextView tvBirthday;
@@ -377,7 +377,6 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
                         ToastUtil.showFailed(entity.msg);
                     }
                 }
-
             }
 
             @Override
@@ -455,17 +454,17 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
                     // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
                     // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
                     // 如果裁剪并压缩了，已取压缩路径为准，因为是先裁剪后压缩的
-                    imageList.clear();
+                    imagePathList.clear();
                     for (LocalMedia localMedia : selectList) {
-                        imageList.add(localMedia.getCompressPath());
+                        imagePathList.add(localMedia.getCompressPath());
                     }
                     //todo
                     String url;
-                    if (!imageList.isEmpty()) {
-                        url = imageList.get(0);
+                    if (!imagePathList.isEmpty()) {
+                        url = imagePathList.get(0);
                         GlideManager.loadImg(url, crvAvatar);
                     }
-                    uploadImage(imageList);
+                    uploadImage(imagePathList);
                     break;
                 default:
                     break;

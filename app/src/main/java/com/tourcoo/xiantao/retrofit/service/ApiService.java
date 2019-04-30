@@ -1,12 +1,15 @@
 package com.tourcoo.xiantao.retrofit.service;
 
 
+import com.tourcoo.xiantao.entity.coin.CoinHistory;
+import com.tourcoo.xiantao.entity.goods.GoodsCollectEntity;
 import com.tourcoo.xiantao.entity.message.MessageBean;
 import com.tourcoo.xiantao.entity.message.MessageEntity;
 import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.TokenInfo;
 import com.tourcoo.xiantao.entity.banner.BannerDetail;
+import com.tourcoo.xiantao.entity.recharge.RechargeHistory;
 import com.tourcoo.xiantao.entity.upload.UploadEntity;
 import com.tourcoo.xiantao.entity.user.CashEntity;
 import com.tourcoo.xiantao.helper.GoodsCount;
@@ -351,10 +354,11 @@ public interface ApiService {
     /**
      * 充值记录列表
      *
+     * @param map
      * @return
      */
     @POST("cash/lists")
-    Observable<BaseEntity> requestRechargeList();
+    Observable<BaseEntity<RechargeHistory>> requestRechargeList(@QueryMap Map<String, Object> map);
 
 
     /**
@@ -375,4 +379,63 @@ public interface ApiService {
      */
     @POST("msg/num")
     Observable<BaseEntity<MessageBean>> requestMessageNoReadCount();
+
+
+    /**
+     * 商品收藏列表
+     *
+     * @param map
+     * @return
+     */
+    @POST("collect/index")
+    Observable<BaseEntity<GoodsCollectEntity>> requestGoodsCollectList(@QueryMap Map<String, Object> map);
+
+
+    /**
+     * 金币消费列表
+     *
+     * @param map
+     * @return
+     */
+    @POST("coin/index")
+    Observable<BaseEntity<CoinHistory>> requestMyCoinList(@QueryMap Map<String, Object> map);
+
+    /**
+     * 转换金币
+     *
+     * @return
+     */
+    @POST("coin/exchange")
+    Observable<BaseEntity> requestExchange();
+
+
+    /**
+     * 添加评价
+     *
+     * @param map
+     * @return
+     */
+    @POST("comment/add")
+    Observable<BaseEntity> requestAddComment(@QueryMap Map<String, Object> map);
+
+
+    /**
+     * 确认收货
+     *
+     * @param map
+     * @return
+     */
+    @POST("order/finish")
+    Observable<BaseEntity> requestConfirmFinish(@Body Map<String, Object> map);
+
+
+    /**
+     * 评论列表
+     * @param map
+     * @return
+     */
+    @POST("comment/index")
+    Observable<BaseEntity> requestCommentList(@Body Map<String, Object> map);
+
+
 }

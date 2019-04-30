@@ -23,7 +23,6 @@ import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.MenuAdapter;
 import com.tourcoo.xiantao.core.frame.base.fragment.BaseTitleFragment;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
-import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
@@ -38,14 +37,14 @@ import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.MenuItem;
 import com.tourcoo.xiantao.entity.TokenInfo;
 import com.tourcoo.xiantao.entity.message.MessageBean;
-import com.tourcoo.xiantao.entity.user.CashEntity;
 import com.tourcoo.xiantao.entity.user.PersonalCenterInfo;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.SettingActivity;
+import com.tourcoo.xiantao.ui.coin.MyCoinListActivity;
 import com.tourcoo.xiantao.ui.goods.CollectionGoodsListActivity;
 import com.tourcoo.xiantao.ui.msg.MsgSystemActivity;
 import com.tourcoo.xiantao.ui.order.MyOrderListActivity;
-import com.trello.rxlifecycle3.android.ActivityEvent;
+import com.tourcoo.xiantao.ui.recharge.AccountBalanceActivity;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import java.util.ArrayList;
@@ -99,6 +98,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     public void initView(Bundle savedInstanceState) {
         refreshLayout = mContentView.findViewById(R.id.refreshLayout);
         refreshLayout.setOnRefreshListener(this);
+        mContentView.findViewById(R.id.accumulatePoints).setOnClickListener(this);
         ivMsg = mContentView.findViewById(R.id.ivMsg);
         ivMsg.setOnClickListener(this);
         tvRedDotWaitPay = mContentView.findViewById(R.id.tvRedDotWaitPay);
@@ -262,6 +262,16 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
             case R.id.ivMsg:
                 skipToMessageCenter();
                 break;
+            case R.id.accumulatePoints:
+            case R.id.tvAccumulatePoints:
+                if (!AccountInfoHelper.getInstance().isLogin()) {
+                    TourCooUtil.startActivity(mContext, LoginActivity.class);
+                    return;
+                }
+                Intent coinIntent = new Intent();
+                coinIntent.setClass(mContext, MyCoinListActivity.class);
+                startActivityForResult(coinIntent, REQUEST_CODE_EDIT_USER_INFO);
+                break;
             default:
                 break;
         }
@@ -322,7 +332,8 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         TourCooLogUtil.i(TAG, TAG + "昵称:" + data.getNickname());
         GlideManager.loadImg(url, civUserAvatar);
         tvBalance.setText("￥" + data.getCash());
-//        tvAccumulatePoints.setText(userInfo.getScore() + "积分");
+        String coin = data.getAu() + "金币" + data.getAg() + "银币";
+        tvAccumulatePoints.setText(coin);
         showMineInfo(data);
     }
 
@@ -443,6 +454,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                                     showUnLoginUI();
                                 }
                             } else {
+                                refreshLayout.finishRefresh();
                                 ToastUtil.showFailed(entity.msg);
                             }
                         }
@@ -473,9 +485,6 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     }
 
 
-
-
-
     /**
      * 查询消息列表
      */
@@ -486,7 +495,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                     public void onRequestNext(BaseEntity<MessageBean> entity) {
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
-                                TourCooLogUtil.i(TAG, "未读消息数量:"+entity.data.getNum());
+                                TourCooLogUtil.i(TAG, "未读消息数量:" + entity.data.getNum());
                                 showMsg(entity.data.getNum());
                             } else {
                                 ToastUtil.showFailed(entity.msg);

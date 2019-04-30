@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/transparent"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/dp_5"
+    android:paddingTop="@dimen/dp_10"
+    android:paddingRight="@dimen/dp_5"
+    android:paddingBottom="@dimen/dp_10">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tvRechargeTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="left"
+            android:paddingLeft="@dimen/dp_10"
+            android:layout_alignParentLeft="true"
+            android:text="2019-02-28 12:34"
+            android:textColor="@color/text_gray_common"
+            android:textSize="@dimen/sp_13" />
+
+        <TextView
+            style="@style/TextViewBlackCommStyle"
+            android:layout_width="wrap_content"
+            android:id="@+id/spentType"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="充值"
+            android:textSize="@dimen/sp_15" />
+
+        <TextView
+            android:id="@+id/tvCoinRecord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="+500.00"
+            android:paddingRight="@dimen/dp_10"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/sp_13" />
+    </RelativeLayout>
+
+
+</LinearLayout>

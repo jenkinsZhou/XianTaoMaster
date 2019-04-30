@@ -14,8 +14,8 @@
     <!--商品网格布局-->
     <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/rvGoodsImage"
-        android:layout_width="@dimen/dp_80"
-        android:layout_height="@dimen/dp_60"
+        android:layout_width="@dimen/dp_100"
+        android:layout_height="@dimen/dp_100"
         android:layout_gravity="center_horizontal"
         android:scaleType="centerInside"
         android:src="@mipmap/ic_orange"

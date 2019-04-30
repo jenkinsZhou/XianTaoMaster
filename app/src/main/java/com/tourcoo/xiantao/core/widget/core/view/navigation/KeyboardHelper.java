@@ -198,8 +198,9 @@ public class KeyboardHelper {
      * 监听layout变化
      */
     public KeyboardHelper setEnable() {
-        setEnable(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
-                | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        /*setEnable(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
+                | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);*/
+//        setEnable(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         return this;
     }
 

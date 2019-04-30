@@ -1,4 +1,4 @@
-package com.tourcoo.xiantao.ui.account;
+package com.tourcoo.xiantao.ui.recharge;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -9,7 +9,6 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -21,8 +20,6 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.RechargeAmountAdapter;
-import com.tourcoo.xiantao.constant.OrderConstant;
-import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
@@ -32,23 +29,17 @@ import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.core.util.ResourceUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
-import com.tourcoo.xiantao.entity.RechargeEntity;
+import com.tourcoo.xiantao.entity.recharge.RechargeEntity;
 import com.tourcoo.xiantao.entity.event.BaseEvent;
-import com.tourcoo.xiantao.entity.goods.Goods;
-import com.tourcoo.xiantao.entity.goods.Spec;
 import com.tourcoo.xiantao.entity.pay.WeiXinPay;
 import com.tourcoo.xiantao.entity.user.CashEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
-import com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity;
-import com.tourcoo.xiantao.ui.recharge.RechargeDetailActivity;
-import com.tourcoo.xiantao.ui.recharge.RechargeRuleActivity;
 import com.tourcoo.xiantao.widget.dialog.PayDialog;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +58,6 @@ import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.PAY_STATUS;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.PAY_STATUS_SUCCESS;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SDK_PAY_FLAG;
 import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_ALI;
-import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_BALANCE;
 import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
 
 /**
@@ -206,7 +196,7 @@ public class AccountBalanceActivity extends BaseTourCooTitleActivity implements 
                 setRightTextSize(15).setOnRightTextClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TourCoolUtil.startActivity(mContext, RechargeDetailActivity.class);
+                TourCoolUtil.startActivity(mContext, RechargeListActivity.class);
             }
         });
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(

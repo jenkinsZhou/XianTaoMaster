@@ -161,7 +161,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
         rlContentView = mContentView.findViewById(R.id.rlContentView);
         rvHome = mContentView.findViewById(R.id.rvHome);
         footView = LayoutInflater.from(mContext).inflate(R.layout.item_view, null);
-        rvHome.setLayoutManager(new GridLayoutManager(mContext, 3));
+        rvHome.setLayoutManager(new GridLayoutManager(mContext, 2));
         mRefreshLayout = mContentView.findViewById(R.id.refreshLayoutHome);
         mRefreshLayout.setEnableLoadMore(false);
         mRefreshLayout.setOnRefreshListener(this);

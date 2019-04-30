@@ -1,6 +1,7 @@
 package com.tourcoo.xiantao.ui.account;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -21,6 +22,7 @@ import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
+import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
@@ -31,6 +33,7 @@ import java.util.List;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
 import static com.tourcoo.xiantao.adapter.AddressInfoAdapter.ADDRESS_DEFAULT;
@@ -203,7 +206,7 @@ public class AddressManagerActivity extends BaseTourCooTitleMultiViewActivity im
                 switch (view.getId()) {
                     case R.id.ivDelete:
                         //删除地址
-                        doDeleteAddress(mAdapter.getData().get(position).getAddress_id());
+                        showDeleteDialog(position);
                         break;
                     case R.id.ivEdit:
                         doSkipEdit(mAdapter.getData().get(position));
@@ -295,5 +298,27 @@ public class AddressManagerActivity extends BaseTourCooTitleMultiViewActivity im
             }
         }
         return addressBeanList.get(0);
+    }
+
+
+    private void showDeleteDialog(int position) {
+        //删除地址
+        ConfirmDialog.Builder builder = new ConfirmDialog.Builder(mContext);
+        builder.setTitle("删除地址").setFirstMessage("确定要删除该地址吗？")
+                .setFirstMsgSize(15).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        })
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        doDeleteAddress(mAdapter.getData().get(position).getAddress_id());
+                        dialog.dismiss();
+//                        ApiRepository.getInstance().updateApp()
+                    }
+                });
+        showConfirmDialog(builder);
     }
 }

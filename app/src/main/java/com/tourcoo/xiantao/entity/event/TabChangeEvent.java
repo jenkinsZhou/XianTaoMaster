@@ -1,4 +1,4 @@
-package com.tourcoo.xiantao.event;
+package com.tourcoo.xiantao.entity.event;
 
 /**
  * @author :JenkinsZhou

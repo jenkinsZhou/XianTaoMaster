@@ -14,8 +14,7 @@ import android.widget.TextView;
 
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
-import com.tourcoo.xiantao.ui.account.AccountBalanceActivity;
-import com.tourcoo.xiantao.ui.recharge.RechargeDetailActivity;
+import com.tourcoo.xiantao.ui.recharge.AccountBalanceActivity;
 
 
 /**

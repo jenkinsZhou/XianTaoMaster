@@ -45,13 +45,13 @@
         <activity android:name="com.tourcoo.xiantao.core.module.TestRefreshActivity" />
         <activity android:name=".ui.account.AddNewAddressActivity" />
         <activity android:name=".ui.account.PersonalDataActivity" />
-        <activity android:name=".ui.recharge.RechargeDetailActivity" />
+        <activity android:name=".ui.recharge.RechargeListActivity" />
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:theme="@android:style/Theme.Translucent" />
         <activity android:name=".ui.account.RegisterActivity" />
-        <activity android:name=".ui.account.AccountBalanceActivity" />
+        <activity android:name=".ui.recharge.AccountBalanceActivity" />
         <activity android:name=".ui.recharge.RechargeRuleActivity" />
         <activity android:name=".ui.account.AddressManagerActivity" />
         <activity android:name=".ui.goods.CollectionGoodsListActivity" />
@@ -74,6 +74,11 @@
         <activity android:name=".ui.account.ForgetPasswordActivity" />
         <activity android:name=".ui.msg.MsgSystemActivity" />
         <activity android:name=".ui.msg.MessageDetailActivity" />
+        <activity android:name=".ui.coin.MyCoinListActivity" />
+        <activity
+            android:name=".ui.coment.EvaluationActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".ui.coment.CommentListActivity" />
     </application>
 
 </manifest>

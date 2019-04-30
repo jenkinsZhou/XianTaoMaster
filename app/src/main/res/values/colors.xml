@@ -76,6 +76,7 @@
     <color name="colorAccent">#2BC436</color>
     <color name="trans_parent">#00000000</color>
     <color name="grayDivider">#F0F0E9</color>
+    <color name="grayDividerDeep">#F4F4EF</color>
     <color name="colorLoadingTextWeiBo">#f0f0f0</color>
     <color name="colorLoadingText">#393939</color>
     <color name="colorLoadingBg">#f5ffffff</color>

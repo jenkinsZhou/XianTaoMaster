@@ -29,7 +29,7 @@ public abstract class BaseRefreshLoadActivity<T> extends BaseTitleActivity imple
     protected RecyclerView mRecyclerView;
     protected StatusLayoutManager mStatusManager;
     private BaseQuickAdapter mQuickAdapter;
-    protected int mDefaultPage = 0;
+    protected int mDefaultPage = 1;
     protected int mDefaultPageSize = 10;
 
     protected RefreshLoadDelegate<T> mRefreshLoadDelegate;
@@ -144,7 +144,7 @@ public abstract class BaseRefreshLoadActivity<T> extends BaseTitleActivity imple
 
     @Override
     public void onRefresh(RefreshLayout refreshlayout) {
-        mDefaultPage = 0;
+        mDefaultPage = 1;
         mRefreshLoadDelegate.setLoadMore(isLoadMoreEnable());
         loadData(mDefaultPage);
     }

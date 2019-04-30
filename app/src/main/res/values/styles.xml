@@ -348,11 +348,11 @@
     </style>
 
 
-    <!--评价星星-->
+    <!--点评星星-->
     <style name="CustomRatingBar">
         <item name="android:progressDrawable">@drawable/rating_bar_star</item>
-        <item name="android:minHeight">@dimen/dp_26</item>
-        <item name="android:maxHeight">@dimen/dp_26</item>
+        <item name="android:minHeight">26dp</item>
+        <item name="android:maxHeight">26dp</item>
     </style>
 
     <style name="DialogPayAnimation" parent="@android:style/Animation.Dialog">
@@ -380,7 +380,6 @@
     </style>
 
 
-
     <style name="CommonBottomDialogStyle" parent="@android:style/Theme.Dialog">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimary</item>
@@ -395,6 +394,7 @@
         <item name="android:windowFrame">@null</item>
         <item name="android:windowAnimationStyle">@style/CommonBottomDialogAnim</item>
     </style>
+
     <style name="CommonBottomDialogAnim" parent="android:Animation">
         <item name="android:windowEnterAnimation">@anim/slide_in_from_bottom</item>
         <item name="android:windowExitAnimation">@anim/slide_out_to_bottom</item>

@@ -35,6 +35,7 @@ import com.tourcoo.xiantao.entity.order.OrderDetailEntity;
 import com.tourcoo.xiantao.helper.GoodsCount;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
+import com.tourcoo.xiantao.ui.coment.EvaluationActivity;
 import com.tourcoo.xiantao.ui.goods.GoodsDetailActivity;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 import com.trello.rxlifecycle3.android.FragmentEvent;
@@ -68,6 +69,7 @@ import static com.tourcoo.xiantao.ui.order.ReturnGoodsActivity.EXTRA_GOODS_LIST;
  * @Email: 971613168@qq.com
  */
 public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity implements View.OnClickListener {
+    private static final int REQUEST_CODE_EVALUATE = 1001;
     private LinearLayout llAddressInfo;
     public static final String EXTRA_ORDER_ID = "EXTRA_ORDER_ID";
     private RecyclerView goodsOrderRecyclerView;
@@ -483,10 +485,11 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
             //确认收货
             case R.id.tvConfirmReceive:
-
+                requestConfirmFinish(mOrderEntity.getOrder().getId());
                 break;
-            //立即评价
             case R.id.tvCommentNow:
+                //立即评价
+                skipEvaluation(mOrderEntity.getOrder());
                 break;
             default:
                 break;
@@ -553,7 +556,32 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
      * 刷新请求
      */
     private void refreshRequest() {
-        requestOrderDetail();
+        ApiRepository.getInstance().requestOrderDetail(orderId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                if (entity.data != null) {
+                                    LogUtils.i(JSON.toJSONString(entity.data));
+                                    OrderDetailEntity orderEntity = parseOrderDetailEntity(entity.data);
+                                    if (orderEntity != null && orderEntity.getOrder() != null) {
+                                        //todo 显示订单详情
+                                        //转换一下订单状态
+                                        parseOrderStatus(orderEntity);
+                                        mOrderEntity = orderEntity;
+                                        TourCooLogUtil.i(TAG, TAG + "orderEntity状态:" + orderEntity.getOrder().getOrder_status());
+                                        showOrderDetail(orderEntity);
+                                    } else {
+                                        ToastUtil.showFailed(entity.msg);
+                                    }
+                                }
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+                });
     }
 
     /**
@@ -590,6 +618,54 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     }
 
 
+    /**
+     * 跳转至评价页面
+     *
+     * @param
+     */
+    private void skipEvaluation(OrderDetailEntity.OrderBean orderBean) {
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_ORDER_ID, orderBean.getId());
+        intent.setClass(mContext, EvaluationActivity.class);
+        startActivityForResult(intent, REQUEST_CODE_EVALUATE);
+    }
+
+
+    /**
+     * 确认收货
+     */
+    private void requestConfirmFinish(int orderId) {
+        TourCooLogUtil.i(TAG, TAG + "订单id:" + orderId);
+        ApiRepository.getInstance().requestConfirmFinish(orderId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                refreshRequest();
+                                ToastUtil.showSuccess("收货完成");
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+                });
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_EVALUATE:
+                if (resultCode == RESULT_OK) {
+                    refreshRequest();
+                }
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 

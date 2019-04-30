@@ -17,19 +17,17 @@ import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.TokenInfo;
-import com.tourcoo.xiantao.event.TabChangeEvent;
+import com.tourcoo.xiantao.entity.event.TabChangeEvent;
 import com.tourcoo.xiantao.helper.GoodsCount;
 import com.tourcoo.xiantao.helper.ShoppingCar;
 import com.tourcoo.xiantao.permission.PermissionManager;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
-import com.tourcoo.xiantao.ui.ShoppingCarFragmentVersion1;
 import com.tourcoo.xiantao.ui.ShoppingCarFragmentVersion2;
 import com.tourcoo.xiantao.ui.account.LoginActivity;
 import com.tourcoo.xiantao.ui.account.MineFragment;
 import com.tourcoo.xiantao.ui.goods.ClassifyGoodsFragment;
 import com.tourcoo.xiantao.ui.goods.HomeFragment;
 import com.trello.rxlifecycle3.android.ActivityEvent;
-import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import org.greenrobot.eventbus.EventBus;
 

@@ -22,6 +22,7 @@ import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.order.OrderDetailEntity;
 import com.tourcoo.xiantao.entity.order.OrderEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
+import com.tourcoo.xiantao.ui.coment.EvaluationActivity;
 import com.tourcoo.xiantao.ui.goods.GoodsDetailActivity;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_ALL;
+import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_COMMENT;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_SEND;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.ui.goods.HomeFragment.EXTRA_GOODS_ID;
@@ -191,6 +193,10 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
                 //申请退货
                 skipReturnGoods(orderInfo);
                 break;
+            case ORDER_STATUS_WAIT_COMMENT:
+                //待评价状态 去评价
+                skipEvaluation(orderInfo);
+                break;
             default:
                 break;
         }
@@ -208,6 +214,18 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
         intent.putExtra(EXTRA_GOODS_LIST, (Serializable) goodsList);
         intent.putExtra(EXTRA_ORDER_ID, orderInfo.getId());
         intent.setClass(mContext, ReturnGoodsActivity.class);
+        startActivity(intent);
+    }
+
+    /**
+     * 去评价
+     *
+     * @param orderInfo
+     */
+    private void skipEvaluation(OrderEntity.OrderInfo orderInfo) {
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_ORDER_ID, orderInfo.getId());
+        intent.setClass(mContext, EvaluationActivity.class);
         startActivity(intent);
     }
 }

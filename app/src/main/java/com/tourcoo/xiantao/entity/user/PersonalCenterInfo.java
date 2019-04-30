@@ -28,8 +28,13 @@ public class PersonalCenterInfo extends LitePalSupport {
      * noreceipt : 0
      * return : 0
      */
-
+    /**
+     * 银币
+     */
     private int ag;
+    /**
+     * 金币
+     */
     private int au;
     private String avatar;
     private String birthday;

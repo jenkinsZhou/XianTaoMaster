@@ -1,5 +1,7 @@
 package com.tourcoo.xiantao.entity.goods;
 
+import com.tourcoo.xiantao.entity.comment.CommentDetail;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -59,7 +61,7 @@ public class Goods implements Serializable {
     private Category category;
     private Freight freight;
     private int goods_sales;
-    private TuanRule tuan_rule;
+    private Object tuan_rule;
     private boolean tuan;
     private int coin;
 
@@ -78,7 +80,7 @@ public class Goods implements Serializable {
     private List<Spec> spec;
     private List<?> spec_rel;
     private List<?> tuan_list;
-    private List<?> comment_list;
+    private List<CommentDetail> comment_list;
 
 
     public int getShow_error() {
@@ -314,7 +316,7 @@ public class Goods implements Serializable {
         this.goods_sales = goods_sales;
     }
 
-    public TuanRule getTuan_rule() {
+    public Object getTuan_rule() {
         return tuan_rule;
     }
 
@@ -368,7 +370,7 @@ public class Goods implements Serializable {
         return comment_list;
     }
 
-    public void setComment_list(List<?> comment_list) {
+    public void setComment_list(List<CommentDetail> comment_list) {
         this.comment_list = comment_list;
     }
 

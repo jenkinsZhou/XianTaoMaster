@@ -7,12 +7,15 @@ import com.tourcoo.xiantao.core.frame.retrofit.RetryWhen;
 import com.tourcoo.xiantao.core.frame.retrofit.TourCoolRetrofit;
 import com.tourcoo.xiantao.core.frame.retrofit.TourCoolTransformer;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
+import com.tourcoo.xiantao.entity.coin.CoinHistory;
+import com.tourcoo.xiantao.entity.goods.GoodsCollectEntity;
 import com.tourcoo.xiantao.entity.message.MessageBean;
 import com.tourcoo.xiantao.entity.message.MessageEntity;
 import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.TokenInfo;
 import com.tourcoo.xiantao.entity.banner.BannerDetail;
+import com.tourcoo.xiantao.entity.recharge.RechargeHistory;
 import com.tourcoo.xiantao.entity.user.CashEntity;
 import com.tourcoo.xiantao.helper.GoodsCount;
 import com.tourcoo.xiantao.retrofit.service.ApiService;
@@ -447,7 +450,7 @@ public class ApiRepository extends BaseRepository {
     public Observable<BaseEntity> requestCancelOrder(int orderId) {
         Map<String, Object> params = new HashMap<>(1);
         params.put("id", orderId);
-         TourCooLogUtil.i(TAG,TAG + "参数:"+params);
+        TourCooLogUtil.i(TAG, TAG + "参数:" + params);
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestCancelOrder(params).retryWhen(new RetryWhen()));
     }
 
@@ -527,6 +530,17 @@ public class ApiRepository extends BaseRepository {
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestBalance().retryWhen(new RetryWhen()));
     }
 
+    /**
+     * 充值记录列表
+     *
+     * @return
+     */
+    public Observable<BaseEntity<RechargeHistory>> requestRechargeList(int page) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("p", page);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestRechargeList(params).retryWhen(new RetryWhen()));
+    }
+
 
     /**
      * 消息列表
@@ -542,10 +556,96 @@ public class ApiRepository extends BaseRepository {
 
     /**
      * 未读消息数量
+     *
      * @return
      */
     public Observable<BaseEntity<MessageBean>> requestMessageNoReadCount() {
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestMessageNoReadCount().retryWhen(new RetryWhen()));
     }
 
+
+    /**
+     * 获取商品收藏列表
+     *
+     * @return
+     */
+    public Observable<BaseEntity<GoodsCollectEntity>> requestGoodsCollectList(int pageIndex) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("p", pageIndex);
+        TourCooLogUtil.i(TAG, TAG + ":" + params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestGoodsCollectList(params).retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 金币列表
+     *
+     * @param pageIndex
+     * @return
+     */
+    public Observable<BaseEntity<CoinHistory>> requestMyCoinList(int pageIndex) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("p", pageIndex);
+        TourCooLogUtil.i(TAG, TAG + ":" + params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestMyCoinList(params).retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 银币兑换金币
+     *
+     * @return
+     */
+    public Observable<BaseEntity> requestExchange() {
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestExchange().retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 添加评价
+     *
+     * @param orderId
+     * @param detail
+     * @param star
+     * @param images
+     * @return
+     */
+    public Observable<BaseEntity> requestAddComment(int orderId, String detail, String star, String images) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("order_id", orderId);
+        params.put("detail", detail);
+        if (!TextUtils.isEmpty(images)) {
+            params.put("images", images);
+        }
+        params.put("star", star);
+        TourCooLogUtil.i(TAG, TAG + "图片url:" + params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestAddComment(params).retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 确认收货
+     *
+     * @param orderId
+     * @return
+     */
+    public Observable<BaseEntity> requestConfirmFinish(int orderId) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("id", orderId);
+        TourCooLogUtil.i(TAG, TAG + ":" + params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestConfirmFinish(params).retryWhen(new RetryWhen()));
+    }
+
+    /**
+     * 商品的评论列表
+     *
+     * @param goodsId
+     * @return
+     */
+    public Observable<BaseEntity> requestCommentList(int goodsId) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("goods_id", goodsId);
+        TourCooLogUtil.i(TAG, TAG + ":" + params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestCommentList(params).retryWhen(new RetryWhen()));
+    }
 }

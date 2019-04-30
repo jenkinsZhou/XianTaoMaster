@@ -4,7 +4,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.widget.core.util.ResourceUtil;
-import com.tourcoo.xiantao.entity.RechargeEntity;
+import com.tourcoo.xiantao.entity.recharge.RechargeEntity;
 
 import java.util.List;
 
