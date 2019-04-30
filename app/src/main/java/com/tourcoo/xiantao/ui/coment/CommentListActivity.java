@@ -15,6 +15,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.CoinHistoryAdapter;
+import com.tourcoo.xiantao.adapter.CommentAdapter;
 import com.tourcoo.xiantao.core.frame.UiConfigManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.util.ToastUtil;
@@ -24,6 +25,7 @@ import com.tourcoo.xiantao.core.widget.divider.TourCoolRecycleViewDivider;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.coin.CoinDetail;
 import com.tourcoo.xiantao.entity.coin.CoinHistory;
+import com.tourcoo.xiantao.entity.comment.CommentDetail;
 import com.tourcoo.xiantao.entity.comment.CommentEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooRefreshLoadActivity;
@@ -32,6 +34,7 @@ import com.trello.rxlifecycle3.android.ActivityEvent;
 import java.util.ArrayList;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.ui.goods.HomeFragment.EXTRA_GOODS_ID;
 
 /**
  * @author :JenkinsZhou
@@ -41,11 +44,11 @@ import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS
  * @Email: 971613168@qq.com
  */
 public abstract class CommentListActivity extends BaseTourCooRefreshLoadActivity<CommentEntity> implements View.OnClickListener {
-    private CoinHistoryAdapter adapter;
+    private CommentAdapter adapter;
     private TextView tvCurrentGold;
     private TextView tvAu;
     private int currentAuAmount;
-    private CoinHistory mCoinHistory;
+    private int goodsId;
 
     @Override
     public int getContentLayout() {
@@ -54,6 +57,7 @@ public abstract class CommentListActivity extends BaseTourCooRefreshLoadActivity
 
     @Override
     public void initView(Bundle savedInstanceState) {
+        goodsId = getIntent().getIntExtra(EXTRA_GOODS_ID, -1);
         tvAu = findViewById(R.id.tvAu);
         tvCurrentGold = findViewById(R.id.tvCurrentGold);
         findViewById(R.id.tvConvertGold).setOnClickListener(this);
@@ -83,7 +87,7 @@ public abstract class CommentListActivity extends BaseTourCooRefreshLoadActivity
 
     @Override
     public void loadData(int page) {
-        requestMyCoinList(page);
+        requestCommentList(goodsId, page);
     }
 
     @Override
@@ -102,17 +106,15 @@ public abstract class CommentListActivity extends BaseTourCooRefreshLoadActivity
     /**
      * 查询充值记录
      */
-    private void requestMyCoinList(int page) {
-        ApiRepository.getInstance().requestMyCoinList(page).compose(bindUntilEvent(ActivityEvent.DESTROY)).
-                subscribe(new BaseObserver<BaseEntity<CoinHistory>>() {
+    private void requestCommentList(int orderId, int page) {
+        ApiRepository.getInstance().requestCommentList(orderId, page).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity<CommentEntity>>() {
                     @Override
-                    public void onRequestNext(BaseEntity<CoinHistory> entity) {
+                    public void onRequestNext(BaseEntity<CommentEntity> entity) {
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
-                                CoinHistory coinHistory = entity.data;
-                                mCoinHistory = coinHistory;
-                                showMyCoin(coinHistory);
-                                UiConfigManager.getInstance().getHttpRequestControl().httpRequestSuccess(getIHttpRequestControl(), coinHistory.getData() == null ? new ArrayList<>() : coinHistory.getData(), null);
+                                CommentEntity commentEntity = entity.data;
+                                UiConfigManager.getInstance().getHttpRequestControl().httpRequestSuccess(getIHttpRequestControl(), commentEntity.getData() == null ? new ArrayList<>() : commentEntity.getData(), null);
                             } else {
                                 ToastUtil.showFailed(entity.msg);
                             }
@@ -139,16 +141,13 @@ public abstract class CommentListActivity extends BaseTourCooRefreshLoadActivity
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
+       /* switch (v.getId()) {
             case R.id.tvConvertGold:
-                if (mCoinHistory ==null || mCoinHistory.getAg()<mCoinHistory.getCoin()) {
-                    ToastUtil.showFailed("银币不足,暂时无法兑换哦");
-                    return;
-                }
+               ,
                 break;
             default:
                 break;
-        }
+        }*/
     }
 
 
@@ -170,7 +169,6 @@ public abstract class CommentListActivity extends BaseTourCooRefreshLoadActivity
                     }
                 });
     }
-
 
 
 }

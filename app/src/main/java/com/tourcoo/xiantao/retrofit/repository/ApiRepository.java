@@ -8,6 +8,8 @@ import com.tourcoo.xiantao.core.frame.retrofit.TourCoolRetrofit;
 import com.tourcoo.xiantao.core.frame.retrofit.TourCoolTransformer;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.entity.coin.CoinHistory;
+import com.tourcoo.xiantao.entity.comment.CommentDetail;
+import com.tourcoo.xiantao.entity.comment.CommentEntity;
 import com.tourcoo.xiantao.entity.goods.GoodsCollectEntity;
 import com.tourcoo.xiantao.entity.message.MessageBean;
 import com.tourcoo.xiantao.entity.message.MessageEntity;
@@ -642,9 +644,10 @@ public class ApiRepository extends BaseRepository {
      * @param goodsId
      * @return
      */
-    public Observable<BaseEntity> requestCommentList(int goodsId) {
+    public Observable<BaseEntity<CommentEntity>> requestCommentList(int goodsId, int page) {
         Map<String, Object> params = new HashMap<>(1);
         params.put("goods_id", goodsId);
+        params.put("p", page);
         TourCooLogUtil.i(TAG, TAG + ":" + params);
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestCommentList(params).retryWhen(new RetryWhen()));
     }

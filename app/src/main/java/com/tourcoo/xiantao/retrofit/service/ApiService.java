@@ -2,6 +2,8 @@ package com.tourcoo.xiantao.retrofit.service;
 
 
 import com.tourcoo.xiantao.entity.coin.CoinHistory;
+import com.tourcoo.xiantao.entity.comment.CommentDetail;
+import com.tourcoo.xiantao.entity.comment.CommentEntity;
 import com.tourcoo.xiantao.entity.goods.GoodsCollectEntity;
 import com.tourcoo.xiantao.entity.message.MessageBean;
 import com.tourcoo.xiantao.entity.message.MessageEntity;
@@ -431,11 +433,13 @@ public interface ApiService {
 
     /**
      * 评论列表
+     *
      * @param map
      * @return
      */
     @POST("comment/index")
-    Observable<BaseEntity> requestCommentList(@Body Map<String, Object> map);
+    Observable<BaseEntity<CommentEntity>> requestCommentList(@Body Map<String, Object> map);
+
 
 
 }

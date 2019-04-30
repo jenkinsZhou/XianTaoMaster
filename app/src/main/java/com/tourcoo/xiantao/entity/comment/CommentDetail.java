@@ -39,7 +39,7 @@ public class CommentDetail {
     private int star;
     private String detail;
     private String images;
-    private int createtime;
+    private long createtime;
     private int updatetime;
     private String status;
     private Object reply;
@@ -118,7 +118,7 @@ public class CommentDetail {
         this.images = images;
     }
 
-    public int getCreatetime() {
+    public long getCreatetime() {
         return createtime;
     }
 
