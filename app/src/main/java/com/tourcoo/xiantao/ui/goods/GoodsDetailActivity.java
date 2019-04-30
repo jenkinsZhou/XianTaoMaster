@@ -315,12 +315,11 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         switch (v.getId()) {
             case R.id.tvBuyNow:
                 //立即购买
-                mGoodsEntity.setGoodsCount(1);
-                settleGoods(mGoodsEntity);
+//                mGoodsEntity.setGoodsCount(1);
+//                settleGoods(mGoodsEntity);
                 break;
             case R.id.tvAddShoppingCar:
                 //添加购物车
-                addGoods(count++);
                 break;
             case R.id.llCollect:
                 //收藏或取消收藏
@@ -334,9 +333,9 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     }
 
 
-    /**
+    /* *//**
      * 直接购买结算页接口
-     */
+     *//*
     private void settleGoods(GoodsEntity goodsEntity) {
         if (goodsEntity == null || goodsEntity.getDetail() == null) {
             return;
@@ -365,14 +364,17 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     }
                 });
     }
+*/
 
-
-    /**
-     * 结算实体
-     *
-     * @param data
-     * @return
+    /*
      */
+/**
+ * 结算实体
+ *
+ * @param data
+ * @return
+ *//*
+
     private SettleEntity parseSettleInfo(Object data) {
         if (data == null) {
             return null;
@@ -386,11 +388,12 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             return null;
         }
     }
+*/
 
 
-    /**
+    /*   *//**
      * 添加购物车
-     */
+     *//*
     private void addShopingCar(int goodsId, int count, String skuId) {
         ApiRepository.getInstance().settleGoods(goodsId, count, skuId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseObserver<BaseEntity>() {
@@ -408,7 +411,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     }
                 });
     }
-
+*/
 
     /**
      * 请求添加商品接口
@@ -444,7 +447,11 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         ivCollect.setImageResource(R.mipmap.ic_collect);
     }
 
-
+    /**
+     * 添加收藏
+     *
+     * @param goodsId
+     */
     private void collectAdd(int goodsId) {
         if (goodsId < 0) {
             ToastUtil.showFailed("未获取到商品id");
