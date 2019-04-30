@@ -1,6 +1,7 @@
 package com.tourcoo.xiantao.ui.goods;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -29,6 +30,7 @@ import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
 import com.tourcoo.xiantao.ui.base.WebViewActivity;
 import com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity;
+import com.tourcoo.xiantao.widget.dialog.ProductSkuDialog;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
 import java.util.ArrayList;
@@ -83,6 +85,8 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private ImageView ivCollect;
 
     private LinearLayout llCollect;
+
+    private ProductSkuDialog dialog;
 
     @Override
     public int getContentLayout() {
@@ -249,6 +253,21 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         } else {
             showCollect();
         }
+
+        tvPin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog = new ProductSkuDialog(GoodsDetailActivity.this, goodsEntity, new ProductSkuDialog.Callback() {
+                    @Override
+                    public void onAdded(String specSkuId, int quantity) {
+                        ToastUtil.show("规格ID：" + specSkuId + "   商品数量：" + quantity);
+                    }
+                });
+
+                dialog.show();
+            }
+        });
+
     }
 
 
@@ -389,8 +408,6 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     }
                 });
     }
-
-
 
 
     /**
