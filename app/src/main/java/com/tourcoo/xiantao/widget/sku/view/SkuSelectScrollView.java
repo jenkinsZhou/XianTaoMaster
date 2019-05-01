@@ -189,8 +189,6 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
             }
         }
 
-        TourCooLogUtil.e(skuIdList);
-
         // 获取选中信息列表ID
         List<String> selectSpecId = new ArrayList<>();
         for (int k = 0; k < selectedAttributeList.size(); k++) {
@@ -201,8 +199,6 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
                 selectSpecId.add(selectedAttributeList.get(k).getItem_id());
             }
         }
-
-        TourCooLogUtil.e(selectSpecId);
 
         //如果不存在需要设置不可点击的组合，则对所有的sku全部设置成可点击状态
         if (skuIdList.size() == 0) {
@@ -238,9 +234,6 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
                     existMulList.add(i);
                 }
             }
-
-            TourCooLogUtil.e(existMulList);
-
 
             if (existMulList.size() == 0) {
                 for (int k = 0; k < skuContainerLayout.getChildCount(); k++) {
@@ -295,7 +288,7 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
 
                         if (map.get(k) != null) {
                             List<String> unclickId = map.get(k);
-                            if(!unclickId.contains(attribute.getItem_id())){
+                            if (!unclickId.contains(attribute.getItem_id())) {
                                 String attributeValue = attribute.getSpec_value();
                                 itemLayout.optionItemViewEnableStatus(attributeValue);
                             }
@@ -393,16 +386,22 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
     /**
      * 设置选中的sku
      *
-     * @param specAttrs
+     * @param specList
      */
-    public void setSelectedSku(List<SpecAttr> specAttrs) {
+    public void setSelectedSku(SpecList specList) {
         selectedAttributeList.clear();
 
-        for (int i = 0; i < specAttrs.size(); i++) {
-            selectedAttributeList.add(new SkuAttribute(
-                    specAttrs.get(i).getSpec_items().get(0).getItem_id(),
-                    specAttrs.get(i).getSpec_items().get(0).getSpec_value()
-            ));
+        String[] specSkuIds = specList.getSpec_sku_id().split("_");
+
+        for (int i = 0; i < specData.getSpec_attr().size(); i++) {
+            SpecAttr specAttr = specData.getSpec_attr().get(i);
+
+            for (int j = 0; j < specAttr.getSpec_items().size(); j++) {
+                SkuAttribute skuAttribute = specAttr.getSpec_items().get(j);
+                if (skuAttribute.getItem_id().equals(specSkuIds[i])) {
+                    selectedAttributeList.add(skuAttribute);
+                }
+            }
         }
 
         // 清除所有选中状态

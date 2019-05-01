@@ -4,32 +4,24 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.view.textservice.SpellCheckerInfo;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
-import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
-import com.tourcoo.xiantao.entity.goods.GoodsDetailEntity;
 import com.tourcoo.xiantao.entity.goods.GoodsEntity;
-import com.tourcoo.xiantao.entity.goods.Spec;
-import com.tourcoo.xiantao.entity.sku.Sku;
 import com.tourcoo.xiantao.entity.spec.SkuAttribute;
 import com.tourcoo.xiantao.entity.spec.SpecAttr;
 import com.tourcoo.xiantao.entity.spec.SpecData;
@@ -37,15 +29,11 @@ import com.tourcoo.xiantao.entity.spec.SpecList;
 import com.tourcoo.xiantao.util.NumberUtils;
 import com.tourcoo.xiantao.widget.sku.view.OnSkuListener;
 import com.tourcoo.xiantao.widget.sku.view.SkuSelectScrollView;
-import com.wuhenzhizao.titlebar.utils.AppUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.StyleRes;
-
-import org.litepal.util.LogUtil;
 
 /**
  * Created by liufei on 2017/11/30.
@@ -60,14 +48,23 @@ public class ProductSkuDialog extends Dialog {
     private String priceFormat;
     private String stockQuantityFormat;
 
-    public ProductSkuDialog(@NonNull Context context, GoodsEntity product, Callback callback) {
+    public static final int SHOPPING_CART = 1;
+    public static final int PING_TUAN = 2;
+    public static final int BUY_NOW = 3;
+    private int type;
+
+
+    public ProductSkuDialog(@NonNull Context context, GoodsEntity product, Callback callback,int type) {
         super(context, R.style.CommonBottomDialogStyle);
         this.context = context;
         this.product = product;
         this.callback = callback;
+        this.type = type;
     }
 
 
+    //标题
+    private TextView tvTitle;
     //减少商品
     private TextView btnSkuQuantityMinus;
     //增加商品
@@ -97,7 +94,9 @@ public class ProductSkuDialog extends Dialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_goods_select);
         setCanceledOnTouchOutside(true);
+        setCancelable(true);
 
+        tvTitle = findViewById(R.id.tvTitle);
         btnSkuQuantityMinus = findViewById(R.id.btn_sku_quantity_minus);
         etSkuQuantityInput = findViewById(R.id.et_sku_quantity_input);
         btnSkuQuantityPlus = findViewById(R.id.btn_sku_quantity_plus);
@@ -109,6 +108,18 @@ public class ProductSkuDialog extends Dialog {
         tvSkuSellingPrice = findViewById(R.id.tv_sku_selling_price);
 //        tvSkuSellingPriceUnit =findViewById(R.id.tv_sku_selling_price_unit);
 
+
+        switch (type){
+            case SHOPPING_CART:
+                tvTitle.setText("加入购物车");
+                break;
+            case PING_TUAN:
+                tvTitle.setText("发起拼团");
+                break;
+            case BUY_NOW:
+                tvTitle.setText("单独购买");
+                break;
+        }
 
         btnSkuQuantityMinus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -281,6 +292,16 @@ public class ProductSkuDialog extends Dialog {
                     return;
                 }
 
+                if(scrollSkuList.getSelectedSku() == null){
+                    String info = tvSkuInfo.getText().toString();
+                    if(StringUtils.isEmpty(info)){
+                        ToastUtil.showFailed("请选择商品规格");
+                    }else {
+                        ToastUtil.showFailed(info);
+                    }
+                    return;
+                }
+
                 StringBuilder spec_sku_id = new StringBuilder();
                 String[] skuIds = selectedSku.getSpec_sku_id().split("_");
                 List<SpecAttr> specAttrList = product.getSpecData().getSpec_attr();
@@ -305,7 +326,7 @@ public class ProductSkuDialog extends Dialog {
                     callback.onAdded(spec_sku_id.toString(), quantityInt);
                     dismiss();
                 } else {
-                    Toast.makeText(getContext(), "商品数量超出库存，请修改数量", Toast.LENGTH_SHORT).show();
+                    ToastUtil.showFailed("商品数量超出库存");
                 }
 
             }
@@ -315,11 +336,11 @@ public class ProductSkuDialog extends Dialog {
         stockQuantityFormat = context.getString(R.string.product_detail_sku_stock);
 
         if (product.getSpecData() == null) {
-            SpecData specData = new SpecData();
-            specData.setSpec_attr(new ArrayList<>());
-            specData.setSpec_list(new ArrayList<>());
-            this.product.setSpecData(specData);
-            this.skuList = new ArrayList<>();
+//            SpecData specData = new SpecData();
+//            specData.setSpec_attr(new ArrayList<>());
+//            specData.setSpec_list(new ArrayList<>());
+//            this.product.setSpecData(specData);
+//            this.skuList = new ArrayList<>();
         } else {
             this.skuList = product.getSpecData().getSpec_attr();
             updateSkuData();
@@ -335,15 +356,18 @@ public class ProductSkuDialog extends Dialog {
         for (SpecList first : product.getSpecData().getSpec_list()) {
             if (first.getForm().getStock_num() >= 0) {
                 firstSku = first;
+                TourCooLogUtil.e(first);
                 break;
             }
         }
+
+
         if (firstSku != null) {
             if (firstSku.getForm().getStock_num() > 0) {
                 selectedSku = firstSku;
                 currentSkuQuantity = firstSku.getForm().getStock_num();
                 // 选中第一个sku
-                scrollSkuList.setSelectedSku(product.getSpecData().getSpec_attr());
+                scrollSkuList.setSelectedSku(firstSku);
 
                 StringBuilder builder = new StringBuilder();
                 StringBuilder spec_sku_id = new StringBuilder();

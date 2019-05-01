@@ -1,7 +1,6 @@
 package com.tourcoo.xiantao.ui.goods;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -80,6 +79,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
      * 拼团按钮
      */
     private TextView tvPin;
+    private TextView tvAddShoppingCar;
 
     private TextView tvCollect;
     private ImageView ivCollect;
@@ -102,8 +102,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         llAssemble = findViewById(R.id.llAssemble);
         tvBuyNow = findViewById(R.id.tvBuyNow);
         tvPin = findViewById(R.id.tvPin);
-        tvBuyNow.setOnClickListener(this);
-        findViewById(R.id.tvAddShoppingCar).setOnClickListener(this);
+        tvAddShoppingCar = findViewById(R.id.tvAddShoppingCar);
     }
 
     @Override
@@ -262,7 +261,37 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     public void onAdded(String specSkuId, int quantity) {
                         ToastUtil.show("规格ID：" + specSkuId + "   商品数量：" + quantity);
                     }
-                });
+                }, ProductSkuDialog.PING_TUAN);
+
+                dialog.show();
+            }
+        });
+
+        tvBuyNow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog = new ProductSkuDialog(GoodsDetailActivity.this, goodsEntity, new ProductSkuDialog.Callback() {
+                    @Override
+                    public void onAdded(String specSkuId, int quantity) {
+                        ToastUtil.show("规格ID：" + specSkuId + "   商品数量：" + quantity);
+                    }
+                }, ProductSkuDialog.BUY_NOW);
+
+                dialog.show();
+            }
+        });
+
+        tvAddShoppingCar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog = new ProductSkuDialog(GoodsDetailActivity.this, goodsEntity, new ProductSkuDialog.Callback() {
+                    @Override
+                    public void onAdded(String specSkuId, int quantity) {
+                        ToastUtil.show("规格ID：" + specSkuId + "   商品数量：" + quantity);
+                        //添加购物车
+                        addGoods(goodsEntity.getDetail().getGoods_id(),quantity,specSkuId);
+                    }
+                }, ProductSkuDialog.SHOPPING_CART);
 
                 dialog.show();
             }
@@ -319,8 +348,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 settleGoods(mGoodsEntity);
                 break;
             case R.id.tvAddShoppingCar:
-                //添加购物车
-                addGoods(count++);
+
                 break;
             case R.id.llCollect:
                 //收藏或取消收藏
@@ -413,8 +441,8 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     /**
      * 请求添加商品接口
      */
-    private void addGoods(int count) {
-        ApiRepository.getInstance().addGoods(23, count, "48").compose(bindUntilEvent(ActivityEvent.DESTROY)).
+    private void addGoods(int goodsId,int count,String skuId) {
+        ApiRepository.getInstance().addGoods(goodsId, count, skuId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseLoadingObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {
