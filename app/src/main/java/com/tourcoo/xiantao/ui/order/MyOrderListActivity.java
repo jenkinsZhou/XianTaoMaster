@@ -5,8 +5,12 @@ import android.os.Bundle;
 import com.google.android.material.tabs.TabLayout;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
+import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
 import com.tourcoo.xiantao.ui.account.MineFragment;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +37,9 @@ public class MyOrderListActivity extends BaseTourCooTitleActivity implements Vie
     private ViewPager orderViewPager;
     private TabLayout orderTabLayout;
     private String[] titles = new String[]{"全部", "待付款", "待发货", "待收货", "待评价"};
+    private List<Fragment> fragmentList = new ArrayList<>();
+    public static final String EXTRA_CURRENT_TAB_INDEX = "EXTRA_CURRENT_TAB_INDEX";
+    private int currentTabIndex;
 
     @Override
     public int getContentLayout() {
@@ -44,13 +51,13 @@ public class MyOrderListActivity extends BaseTourCooTitleActivity implements Vie
         orderTabLayout = findViewById(R.id.orderTabLayout);
         orderViewPager = findViewById(R.id.orderViewPager);
         initTabTitle();
+        currentTabIndex = getIntent().getIntExtra(EXTRA_CURRENT_TAB_INDEX, -1);
     }
 
 
     @Override
     public void loadData() {
         super.loadData();
-        List<Fragment> fragmentList = new ArrayList<>();
         fragmentList.add(OrderListFragment.newInstance(ORDER_STATUS_ALL));
         fragmentList.add(OrderListFragment.newInstance(ORDER_STATUS_WAIT_PAY));
         fragmentList.add(OrderListFragment.newInstance(ORDER_STATUS_WAIT_SEND));
@@ -62,6 +69,8 @@ public class MyOrderListActivity extends BaseTourCooTitleActivity implements Vie
         orderViewPager.setOffscreenPageLimit(5);
         orderTabLayout.setupWithViewPager(orderViewPager);
         initTabTitle();
+        TourCooLogUtil.i(TAG, "value索引:" + currentTabIndex);
+        setCurrentTabByPosition(currentTabIndex);
     }
 
     private void initTabTitle() {
@@ -110,4 +119,22 @@ public class MyOrderListActivity extends BaseTourCooTitleActivity implements Vie
     }
 
 
+    /**
+     * 设置当前tab
+     *
+     * @param position
+     */
+    public void setCurrentTabByPosition(int position) {
+        if (position < 0 || position >= fragmentList.size()) {
+            return;
+        }
+        orderViewPager.setCurrentItem(position);
+    }
+
+
+    @Override
+    public void finish() {
+        EventBus.getDefault().postSticky(new RefreshEvent());
+        super.finish();
+    }
 }

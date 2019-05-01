@@ -62,7 +62,7 @@ public class ClassifyGoodsFragment extends BaseTitleFragment {
 
     @Override
     public void initView(Bundle savedInstanceState) {
-        initTitle();
+//        initTitle();
         init();
         getGoodsClassify();
     }
@@ -80,6 +80,7 @@ public class ClassifyGoodsFragment extends BaseTitleFragment {
                 .setMinHeight(0)
                 .setMaxHeight(mMaxHeight);
     }
+
 
     private void init() {
         classifyRecyclerView = mContentView.findViewById(R.id.classifyRecyclerView);
@@ -104,14 +105,15 @@ public class ClassifyGoodsFragment extends BaseTitleFragment {
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
-        titleBar
+        titleBar.setTitleMainText("分类");
+     /*   titleBar
                 .setDividerVisible(false)
                 .setStatusAlpha(StatusBarUtil.isSupportStatusBarFontChange() ? 0 : 102)
                 .setStatusAlpha(0)
                 .setVisibility(View.GONE);
         StatusBarUtil.setStatusBarLightMode(mContext);
         titleBar.setLeftTextColor(Color.WHITE)
-                .setBgColor(Color.WHITE);
+                .setBgColor(Color.WHITE);*/
     }
 
 

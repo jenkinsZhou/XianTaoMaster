@@ -36,6 +36,8 @@ import com.tourcoo.xiantao.core.widget.divider.TourCoolRecycleViewDivider;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.MenuItem;
 import com.tourcoo.xiantao.entity.TokenInfo;
+import com.tourcoo.xiantao.entity.event.RefreshEvent;
+import com.tourcoo.xiantao.entity.event.TabChangeEvent;
 import com.tourcoo.xiantao.entity.message.MessageBean;
 import com.tourcoo.xiantao.entity.user.PersonalCenterInfo;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
@@ -47,6 +49,10 @@ import com.tourcoo.xiantao.ui.order.MyOrderListActivity;
 import com.tourcoo.xiantao.ui.order.ReturnOrderList;
 import com.tourcoo.xiantao.ui.recharge.AccountBalanceActivity;
 import com.trello.rxlifecycle3.android.FragmentEvent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +66,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_OK;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.ui.order.MyOrderListActivity.EXTRA_CURRENT_TAB_INDEX;
 
 /**
  * @author :JenkinsZhou
@@ -98,9 +105,13 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     @Override
     public void initView(Bundle savedInstanceState) {
         refreshLayout = mContentView.findViewById(R.id.refreshLayout);
-        mContentView.findViewById(R.id.llReturnGood).setOnClickListener(this);
         refreshLayout.setOnRefreshListener(this);
         mContentView.findViewById(R.id.accumulatePoints).setOnClickListener(this);
+        mContentView.findViewById(R.id.llReturnGood).setOnClickListener(this);
+        mContentView.findViewById(R.id.llWaitSend).setOnClickListener(this);
+        mContentView.findViewById(R.id.llWaitReceive).setOnClickListener(this);
+        mContentView.findViewById(R.id.llWaitEvaluate).setOnClickListener(this);
+        mContentView.findViewById(R.id.llWaitEvaluate).setOnClickListener(this);
         ivMsg = mContentView.findViewById(R.id.ivMsg);
         ivMsg.setOnClickListener(this);
         tvRedDotWaitPay = mContentView.findViewById(R.id.tvRedDotWaitPay);
@@ -126,6 +137,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         rvMineMenu.addItemDecoration(divider);
         rvMineMenu.setLayoutManager(new GridLayoutManager(mContext, 4));
         mContentView.findViewById(R.id.llWaitPay).setOnClickListener(this);
+        EventBus.getDefault().register(this);
     }
 
 
@@ -241,7 +253,8 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                 TourCooUtil.startActivity(mContext, MyOrderListActivity.class);
                 break;
             case R.id.llWaitPay:
-                TourCooUtil.startActivity(mContext, RegisterActivity.class);
+                //待付款
+                skipToOrderList(1);
                 break;
             case R.id.ivSetting:
                 TourCooUtil.startActivity(mContext, SettingActivity.class);
@@ -280,6 +293,18 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                 returnIntent.setClass(mContext, ReturnOrderList.class);
 //                startActivityForResult(returnIntent, REQUEST_CODE_EDIT_USER_INFO);
                 startActivity(returnIntent);
+                break;
+            case R.id.llWaitSend:
+                //待发货
+                skipToOrderList(2);
+                break;
+            case R.id.llWaitReceive:
+                //待收货
+                skipToOrderList(3);
+                break;
+            case R.id.llWaitEvaluate:
+                //待评价
+                skipToOrderList(4);
                 break;
             default:
                 break;
@@ -455,7 +480,6 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                             if (entity.code == CODE_REQUEST_SUCCESS) {
                                 boolean isLogin = tokenCheckCallBack(entity.data);
                                 if (isLogin) {
-                                    TourCooLogUtil.i(TAG, TAG + ":" + "执行了");
                                     getPersonalCenter();
                                     //获取未读消息数量
                                     requestMessageNoReadCount();
@@ -521,4 +545,50 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     }
 
 
+    /**
+     * 跳转到订单列表
+     *
+     * @param index
+     */
+    private void skipToOrderList(int index) {
+        Intent intent = new Intent();
+        intent.setClass(mContext, MyOrderListActivity.class);
+        intent.putExtra(EXTRA_CURRENT_TAB_INDEX, index);
+        startActivityForResult(intent, REQUEST_CODE_MESSAGE_CENTER);
+    }
+
+
+    /**
+     * 刷新请求
+     */
+    public void refreshUI() {
+        TourCooLogUtil.i(TAG, "刷新了UI");
+        if (AccountInfoHelper.getInstance().isLogin()) {
+            checkTokenAndRequestUserInfo();
+        } else {
+            showUnLoginUI();
+        }
+    }
+
+
+    /**
+     * @param refreshEvent
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onRefreshUIEvent(RefreshEvent refreshEvent) {
+        //todo 刷新ui
+        if (refreshEvent == null) {
+            return;
+        }
+        refreshUI();
+    }
+
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
 }
+
+
+

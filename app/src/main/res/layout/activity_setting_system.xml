@@ -65,7 +65,7 @@
                 app:sLeftTextString="清除缓存"
                 app:sRightIconRes="@mipmap/ic_arrow_right"
                 app:sRightTextColor="@color/grayLittleCommon"
-                app:sRightTextString="12M"
+                app:sRightTextString=""
                 app:sUseRipple="false" />
 
             <com.allen.library.SuperTextView

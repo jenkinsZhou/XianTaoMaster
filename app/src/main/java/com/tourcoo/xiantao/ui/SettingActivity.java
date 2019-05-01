@@ -44,8 +44,10 @@ public class SettingActivity extends BaseTourCooTitleActivity implements View.On
     @Override
     public void initView(Bundle savedInstanceState) {
         stvClearCache = findViewById(R.id.stvClearCache);
+        stvClearCache.setOnClickListener(this);
         findViewById(R.id.btnExitLogin).setOnClickListener(this);
         findViewById(R.id.stvResetPassword).setOnClickListener(this);
+        showCache();
     }
 
 

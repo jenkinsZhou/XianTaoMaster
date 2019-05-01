@@ -50,7 +50,9 @@ import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS
 public class MainTabActivity extends BaseMainActivity implements EasyPermissions.PermissionCallbacks {
     private TabChangeEvent mTabChangeEvent;
     public CommonTabLayout mTabLayout;
+    public static final int TAB_INDEX_MINE = 3;
     private boolean isFirstLoad = true;
+    private MineFragment mineFragment;
     /**
      * 当前购物车中商品数量
      */
@@ -76,10 +78,11 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
     @Override
     public List<TabEntity> getTabList() {
         ArrayList<TabEntity> tabEntities = new ArrayList<>();
+        mineFragment = MineFragment.newInstance();
         tabEntities.add(new TabEntity("首页", R.mipmap.tab_home_normal, R.mipmap.tab_home_selected, HomeFragment.newInstance()));
         tabEntities.add(new TabEntity("分类", R.mipmap.tab_classification_normal, R.mipmap.tab_classification_selected, ClassifyGoodsFragment.newInstance()));
         tabEntities.add(new TabEntity("购物车", R.mipmap.tab_shopping_cart_normal, R.mipmap.tab_shopping_cart_selected, ShoppingCarFragmentVersion2.newInstance()));
-        tabEntities.add(new TabEntity("个人中心", R.mipmap.tab_personal_center_normal, R.mipmap.tab_personal_center_selected, MineFragment.newInstance()));
+        tabEntities.add(new TabEntity("个人中心", R.mipmap.tab_personal_center_normal, R.mipmap.tab_personal_center_selected, mineFragment));
         return tabEntities;
     }
 
@@ -123,6 +126,9 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
                     if (AccountInfoHelper.getInstance().isLogin()) {
                         //获取购物车中商品数量
                         getTotalNum();
+                    }
+                    if (position == TAB_INDEX_MINE) {
+                        mineFragment.refreshUI();
                     }
                 }
 
@@ -256,9 +262,6 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
             mTabLayout.showMsg(2, count);
         }
     }
-
-
-
 
 
 }
