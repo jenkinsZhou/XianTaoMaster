@@ -11,22 +11,24 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.OrderListAdapter;
 import com.tourcoo.xiantao.core.frame.UiConfigManager;
-import com.tourcoo.xiantao.core.frame.base.fragment.BaseRefreshFragment;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
+import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.order.OrderEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
+import com.tourcoo.xiantao.ui.BaseTourCooRefreshLoadActivity;
 import com.tourcoo.xiantao.ui.comment.EvaluationActivity;
-import com.trello.rxlifecycle3.android.FragmentEvent;
+import com.trello.rxlifecycle3.android.ActivityEvent;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_ALL;
+import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_BACK;
+import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_BACK_ING;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_COMMENT;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_SEND;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
@@ -34,31 +36,26 @@ import static com.tourcoo.xiantao.ui.order.OrderDetailActivity.EXTRA_ORDER_ID;
 import static com.tourcoo.xiantao.ui.order.ReturnGoodsActivity.EXTRA_GOODS_LIST;
 
 /**
- * @author :JenkinsZhou
- * @description :订单列表（全部状态）
- * @company :途酷科技
- * @date 2019年04月27日18:30
+ * @author :zhoujian
+ * @description :退货订单列表
+ * @company :翼迈科技
+ * @date 2019年 04月 30日 23时11分
  * @Email: 971613168@qq.com
  */
-public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo> {
+public class ReturnOrderList extends BaseTourCooRefreshLoadActivity<OrderEntity.OrderInfo> implements View.OnClickListener {
     private OrderListAdapter mAdapter;
-    private int orderStatus = ORDER_STATUS_ALL;
+    private int orderStatus = ORDER_STATUS_BACK;
     public static final String EXTRA_ORDER_STATUS = "EXTRA_ORDER_STATUS";
 
     @Override
     public int getContentLayout() {
-        return R.layout.layout__smart_refresh;
+        return R.layout.layout_title_refresh_recycler;
     }
 
     @Override
     public void initView(Bundle savedInstanceState) {
         mDefaultPage = 1;
         mDefaultPageSize = 10;
-        if (getArguments() == null) {
-            ToastUtil.show("未获取到数据");
-            return;
-        }
-        orderStatus = getArguments().getInt(EXTRA_ORDER_STATUS, -1);
         TourCooLogUtil.i(TAG, TAG + "订单状态:" + orderStatus);
     }
 
@@ -66,6 +63,12 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
     public OrderListAdapter getAdapter() {
         mAdapter = new OrderListAdapter();
         return mAdapter;
+    }
+
+    @Override
+    public void setTitleBar(TitleBarView titleBar) {
+        super.setTitleBar(titleBar);
+        titleBar.setTitleMainText("退货列表");
     }
 
     @Override
@@ -97,7 +100,7 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
      * 获取个人中心信息
      */
     private void requestOrderInfo(int page) {
-        ApiRepository.getInstance().requestOrderInfo(orderStatus, page).compose(bindUntilEvent(FragmentEvent.DESTROY)).
+        ApiRepository.getInstance().requestOrderInfo(orderStatus, page).compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {
@@ -222,5 +225,10 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
         intent.putExtra(EXTRA_ORDER_ID, orderInfo.getId());
         intent.setClass(mContext, EvaluationActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 }

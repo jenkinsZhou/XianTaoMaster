@@ -428,6 +428,7 @@ public class ApiRepository extends BaseRepository {
         Map<String, Object> params = new HashMap<>(1);
         params.put("p", page);
         params.put("status", orderStatus);
+        TourCooLogUtil.i(TAG, TAG + ":" + params);
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestOrderInfo(params).retryWhen(new RetryWhen()));
     }
 
@@ -648,7 +649,7 @@ public class ApiRepository extends BaseRepository {
         Map<String, Object> params = new HashMap<>(1);
         params.put("goods_id", goodsId);
         params.put("p", page);
-        TourCooLogUtil.i(TAG, TAG + ":" + params);
+        TourCooLogUtil.i(TAG, TAG + "商品id:" + params);
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestCommentList(params).retryWhen(new RetryWhen()));
     }
 }

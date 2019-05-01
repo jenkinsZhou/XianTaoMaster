@@ -6,16 +6,17 @@ android {
         debug {
             keyAlias 'emi'
             keyPassword 'android'
-            storeFile file('E:/android/android project/XianTaoMaster/android_key_release.jks')
+            storeFile file('C:/Users/JenkinsZhou/android/android_key_release.jks')
             storePassword 'android'
         }
         release {
             keyAlias 'emi'
             keyPassword 'android'
-            storeFile file('E:/android/android project/XianTaoMaster/android.jks')
+            storeFile file('C:/Users/JenkinsZhou/android/android.jks')
             storePassword 'android'
         }
     }
+
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.tourcoo.xiantao"

@@ -1,7 +1,6 @@
 package com.tourcoo.xiantao.ui.goods;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,7 +15,6 @@ import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
-import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.util.TourCoolUtil;
@@ -24,12 +22,10 @@ import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.goods.GoodsEntity;
-import com.tourcoo.xiantao.entity.goods.Spec;
-import com.tourcoo.xiantao.entity.settle.SettleEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
 import com.tourcoo.xiantao.ui.base.WebViewActivity;
-import com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity;
+import com.tourcoo.xiantao.ui.comment.CommentListActivity;
 import com.tourcoo.xiantao.widget.dialog.ProductSkuDialog;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
@@ -295,17 +291,18 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     /**
      * 结算后跳转到结算页面显示
      *
-     * @param settleEntity
+     * @param
      */
-    private void skipOrderDetail(SettleEntity settleEntity) {
-        boolean skipEnable = settleEntity != null && settleEntity.getGoods_list() != null;
+    private void skipOrderDetail(int goodsId) {
+      /*  boolean skipEnable = settleEntity != null && settleEntity.getGoods_list() != null;
         if (!skipEnable) {
             ToastUtil.showFailed("未获取到商品信息");
             return;
-        }
+        }*/
         Intent intent = new Intent();
-        intent.putExtra(EXTRA_SETTLE, settleEntity);
-        intent.setClass(mContext, OrderSettleDetailActivity.class);
+//        intent.putExtra(EXTRA_SETTLE, settleEntity);
+        intent.putExtra(EXTRA_GOODS_ID, mGoodsId);
+        intent.setClass(mContext, CommentListActivity.class);
         startActivity(intent);
     }
 
@@ -317,8 +314,10 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 //立即购买
 //                mGoodsEntity.setGoodsCount(1);
 //                settleGoods(mGoodsEntity);
+                skipOrderDetail(mGoodsId);
                 break;
             case R.id.tvAddShoppingCar:
+
                 //添加购物车
                 break;
             case R.id.llCollect:

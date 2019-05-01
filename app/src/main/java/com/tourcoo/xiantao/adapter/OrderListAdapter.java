@@ -148,6 +148,10 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                 case FINISH:
                     setTextGreen(tvOrderStatus, "退货中");
                     orderInfo.setOrder_status(ORDER_STATUS_BACK_ING);
+                    hindView(btnOne);
+                    hindView(btnTwo);
+                    hindView(btnThree);
+                    setTextGray(btnFour, "查看详情");
                     break;
                 case 30:
                     //已经退货
@@ -155,11 +159,19 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                     tvOrderStatus.setTextColor(TourCooUtil.getColor(R.color.redTextCommon));
                     setTextRed(tvOrderStatus, "已退货");
                     orderInfo.setOrder_status(ORDER_STATUS_BACK_FINISH);
+                    hindView(btnOne);
+                    hindView(btnTwo);
+                    hindView(btnThree);
+                    hindView(btnFour);
                     break;
                 case 40:
                     //退货被拒绝
                     setTextRed(tvOrderStatus, "退货被拒绝");
                     orderInfo.setOrder_status(ORDER_STATUS_BACK_REFUSE);
+                    hindView(btnOne);
+                    hindView(btnTwo);
+                    hindView(btnThree);
+                    hindView(btnFour);
                     break;
                 default:
                     break;

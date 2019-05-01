@@ -186,7 +186,7 @@
                 android:layout_height="@dimen/dp_40"
                 android:layout_marginTop="@dimen/dp_15"
                 android:layout_marginBottom="@dimen/dp_15"
-                android:background="@drawable/bg_radius_16_green"
+                android:background="@drawable/bg_radius_20_green"
                 android:text="@string/product_detail_sku_confirm"
                 android:textColor="@color/comm_white"
                 android:textSize="@dimen/sp_15" />

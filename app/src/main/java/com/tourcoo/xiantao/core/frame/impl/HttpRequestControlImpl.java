@@ -96,6 +96,7 @@ public class HttpRequestControlImpl implements HttpRequestControl {
     public void httpRequestError(IRequestControl requestControl, Throwable e) {
         int reason = R.string.exception_other_error;
         TourCooLogUtil.e(TAG, TAG + ":" + e.toString());
+
 //        int code = FastError.EXCEPTION_OTHER_ERROR;
         if (!NetworkUtil.isConnected(XianTaoApplication.getContext())) {
             reason = R.string.exception_network_not_connected;

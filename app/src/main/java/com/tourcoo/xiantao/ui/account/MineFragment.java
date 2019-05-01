@@ -44,6 +44,7 @@ import com.tourcoo.xiantao.ui.coin.MyCoinListActivity;
 import com.tourcoo.xiantao.ui.goods.CollectionGoodsListActivity;
 import com.tourcoo.xiantao.ui.msg.MsgSystemActivity;
 import com.tourcoo.xiantao.ui.order.MyOrderListActivity;
+import com.tourcoo.xiantao.ui.order.ReturnOrderList;
 import com.tourcoo.xiantao.ui.recharge.AccountBalanceActivity;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 
@@ -97,6 +98,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     @Override
     public void initView(Bundle savedInstanceState) {
         refreshLayout = mContentView.findViewById(R.id.refreshLayout);
+        mContentView.findViewById(R.id.llReturnGood).setOnClickListener(this);
         refreshLayout.setOnRefreshListener(this);
         mContentView.findViewById(R.id.accumulatePoints).setOnClickListener(this);
         ivMsg = mContentView.findViewById(R.id.ivMsg);
@@ -271,6 +273,13 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                 Intent coinIntent = new Intent();
                 coinIntent.setClass(mContext, MyCoinListActivity.class);
                 startActivityForResult(coinIntent, REQUEST_CODE_EDIT_USER_INFO);
+                break;
+            case R.id.llReturnGood:
+                //退货列表
+                Intent returnIntent = new Intent();
+                returnIntent.setClass(mContext, ReturnOrderList.class);
+//                startActivityForResult(returnIntent, REQUEST_CODE_EDIT_USER_INFO);
+                startActivity(returnIntent);
                 break;
             default:
                 break;
@@ -454,10 +463,16 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                                     showUnLoginUI();
                                 }
                             } else {
-                                refreshLayout.finishRefresh();
+                                refreshLayout.finishRefresh(false);
                                 ToastUtil.showFailed(entity.msg);
                             }
                         }
+                    }
+
+                    @Override
+                    public void onRequestError(Throwable e) {
+                        super.onRequestError(e);
+                        refreshLayout.finishRefresh(false);
                     }
                 });
     }

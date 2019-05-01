@@ -17,7 +17,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.LogUtils;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.OrderGoodsDetailAdapter;
-import com.tourcoo.xiantao.adapter.OrderGoodsSettleAdapter;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
@@ -32,13 +31,10 @@ import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.order.OrderDetailEntity;
-import com.tourcoo.xiantao.helper.GoodsCount;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
-import com.tourcoo.xiantao.ui.coment.EvaluationActivity;
-import com.tourcoo.xiantao.ui.goods.GoodsDetailActivity;
+import com.tourcoo.xiantao.ui.comment.EvaluationActivity;
 import com.trello.rxlifecycle3.android.ActivityEvent;
-import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -57,7 +53,6 @@ import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_PAY;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_RECIEVE;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_SEND;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
-import static com.tourcoo.xiantao.ui.goods.HomeFragment.EXTRA_GOODS_ID;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.NOT_USE_COIN;
 import static com.tourcoo.xiantao.ui.order.ReturnGoodsActivity.EXTRA_GOODS_LIST;
 
@@ -485,7 +480,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
             //确认收货
             case R.id.tvConfirmReceive:
-                requestConfirmFinish(mOrderEntity.getOrder().getId());
+                showConfirmFinishDialog();
                 break;
             case R.id.tvCommentNow:
                 //立即评价
@@ -665,6 +660,31 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             default:
                 break;
         }
+    }
+
+
+    /**
+     * 确认收货确认框
+     */
+    private void showConfirmFinishDialog() {
+        //删除地址
+        ConfirmDialog.Builder builder = new ConfirmDialog.Builder(mContext);
+        builder.setTitle("确认收货").setFirstMessage("是否确认收货？")
+                .setFirstMsgSize(15).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        })
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        requestConfirmFinish(mOrderEntity.getOrder().getId());
+                        dialog.dismiss();
+//                        ApiRepository.getInstance().updateApp()
+                    }
+                });
+        showConfirmDialog(builder);
     }
 }
 

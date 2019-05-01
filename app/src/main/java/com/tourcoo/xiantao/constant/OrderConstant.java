@@ -24,7 +24,9 @@ public class OrderConstant {
 
     public static final int ORDER_STATUS_WAIT_COMMENT = 4;
 
-
+    /**
+     * 退货列表
+     */
     public static final int ORDER_STATUS_BACK = 5;
 
     public static final int ORDER_STATUS_FINISH = 6;

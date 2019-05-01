@@ -1,4 +1,4 @@
-package com.tourcoo.xiantao.ui.coment;
+package com.tourcoo.xiantao.ui.comment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,12 +27,10 @@ import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
-import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.upload.UploadEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.retrofit.repository.UploadProgressBody;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
-import com.tourcoo.xiantao.ui.account.PersonalDataActivity;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
 import org.apache.commons.lang.StringUtils;
