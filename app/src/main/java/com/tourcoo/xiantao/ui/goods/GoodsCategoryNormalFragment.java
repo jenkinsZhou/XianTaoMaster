@@ -93,7 +93,7 @@ public class GoodsCategoryNormalFragment extends BaseRefreshFragment<GoodsCatego
      */
     public void getCategoryGoodsList(String type, int pageIndex) {
         TourCooLogUtil.i(TAG, TAG + ":" + "mActivity.categoryId = " + mActivity.categoryId);
-        ApiRepository.getInstance().getCategoryGoodsList(mActivity.categoryId, type, pageIndex, "").compose(bindUntilEvent(FragmentEvent.DESTROY)).
+        ApiRepository.getInstance().getCategoryGoodsList(mActivity.categoryId, type, pageIndex, mActivity.keyword).compose(bindUntilEvent(FragmentEvent.DESTROY)).
                 subscribe(new BaseObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {

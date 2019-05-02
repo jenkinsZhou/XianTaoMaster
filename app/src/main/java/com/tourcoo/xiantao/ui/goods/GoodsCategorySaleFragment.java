@@ -40,7 +40,6 @@ public class GoodsCategorySaleFragment extends BaseRefreshFragment<GoodsCategory
     private GoodsCategoryListActivity mActivity;
 
 
-
     @Override
     public int getContentLayout() {
         return R.layout.layout__smart_refresh;
@@ -49,7 +48,7 @@ public class GoodsCategorySaleFragment extends BaseRefreshFragment<GoodsCategory
     @Override
     public void initView(Bundle savedInstanceState) {
         mActivity = (GoodsCategoryListActivity) mContext;
-        mDefaultPageSize = 5;
+        mDefaultPageSize = 10;
         mDefaultPage = 1;
     }
 
@@ -91,8 +90,8 @@ public class GoodsCategorySaleFragment extends BaseRefreshFragment<GoodsCategory
      * 根据商品类型请求相应数据
      */
     public void getCategoryGoodsList(String type, int pageIndex) {
-         TourCooLogUtil.i(TAG,TAG+":"+"mActivity.categoryId = "+mActivity.categoryId );
-        ApiRepository.getInstance().getCategoryGoodsList(mActivity.categoryId, type, pageIndex, "").compose(bindUntilEvent(FragmentEvent.DESTROY)).
+        TourCooLogUtil.i(TAG, TAG + ":" + "mActivity.categoryId = " + mActivity.categoryId);
+        ApiRepository.getInstance().getCategoryGoodsList(mActivity.categoryId, type, pageIndex, mActivity.keyword).compose(bindUntilEvent(FragmentEvent.DESTROY)).
                 subscribe(new BaseObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {

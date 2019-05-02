@@ -1,6 +1,7 @@
 package com.tourcoo.xiantao.ui.goods;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -33,6 +34,10 @@ public class GoodsCategoryListActivity extends BaseTourCooTitleActivity implemen
     private TabLayout goodsTabLayout;
     private int currentSelectPosition;
     private ViewPager goodsViewPager;
+    private TitleBarView titleBarView;
+    public static final String EXTRA_TITLE_NAME = "EXTRA_TITLE_NAME";
+    public static final String EXTRA_KEY_WORD = "EXTRA_KEY_WORD";
+    public String keyword;
     /**
      * 商品分类的id
      */
@@ -46,7 +51,10 @@ public class GoodsCategoryListActivity extends BaseTourCooTitleActivity implemen
     @Override
     public void initView(Bundle savedInstanceState) {
         categoryId = getIntent().getIntExtra(EXTRA_CATEGORY_ID, -1);
-         TourCooLogUtil.i(TAG,TAG+"商品id:"+ categoryId);
+        keyword = getIntent().getStringExtra(EXTRA_KEY_WORD);
+        String titleName = getIntent().getStringExtra(EXTRA_TITLE_NAME);
+        showTitle(titleName);
+        TourCooLogUtil.i(TAG, TAG + "商品id:" + categoryId);
         goodsViewPager = findViewById(R.id.goodsViewPager);
         goodsViewPager.setOffscreenPageLimit(3);
         initTabTitle();
@@ -101,6 +109,7 @@ public class GoodsCategoryListActivity extends BaseTourCooTitleActivity implemen
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         super.setTitleBar(titleBar);
+        titleBarView = titleBar;
     }
 
 
@@ -138,6 +147,12 @@ public class GoodsCategoryListActivity extends BaseTourCooTitleActivity implemen
 
             }
         });
+    }
 
+    private void showTitle(String titleName) {
+        if (TextUtils.isEmpty(titleName)) {
+            return;
+        }
+        titleBarView.setTitleMainText(titleName);
     }
 }

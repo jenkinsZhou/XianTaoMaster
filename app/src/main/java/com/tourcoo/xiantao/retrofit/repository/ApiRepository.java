@@ -404,7 +404,7 @@ public class ApiRepository extends BaseRepository {
         } else {
             params.put("id", categoryId);
         }
-        TourCooLogUtil.i(TAG, TAG + ":" + params);
+        TourCooLogUtil.i(TAG, TAG + "提交的参数:" + params);
         return TourCoolTransformer.switchSchedulersIo(getApiService().getCategoryGoodsList(params).retryWhen(new RetryWhen()));
     }
 

@@ -89,8 +89,8 @@ public class GoodsCategoryPriceFragment extends BaseRefreshFragment<GoodsCategor
      * 根据商品类型请求相应数据
      */
     public void getCategoryGoodsList(String type, int pageIndex) {
-        TourCooLogUtil.i(TAG,TAG+":"+"mActivity.categoryId = "+mActivity.categoryId );
-        ApiRepository.getInstance().getCategoryGoodsList(mActivity.categoryId, type, pageIndex, "").compose(bindUntilEvent(FragmentEvent.DESTROY)).
+        TourCooLogUtil.i(TAG, TAG + ":" + "mActivity.categoryId = " + mActivity.categoryId);
+        ApiRepository.getInstance().getCategoryGoodsList(mActivity.categoryId, type, pageIndex, mActivity.keyword).compose(bindUntilEvent(FragmentEvent.DESTROY)).
                 subscribe(new BaseObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {

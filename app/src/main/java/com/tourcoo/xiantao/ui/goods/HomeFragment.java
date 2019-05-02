@@ -35,6 +35,7 @@ import com.tourcoo.xiantao.core.helper.TitleBarViewHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.module.MainTabActivity;
 import com.tourcoo.xiantao.core.util.ToastUtil;
+import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.core.util.StatusBarUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
@@ -157,6 +158,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
 
     private void initView() {
         mMainTabActivity = (MainTabActivity) mContext;
+        mContentView.findViewById(R.id.rlSearchLayout).setOnClickListener(this);
         homeViewFlipper = mContentView.findViewById(R.id.homeViewFlipper);
         rlContentView = mContentView.findViewById(R.id.rlContentView);
         rvHome = mContentView.findViewById(R.id.rvHome);
@@ -242,7 +244,13 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-
+        switch (v.getId()) {
+            case R.id.rlSearchLayout:
+                TourCoolUtil.startActivity(mContext,SearchGoodsActivity.class);
+                break;
+            default:
+                break;
+        }
     }
 
 
