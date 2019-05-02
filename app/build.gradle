@@ -48,6 +48,9 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    //webView加载html依赖的库
+    implementation 'org.jsoup:jsoup:1.11.2'
+
     implementation project(':swipemenulib')
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.blankj:utilcode:1.18.2'

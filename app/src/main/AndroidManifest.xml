@@ -43,6 +43,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.tourcoo.xiantao.core.module.TestRefreshActivity" />
+        <activity android:name=".ui.goods.TuanListActivity" />
         <activity android:name=".ui.account.AddNewAddressActivity" />
         <activity android:name=".ui.account.PersonalDataActivity" />
         <activity android:name=".ui.recharge.RechargeListActivity" />
@@ -79,6 +80,7 @@
             android:name=".ui.coment.EvaluationActivity"
             android:windowSoftInputMode="adjustPan" />
         <activity android:name=".ui.coment.CommentListActivity" />
+
     </application>
 
 </manifest>

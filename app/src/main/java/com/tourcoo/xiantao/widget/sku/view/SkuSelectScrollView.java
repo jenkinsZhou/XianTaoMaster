@@ -251,7 +251,6 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
                 }
             } else {
 
-
                 Map<Integer, List<String>> map = new HashMap<>();
 
                 for (int existIndex : existMulList) {
@@ -284,27 +283,24 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
                     SpecAttr specAttr = specData.getSpec_attr().get(k);
                     // 属性值是否可点击flag
                     List<SkuAttribute> attributeBeanList = specAttr.getSpec_items();
-                    for (SkuAttribute attribute : attributeBeanList) {
-
-                        if (map.get(k) != null) {
-                            List<String> unclickId = map.get(k);
-                            if (!unclickId.contains(attribute.getItem_id())) {
-                                String attributeValue = attribute.getSpec_value();
-                                itemLayout.optionItemViewEnableStatus(attributeValue);
-                            }
-
-                        } else {
+                    if (map.get(k) == null) {
+                        for (SkuAttribute attribute : attributeBeanList) {
                             String attributeValue = attribute.getSpec_value();
                             itemLayout.optionItemViewEnableStatus(attributeValue);
                         }
-
+                    } else {
+                        List<String> unclickId = map.get(k);
+                        for (int i = 0; i < attributeBeanList.size(); i++) {
+                            String id = attributeBeanList.get(i).getItem_id();
+                            if(!unclickId.contains(id)){
+                                String attributeValue = attributeBeanList.get(i).getSpec_value();
+                                itemLayout.optionItemViewEnableStatus(attributeValue);
+                            }
+                        }
                     }
                 }
-
             }
-
         }
-
 
     }
 
@@ -385,7 +381,7 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
 
     /**
      * 设置选中的sku
-     *
+     * todo:存在bug,暂未修复，后期优化 两层sku属性 选择会出错
      * @param specList
      */
     public void setSelectedSku(SpecList specList) {
@@ -393,12 +389,14 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
 
         String[] specSkuIds = specList.getSpec_sku_id().split("_");
 
-        for (int i = 0; i < specData.getSpec_attr().size(); i++) {
+        for (int i = 0; i < specSkuIds.length; i++) {
             SpecAttr specAttr = specData.getSpec_attr().get(i);
-
+            TourCooLogUtil.e(specAttr);
             for (int j = 0; j < specAttr.getSpec_items().size(); j++) {
                 SkuAttribute skuAttribute = specAttr.getSpec_items().get(j);
+                TourCooLogUtil.e(skuAttribute);
                 if (skuAttribute.getItem_id().equals(specSkuIds[i])) {
+                    // 选中，保存选中信息
                     selectedAttributeList.add(skuAttribute);
                 }
             }

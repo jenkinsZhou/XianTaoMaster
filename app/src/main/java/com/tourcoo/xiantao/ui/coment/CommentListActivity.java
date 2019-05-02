@@ -43,47 +43,32 @@ import static com.tourcoo.xiantao.ui.goods.HomeFragment.EXTRA_GOODS_ID;
  * @date 2019年04月30日17:57
  * @Email: 971613168@qq.com
  */
-public abstract class CommentListActivity extends BaseTourCooRefreshLoadActivity<CommentEntity> implements View.OnClickListener {
+public class CommentListActivity extends BaseTourCooRefreshLoadActivity<CommentDetail> {
     private CommentAdapter adapter;
-    private TextView tvCurrentGold;
-    private TextView tvAu;
-    private int currentAuAmount;
     private int goodsId;
 
     @Override
     public int getContentLayout() {
-        return R.layout.activity_my_coin_list;
+        return R.layout.activity_comment_list;
     }
 
     @Override
     public void initView(Bundle savedInstanceState) {
         goodsId = getIntent().getIntExtra(EXTRA_GOODS_ID, -1);
-        tvAu = findViewById(R.id.tvAu);
-        tvCurrentGold = findViewById(R.id.tvCurrentGold);
-        findViewById(R.id.tvConvertGold).setOnClickListener(this);
-        TourCoolRecycleViewDivider divider = new TourCoolRecycleViewDivider(
-                mContext, LinearLayoutManager.HORIZONTAL, 1, ContextCompat.getColor(mContext, R.color.grayDividerDeep));
-        mRecyclerView.addItemDecoration(divider);
     }
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         super.setTitleBar(titleBar);
-        titleBar.setTitleMainText("我的金币");
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, 0, 20, 0);
-        TextView textView = titleBar.getTextView(Gravity.END);
-        textView.setLayoutParams(params);
-
+        titleBar.setTitleMainText("全部评价");
     }
 
 
-   /* @Override
-    public BaseQuickAdapter<CoinDetail, BaseViewHolder> getAdapter() {
-        adapter = new CoinHistoryAdapter();
-        return nu;
-    }*/
+    @Override
+    public BaseQuickAdapter<CommentDetail, BaseViewHolder> getAdapter() {
+        adapter = new CommentAdapter();
+        return adapter;
+    }
 
     @Override
     public void loadData(int page) {
@@ -104,7 +89,7 @@ public abstract class CommentListActivity extends BaseTourCooRefreshLoadActivity
 
 
     /**
-     * 查询充值记录
+     * 查询评价记录
      */
     private void requestCommentList(int orderId, int page) {
         ApiRepository.getInstance().requestCommentList(orderId, page).compose(bindUntilEvent(ActivityEvent.DESTROY)).
@@ -125,47 +110,6 @@ public abstract class CommentListActivity extends BaseTourCooRefreshLoadActivity
                     public void onRequestError(Throwable e) {
                         super.onRequestError(e);
                         mStatusManager.showErrorLayout();
-                    }
-                });
-    }
-
-
-    private void showMyCoin(CoinHistory coinHistory) {
-        if (coinHistory == null) {
-            return;
-        }
-        currentAuAmount = coinHistory.getAg();
-        tvCurrentGold.setText(coinHistory.getAu() + "");
-        tvAu.setText(coinHistory.getAg() + "");
-    }
-
-    @Override
-    public void onClick(View v) {
-       /* switch (v.getId()) {
-            case R.id.tvConvertGold:
-               ,
-                break;
-            default:
-                break;
-        }*/
-    }
-
-
-    /**
-     * 银币转换
-     */
-    private void requestExchange() {
-        ApiRepository.getInstance().requestExchange().compose(bindUntilEvent(ActivityEvent.DESTROY)).
-                subscribe(new BaseObserver<BaseEntity>() {
-                    @Override
-                    public void onRequestNext(BaseEntity entity) {
-                        if (entity != null) {
-                            if (entity.code == CODE_REQUEST_SUCCESS) {
-                                ToastUtil.showSuccess("兑换成功");
-                            } else {
-                                ToastUtil.showFailed(entity.msg);
-                            }
-                        }
                     }
                 });
     }

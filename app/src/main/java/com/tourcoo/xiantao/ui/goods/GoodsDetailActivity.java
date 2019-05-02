@@ -1,24 +1,42 @@
 package com.tourcoo.xiantao.ui.goods;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.text.TextUtils;
 import android.view.View;
+import android.view.WindowManager;
+import android.webkit.WebView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.SpanUtils;
+import com.blankj.utilcode.util.StringUtils;
+import com.blankj.utilcode.util.TimeUtils;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.tourcoo.xiantao.R;
+import com.tourcoo.xiantao.adapter.GridImageAdapter;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
+import com.tourcoo.xiantao.core.log.widget.utils.DateUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.util.TourCoolUtil;
+import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.goods.Goods;
@@ -28,14 +46,24 @@ import com.tourcoo.xiantao.entity.settle.SettleEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
 import com.tourcoo.xiantao.ui.base.WebViewActivity;
+import com.tourcoo.xiantao.ui.coment.CommentListActivity;
 import com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity;
 import com.tourcoo.xiantao.widget.dialog.ProductSkuDialog;
+import com.tourcoo.xiantao.widget.ratingstar.RatingStarView;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import cn.bingoogolapple.bgabanner.BGABanner;
+import de.hdodenhof.circleimageview.CircleImageView;
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
@@ -70,6 +98,9 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
      * 拼团布局
      */
     private LinearLayout llAssemble;
+    private LinearLayout llTuanContainer;
+
+    private LinearLayout llCommentContainer;
 
     /**
      * 单独购买
@@ -80,11 +111,17 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
      */
     private TextView tvPin;
     private TextView tvAddShoppingCar;
+    private TextView tvTuanTag;
+    private TextView tvLable;
+    private TextView tvOrigin;
+    private TextView tvTuanStatus;
+    private TextView btnSeeTotal;
+    private TextView btnSeeTotalComment;
+    private TextView btnSeeComment;
 
-    private TextView tvCollect;
-    private ImageView ivCollect;
+    private CheckBox cbCollect;
+    private WebView webView;
 
-    private LinearLayout llCollect;
 
     private ProductSkuDialog dialog;
 
@@ -94,15 +131,37 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     }
 
     private void init() {
-        llCollect = findViewById(R.id.llCollect);
-        llCollect.setOnClickListener(this);
-        tvCollect = findViewById(R.id.tvCollect);
-        ivCollect = findViewById(R.id.ivCollect);
+        cbCollect = findViewById(R.id.cbCollect);
+        cbCollect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (buttonView.isPressed()) {
+                    if (isChecked) {
+                        collectAdd(mGoodsId);
+                    } else {
+                        collectCancel(mGoodsId);
+                    }
+                }
+            }
+        });
         rlContentView = findViewById(R.id.rlContentView);
         llAssemble = findViewById(R.id.llAssemble);
         tvBuyNow = findViewById(R.id.tvBuyNow);
         tvPin = findViewById(R.id.tvPin);
         tvAddShoppingCar = findViewById(R.id.tvAddShoppingCar);
+        webView = findViewById(R.id.webView);
+        tvTuanTag = findViewById(R.id.tvTuanTag);
+        tvLable = findViewById(R.id.tvLable);
+        tvOrigin = findViewById(R.id.tvOrigin);
+        tvTuanStatus = findViewById(R.id.tvTuanStatus);
+        llTuanContainer = findViewById(R.id.llTuanContainer);
+        llCommentContainer = findViewById(R.id.llCommentContainer);
+        btnSeeTotal = findViewById(R.id.btnSeeTotal);
+        btnSeeTotal.setOnClickListener(this);
+        btnSeeTotalComment = findViewById(R.id.btnSeeTotalComment);
+        btnSeeTotalComment.setOnClickListener(this);
+        btnSeeComment = findViewById(R.id.btnSeeComment);
+        btnSeeComment.setOnClickListener(this);
     }
 
     @Override
@@ -245,13 +304,121 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         //显示名称
         tvGoodsName.setText(detail.getGoods_name());
         //是否显示拼团信息
-        setVisible(llAssemble, detail.isTuan());
+        setVisible(llAssemble, detail.isTuan() && detail.getTuan_list() != null && detail.getTuan_list().size() > 0);
         setVisible(tvPin, detail.isTuan());
-        if (goodsEntity.getCollect() == 0) {
+        setVisible(tvTuanTag, detail.isTuan());
+
+        tvLable.setText(detail.getLabel());
+        if (!StringUtils.isEmpty(detail.getOrigin())) {
+            tvOrigin.setText(new SpanUtils()
+                    .append("产地: ").setForegroundColor(Color.parseColor("#9B9B9B"))
+                    .append(detail.getOrigin()).setForegroundColor(TourCoolUtil.getColor(R.color.colorTextBlack))
+                    .create());
+        }
+
+        if (detail.isTuan() && detail.getTuan_list() != null && detail.getTuan_list().size() > 0) {
+            tvTuanStatus.setText(detail.getTuan_list().size() + "人正在拼团 可直接参与");
+            int size = detail.getTuan_list().size() == 1 ? 1 : 2;
+
+            for (int i = 0; i < size; i++) {
+
+                View view = View.inflate(this, R.layout.item_goods_details_tuan_person_layout, null);
+                ImageView ivAvatar = view.findViewById(R.id.ivAvatar);
+                TextView tvNickName = view.findViewById(R.id.tvNickName);
+                TextView tvSurplus = view.findViewById(R.id.tvSurplus);
+                TextView tvEndTime = view.findViewById(R.id.tvEndTime);
+                TextView btnJoinTuan = view.findViewById(R.id.btnJoinTuan);
+
+                GlideManager.loadCircleImg(detail.getTuan_list().get(i).getAvatar(), ivAvatar);
+                tvNickName.setText(detail.getTuan_list().get(i).getNickname());
+                tvSurplus.setText(detail.getTuan_list().get(i).getSurplus() + "kg");
+
+                long totalTime = detail.getTuan_list().get(i).getDeadline() * 1000L;
+
+                SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+                CountDownTimer timer = new CountDownTimer(totalTime, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        Date date = TimeUtils.millis2Date(millisUntilFinished);
+                        tvEndTime.setText("剩余" + format.format(date));
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        btnJoinTuan.setText("拼团已截止");
+                        btnJoinTuan.setEnabled(false);
+                    }
+                }.start();
+
+                llTuanContainer.addView(view);
+            }
+
+
+        }
+
+        if (detail.getComment_list() != null && detail.getComment_list().size() > 0) {
+
+            int size = detail.getComment_list().size() == 1 ? 1 : 2;
+
+            for (int i = 0; i < size; i++) {
+                Goods.CommentListBean item = detail.getComment_list().get(i);
+                View view = View.inflate(this, R.layout.item_comment, null);
+                RatingStarView ratingStarView = view.findViewById(R.id.rsvRating);
+                RecyclerView commentImageRecyclerView = view.findViewById(R.id.commentImageRecyclerView);
+
+                TextView tvNickName = view.findViewById(R.id.tvNickName);
+                TextView tvTime = view.findViewById(R.id.tvTime);
+                TextView tvComment = view.findViewById(R.id.tvComment);
+                CircleImageView circleImageView = view.findViewById(R.id.civAvatar);
+
+                tvNickName.setText(TourCooUtil.getNotNullValue(item.getNickname()));
+                tvTime.setText(DateUtil.parseDate(item.getCreatetime()));
+                tvComment.setText(TourCooUtil.getNotNullValue(item.getDetail()));
+                if (!TextUtils.isEmpty(item.getImages())) {
+                    List<String> imageUrlList = new ArrayList<>();
+                    if (item.getImages() != null) {
+                        String[] imageArray = item.getImages().split(",");
+                        for (String image : imageArray) {
+                            if (!TextUtils.isEmpty(image)) {
+                                imageUrlList.add(TourCooUtil.getUrl(image));
+                            }
+                        }
+                    }
+
+
+                    commentImageRecyclerView.setLayoutManager(new GridLayoutManager(mContext, 4));
+                    GridImageAdapter gridImageAdapter = new GridImageAdapter(imageUrlList);
+                    gridImageAdapter.bindToRecyclerView(commentImageRecyclerView);
+                    gridImageAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                            onThumbnailClick(imageUrlList.get(position));
+                        }
+                    });
+                }
+
+                ratingStarView.setEnabled(false);
+                ratingStarView.setRating(item.getStar());
+                String imageUrl = TourCooUtil.getUrl(item.getAvatar());
+                GlideManager.loadImg(imageUrl, circleImageView, TourCooUtil.getDrawable(R.mipmap.img_default_avatar));
+
+                llCommentContainer.addView(view);
+            }
+
+        } else {
+            llCommentContainer.setVisibility(View.GONE);
+            btnSeeTotalComment.setText("暂无评论");
+            btnSeeTotalComment.setEnabled(false);
+            btnSeeComment.setEnabled(false);
+        }
+
+        if (goodsEntity.getDetail().getCollect() == 0) {
             showNoCollect();
         } else {
             showCollect();
         }
+
+        imageFillWidth(webView, goodsEntity.getDetail().getContent());
 
         tvPin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -259,7 +426,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 dialog = new ProductSkuDialog(GoodsDetailActivity.this, goodsEntity, new ProductSkuDialog.Callback() {
                     @Override
                     public void onAdded(String specSkuId, int quantity) {
-                        ToastUtil.show("规格ID：" + specSkuId + "   商品数量：" + quantity);
+                        startNewTuan(goodsEntity.getDetail().getGoods_id(), quantity);
                     }
                 }, ProductSkuDialog.PING_TUAN);
 
@@ -273,7 +440,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 dialog = new ProductSkuDialog(GoodsDetailActivity.this, goodsEntity, new ProductSkuDialog.Callback() {
                     @Override
                     public void onAdded(String specSkuId, int quantity) {
-                        ToastUtil.show("规格ID：" + specSkuId + "   商品数量：" + quantity);
+                        addGoods(goodsEntity.getDetail().getGoods_id(), quantity, specSkuId);
                     }
                 }, ProductSkuDialog.BUY_NOW);
 
@@ -287,9 +454,8 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 dialog = new ProductSkuDialog(GoodsDetailActivity.this, goodsEntity, new ProductSkuDialog.Callback() {
                     @Override
                     public void onAdded(String specSkuId, int quantity) {
-                        ToastUtil.show("规格ID：" + specSkuId + "   商品数量：" + quantity);
                         //添加购物车
-                        addGoods(goodsEntity.getDetail().getGoods_id(),quantity,specSkuId);
+                        addShopingCar(goodsEntity.getDetail().getGoods_id(), quantity, specSkuId);
                     }
                 }, ProductSkuDialog.SHOPPING_CART);
 
@@ -299,6 +465,29 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
     }
 
+    private void onThumbnailClick(String imageUrl) {
+// 全屏显示的方法
+        /* android.R.style.Theme_Black_NoTitleBar_Fullscreen*/
+        final Dialog dialog = new Dialog(mContext, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        ImageView imgView = getView();
+        dialog.setContentView(imgView);
+        dialog.show();
+        GlideManager.loadImg(imageUrl, imgView);
+// 点击图片消失
+        imgView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
+
+    private ImageView getView() {
+        ImageView imgView = new ImageView(mContext);
+        imgView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        imgView.setLayoutParams(new WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT));
+        return imgView;
+    }
 
     private void setVisible(View view, boolean visible) {
         if (view == null) {
@@ -347,14 +536,17 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 mGoodsEntity.setGoodsCount(1);
                 settleGoods(mGoodsEntity);
                 break;
-            case R.id.tvAddShoppingCar:
-
+            case R.id.btnSeeTotal:
+                Intent intent = new Intent(GoodsDetailActivity.this, TuanListActivity.class);
+                intent.putExtra("goods_id", mGoodsId);
+                startActivity(intent);
                 break;
-            case R.id.llCollect:
-                //收藏或取消收藏
-                if (!isCollected(mGoodsEntity)) {
-                    collectAdd(mGoodsId);
-                }
+
+            case R.id.btnSeeComment:
+            case R.id.btnSeeTotalComment:
+                intent = new Intent(GoodsDetailActivity.this, CommentListActivity.class);
+                intent.putExtra(EXTRA_GOODS_ID, mGoodsId);
+                startActivity(intent);
                 break;
             default:
                 break;
@@ -370,7 +562,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             return;
         }
         Goods goods = goodsEntity.getDetail();
-        Spec spec = goods.getSpecBean().get(0);
+        Spec spec = goods.getSpec().get(0);
         ApiRepository.getInstance().settleGoods(goods.getGoods_id(), goodsEntity.getGoodsCount(), spec.getSpec_sku_id()).compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseLoadingObserver<BaseEntity>() {
                     @Override
@@ -420,6 +612,23 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
      * 添加购物车
      */
     private void addShopingCar(int goodsId, int count, String skuId) {
+        ApiRepository.getInstance().addGoods(goodsId, count, skuId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseLoadingObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            ToastUtil.showSuccess(entity.msg);
+                        }
+                    }
+                });
+
+    }
+
+
+    /**
+     * 请求添加商品接口
+     */
+    private void addGoods(int goodsId, int count, String skuId) {
         ApiRepository.getInstance().settleGoods(goodsId, count, skuId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseObserver<BaseEntity>() {
                     @Override
@@ -439,20 +648,18 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
 
     /**
-     * 请求添加商品接口
+     * 发起拼团接口
      */
-    private void addGoods(int goodsId,int count,String skuId) {
-        ApiRepository.getInstance().addGoods(goodsId, count, skuId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+    private void startNewTuan(int goodsId, int count) {
+        ApiRepository.getInstance().startNewTuan(goodsId, count).compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseLoadingObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
+                            ToastUtil.showSuccess("发起拼团成功");
                             if (entity.code == CODE_REQUEST_SUCCESS) {
-                                if (entity.data != null) {
-                                    ToastUtil.showSuccess(entity.data.toString());
-                                }
-                            } else {
-                                ToastUtil.showFailed(entity.msg);
+                                //todo:拼团列表
+//                                startActivity(new Intent(GoodsDetailActivity.this, ));
                             }
                         }
                     }
@@ -461,15 +668,13 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
 
     private void showCollect() {
-        tvCollect.setText("已收藏");
-        tvCollect.setTextColor(TourCoolUtil.getColor(R.color.greenCommon));
-        ivCollect.setImageResource(R.mipmap.ic_collect_selected);
+        cbCollect.setChecked(true);
+        cbCollect.setText("已收藏");
     }
 
     private void showNoCollect() {
-        tvCollect.setText("收藏");
-        tvCollect.setTextColor(TourCoolUtil.getColor(R.color.text_gray_common));
-        ivCollect.setImageResource(R.mipmap.ic_collect);
+        cbCollect.setChecked(false);
+        cbCollect.setText("收藏");
     }
 
 
@@ -484,23 +689,66 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     @Override
                     public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
+                            ToastUtil.showSuccess(entity.msg);
                             if (entity.code == CODE_REQUEST_SUCCESS) {
-                                if (entity.data != null) {
-                                    ToastUtil.showSuccess(entity.data.toString());
-                                    TourCooLogUtil.i(TAG, TAG + "回调结果:" + JSON.toJSONString(entity.data.toString()));
-                                } else {
-                                    ToastUtil.showFailed(entity.msg);
-                                    TourCooLogUtil.i(TAG, TAG + "回调结果:" + JSON.toJSONString(entity));
-                                }
+                                showCollect();
                             } else {
-                                ToastUtil.showFailed(entity.msg);
+                                showNoCollect();
                             }
                         }
                     }
                 });
     }
 
-    private boolean isCollected(GoodsEntity goodsEntity) {
-        return goodsEntity.getCollect() == 1;
+    private void collectCancel(int goodsId) {
+        if (goodsId < 0) {
+            ToastUtil.showFailed("未获取到商品id");
+            return;
+        }
+        ApiRepository.getInstance().collectCancel(goodsId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseLoadingObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            ToastUtil.showSuccess(entity.msg);
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                showNoCollect();
+                            } else {
+                                showCollect();
+                            }
+                        }
+                    }
+                });
     }
+
+
+    /**
+     * 处理图片视频填充手机宽度
+     */
+    private void imageFillWidth(WebView webView, String content) {
+        Document doc = Jsoup.parse(content);
+
+        //修改视频标签
+        Elements embeds = doc.getElementsByTag("embed");
+        for (Element element : embeds) {
+            //宽度填充手机，高度自适应
+            element.attr("width", "100%").attr("height", "auto");
+        }
+        //webview 无法正确识别 embed 为视频，所以这里把这个标签改成 video 手机就可以识别了
+        doc.select("embed").tagName("video");
+
+        //控制图片的大小
+        Elements imgs = doc.getElementsByTag("img");
+        for (int i = 0; i < imgs.size(); i++) {
+            //宽度填充手机，高度自适应
+            imgs.get(i).attr("style", "width: 100%; height: auto;");
+        }
+
+        //对数据进行包装,除去WebView默认存在的一定像素的边距问题
+        String data = "<html><head><style>img{width:100% !important;}</style></head><body style='margin:0;padding:0'>" + doc + "</body></html>";
+
+        //加载使用 jsoup 处理过的 html 文本
+        webView.loadData(data, "text/html; charset=UTF-8", null);
+    }
+
 }

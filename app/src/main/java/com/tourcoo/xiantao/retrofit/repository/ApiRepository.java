@@ -10,6 +10,7 @@ import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.entity.coin.CoinHistory;
 import com.tourcoo.xiantao.entity.comment.CommentDetail;
 import com.tourcoo.xiantao.entity.comment.CommentEntity;
+import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.goods.GoodsCollectEntity;
 import com.tourcoo.xiantao.entity.message.MessageBean;
 import com.tourcoo.xiantao.entity.message.MessageEntity;
@@ -25,6 +26,7 @@ import com.tourcoo.xiantao.retrofit.service.ApiService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.DoubleUnaryOperator;
 
 import io.reactivex.Observable;
 
@@ -478,6 +480,16 @@ public class ApiRepository extends BaseRepository {
         return TourCoolTransformer.switchSchedulersIo(getApiService().collectAdd(params).retryWhen(new RetryWhen()));
     }
 
+
+
+    public Observable<BaseEntity> collectCancel(int goodsIds) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("goods_id", goodsIds);
+        TourCooLogUtil.i(TAG, TAG + ":" + params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().collectCancel(params).retryWhen(new RetryWhen()));
+    }
+
+
     /**
      * 修改个人信息
      *
@@ -650,5 +662,33 @@ public class ApiRepository extends BaseRepository {
         params.put("p", page);
         TourCooLogUtil.i(TAG, TAG + ":" + params);
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestCommentList(params).retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 发起拼团接口
+     *
+     * @param goodsId
+     * @param goodsCount
+     * @return
+     */
+    public Observable<BaseEntity> startNewTuan(int goodsId, int goodsCount) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("goods_id", goodsId);
+        params.put("num", goodsCount);
+        TourCooLogUtil.i(TAG, TAG + ":" + goodsId);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().startNewTuan(params).retryWhen(new RetryWhen()));
+    }
+
+    /**
+     * 单个商品的拼团列表
+     *
+     * @param goods_id
+     * @return
+     */
+    public Observable<BaseEntity<List<Goods.TuanListBean>>> tuanList(int goods_id) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("goods_id", goods_id);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().tuanList(params).retryWhen(new RetryWhen()));
     }
 }
