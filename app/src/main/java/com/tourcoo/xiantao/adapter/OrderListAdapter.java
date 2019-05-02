@@ -52,7 +52,6 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
         RecyclerView commentImageRecyclerView = helper.getView(R.id.photoRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-
         helper.setText(R.id.tvPrice, "￥" + orderInfo.getPay_price());
         commentImageRecyclerView.setLayoutManager(layoutManager);
         List<Goods> goodsList = orderInfo.getGoods();
@@ -177,6 +176,13 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                     break;
             }
         }
+        int pin = orderInfo.getTuan();
+        //1表示拼团订单
+        if (pin == 1) {
+            helper.setGone(R.id.tvPin, true);
+        } else {
+            helper.setGone(R.id.tvPin, false);
+        }
     }
 
 
@@ -197,21 +203,8 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
     }
 
 
-    private void setViewVisible(View view, boolean visible) {
-        if (visible) {
-            view.setVisibility(View.VISIBLE);
-        } else {
-            view.setVisibility(View.INVISIBLE);
-        }
-    }
-
-
     private void hindView(View view) {
-        view.setVisibility(View.INVISIBLE);
-    }
-
-    private void showView(View view) {
-        view.setVisibility(View.INVISIBLE);
+        view.setVisibility(View.GONE);
     }
 
 

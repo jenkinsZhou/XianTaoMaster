@@ -441,5 +441,13 @@ public interface ApiService {
     Observable<BaseEntity<CommentEntity>> requestCommentList(@Body Map<String, Object> map);
 
 
+    /**
+     * 订单支付
+     *
+     * @param map
+     * @return
+     */
+    @POST("order/order_pay")
+    Observable<BaseEntity> requestOrderPay(@QueryMap Map<String, Object> map);
 
 }

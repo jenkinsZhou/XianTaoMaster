@@ -1,8 +1,11 @@
 package com.tourcoo.xiantao.ui.order;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -14,7 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alipay.sdk.app.PayTask;
 import com.blankj.utilcode.util.LogUtils;
+import com.tencent.mm.opensdk.modelpay.PayReq;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.OrderGoodsDetailAdapter;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
@@ -23,6 +30,7 @@ import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.log.widget.utils.DateUtil;
+import com.tourcoo.xiantao.core.threadpool.ThreadPoolManager;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
@@ -30,15 +38,22 @@ import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.goods.Goods;
+import com.tourcoo.xiantao.entity.goods.Spec;
 import com.tourcoo.xiantao.entity.order.OrderDetailEntity;
+import com.tourcoo.xiantao.entity.pay.WeiXinPay;
+import com.tourcoo.xiantao.entity.user.CashEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
 import com.tourcoo.xiantao.ui.comment.EvaluationActivity;
+import com.tourcoo.xiantao.widget.dialog.PayDialog;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
@@ -52,9 +67,16 @@ import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_COMME
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_PAY;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_RECIEVE;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_SEND;
+import static com.tourcoo.xiantao.constant.WxConfig.APP_ID;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.NOT_USE_COIN;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.PAY_STATUS;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.PAY_STATUS_SUCCESS;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SDK_PAY_FLAG;
 import static com.tourcoo.xiantao.ui.order.ReturnGoodsActivity.EXTRA_GOODS_LIST;
+import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_ALI;
+import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_BALANCE;
+import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
 
 /**
  * @author :JenkinsZhou
@@ -65,10 +87,13 @@ import static com.tourcoo.xiantao.ui.order.ReturnGoodsActivity.EXTRA_GOODS_LIST;
  */
 public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity implements View.OnClickListener {
     private static final int REQUEST_CODE_EVALUATE = 1001;
+    private IWXAPI api;
     private LinearLayout llAddressInfo;
     public static final String EXTRA_ORDER_ID = "EXTRA_ORDER_ID";
     private RecyclerView goodsOrderRecyclerView;
     private OrderDetailEntity mOrderEntity;
+    private PaymentHandler paymentHandler = new PaymentHandler(OrderDetailActivity.this);
+    private int mPayType;
     /**
      * 商品订单适配器
      */
@@ -121,6 +146,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
     @Override
     public void initView(Bundle savedInstanceState) {
+        api = WXAPIFactory.createWXAPI(mContext, null);
         tvCoin = findViewById(R.id.tvCoin);
         llBottomToolBar = findViewById(R.id.llBottomToolBar);
         tvCommentNow = findViewById(R.id.tvCommentNow);
@@ -181,8 +207,9 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
      * 获取订单详情
      */
     private void requestOrderDetail() {
+        mStatusLayoutManager.showLoadingLayout();
         ApiRepository.getInstance().requestOrderDetail(orderId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
-                subscribe(new BaseLoadingObserver<BaseEntity>() {
+                subscribe(new BaseObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
@@ -199,12 +226,20 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                                         showOrderDetail(orderEntity);
                                     } else {
                                         ToastUtil.showFailed(entity.msg);
+                                        mStatusLayoutManager.showErrorLayout();
                                     }
                                 }
                             } else {
                                 ToastUtil.showFailed(entity.msg);
+                                mStatusLayoutManager.showErrorLayout();
                             }
                         }
+                    }
+
+                    @Override
+                    public void onRequestError(Throwable e) {
+                        super.onRequestError(e);
+                        mStatusLayoutManager.showErrorLayout();
                     }
                 });
     }
@@ -228,7 +263,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 return new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        requestOrderDetail();
                     }
                 };
             }
@@ -238,7 +273,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 return new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        requestOrderDetail();
                     }
                 };
             }
@@ -248,7 +283,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 return new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        requestOrderDetail();
                     }
                 };
             }
@@ -321,6 +356,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
      * @param orderDetailEntity
      */
     private void showOrderDetail(OrderDetailEntity orderDetailEntity) {
+        mStatusLayoutManager.showSuccessLayout();
         OrderDetailEntity.OrderBean orderBean = orderDetailEntity.getOrder();
         showAddressInfo(orderBean.getAddress());
         showCoin(orderDetailEntity);
@@ -463,10 +499,9 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             case R.id.tvCancelOrder:
                 showCancelOrderDialog();
                 break;
-            //立即支付
             case R.id.tvPayNow:
-
-
+                //立即支付
+                requestBalanceAndShowPayDialog();
                 break;
             //申请退货
             case R.id.tvReturn:
@@ -685,6 +720,171 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     }
                 });
         showConfirmDialog(builder);
+    }
+
+
+    /**
+     * 查询账户信息并显示支付
+     */
+    private void requestBalanceAndShowPayDialog() {
+        if (mOrderEntity == null || mOrderEntity.getOrder() == null) {
+            ToastUtil.showFailed("未获取到订单信息");
+            return;
+        }
+        ApiRepository.getInstance().requestBalance().compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity<CashEntity>>() {
+                    @Override
+                    public void onRequestNext(BaseEntity<CashEntity> entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
+                                TourCooLogUtil.i(TAG, entity.data);
+                                double cash = entity.data.getCash();
+                                showPayDialog(mOrderEntity.getOrder().getPay_price(), cash);
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+                });
+    }
+
+
+    private void showPayDialog(double money, double balance) {
+        PayDialog payDialog = new PayDialog(mContext, money, balance, new PayDialog.PayListener() {
+            @Override
+            public void pay(int payType, Dialog dialog) {
+                mPayType = payType;
+                createPay(payType);
+                dialog.dismiss();
+            }
+        });
+        payDialog.show();
+    }
+
+
+    /**
+     * 支付接口
+     */
+    private void createPay(int payType) {
+        if (mOrderEntity == null || mOrderEntity.getOrder() == null) {
+            ToastUtil.showFailed("未获取到订单信息");
+            return;
+        }
+        ApiRepository.getInstance().requestOrderPay(mOrderEntity.getOrder().getId(), payType).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseLoadingObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            TourCooLogUtil.e("回调结果:", entity);
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                ThreadPoolManager.getThreadPoolProxy().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        switch (mPayType) {
+                                            case PAY_TYPE_WE_XIN:
+                                                weiChatPay(entity.data.toString());
+                                                break;
+                                            case PAY_TYPE_ALI:
+                                                aliPay(entity.data.toString());
+                                                break;
+                                            case PAY_TYPE_BALANCE:
+                                                TourCooLogUtil.i("支付结果", entity);
+                                                ToastUtil.showSuccess("支付完成");
+                                                refreshRequest();
+                                                break;
+                                            default:
+
+                                                break;
+                                        }
+                                    }
+                                });
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+                });
+    }
+
+
+    /**
+     * 微信支付
+     *
+     * @param payInfo
+     */
+    private void weiChatPay(String payInfo) {
+        WeiXinPay weiXinPay = parseWeiXinPay(payInfo);
+        if (weiXinPay != null) {
+            PayReq req = new PayReq();
+            req.appId = weiXinPay.getAppid();
+            req.nonceStr = weiXinPay.getNoncestr();
+            req.packageValue = "Sign=WXPay";
+            req.partnerId = weiXinPay.getPartnerid();
+            req.timeStamp = weiXinPay.getTimestamp();
+            req.sign = weiXinPay.getSign();
+            TourCooLogUtil.d("请求结果", weiXinPay);
+            req.prepayId = weiXinPay.getPrepayid();
+            api.registerApp(APP_ID);
+            api.sendReq(req);
+        } else {
+            ToastUtil.showFailed("解析失败");
+        }
+    }
+
+    private WeiXinPay parseWeiXinPay(String data) {
+        if (data == null) {
+            return null;
+        }
+        try {
+            return JSON.parseObject(data, WeiXinPay.class);
+        } catch (Exception e) {
+            TourCooLogUtil.e(TAG, "value:" + e.toString());
+            return null;
+        }
+    }
+
+
+    private void aliPay(String payInfo) {
+        PayTask aliPay = new PayTask(mContext);
+        Map<String, String> result = aliPay.payV2(payInfo, true);
+        Message msg = new Message();
+        msg.what = SDK_PAY_FLAG;
+        msg.obj = result;
+        paymentHandler.sendMessage(msg);
+    }
+
+
+    @SuppressWarnings("unchecked")
+    private static class PaymentHandler extends Handler {
+        private WeakReference<OrderDetailActivity> softReference;
+
+        public PaymentHandler(OrderDetailActivity activity) {
+            softReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case SDK_PAY_FLAG:
+                    Map<String, String> result = (Map<String, String>) msg.obj;
+                    for (Map.Entry<String, String> stringStringEntry : result.entrySet()) {
+                        if (PAY_STATUS.equalsIgnoreCase(stringStringEntry.getKey())) {
+                            boolean success = PAY_STATUS_SUCCESS.equals(stringStringEntry.getValue());
+                            if (success) {
+                                ToastUtil.showSuccess("支付完成");
+//                                softReference.get().refreshStatus(TYPE_STATUS_ORDER_WAIT_EVALUATE);
+                            } else {
+                                ToastUtil.showFailed("支付失败");
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }
 

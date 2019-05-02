@@ -80,6 +80,7 @@
             android:windowSoftInputMode="adjustPan" />
         <activity android:name=".ui.comment.CommentListActivity" />
         <activity android:name=".ui.order.ReturnOrderList" />
+        <activity android:name=".ui.goods.SearchGoodsActivity" />
     </application>
 
 </manifest>

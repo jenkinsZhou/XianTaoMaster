@@ -1,6 +1,7 @@
 package com.tourcoo.xiantao.core.frame.delegate;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -122,12 +123,11 @@ public class RefreshLoadDelegate<T> {
         }
         StatusLayoutManager.Builder builder = new StatusLayoutManager.Builder(contentView)
                 .setDefaultLayoutsBackgroundColor(android.R.color.transparent)
-                .setDefaultEmptyText(R.string.multi_empty).setDefaultEmptyImg(R.mipmap.img_no_content)
-                .setDefaultEmptyClickViewTextColor(contentView.getResources().getColor(R.color.colorTitleText))
-                .setDefaultLoadingText(R.string.multi_loading)
-                .setDefaultErrorText(R.string.multi_error)
-                .setDefaultErrorImg(R.mipmap.img_no_network)
                 .setDefaultErrorClickViewTextColor(contentView.getResources().getColor(R.color.colorTitleText))
+                .setErrorLayout(inflateLayout(R.layout.custom_error_layout))
+                .setErrorClickViewID(R.id.tvRefresh)
+                .setEmptyLayout(inflateLayout(R.layout.custom_empty_layout))
+                .setEmptyClickViewID(R.id.tvRefresh)
                 .setOnStatusChildClickListener(new OnStatusChildClickListener() {
                     @Override
                     public void onEmptyChildClick(View view) {
@@ -208,4 +208,8 @@ public class RefreshLoadDelegate<T> {
         TourCooLogUtil.i("RefreshLoadDelegate", "onDestroy");
     }
 
+
+    private View inflateLayout(int layoutId) {
+        return LayoutInflater.from(mContext).inflate(layoutId, null);
+    }
 }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:layout_marginLeft="@dimen/dp_10"
+    android:textSize="@dimen/sp_12"
+    android:textColor="@color/greenCommon"
+    android:text="知道了"
+    android:background="@drawable/selector_bg_radius_20_green_hollow"
+    android:paddingStart="@dimen/dp_10"
+    android:paddingEnd="@dimen/dp_10"
+    android:layout_marginTop="@dimen/dp_5"
+    android:paddingTop="@dimen/dp_3"
+    android:paddingBottom="@dimen/dp_3">
+
+</TextView>

@@ -289,10 +289,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                 break;
             case R.id.llReturnGood:
                 //退货列表
-                Intent returnIntent = new Intent();
-                returnIntent.setClass(mContext, ReturnOrderList.class);
-//                startActivityForResult(returnIntent, REQUEST_CODE_EDIT_USER_INFO);
-                startActivity(returnIntent);
+                skipReturnOrderList();
                 break;
             case R.id.llWaitSend:
                 //待发货
@@ -551,6 +548,10 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
      * @param index
      */
     private void skipToOrderList(int index) {
+        if (!AccountInfoHelper.getInstance().isLogin()) {
+            ToastUtil.show("您还没有登录");
+            return;
+        }
         Intent intent = new Intent();
         intent.setClass(mContext, MyOrderListActivity.class);
         intent.putExtra(EXTRA_CURRENT_TAB_INDEX, index);
@@ -587,6 +588,21 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
+    }
+
+
+    /**
+     * 退货列表
+     */
+    private void skipReturnOrderList() {
+        if (!AccountInfoHelper.getInstance().isLogin()) {
+            ToastUtil.show("您还没有登录");
+            return;
+        }
+        Intent returnIntent = new Intent();
+        returnIntent.setClass(mContext, ReturnOrderList.class);
+//                startActivityForResult(returnIntent, REQUEST_CODE_EDIT_USER_INFO);
+        startActivity(returnIntent);
     }
 }
 

@@ -17,10 +17,7 @@
         app:tl_textSize="@dimen/sp_11"
         app:tl_textUnSelectColor="#333333" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_1"
-        android:background="#DBDBDB" />
+
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/orderViewPager"

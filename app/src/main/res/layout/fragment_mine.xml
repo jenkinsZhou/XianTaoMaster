@@ -120,33 +120,32 @@
                             android:textSize="@dimen/sp_20" />
 
 
-
-
                         <TextView
                             android:id="@+id/tvAccumulatePoints"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/accumulatePoints"
                             android:layout_alignBottom="@id/tvBalance"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginRight="@dimen/dp_20"
                             android:gravity="center"
                             android:maxLines="1"
                             android:minWidth="@dimen/dp_80"
-                            android:layout_alignParentRight="true"
-                            android:layout_marginRight="@dimen/dp_20"
                             android:text="129金币 932银币"
                             android:textColor="@color/whiteCommon"
                             android:textSize="@dimen/sp_13" />
 
                         <TextView
-                            android:layout_alignLeft="@id/tvAccumulatePoints"
-                            android:layout_alignRight="@id/tvAccumulatePoints"
                             android:id="@+id/accumulatePoints"
                             style="@style/TextView12spWhite"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_alignLeft="@id/tvAccumulatePoints"
                             android:layout_alignTop="@id/balance"
+                            android:layout_alignRight="@id/tvAccumulatePoints"
                             android:gravity="center"
                             android:text="    我的积分    " />
+
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="@dimen/dp_25"
@@ -201,12 +200,12 @@
                             android:text="全部" />
 
                         <ImageView
-                            android:layout_width="@dimen/dp_12"
-                            android:layout_height="@dimen/dp_14"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_marginLeft="@dimen/dp_5"
                             android:scaleType="fitXY"
-                            android:src="@mipmap/arrow_right_red"
+                            android:src="@mipmap/ic_arrow_right"
                             stv:ignore="VectorDrawableCompat" />
 
                     </LinearLayout>
@@ -241,6 +240,7 @@
                                 android:id="@+id/ivObligation"
                                 android:layout_width="@dimen/dp_26"
                                 android:layout_height="@dimen/dp_24"
+                                android:layout_alignEnd="@+id/llWaitPay"
                                 android:layout_gravity="center_horizontal"
                                 android:scaleType="fitXY"
                                 android:src="@mipmap/ic_obligation" />
@@ -265,8 +265,9 @@
                             android:background="@drawable/bg_circle_red"
                             android:gravity="center"
                             android:text="10"
+                            android:visibility="invisible"
                             android:textColor="@color/whiteCommon"
-                            android:textSize="@dimen/sp_8" />
+                            android:textSize="@dimen/sp_10" />
 
 
                     </RelativeLayout>
@@ -315,7 +316,8 @@
                             android:gravity="center"
                             android:text="10"
                             android:textColor="@color/whiteCommon"
-                            android:textSize="@dimen/sp_8" />
+                            android:textSize="@dimen/sp_10"
+                            android:visibility="invisible" />
                     </RelativeLayout>
 
                     <!--待发货-->
@@ -360,7 +362,8 @@
                             android:gravity="center"
                             android:text="10"
                             android:textColor="@color/whiteCommon"
-                            android:textSize="@dimen/sp_8" />
+                            android:textSize="@dimen/sp_10"
+                            android:visibility="invisible" />
                     </RelativeLayout>
 
                     <!--待评价-->
@@ -405,7 +408,8 @@
                             android:gravity="center"
                             android:text="10"
                             android:textColor="@color/whiteCommon"
-                            android:textSize="@dimen/sp_8" />
+                            android:textSize="@dimen/sp_10"
+                            android:visibility="invisible" />
                     </RelativeLayout>
 
 
@@ -453,7 +457,8 @@
                             android:gravity="center"
                             android:text="99+"
                             android:textColor="@color/whiteCommon"
-                            android:textSize="@dimen/sp_8" />
+                            android:textSize="@dimen/sp_10"
+                            android:visibility="invisible" />
                     </RelativeLayout>
 
                 </LinearLayout>

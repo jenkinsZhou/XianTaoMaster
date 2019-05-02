@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/customEmptyRoot"
+    android:id="@+id/custom_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/whiteCommon"
@@ -12,21 +12,40 @@
         android:layout_height="match_parent"
         android:background="@color/whiteCommon">
 
-        <ImageView
-            android:id="@+id/ivNetError"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_centerVertical="true"
-            android:src="@mipmap/img_no_content" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/ivNetError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@mipmap/img_no_network" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/ivNetError"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center_horizontal"
-            android:text="暂无数据" />
+            <TextView
+                android:id="@+id/tvErrorContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="暂无数据" />
+
+            <TextView
+                android:id="@+id/tvRefresh"
+                style="@style/TextViewButtonBlueBgMatchParentStyleBase"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvErrorContent"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/dp_20"
+                android:paddingLeft="@dimen/dp_20"
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_5"
+                android:paddingRight="@dimen/dp_20"
+                android:text="刷新" />
+        </LinearLayout>
+
     </RelativeLayout>
 
 </RelativeLayout>

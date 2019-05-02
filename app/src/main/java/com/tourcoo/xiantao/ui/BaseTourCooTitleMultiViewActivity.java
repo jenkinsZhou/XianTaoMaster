@@ -72,9 +72,9 @@ public abstract class BaseTourCooTitleMultiViewActivity extends BaseTourCooTitle
                 // 自定义布局
                 .setLoadingLayout(getLoadingLayout())
                 .setEmptyLayout(inflateLayout(R.layout.custom_empty_layout))
-                .setEmptyClickViewID(R.id.customEmptyRoot)
+                .setEmptyClickViewID(R.id.tvRefresh)
                 .setErrorLayout(inflateLayout(R.layout.custom_error_layout))
-                .setErrorClickViewID(R.id.custom_root)
+                .setErrorClickViewID(R.id.tvRefresh)
 //
 //                .setLoadingLayout(R.layout.layout_loading)
 //                .setEmptyLayout(R.layout.layout_empty)

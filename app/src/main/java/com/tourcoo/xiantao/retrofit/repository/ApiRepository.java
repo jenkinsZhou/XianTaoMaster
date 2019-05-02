@@ -652,4 +652,37 @@ public class ApiRepository extends BaseRepository {
         TourCooLogUtil.i(TAG, TAG + "商品id:" + params);
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestCommentList(params).retryWhen(new RetryWhen()));
     }
+
+
+    /**
+     * 支付订单
+     *
+     * @param orderId
+     * @param payType
+     * @return
+     */
+    public Observable<BaseEntity> requestOrderPay(int orderId, int payType) {
+        Map<String, Object> params = new HashMap<>(2);
+        params.put("id", orderId);
+        String payTypeString;
+        switch (payType) {
+            case PAY_TYPE_ALI:
+                payTypeString = "ali";
+                break;
+            case PAY_TYPE_WE_XIN:
+                payTypeString = "wx";
+                break;
+            case PAY_TYPE_BALANCE:
+                payTypeString = "cash";
+                break;
+            default:
+                payTypeString = "ali";
+                break;
+        }
+        params.put("pay_type", payTypeString);
+        TourCooLogUtil.i(TAG, TAG + "提交的参数:" + params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestOrderPay(params).retryWhen(new RetryWhen()));
+    }
+
+
 }

@@ -316,10 +316,6 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
 
 
     private void getHomeInfo() {
-        if (!NetworkUtil.isConnected(mContext)) {
-            statusLayoutManager.showCustomLayout(R.layout.custom_error_layout, R.id.custom_root);
-            return;
-        }
         ApiRepository.getInstance().getHomeBanner().compose(bindUntilEvent(FragmentEvent.DESTROY)).
                 subscribe(new BaseObserver<BaseEntity>() {
                     @Override
@@ -415,7 +411,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
                 .setLoadingLayout(getLoadingLayout())
 //                .setEmptyLayout(inflate(R.layout.layout_empty))
                 .setErrorLayout(inflate(R.layout.custom_error_layout))
-                .setErrorClickViewID(R.id.custom_root)
+                .setErrorClickViewID(R.id.tvRefresh)
 //
 //                .setLoadingLayout(R.layout.layout_loading)
 //                .setEmptyLayout(R.layout.layout_empty)
