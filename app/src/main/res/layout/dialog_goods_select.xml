@@ -81,6 +81,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="-2dp"
                             android:gravity="bottom"
+                            android:singleLine="true"
+                            android:ellipsize="end"
                             android:includeFontPadding="false"
                             android:textColor="@color/greenCommon"
                             android:textSize="@dimen/sp_15" />

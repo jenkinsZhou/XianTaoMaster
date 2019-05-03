@@ -12,6 +12,7 @@ import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.TokenInfo;
 import com.tourcoo.xiantao.entity.banner.BannerDetail;
+import com.tourcoo.xiantao.entity.news.NewsBean;
 import com.tourcoo.xiantao.entity.recharge.RechargeHistory;
 import com.tourcoo.xiantao.entity.tuan.TuanDetails;
 import com.tourcoo.xiantao.entity.upload.UploadEntity;
@@ -502,4 +503,11 @@ public interface ApiService {
      */
     @POST("tuan/detail")
     Observable<BaseEntity<List<TuanDetails>>> tuanDetails(@QueryMap Map<String, Object> params);
+
+    /**
+     * news详情
+     * @return
+     */
+    @POST("index/news")
+    Observable<BaseEntity<NewsBean>> getNewsDetails(@QueryMap Map<String, Object> params);
 }

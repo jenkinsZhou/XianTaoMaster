@@ -2,12 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
-    <TextView
-        android:id="@+id/tvNewsContent"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_title_bar" />
+
+    <WebView
+        android:id="@+id/webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:layout_marginLeft="@dimen/dp_5"
-        android:text="营业资质公布 点击此处查询资质结果" />
+        android:orientation="vertical"
+        android:overScrollMode="never"
+        android:scrollbars="none">
+
+    </WebView>
+
 </LinearLayout>

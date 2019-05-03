@@ -18,6 +18,7 @@ import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.TokenInfo;
 import com.tourcoo.xiantao.entity.banner.BannerDetail;
+import com.tourcoo.xiantao.entity.news.NewsBean;
 import com.tourcoo.xiantao.entity.recharge.RechargeHistory;
 import com.tourcoo.xiantao.entity.tuan.TuanDetails;
 import com.tourcoo.xiantao.entity.user.CashEntity;
@@ -774,4 +775,18 @@ public class ApiRepository extends BaseRepository {
         params.put("num", num);
         return TourCoolTransformer.switchSchedulersIo(getApiService().joinTuan(params).retryWhen(new RetryWhen()));
     }
+
+
+    /**
+     * news详情
+     *
+     * @param id
+     * @return
+     */
+    public Observable<BaseEntity<NewsBean>> getNewsDetails(int id) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("id", id);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().getNewsDetails(params).retryWhen(new RetryWhen()));
+    }
+
 }

@@ -26,10 +26,11 @@ import static com.tourcoo.xiantao.constant.TuanConstant.TUAN_STATUS_MINE;
 /**
  * 我的拼团记录
  */
-public class MyTuanListActivity extends BaseTourCooTitleActivity{
+public class MyTuanListActivity extends BaseTourCooTitleActivity {
     private ViewPager tuanViewPager;
     private TabLayout tuanTabLayout;
     private String[] titles = new String[]{"我发起的", "我参与的"};
+    private List<Fragment> fragmentList;
 
     @Override
     public int getContentLayout() {
@@ -48,7 +49,7 @@ public class MyTuanListActivity extends BaseTourCooTitleActivity{
     @Override
     public void loadData() {
         super.loadData();
-        List<Fragment> fragmentList = new ArrayList<>();
+        fragmentList = new ArrayList<>();
         fragmentList.add(MyTuanListFragment.newInstance(TUAN_STATUS_MINE));
         fragmentList.add(MyTuanListFragment.newInstance(TUAN_STATUS_JOIN));
         MyPagerAdapter pagerAdapter = new MyPagerAdapter(getSupportFragmentManager(), fragmentList);
@@ -87,5 +88,12 @@ public class MyTuanListActivity extends BaseTourCooTitleActivity{
         }
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (fragmentList != null) {
+            fragmentList.clear();
+            fragmentList = null;
+        }
+    }
 }

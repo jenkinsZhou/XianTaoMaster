@@ -50,6 +50,7 @@ import com.tourcoo.xiantao.entity.news.NewsBean;
 import com.tourcoo.xiantao.helper.ShoppingCar;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.base.WebViewActivity;
+import com.tourcoo.xiantao.ui.msg.HomeNewsDetailActivity;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import java.util.ArrayList;
@@ -515,7 +516,6 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
             return;
         }
         View contentLayout;
-        View test = View.inflate(mContext, R.layout.layout_news, null);
 //        ImageView ivNewsIcon;
         TextView tvNewsContent;
         for (NewsBean newsBean : newsBeanList) {
@@ -526,6 +526,14 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
 //            ivNewsIcon = contentLayout.findViewById(R.id.icBulletin);
             tvNewsContent = contentLayout.findViewById(R.id.tvNewsContent);
             tvNewsContent.setText(newsBean.getName());
+            tvNewsContent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getContext(), HomeNewsDetailActivity.class);
+                    intent.putExtra("id", newsBean.getId());
+                    startActivity(intent);
+                }
+            });
             homeViewFlipper.addView(contentLayout);
             //todo
 //            homeViewFlipper.addView(test);

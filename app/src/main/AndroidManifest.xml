@@ -78,6 +78,8 @@
         <activity android:name=".ui.coin.MyCoinListActivity" />
         <activity android:name=".ui.tuan.MyTuanListActivity" />
         <activity android:name=".ui.tuan.TuanDetailsActivity" />
+        <activity android:name=".ui.order.SeeLogisticsActivity" />
+        <activity android:name=".ui.msg.HomeNewsDetailActivity" />
 
         <activity
             android:name=".ui.comment.EvaluationActivity"
