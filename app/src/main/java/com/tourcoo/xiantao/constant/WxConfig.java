@@ -13,4 +13,10 @@ public class WxConfig {
      */
     public static final String APP_ID = "wx0617b9768e39eaca";
     public static final String APP_SECRET = "ecda10305d1f9e30043b0414877d0f2c";
+
+    /**
+     * 微信分享小程序
+     */
+    public static final String MINI_PROGRAM_USERNAME = "gh_ee1858213f8f"; //小程序ID
+    public static final String MINI_PROGRAM_PATH = "/pages/progress/progress?from=out&tuan_id="; //小程序路径
 }

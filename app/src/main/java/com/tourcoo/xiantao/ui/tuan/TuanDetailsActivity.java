@@ -1,20 +1,17 @@
-package com.tourcoo.xiantao.ui.goods;
+package com.tourcoo.xiantao.ui.tuan;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.LinearLayout;
 
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tourcoo.xiantao.R;
+import com.tourcoo.xiantao.adapter.TuanDetailsAdapter;
 import com.tourcoo.xiantao.adapter.TuanListAdapter;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
@@ -23,6 +20,7 @@ import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.core.widget.divider.TourCoolRecycleViewDivider;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.goods.Goods;
+import com.tourcoo.xiantao.entity.tuan.TuanDetails;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
 import com.tourcoo.xiantao.widget.dialog.PinTuanDialog;
@@ -33,13 +31,12 @@ import java.util.List;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 
 
-public class TuanListActivity extends BaseTourCooTitleActivity implements OnRefreshListener {
-    private TuanListAdapter mAdapter;
+public class TuanDetailsActivity extends BaseTourCooTitleActivity implements OnRefreshListener {
+    private TuanDetailsAdapter mAdapter;
     private SmartRefreshLayout mRefreshLayout;
     private RecyclerView rvContent;
 
-    private int goods_id;
-    private PinTuanDialog dialog;
+    private int tuan_id;
 
 
     @Override
@@ -50,90 +47,48 @@ public class TuanListActivity extends BaseTourCooTitleActivity implements OnRefr
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         super.setTitleBar(titleBar);
-        titleBar.setTitleMainText("全部拼团");
+        titleBar.setTitleMainText("参团详情");
     }
 
     @Override
     public void initView(Bundle savedInstanceState) {
-        goods_id = getIntent().getIntExtra("goods_id", 0);
+        tuan_id = getIntent().getIntExtra("tuan_id", 0);
 
         mRefreshLayout = findViewById(R.id.smartLayoutRoot);
         rvContent = findViewById(R.id.rv_content);
         rvContent.setLayoutManager(new LinearLayoutManager(mContext));
         mRefreshLayout.setOnRefreshListener(this);
-        mAdapter = new TuanListAdapter(this, null);
+        mAdapter = new TuanDetailsAdapter(this, null);
         rvContent.setAdapter(mAdapter);
         rvContent.addItemDecoration(new TourCoolRecycleViewDivider(this, LinearLayoutManager.VERTICAL));
-        mAdapter.setIOnItemClickListener(new TuanListAdapter.IOnItemClickListener() {
-            @Override
-            public void onJoinTuanClick(int tuan_id, int num,String surplus,long time) {
-                dialog = new PinTuanDialog(TuanListActivity.this, num,surplus,time, new PinTuanDialog.Callback() {
-                    @Override
-                    public void onAdded(int quantity) {
-                        joinTuan(tuan_id, num);
-                    }
-                });
-                dialog.show();
-            }
-        });
+
         mRefreshLayout.setRefreshHeader(new ClassicsHeader(mContext).setSpinnerStyle(SpinnerStyle.Translate));
-        getTuanList();
+        tuanDetails();
 
     }
 
 
     @Override
     public void onRefresh(RefreshLayout refreshLayout) {
-        getTuanList();
+        tuanDetails();
     }
 
     /**
-     * 获取拼团列表
+     * 单个团详情
      */
-    private void getTuanList() {
-        ApiRepository.getInstance().tuanList(goods_id).compose(bindUntilEvent(ActivityEvent.DESTROY)).
-                subscribe(new BaseObserver<BaseEntity<List<Goods.TuanListBean>>>() {
+    private void tuanDetails() {
+        ApiRepository.getInstance().tuanDetails(tuan_id).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity<List<TuanDetails>>>() {
                     @Override
-                    public void onRequestNext(BaseEntity<List<Goods.TuanListBean>> entity) {
+                    public void onRequestNext(BaseEntity<List<TuanDetails>> entity) {
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
                                 if (!entity.data.isEmpty()) {
-//                                    mStatusLayoutManager.showSuccessLayout();
                                     mAdapter.setNewData(entity.data);
                                     mRefreshLayout.finishRefresh(true);
-                                } else {
-                                    mStatusLayoutManager.showEmptyLayout();
                                 }
                             } else {
                                 ToastUtil.showFailed(entity.msg);
-//                                mStatusLayoutManager.showErrorLayout();
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onRequestError(Throwable e) {
-                        super.onRequestError(e);
-                        TourCooLogUtil.e(TAG, TAG + "异常:" + e.toString());
-//                        mStatusLayoutManager.showErrorLayout();
-                    }
-                });
-    }
-
-
-    /**
-     * 加入拼团
-     */
-    private void joinTuan(int tuan_id, int num) {
-        ApiRepository.getInstance().joinTuan(tuan_id, num).compose(bindUntilEvent(ActivityEvent.DESTROY)).
-                subscribe(new BaseObserver<BaseEntity>() {
-                    @Override
-                    public void onRequestNext(BaseEntity entity) {
-                        if (entity != null) {
-                            if (entity.code == CODE_REQUEST_SUCCESS) {
-                                ToastUtil.showSuccess("加入拼团成功，请支付费用");
-                            } else {
-                                ToastUtil.showFailed(entity.msg);
                             }
                         }
                     }
@@ -146,12 +101,4 @@ public class TuanListActivity extends BaseTourCooTitleActivity implements OnRefr
                 });
     }
 
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mAdapter != null) {
-            mAdapter.cancelAllTimers();
-        }
-    }
 }

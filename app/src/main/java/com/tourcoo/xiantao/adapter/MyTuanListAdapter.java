@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SpanUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -54,6 +55,11 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
     private SparseArray<CountDownTimer> countDownMap;
     private Context context;
 
+    private static final int TUAN_STATUS_FAIL = 0;
+    private static final int TUAN_STATUS_RUNNING = 1;
+    private static final int TUAN_STATUS_COMPLETE = 2;
+
+
     public MyTuanListAdapter(Context context, List<TuanEntity.DataBean> datas) {
         this.context = context;
         if (datas == null) {
@@ -63,6 +69,15 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
         countDownMap = new SparseArray<>();
     }
 
+    public void setNewData(List<TuanEntity.DataBean> data) {
+        this.mDatas = data;
+        notifyDataSetChanged();
+    }
+
+    public void addMoreItem(List<TuanEntity.DataBean> data) {
+        this.mDatas.addAll(data);
+        notifyDataSetChanged();
+    }
 
     /**
      * 清空资源
@@ -96,47 +111,85 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
         holder.tvGoodsName.setText(item.getGoods().getGoods_name());
         holder.tvLable.setText(item.getGoods().getLabel());
         holder.tvTuanRuleName.setText(item.getTuan_rule().getName());
-        holder.tvLable.setText(item.getGoods().getLabel());
-
-        holder.tvTuanStatus.setText(new SpanUtils()
-                        .append("还差").setForegroundColor(TourCoolUtil.getColor(R.color.colorTextGray))
-                        .append(item.getTuan().getSurplus()+"kg").setForegroundColor(TourCoolUtil.getColor(R.color.redTextCommon))
-                        .append("成团").setForegroundColor(TourCoolUtil.getColor(R.color.colorTextGray))
-                        .create());
-
-        holder.btnClick.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (listener != null) {
-                    listener.onBtnClick();
-                }
+                if(listener != null) listener.onItemClick(mDatas.get(position).getId());
             }
         });
 
-        long time = item.getDeadline() * 1000L;
-        time = time - System.currentTimeMillis();
-        //将前一个缓存清除
-        if (holder.countDownTimer != null) {
-            holder.countDownTimer.cancel();
-        }
-        if (time > 0) {
-            holder.countDownTimer = new CountDownTimer(time, 1000) {
-                public void onTick(long millisUntilFinished) {
-                    holder.tvEndTime.setText("剩余" + FormatDuration.format(new Long(millisUntilFinished).intValue()));
+        switch (item.getStatus()) {
+            case TUAN_STATUS_FAIL:
+                break;
+            case TUAN_STATUS_RUNNING:
+
+                long time = item.getDeadline() * 1000L;
+                time = time - System.currentTimeMillis();
+
+                TourCooLogUtil.e(item);
+                LogUtils.e(position, time);
+                //已经过了截止时间 或者已经满团    订单状态 ---> 已完成
+                if (Double.parseDouble(item.getTuan().getSurplus()) == 0.0 || time <= 0) {
+                    holder.tvEndTime.setVisibility(View.GONE);
+                    holder.tvTuanStatus.setVisibility(View.GONE);
+                    holder.btnClick.setVisibility(View.GONE);
+                    holder.btnPay.setVisibility(View.GONE);
+                } else {
+
+                    if (item.getUser_status() == 0) {
+                        holder.btnPay.setVisibility(View.VISIBLE);
+                        holder.btnPay.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (listener != null) {
+                                    listener.onPayClick(item.getTuanuser_id());
+                                }
+                            }
+                        });
+                    }
+
+                    holder.tvEndTime.setVisibility(View.VISIBLE);
+                    holder.tvTuanStatus.setVisibility(View.VISIBLE);
+                    holder.btnClick.setVisibility(View.VISIBLE);
+                    holder.tvTuanStatus.setText(new SpanUtils()
+                            .append("还差").setForegroundColor(TourCoolUtil.getColor(R.color.colorTextGray))
+                            .append(item.getTuan().getSurplus() + "kg").setForegroundColor(TourCoolUtil.getColor(R.color.redTextCommon))
+                            .append("成团").setForegroundColor(TourCoolUtil.getColor(R.color.colorTextGray))
+                            .create());
+
+                    holder.btnClick.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (listener != null) {
+                                listener.onBtnClick(item.getTuanuser_id());
+                            }
+                        }
+                    });
+
+
+                    //将前一个缓存清除
+                    if (holder.countDownTimer != null) {
+                        holder.countDownTimer.cancel();
+                    }
+
+                    holder.countDownTimer = new CountDownTimer(time, 1000) {
+                        public void onTick(long millisUntilFinished) {
+                            holder.tvEndTime.setText("剩余" + FormatDuration.format(new Long(millisUntilFinished).intValue()));
+                        }
+
+                        public void onFinish() {
+                            holder.tvEndTime.setVisibility(View.GONE);
+                        }
+                    }.start();
+
+                    countDownMap.put(holder.tvEndTime.hashCode(), holder.countDownTimer);
+
                 }
 
-                public void onFinish() {
-                    holder.tvEndTime.setVisibility(View.INVISIBLE);
-//                    holder.btnJoinTuan.setText("已截止");
-//                    holder.btnJoinTuan.setEnabled(false);
-                }
-            }.start();
+                break;
+            case TUAN_STATUS_COMPLETE:
 
-            countDownMap.put(holder.tvEndTime.hashCode(), holder.countDownTimer);
-        } else {
-            holder.tvEndTime.setVisibility(View.INVISIBLE);
-//            holder.btnJoinTuan.setText("已截止");
-//            holder.btnJoinTuan.setEnabled(false);
+                break;
         }
 
     }
@@ -149,31 +202,23 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
         return 0;
     }
 
-    public void setNewData(List<TuanEntity.DataBean> data) {
-        this.mDatas = data;
-        notifyDataSetChanged();
-    }
+    class ViewHolder extends RecyclerView.ViewHolder {
+        private TextView tvTuanStatus;
+        private TextView tvGoodsName;
+        private TextView tvTuanRuleName;
+        private TextView tvLable;
+        private TextView tvEndTime;
+        private TextView btnClick;
+        private TextView btnPay;
+        private RoundedImageView ivGoodsImage;
+        private CountDownTimer countDownTimer;
 
-    public void addMoreItem(List<TuanEntity.DataBean> data) {
-        this.mDatas.addAll(data);
-        notifyDataSetChanged();
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvTuanStatus;
-        public TextView tvGoodsName;
-        public TextView tvTuanRuleName;
-        public TextView tvLable;
-        public TextView tvEndTime;
-        public TextView btnClick;
-        public RoundedImageView ivGoodsImage;
-        public CountDownTimer countDownTimer;
-
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             tvTuanStatus = itemView.findViewById(R.id.tvTuanStatus);
             ivGoodsImage = itemView.findViewById(R.id.ivGoodsImage);
             tvGoodsName = itemView.findViewById(R.id.tvGoodsName);
+            btnPay = itemView.findViewById(R.id.btnPay);
             tvTuanRuleName = itemView.findViewById(R.id.tvTuanRuleName);
             tvLable = itemView.findViewById(R.id.tvLable);
             tvEndTime = itemView.findViewById(R.id.tvEndTime);
@@ -188,7 +233,9 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
     }
 
     public interface IOnItemClickListener {
-        void onBtnClick();
+        void onItemClick(int tuan_id);
+        void onBtnClick(int tuanuser_id);
+        void onPayClick(int tuanuser_id);
     }
 
 

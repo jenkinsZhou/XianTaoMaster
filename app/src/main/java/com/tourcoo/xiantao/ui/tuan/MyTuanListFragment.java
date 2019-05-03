@@ -1,7 +1,10 @@
 package com.tourcoo.xiantao.ui.tuan;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,39 +12,37 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.blankj.utilcode.util.ImageUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.Utils;
+import com.bumptech.glide.util.Util;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.MyTuanListAdapter;
-import com.tourcoo.xiantao.core.frame.UiConfigManager;
+import com.tourcoo.xiantao.constant.WxConfig;
 import com.tourcoo.xiantao.core.frame.base.fragment.BaseFragment;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
+import com.tourcoo.xiantao.core.util.TourCoolUtil;
+import com.tourcoo.xiantao.core.widget.custom.SharePopupWindow;
 import com.tourcoo.xiantao.entity.BaseEntity;
-import com.tourcoo.xiantao.entity.goods.Goods;
-import com.tourcoo.xiantao.entity.order.OrderEntity;
 import com.tourcoo.xiantao.entity.tuan.TuanEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
-import com.tourcoo.xiantao.ui.order.OrderDetailActivity;
-import com.tourcoo.xiantao.ui.order.ReturnGoodsActivity;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_COMMENT;
-import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_SEND;
 import static com.tourcoo.xiantao.constant.TuanConstant.TUAN_STATUS_MINE;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
-import static com.tourcoo.xiantao.ui.order.OrderDetailActivity.EXTRA_ORDER_ID;
-import static com.tourcoo.xiantao.ui.order.ReturnGoodsActivity.EXTRA_GOODS_LIST;
 
 /**
  * @author :JenkinsZhou
@@ -59,10 +60,13 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
     private boolean isLoadMore = false;
     private int totalPage = -1;
 
+    private SharePopupWindow sharePopupWindow;
+    private View footView;
+    private IWXAPI api;
+
     private MyTuanListAdapter mAdapter;
     private int tuanStatus = TUAN_STATUS_MINE;
     public static final String EXTRA_TUAN_STATUS = "EXTRA_TUAN_STATUS";
-
 
     public static MyTuanListFragment newInstance(int tuanStatus) {
         Bundle args = new Bundle();
@@ -83,7 +87,13 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
             ToastUtil.show("未获取到数据");
             return;
         }
+
+        api = WXAPIFactory.createWXAPI(getContext(), WxConfig.APP_ID);
+        sharePopupWindow = new SharePopupWindow(getContext(), true);
+
         tuanStatus = getArguments().getInt(EXTRA_TUAN_STATUS, -1);
+
+        footView = LayoutInflater.from(mContext).inflate(R.layout.item_view, null);
 
         mAdapter = new MyTuanListAdapter(getContext(), null);
         mRefreshLayout = mContentView.findViewById(R.id.smartLayout_rootFastLib);
@@ -92,6 +102,54 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
         mRecyclerView.setAdapter(mAdapter);
         mRefreshLayout.setOnRefreshLoadMoreListener(this);
         mRefreshLayout.setRefreshHeader(new ClassicsHeader(mContext).setSpinnerStyle(SpinnerStyle.Translate));
+        mAdapter.setIOnItemClickListener(new MyTuanListAdapter.IOnItemClickListener() {
+            @Override
+            public void onItemClick(int tuan_id) {
+                Intent intent = new Intent(getContext(), TuanDetailsActivity.class);
+                intent.putExtra("tuan_id", tuan_id);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onBtnClick(int tuanuser_id) {
+
+                sharePopupWindow.setISharePopupWindowClickListener(new SharePopupWindow.ISharePopupWindowClickListener() {
+                    @Override
+                    public void onWxClick() {
+                        WXMiniProgramObject miniProgram = new WXMiniProgramObject();
+                        miniProgram.webpageUrl = "https://www.baidu.com";//自定义
+                        miniProgram.userName = WxConfig.MINI_PROGRAM_USERNAME;//小程序端提供参数
+                        miniProgram.path = WxConfig.MINI_PROGRAM_PATH + tuanuser_id;//小程序端提供参数
+                        miniProgram.miniprogramType = WXMiniProgramObject.MINIPROGRAM_TYPE_PREVIEW;// 正式版:0，测试版:1，体验版:2
+                        WXMediaMessage mediaMessage = new WXMediaMessage(miniProgram);
+                        mediaMessage.title = "邀请拼团";//自定义
+                        mediaMessage.description = "拼团钜惠";//自定义
+                        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_orange);
+                        Bitmap sendBitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, true);
+                        bitmap.recycle();
+                        mediaMessage.thumbData = ImageUtils.bitmap2Bytes(sendBitmap, Bitmap.CompressFormat.PNG);
+                        SendMessageToWX.Req req = new SendMessageToWX.Req();
+                        req.transaction = "";
+                        req.scene = SendMessageToWX.Req.WXSceneSession;
+                        req.message = mediaMessage;
+                        api.sendReq(req);
+                        sharePopupWindow.dismiss();
+                    }
+
+                    @Override
+                    public void onWxFriendClick() {
+                        sharePopupWindow.dismiss();
+                    }
+                });
+
+                sharePopupWindow.showAtScreenBottom(mRefreshLayout);
+            }
+
+            @Override
+            public void onPayClick(int tuanuser_id) {
+
+            }
+        });
         loadData(mDefaultPage);
     }
 
@@ -115,8 +173,10 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
                                         totalPage = tuanEntity.getLast_page();
                                         if (!isLoadMore) {
                                             mAdapter.setNewData(tuanEntity.getData());
+                                            mRefreshLayout.finishRefresh(true);
                                         } else {
                                             mAdapter.addMoreItem(tuanEntity.getData());
+                                            mRefreshLayout.finishLoadMore();
                                         }
 
                                     } else {
@@ -142,16 +202,20 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
     @Override
     public void onLoadMore(RefreshLayout refreshLayout) {
         isLoadMore = true;
-        if (totalPage != -1 && mDefaultPage + 1 < totalPage) {
+        if (totalPage != -1 && mDefaultPage + 1 <= totalPage) {
             mDefaultPage++;
             loadData(mDefaultPage);
         } else {
+            refreshLayout.setEnableLoadMore(false);
+            refreshLayout.setNoMoreData(true);
             refreshLayout.finishLoadMore();
         }
     }
 
     @Override
     public void onRefresh(RefreshLayout refreshLayout) {
+        refreshLayout.setNoMoreData(false);
+        refreshLayout.setEnableLoadMore(true);
         isLoadMore = false;
         mDefaultPage = 1;
         loadData(mDefaultPage);
@@ -176,7 +240,7 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if(mAdapter != null){
+        if (mAdapter != null) {
             mAdapter.cancelAllTimers();
         }
     }

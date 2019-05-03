@@ -6,13 +6,13 @@ android {
         debug {
             keyAlias 'emi'
             keyPassword 'android'
-            storeFile file('C:/Users/JenkinsZhou/android/android_key_release.jks')
+            storeFile file('E:\\android\\android project\\XianTaoMaster\\android_key_release.jks')
             storePassword 'android'
         }
         release {
             keyAlias 'emi'
             keyPassword 'android'
-            storeFile file('C:/Users/JenkinsZhou/android/android.jks')
+            storeFile file('E:\\android\\android project\\XianTaoMaster\\android.jks')
             storePassword 'android'
         }
     }
@@ -53,6 +53,8 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.11.2'
     //定位功能
     implementation 'com.amap.api:location:4.5.0'
+    //微信分享小程序
+    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
     implementation project(':swipemenulib')
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.blankj:utilcode:1.18.2'

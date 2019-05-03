@@ -15,6 +15,7 @@ public class TuanConstant {
 
     public static final int TUAN_STATUS_JOIN = 2;
 
+
     public static final int NOT_FINISH = 10;
     public static final int FINISH = 20;
 }

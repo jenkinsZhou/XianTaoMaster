@@ -82,7 +82,7 @@ public class TuanListAdapter extends RecyclerView.Adapter<TuanListAdapter.ViewHo
             @Override
             public void onClick(View v) {
                 if (listener != null) {
-                    listener.onJoinTuanClick();
+                    listener.onJoinTuanClick(data.getId(), data.getNum(), data.getSurplus(), data.getDeadline() * 1000L);
                 }
             }
         });
@@ -156,7 +156,7 @@ public class TuanListAdapter extends RecyclerView.Adapter<TuanListAdapter.ViewHo
     }
 
     public interface IOnItemClickListener {
-        void onJoinTuanClick();
+        void onJoinTuanClick(int tuan_id, int num, String surplus, long time);
     }
 
 }

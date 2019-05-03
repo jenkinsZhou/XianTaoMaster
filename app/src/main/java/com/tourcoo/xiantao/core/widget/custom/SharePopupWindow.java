@@ -29,21 +29,30 @@ public class SharePopupWindow extends PopupWindow {
 
 
     public SharePopupWindow(Context context) {
+        this(context,false);
+    }
+
+    public SharePopupWindow(Context context,boolean isHideWXFriend) {
         super(context);
         this.mContext = context;
-        initView(context);
+        initView(context,isHideWXFriend);
         setPopConfig();
     }
+
     /**
      *   初始化控件
      * @param context
      */
-    private void initView(Context context) {
+    private void initView(Context context,boolean isHideWXFriend) {
         parentView = View.inflate(context, R.layout.layout_share_popup_window, null);
         setContentView(parentView);
         btnShareWX = parentView.findViewById(R.id.btnShareWX);
         btnShareWXFriend = parentView.findViewById(R.id.btnShareWXFriend);
         btnCancel = parentView.findViewById(R.id.btnCancel);
+
+        if(isHideWXFriend){
+            btnShareWXFriend.setVisibility(View.GONE);
+        }
 
         btnShareWX.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,7 +94,7 @@ public class SharePopupWindow extends PopupWindow {
         this.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         this.setOutsideTouchable(true);// 设置外部触摸会关闭窗口
         // 设置动画
-//        this.setAnimationStyle(R.style.IosDialog);
+        this.setAnimationStyle(R.style.CommonBottomDialogAnim);
 
 
         //获取自身的长宽高

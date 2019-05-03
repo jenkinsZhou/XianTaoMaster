@@ -13,6 +13,7 @@ import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.TokenInfo;
 import com.tourcoo.xiantao.entity.banner.BannerDetail;
 import com.tourcoo.xiantao.entity.recharge.RechargeHistory;
+import com.tourcoo.xiantao.entity.tuan.TuanDetails;
 import com.tourcoo.xiantao.entity.upload.UploadEntity;
 import com.tourcoo.xiantao.entity.user.CashEntity;
 import com.tourcoo.xiantao.helper.GoodsCount;
@@ -346,7 +347,6 @@ public interface ApiService {
     @POST("collect/cancel")
     Observable<BaseEntity> collectCancel(@QueryMap Map<String, Object> map);
 
-
     /**
      * 修改个人信息
      *
@@ -460,7 +460,7 @@ public interface ApiService {
      * @return
      */
     @POST("comment/index")
-    Observable<BaseEntity<CommentEntity>> requestCommentList(@QueryMap Map<String, Object> map);
+    Observable<BaseEntity<CommentEntity>> requestCommentList(@Body Map<String, Object> map);
 
 
     /**
@@ -474,7 +474,6 @@ public interface ApiService {
 
     /**
      * 发起拼团接口
-     *
      * @return
      */
     @POST("tuan/launch")
@@ -483,11 +482,24 @@ public interface ApiService {
 
     /**
      * 单个商品的拼团列表
-     *
      * @return
      */
     @POST("tuan/goods")
     Observable<BaseEntity<List<Goods.TuanListBean>>> tuanList(@QueryMap Map<String, Object> params);
 
 
+
+    /**
+     * 加入拼团
+     * @return
+     */
+    @POST("tuan/join")
+    Observable<BaseEntity> joinTuan(@QueryMap Map<String, Object> params);
+
+    /**
+     * 单个团详情
+     * @return
+     */
+    @POST("tuan/detail")
+    Observable<BaseEntity<List<TuanDetails>>> tuanDetails(@QueryMap Map<String, Object> params);
 }
