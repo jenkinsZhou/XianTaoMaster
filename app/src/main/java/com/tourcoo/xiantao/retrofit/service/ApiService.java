@@ -290,6 +290,16 @@ public interface ApiService {
 
 
     /**
+     * 我的拼团列表
+     *
+     * @param map
+     * @return
+     */
+    @POST("tuan/index")
+    Observable<BaseEntity> requestTuanListInfo(@QueryMap Map<String, Object> map);
+
+
+    /**
      * 订单详情
      *
      * @param map

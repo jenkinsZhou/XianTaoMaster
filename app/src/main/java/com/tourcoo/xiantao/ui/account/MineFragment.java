@@ -45,6 +45,7 @@ import com.tourcoo.xiantao.ui.goods.CollectionGoodsListActivity;
 import com.tourcoo.xiantao.ui.msg.MsgSystemActivity;
 import com.tourcoo.xiantao.ui.order.MyOrderListActivity;
 import com.tourcoo.xiantao.ui.recharge.AccountBalanceActivity;
+import com.tourcoo.xiantao.ui.tuan.MyTuanListActivity;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import java.util.ArrayList;
@@ -178,6 +179,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                         break;
                     case 1:
                         //拼团记录
+                        TourCoolUtil.startActivity(mContext, MyTuanListActivity.class);
                         break;
                     case 2:
                         //收藏商品

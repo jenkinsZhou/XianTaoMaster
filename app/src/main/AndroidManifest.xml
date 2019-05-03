@@ -76,6 +76,7 @@
         <activity android:name=".ui.msg.MsgSystemActivity" />
         <activity android:name=".ui.msg.MessageDetailActivity" />
         <activity android:name=".ui.coin.MyCoinListActivity" />
+        <activity android:name=".ui.tuan.MyTuanListActivity" />
         <activity
             android:name=".ui.coment.EvaluationActivity"
             android:windowSoftInputMode="adjustPan" />

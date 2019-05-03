@@ -491,6 +491,20 @@ public class ApiRepository extends BaseRepository {
 
 
     /**
+     * 获取我的拼团记录
+     *
+     * @return
+     */
+    public Observable<BaseEntity> requestTuanListInfo(int tuanStatus, int page) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("p", page);
+        params.put("type", tuanStatus);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestTuanListInfo(params).retryWhen(new RetryWhen()));
+    }
+
+
+
+    /**
      * 修改个人信息
      *
      * @param avatarUrl
