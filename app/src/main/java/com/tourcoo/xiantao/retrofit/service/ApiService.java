@@ -346,6 +346,7 @@ public interface ApiService {
     @POST("collect/cancel")
     Observable<BaseEntity> collectCancel(@QueryMap Map<String, Object> map);
 
+
     /**
      * 修改个人信息
      *
@@ -459,7 +460,7 @@ public interface ApiService {
      * @return
      */
     @POST("comment/index")
-    Observable<BaseEntity<CommentEntity>> requestCommentList(@Body Map<String, Object> map);
+    Observable<BaseEntity<CommentEntity>> requestCommentList(@QueryMap Map<String, Object> map);
 
 
     /**
@@ -473,6 +474,7 @@ public interface ApiService {
 
     /**
      * 发起拼团接口
+     *
      * @return
      */
     @POST("tuan/launch")
@@ -481,8 +483,11 @@ public interface ApiService {
 
     /**
      * 单个商品的拼团列表
+     *
      * @return
      */
     @POST("tuan/goods")
     Observable<BaseEntity<List<Goods.TuanListBean>>> tuanList(@QueryMap Map<String, Object> params);
+
+
 }

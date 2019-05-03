@@ -78,57 +78,105 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
+
                 <LinearLayout
                     android:id="@+id/llAddressInfo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp_10"
                     android:background="@color/colorWhite"
-                    android:orientation="vertical"
-                    android:padding="@dimen/dp_17">
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="@dimen/dp_10"
+                        android:src="@mipmap/ic_location" />
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:layout_marginTop="@dimen/dp_10"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:padding="@dimen/dp_17">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="收货人："
-                            android:textColor="#ff333333"
-                            android:textSize="@dimen/sp_15" />
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
 
-                        <TextView
-                            android:id="@+id/tvNickName"
-                            android:layout_width="296dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="-"
-                            android:textColor="#ff333333"
-                            android:textSize="@dimen/sp_15" />
+                            <TextView
+                                android:id="@+id/fillAddress"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:text="填写收货地址"
+                                android:visibility="gone" />
+                            <LinearLayout
+                                android:id="@+id/llAddressLayout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/tvMobile"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="#ff333333"
-                            android:textSize="@dimen/sp_15" />
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="收货人："
+                                        android:textColor="#ff333333"
+                                        android:textSize="@dimen/sp_15" />
+
+                                    <TextView
+                                        android:id="@+id/tvNickName"
+                                        android:layout_width="296dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="-"
+                                        android:textColor="#ff333333"
+                                        android:textSize="@dimen/sp_15" />
+
+                                    <TextView
+                                        android:id="@+id/tvMobile"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textColor="#ff333333"
+                                        android:textSize="@dimen/sp_15" />
+
+                                </LinearLayout>
+
+                                <TextView
+                                    android:id="@+id/tvAddress"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/dp_12"
+                                    android:layout_marginBottom="@dimen/dp_5"
+                                    android:text="收货地址：安徽省合肥市高新区 黄山路与天智路交口鸿泰中安创新空间201室"
+                                    android:textColor="#ff666666"
+                                    android:textSize="@dimen/sp_13" />
+
+
+                            </LinearLayout>
+
+
+                        </RelativeLayout>
+
 
                     </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/tvAddress"
-                        android:layout_width="match_parent"
+                    <ImageView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/dp_12"
-                        android:layout_marginBottom="@dimen/dp_5"
-                        android:text="收货地址：安徽省合肥市高新区 黄山路与天智路交口鸿泰中安创新空间201室"
-                        android:textColor="#ff666666"
-                        android:textSize="@dimen/sp_13" />
-
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="@dimen/dp_10"
+                        android:src="@mipmap/ic_arrow_right" />
                 </LinearLayout>
+
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -316,7 +364,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@null"
-                            android:text="请输入备注信息"
+                            android:hint="请填写您的备注信息"
                             android:textColor="#ff999999"
                             android:textSize="@dimen/sp_13" />
 

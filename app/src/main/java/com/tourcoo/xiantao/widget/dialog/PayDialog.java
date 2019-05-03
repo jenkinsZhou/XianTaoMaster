@@ -79,6 +79,7 @@ public class PayDialog extends Dialog implements View.OnClickListener {
         btnRecharge = findViewById(R.id.btnRecharge);
         ivBalancePayCheckBox = findViewById(R.id.ivBalancePayCheckBox);
         RelativeLayout rlBalancePay = findViewById(R.id.rlBalancePay);
+        rlBalancePay.setOnClickListener(this);
         ivAliAPayCheckBox = findViewById(R.id.ivAliAPayCheckBox);
         ivWeChatPayCheckBox = findViewById(R.id.ivWeChatPayCheckBox);
         if (showBalancePay) {

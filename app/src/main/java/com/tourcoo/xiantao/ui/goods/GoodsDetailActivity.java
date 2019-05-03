@@ -41,6 +41,7 @@ import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.goods.GoodsEntity;
 import com.tourcoo.xiantao.entity.goods.Spec;
@@ -55,6 +56,7 @@ import com.tourcoo.xiantao.widget.dialog.ProductSkuDialog;
 import com.tourcoo.xiantao.widget.ratingstar.RatingStarView;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
+import org.greenrobot.eventbus.EventBus;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -346,7 +348,6 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 CountDownTimer timer = new CountDownTimer(totalTime, 1000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
-                        LogUtils.e(millisUntilFinished);
                         tvEndTime.setText("剩余" + FormatDuration.format(new Long(millisUntilFinished).intValue()));
                     }
 
@@ -524,7 +525,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
      *
      * @param settleEntity
      */
-    private void skipOrderDetail(SettleEntity settleEntity) {
+    private void skipOrderSettleDetail(SettleEntity settleEntity) {
         boolean skipEnable = settleEntity != null && settleEntity.getGoods_list() != null;
         if (!skipEnable) {
             ToastUtil.showFailed("未获取到商品信息");
@@ -540,11 +541,11 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.tvBuyNow:
+        /*    case R.id.tvBuyNow:
                 //立即购买
                 mGoodsEntity.setGoodsCount(1);
                 settleGoods(mGoodsEntity);
-                break;
+                break;*/
             case R.id.btnSeeTotal:
                 Intent intent = new Intent(GoodsDetailActivity.this, TuanListActivity.class);
                 intent.putExtra("goods_id", mGoodsId);
@@ -582,7 +583,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                                     //显示回调
                                     SettleEntity settleEntity = parseSettleInfo(entity.data);
                                     if (settleEntity != null) {
-                                        skipOrderDetail(settleEntity);
+                                        skipOrderSettleDetail(settleEntity);
                                     } else {
                                         ToastUtil.showFailed("失败");
                                     }
@@ -627,6 +628,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
                             ToastUtil.showSuccess(entity.msg);
+                            EventBus.getDefault().postSticky(new RefreshEvent());
                         }
                     }
                 });
@@ -645,7 +647,13 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS) {
                                 if (entity.data != null) {
-                                    ToastUtil.showSuccess(entity.data.toString());
+                                    //跳转到结算
+                                    SettleEntity settleEntity = parseSettleInfo(entity.data);
+                                    if (settleEntity != null) {
+                                        skipOrderSettleDetail(settleEntity);
+                                    } else {
+                                        ToastUtil.showFailed("失败");
+                                    }
                                 }
                             } else {
                                 ToastUtil.showFailed(entity.msg);
@@ -781,5 +789,8 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             }
         }
     }
+
+
+
 
 }

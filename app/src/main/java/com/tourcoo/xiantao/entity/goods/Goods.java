@@ -362,7 +362,7 @@ public class Goods implements Serializable {
         this.goods_sku = goods_sku;
     }
 
-    public static class CategoryBean {
+    public static class CategoryBean implements Serializable {
         /**
          * id : 5
          * pid : 4
@@ -438,7 +438,7 @@ public class Goods implements Serializable {
         }
     }
 
-    public static class FreightBean {
+    public static class FreightBean implements Serializable{
         /**
          * id : 22
          * name : 手机
@@ -636,7 +636,7 @@ public class Goods implements Serializable {
             }
         }
 
-        public static class SpecBeanX {
+        public static class SpecBeanX implements Serializable{
             /**
              * id : 20
              * spec_name : 颜色
@@ -673,7 +673,7 @@ public class Goods implements Serializable {
         }
     }
 
-    public static class TuanListBean {
+    public static class TuanListBean implements Serializable {
         /**
          * id : 114
          * goods_id : 22
@@ -838,7 +838,7 @@ public class Goods implements Serializable {
             this.tuan = tuan;
         }
 
-        public static class GoodsBean {
+        public static class GoodsBean implements Serializable {
             /**
              * goods_name : Mate 20 华为 HUAWEI 1
              * label :
@@ -974,7 +974,7 @@ public class Goods implements Serializable {
             }
         }
 
-        public static class TuanRuleBeanX {
+        public static class TuanRuleBeanX implements Serializable {
             /**
              * id : 2
              * goods_id : 22
@@ -1100,7 +1100,7 @@ public class Goods implements Serializable {
             }
         }
 
-        public static class UserBean {
+        public static class UserBean implements Serializable{
             /**
              * nickname : ﾟ默｡
              * avatar : https://wx.qlogo.cn/mmopen/vi_32/lTYDafia0gtOUD73KkMECgR3CqaqpUtRGzOsxCltfpHWIMr02yIDRxe6ED6GzAMQm1MRkdfWAG044agOxVS8Xcw/132
@@ -1126,7 +1126,7 @@ public class Goods implements Serializable {
             }
         }
 
-        public static class TuanBean {
+        public static class TuanBean implements Serializable {
             /**
              * num : 4
              * surplus : 12
@@ -1153,7 +1153,7 @@ public class Goods implements Serializable {
         }
     }
 
-    public static class CommentListBean {
+    public static class CommentListBean implements Serializable {
         /**
          * id : 29
          * goods_id : 0

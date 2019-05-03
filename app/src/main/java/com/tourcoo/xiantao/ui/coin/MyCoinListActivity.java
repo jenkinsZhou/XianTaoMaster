@@ -144,7 +144,7 @@ public class MyCoinListActivity extends BaseTourCooRefreshLoadActivity<CoinDetai
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tvConvertGold:
-                if (mCoinHistory ==null || mCoinHistory.getAg()<mCoinHistory.getCoin()) {
+                if (mCoinHistory == null || mCoinHistory.getAg() < mCoinHistory.getCoin()) {
                     ToastUtil.showFailed("银币不足,暂时无法兑换哦");
                     return;
                 }
@@ -167,6 +167,7 @@ public class MyCoinListActivity extends BaseTourCooRefreshLoadActivity<CoinDetai
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS) {
                                 ToastUtil.showSuccess("兑换成功");
+                                mRefreshLayout.autoRefresh();
                             } else {
                                 ToastUtil.showFailed(entity.msg);
                             }

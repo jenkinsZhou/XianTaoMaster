@@ -39,6 +39,7 @@ import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 import static com.tourcoo.xiantao.adapter.AddressInfoAdapter.ADDRESS_DEFAULT;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.ui.account.AddNewAddressActivity.RESULT_SUCCESS_ADDRESS;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SKIP_TAG_SETTLE;
 
 /**
  * @author :JenkinsZhou
@@ -54,7 +55,18 @@ public class AddressManagerActivity extends BaseTourCooTitleMultiViewActivity im
     private RecyclerView rvContent;
     public static final int REQUEST_CODE_ADD_ADDRESS = 100;
     public static final int REQUEST_CODE_EDIT_ADDRESS = 101;
+    /**
+     * 从结算页面跳转过来的
+     */
+    public static final String EXTRA_SKIP_TAG_SETTLE = "EXTRA_SKIP_TAG_SETTLE";
     public static final String EXTRA_ADDRESS_INFO = "EXTRA_ADDRESS_INFO";
+
+    private int skipTag;
+
+    /**
+     * 是否点击过
+     */
+    private boolean isClick = false;
 
     @Override
     public int getContentLayout() {
@@ -63,6 +75,7 @@ public class AddressManagerActivity extends BaseTourCooTitleMultiViewActivity im
 
     @Override
     public void initView(Bundle savedInstanceState) {
+        skipTag = getIntent().getIntExtra(EXTRA_SKIP_TAG_SETTLE, -1);
         rlContentView = findViewById(R.id.rlContentView);
         mRefreshLayout = findViewById(R.id.smartLayoutRoot);
         rvContent = findViewById(R.id.rv_content);
@@ -105,6 +118,16 @@ public class AddressManagerActivity extends BaseTourCooTitleMultiViewActivity im
         super.loadData();
         mStatusLayoutManager.showLoadingLayout();
         mRefreshLayout.setRefreshHeader(new ClassicsHeader(mContext).setSpinnerStyle(SpinnerStyle.Translate));
+        mAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                if (skipTag != SKIP_TAG_SETTLE) {
+                    return;
+                }
+                isClick = true;
+                doSetDefaultAddress(mAdapter.getData().get(position).getAddress_id());
+            }
+        });
         getMyAddressList();
     }
 
@@ -123,10 +146,17 @@ public class AddressManagerActivity extends BaseTourCooTitleMultiViewActivity im
                                 if (!entity.data.isEmpty()) {
                                     mStatusLayoutManager.showSuccessLayout();
                                     mAdapter.setNewData(entity.data);
-                                    AccountInfoHelper.getInstance().setDefaultAddress(getDefaultAddress(entity.data));
+                                    AddressEntity addressEntity = getDefaultAddress(entity.data);
+                                    if (addressEntity != null) {
+                                        AccountInfoHelper.getInstance().setDefaultAddress(addressEntity);
+                                        selectAddressCallback(addressEntity);
+                                    } else {
+                                        selectAddressCallback(null);
+                                    }
                                     mRefreshLayout.finishRefresh(true);
                                 } else {
                                     mStatusLayoutManager.showEmptyLayout();
+                                    selectAddressCallback(null);
                                 }
                             } else {
                                 ToastUtil.showFailed(entity.msg);
@@ -213,6 +243,8 @@ public class AddressManagerActivity extends BaseTourCooTitleMultiViewActivity im
                         //编辑地址
                         break;
                     case R.id.llDefaultAddress:
+                        //设置默认地址
+                        isClick = true;
                         doSetDefaultAddress(mAdapter.getData().get(position).getAddress_id());
                         break;
                     default:
@@ -263,6 +295,7 @@ public class AddressManagerActivity extends BaseTourCooTitleMultiViewActivity im
         switch (requestCode) {
             case REQUEST_CODE_ADD_ADDRESS:
                 if (RESULT_SUCCESS_ADDRESS == resultCode) {
+                    isClick = true;
                     getMyAddressList();
                 }
                 break;
@@ -297,7 +330,7 @@ public class AddressManagerActivity extends BaseTourCooTitleMultiViewActivity im
                 return addressEntity;
             }
         }
-        return addressBeanList.get(0);
+        return null;
     }
 
 
@@ -320,5 +353,19 @@ public class AddressManagerActivity extends BaseTourCooTitleMultiViewActivity im
                     }
                 });
         showConfirmDialog(builder);
+    }
+
+
+    private void selectAddressCallback(AddressEntity addressEntity) {
+        if (skipTag != SKIP_TAG_SETTLE) {
+            //如果不是结算页面跳转来的 则不finish 否则finish
+            return;
+        }
+        if (isClick) {
+            Intent data = new Intent();
+            data.putExtra(EXTRA_ADDRESS_INFO, addressEntity);
+            setResult(RESULT_OK, data);
+            finish();
+        }
     }
 }

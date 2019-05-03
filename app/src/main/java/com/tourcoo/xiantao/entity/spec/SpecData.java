@@ -1,5 +1,6 @@
 package com.tourcoo.xiantao.entity.spec;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -9,7 +10,7 @@ import java.util.List;
  * @date 2019年04月26日9:46
  * @Email: 971613168@qq.com
  */
-public class SpecData {
+public class SpecData implements Serializable {
     private List<SpecAttr> spec_attr;
     private List<SpecList> spec_list;
 

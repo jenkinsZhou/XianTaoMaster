@@ -1,7 +1,9 @@
 package com.tourcoo.xiantao.ui.order;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,6 +25,7 @@ import com.tourcoo.xiantao.adapter.OrderGoodsSettleAdapter;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
+import com.tourcoo.xiantao.core.frame.util.StackUtil;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.threadpool.ThreadPoolManager;
@@ -36,6 +39,8 @@ import com.tourcoo.xiantao.entity.settle.SettleEntity;
 import com.tourcoo.xiantao.entity.user.CashEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
+import com.tourcoo.xiantao.ui.account.AddressManagerActivity;
+import com.tourcoo.xiantao.ui.goods.GoodsDetailActivity;
 import com.tourcoo.xiantao.widget.dialog.PayDialog;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
@@ -51,6 +56,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import static com.tourcoo.xiantao.constant.WxConfig.APP_ID;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.EXTRA_ADDRESS_INFO;
+import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.EXTRA_SKIP_TAG_SETTLE;
+import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.REQUEST_CODE_EDIT_ADDRESS;
 import static com.tourcoo.xiantao.ui.goods.GoodsDetailActivity.EXTRA_SETTLE;
 import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_ALI;
 import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_BALANCE;
@@ -64,6 +72,7 @@ import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
  * @Email: 971613168@qq.com
  */
 public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity implements View.OnClickListener {
+    public static final int SKIP_TAG_SETTLE = 1002;
     private IWXAPI api;
     public static final int USE_COIN = 1;
     private static final String TAG = "OrderDetailActivity";
@@ -83,6 +92,10 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     private TextView tvNickName;
     private TextView tvAddress;
     private LinearLayout llAddressInfo;
+    private TextView tvCoinAmount;
+
+    private LinearLayout llAddressLayout;
+    private TextView fillAddress;
     private RecyclerView goodsOrderRecyclerView;
 
     private TextView tvTotalPrice;
@@ -125,6 +138,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
      */
     private double cash;
 
+    private double payMoney;
+
     @Override
     protected IMultiStatusView getMultiStatusView() {
         return null;
@@ -139,10 +154,14 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     @Override
     public void initView(Bundle savedInstanceState) {
         //金币抵扣布局
+        tvCoinAmount = findViewById(R.id.tvCoinAmount);
         api = WXAPIFactory.createWXAPI(mContext, null);
         etRemark = findViewById(R.id.etRemark);
+        fillAddress = findViewById(R.id.fillAddress);
+        llAddressLayout = findViewById(R.id.llAddressLayout);
         llUseCoin = findViewById(R.id.llUseCoin);
         llAddressInfo = findViewById(R.id.llAddressInfo);
+        llAddressInfo.setOnClickListener(this);
         switchUseCoin = findViewById(R.id.switchUseCoin);
         tvShouldPayPrice = findViewById(R.id.tvShouldPayPrice);
         tvExpressPrice = findViewById(R.id.tvExpressPrice);
@@ -158,6 +177,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         goodsOrderRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mSettleEntity = (SettleEntity) getIntent().getSerializableExtra(EXTRA_SETTLE);
         initCoinSwitch();
+        listenCoinSwitch();
         requestPermission();
     }
 
@@ -176,12 +196,15 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         mGoodsAdapter.bindToRecyclerView(goodsOrderRecyclerView);
     }
 
+
     private void showAddressInfo(AddressEntity addressEntity) {
         if (addressEntity == null || addressEntity.getArea() == null) {
-            llAddressInfo.setVisibility(View.GONE);
+            llAddressLayout.setVisibility(View.GONE);
+            fillAddress.setVisibility(View.VISIBLE);
             return;
         }
-        llAddressInfo.setVisibility(View.VISIBLE);
+        llAddressLayout.setVisibility(View.VISIBLE);
+        fillAddress.setVisibility(View.GONE);
         tvNickName.setText(addressEntity.getName());
         tvMobile.setText(addressEntity.getPhone());
         tvAddress.setText(AccountInfoHelper.getInstance().getWholeAddressInfo(addressEntity));
@@ -221,7 +244,11 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         switch (v.getId()) {
             case R.id.tvSettleAccounts:
                 //弹出支付宝/微信
-                showPayDialog(mSettleEntity.getOrder_pay_price(), cash);
+                showPayDialog(payMoney, cash);
+                break;
+            case R.id.llAddressInfo:
+                //跳转地址选择
+                doSkipAddressManager();
                 break;
             default:
                 break;
@@ -239,6 +266,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             setVisible(llUseCoin, false);
         } else {
             setVisible(llUseCoin, true);
+            tvCoinAmount.setText("可抵现￥" + settleEntity.getCoin());
         }
         if (settleEntity.getCoin_status() == NOT_USE_COIN) {
             switchUseCoin.setChecked(false);
@@ -266,12 +294,40 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    //使用抵扣
                     mSettleEntity.setCoin_status(USE_COIN);
+                    tvShouldPayPrice.setText("￥" + mSettleEntity.getOrder_pay_price());
+                    payMoney = mSettleEntity.getOrder_pay_price();
                 } else {
+                    //不使用抵扣
                     mSettleEntity.setCoin_status(NOT_USE_COIN);
+                    payMoney = mSettleEntity.getOrder_pay_price() + mSettleEntity.getCoin();
+                    tvShouldPayPrice.setText("￥" + mSettleEntity.getOrder_pay_price() + mSettleEntity.getCoin());
                 }
             }
         });
+    }
+
+    private void listenCoinSwitch() {
+        switchUseCoin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    //使用抵扣
+                    mSettleEntity.setCoin_status(USE_COIN);
+                    tvShouldPayPrice.setText("￥" + mSettleEntity.getOrder_pay_price());
+                    tvPayPrice.setText("￥" + mSettleEntity.getOrder_pay_price());
+                    payMoney = mSettleEntity.getOrder_pay_price();
+                } else {
+                    //不使用抵扣
+                    mSettleEntity.setCoin_status(NOT_USE_COIN);
+                    payMoney = mSettleEntity.getOrder_pay_price() + mSettleEntity.getCoin();
+                    tvShouldPayPrice.setText("￥" + payMoney);
+                    tvPayPrice.setText("￥" + payMoney);
+                }
+            }
+        });
+
     }
 
 
@@ -373,7 +429,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                                                 aliPay(entity.data.toString());
                                                 break;
                                             case PAY_TYPE_BALANCE:
-                                                TourCooLogUtil.i("支付结果", entity);
+                                                skipOrderList();
                                                 break;
                                             default:
                                                 break;
@@ -381,7 +437,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                                     }
                                 });
                             } else {
-                                ToastUtil.showSuccess(entity.data.toString());
+                                ToastUtil.show(entity.msg);
                             }
                         }
                     }
@@ -506,5 +562,49 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                 });
     }
 
+
+    private void doSkipAddressManager() {
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_SKIP_TAG_SETTLE, SKIP_TAG_SETTLE);
+        intent.setClass(mContext, AddressManagerActivity.class);
+        startActivityForResult(intent, REQUEST_CODE_EDIT_ADDRESS);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_EDIT_ADDRESS:
+                if (resultCode == RESULT_OK && data != null) {
+                    AddressEntity entity = (AddressEntity) data.getSerializableExtra(EXTRA_ADDRESS_INFO);
+                    showAddressInfo(entity);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    /**
+     * 跳转到订单列表
+     */
+    private void skipOrderList() {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent();
+                intent.setClass(mContext, MyOrderListActivity.class);
+                startActivity(intent);
+                Activity activity = StackUtil.getInstance().getActivity(GoodsDetailActivity.class);
+                if (activity != null) {
+                    activity.finish();
+                }
+                finish();
+            }
+        });
+
+    }
 
 }

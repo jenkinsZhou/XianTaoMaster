@@ -1,5 +1,6 @@
 package com.tourcoo.xiantao.entity.comment;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -9,7 +10,7 @@ import java.util.List;
  * @date 2019年04月30日17:42
  * @Email: 971613168@qq.com
  */
-public class CommentEntity {
+public class CommentEntity implements Serializable {
 
 
     /**

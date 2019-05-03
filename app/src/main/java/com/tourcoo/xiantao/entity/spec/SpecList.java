@@ -1,5 +1,6 @@
 package com.tourcoo.xiantao.entity.spec;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -9,7 +10,7 @@ import java.util.List;
  * @date 2019年04月26日9:45
  * @Email: 971613168@qq.com
  */
-public class SpecList {
+public class SpecList implements Serializable {
 
     /**
      * goods_spec_id : 158

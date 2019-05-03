@@ -68,15 +68,6 @@ public class ApiRepository extends BaseRepository {
         return mApiService;
     }
 
-    /**
-     * 不使用缓存
-     *
-     * @return
-     */
-    public ApiService getNoCacheApiService() {
-        mApiService = TourCoolRetrofit.getInstance().createService(ApiService.class, false);
-        return mApiService;
-    }
 
     /**
      * 发送验证码
@@ -295,7 +286,7 @@ public class ApiRepository extends BaseRepository {
         params.put("goods_id", goodsId);
         params.put("goods_num", goodsCount);
         params.put("goods_sku_id", skuId);
-        TourCooLogUtil.i(TAG, TAG + ":" + goodsId);
+        TourCooLogUtil.i(TAG, params);
         return TourCoolTransformer.switchSchedulersIo(getApiService().settleGoods(params).retryWhen(new RetryWhen()));
     }
 
@@ -415,7 +406,7 @@ public class ApiRepository extends BaseRepository {
         } else {
             params.put("id", categoryId);
         }
-        TourCooLogUtil.i(TAG, TAG + ":" + params);
+        TourCooLogUtil.i(TAG, TAG + "提交的参数:" + params);
         return TourCoolTransformer.switchSchedulersIo(getApiService().getCategoryGoodsList(params).retryWhen(new RetryWhen()));
     }
 
@@ -439,6 +430,7 @@ public class ApiRepository extends BaseRepository {
         Map<String, Object> params = new HashMap<>(1);
         params.put("p", page);
         params.put("status", orderStatus);
+        TourCooLogUtil.i(TAG, TAG + ":" + params);
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestOrderInfo(params).retryWhen(new RetryWhen()));
     }
 
@@ -488,6 +480,7 @@ public class ApiRepository extends BaseRepository {
         TourCooLogUtil.i(TAG, TAG + ":" + params);
         return TourCoolTransformer.switchSchedulersIo(getApiService().collectAdd(params).retryWhen(new RetryWhen()));
     }
+
 
 
 
@@ -683,36 +676,8 @@ public class ApiRepository extends BaseRepository {
         Map<String, Object> params = new HashMap<>(1);
         params.put("goods_id", goodsId);
         params.put("p", page);
-        TourCooLogUtil.i(TAG, TAG + ":" + params);
+        TourCooLogUtil.i(TAG, TAG + "商品id:" + params);
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestCommentList(params).retryWhen(new RetryWhen()));
-    }
-
-
-    /**
-     * 发起拼团接口
-     *
-     * @param goodsId
-     * @param goodsCount
-     * @return
-     */
-    public Observable<BaseEntity> startNewTuan(int goodsId, int goodsCount) {
-        Map<String, Object> params = new HashMap<>(1);
-        params.put("goods_id", goodsId);
-        params.put("num", goodsCount);
-        TourCooLogUtil.i(TAG, TAG + ":" + goodsId);
-        return TourCoolTransformer.switchSchedulersIo(getApiService().startNewTuan(params).retryWhen(new RetryWhen()));
-    }
-
-    /**
-     * 单个商品的拼团列表
-     *
-     * @param goods_id
-     * @return
-     */
-    public Observable<BaseEntity<List<Goods.TuanListBean>>> tuanList(int goods_id) {
-        Map<String, Object> params = new HashMap<>(1);
-        params.put("goods_id", goods_id);
-        return TourCoolTransformer.switchSchedulersIo(getApiService().tuanList(params).retryWhen(new RetryWhen()));
     }
 
 
@@ -745,4 +710,33 @@ public class ApiRepository extends BaseRepository {
         TourCooLogUtil.i(TAG, TAG + "提交的参数:" + params);
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestOrderPay(params).retryWhen(new RetryWhen()));
     }
+
+    /**
+     * 单个商品的拼团列表
+     *
+     * @param goods_id
+     * @return
+     */
+    public Observable<BaseEntity<List<Goods.TuanListBean>>> tuanList(int goods_id) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("goods_id", goods_id);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().tuanList(params).retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 发起拼团接口
+     *
+     * @param goodsId
+     * @param goodsCount
+     * @return
+     */
+    public Observable<BaseEntity> startNewTuan(int goodsId, int goodsCount) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("goods_id", goodsId);
+        params.put("num", goodsCount);
+        TourCooLogUtil.i(TAG, TAG + ":" + goodsId);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().startNewTuan(params).retryWhen(new RetryWhen()));
+    }
+
 }

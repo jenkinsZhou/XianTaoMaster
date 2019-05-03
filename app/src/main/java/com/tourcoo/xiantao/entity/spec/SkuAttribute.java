@@ -1,5 +1,7 @@
 package com.tourcoo.xiantao.entity.spec;
 
+import java.io.Serializable;
+
 /**
  * @author :JenkinsZhou
  * @description :
@@ -7,7 +9,7 @@ package com.tourcoo.xiantao.entity.spec;
  * @date 2019年04月26日9:38
  * @Email: 971613168@qq.com
  */
-public class SkuAttribute {
+public class SkuAttribute implements Serializable {
     private String item_id;
     private String spec_value;
 
