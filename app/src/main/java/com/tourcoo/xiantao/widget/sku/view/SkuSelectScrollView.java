@@ -189,8 +189,6 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
             }
         }
 
-        TourCooLogUtil.e(skuIdList);
-
         // 获取选中信息列表ID
         List<String> selectSpecId = new ArrayList<>();
         for (int k = 0; k < selectedAttributeList.size(); k++) {
@@ -201,8 +199,6 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
                 selectSpecId.add(selectedAttributeList.get(k).getItem_id());
             }
         }
-
-        TourCooLogUtil.e(selectSpecId);
 
         //如果不存在需要设置不可点击的组合，则对所有的sku全部设置成可点击状态
         if (skuIdList.size() == 0) {
@@ -239,9 +235,6 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
                 }
             }
 
-            TourCooLogUtil.e(existMulList);
-
-
             if (existMulList.size() == 0) {
                 for (int k = 0; k < skuContainerLayout.getChildCount(); k++) {
                     SkuItemLayout itemLayout = (SkuItemLayout) skuContainerLayout.getChildAt(k);
@@ -257,7 +250,6 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
                     }
                 }
             } else {
-
 
                 Map<Integer, List<String>> map = new HashMap<>();
 
@@ -291,27 +283,24 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
                     SpecAttr specAttr = specData.getSpec_attr().get(k);
                     // 属性值是否可点击flag
                     List<SkuAttribute> attributeBeanList = specAttr.getSpec_items();
-                    for (SkuAttribute attribute : attributeBeanList) {
-
-                        if (map.get(k) != null) {
-                            List<String> unclickId = map.get(k);
-                            if(!unclickId.contains(attribute.getItem_id())){
-                                String attributeValue = attribute.getSpec_value();
-                                itemLayout.optionItemViewEnableStatus(attributeValue);
-                            }
-
-                        } else {
+                    if (map.get(k) == null) {
+                        for (SkuAttribute attribute : attributeBeanList) {
                             String attributeValue = attribute.getSpec_value();
                             itemLayout.optionItemViewEnableStatus(attributeValue);
                         }
-
+                    } else {
+                        List<String> unclickId = map.get(k);
+                        for (int i = 0; i < attributeBeanList.size(); i++) {
+                            String id = attributeBeanList.get(i).getItem_id();
+                            if(!unclickId.contains(id)){
+                                String attributeValue = attributeBeanList.get(i).getSpec_value();
+                                itemLayout.optionItemViewEnableStatus(attributeValue);
+                            }
+                        }
                     }
                 }
-
             }
-
         }
-
 
     }
 
@@ -392,17 +381,25 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
 
     /**
      * 设置选中的sku
-     *
-     * @param specAttrs
+     * todo:存在bug,暂未修复，后期优化 两层sku属性 选择会出错
+     * @param specList
      */
-    public void setSelectedSku(List<SpecAttr> specAttrs) {
+    public void setSelectedSku(SpecList specList) {
         selectedAttributeList.clear();
 
-        for (int i = 0; i < specAttrs.size(); i++) {
-            selectedAttributeList.add(new SkuAttribute(
-                    specAttrs.get(i).getSpec_items().get(0).getItem_id(),
-                    specAttrs.get(i).getSpec_items().get(0).getSpec_value()
-            ));
+        String[] specSkuIds = specList.getSpec_sku_id().split("_");
+
+        for (int i = 0; i < specSkuIds.length; i++) {
+            SpecAttr specAttr = specData.getSpec_attr().get(i);
+            TourCooLogUtil.e(specAttr);
+            for (int j = 0; j < specAttr.getSpec_items().size(); j++) {
+                SkuAttribute skuAttribute = specAttr.getSpec_items().get(j);
+                TourCooLogUtil.e(skuAttribute);
+                if (skuAttribute.getItem_id().equals(specSkuIds[i])) {
+                    // 选中，保存选中信息
+                    selectedAttributeList.add(skuAttribute);
+                }
+            }
         }
 
         // 清除所有选中状态

@@ -12,7 +12,9 @@ public class GoodsCount {
     /**
      * cart_total_num : 67
      */
-
+    /**
+     * 购物车中总商品数量
+     */
     private int cart_total_num;
 
     public int getCart_total_num() {

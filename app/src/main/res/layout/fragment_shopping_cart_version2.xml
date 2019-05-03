@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -150,6 +149,7 @@
                         android:layout_marginTop="@dimen/dp_4"
                         android:gravity="center"
                         android:text="已优惠:"
+                        android:visibility="gone"
                         android:textColor="#999999"
                         android:textSize="@dimen/sp_12" />
 
@@ -159,6 +159,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignBottom="@id/discount"
                         android:layout_marginLeft="@dimen/dp_5"
+                        android:visibility="gone"
                         android:layout_toRightOf="@id/discount"
                         android:gravity="center"
                         android:text="￥0.00"

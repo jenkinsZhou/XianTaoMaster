@@ -346,7 +346,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         }
         Map<String, Object> params = new HashMap<>(1);
         Goods goods = mSettleEntity.getGoods_list().get(0);
-        List<Spec> specList = goods.getSpecBean();
+        List<Spec> specList = goods.getSpec();
         for (Spec spec : specList) {
             TourCooLogUtil.i(TAG, spec);
         }

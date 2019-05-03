@@ -94,7 +94,7 @@
                             android:layout_marginLeft="@dimen/dp_15"
                             android:layout_toRightOf="@id/civUserAvatar"
                             android:gravity="center"
-                            android:text="用户昵称"
+                            android:text="登录/注册"
                             android:textColor="@color/whiteCommon"
                             android:textSize="@dimen/sp_15" />
 
@@ -116,7 +116,7 @@
                             android:layout_below="@id/balance"
                             android:layout_alignLeft="@id/civUserAvatar"
                             android:gravity="center"
-                            android:text="88.00"
+                            android:text="__"
                             android:textSize="@dimen/sp_20" />
 
 
@@ -131,7 +131,7 @@
                             android:gravity="center"
                             android:maxLines="1"
                             android:minWidth="@dimen/dp_80"
-                            android:text="129金币 932银币"
+                            android:text="__"
                             android:textColor="@color/whiteCommon"
                             android:textSize="@dimen/sp_13" />
 

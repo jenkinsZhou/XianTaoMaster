@@ -200,7 +200,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                     case 3:
                         //收货地址
                         if (!AccountInfoHelper.getInstance().isLogin()) {
-                            ToastUtil.show("您还没有登录");
+                            TourCoolUtil.startActivity(mContext, LoginActivity.class);
                             return;
                         }
                         TourCoolUtil.startActivity(mContext, AddressManagerActivity.class);
@@ -596,7 +596,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
      */
     private void skipReturnOrderList() {
         if (!AccountInfoHelper.getInstance().isLogin()) {
-            ToastUtil.show("您还没有登录");
+            TourCoolUtil.startActivity(mContext, LoginActivity.class);
             return;
         }
         Intent returnIntent = new Intent();

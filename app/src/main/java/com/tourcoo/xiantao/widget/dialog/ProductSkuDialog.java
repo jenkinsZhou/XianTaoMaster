@@ -4,32 +4,25 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.view.textservice.SpellCheckerInfo;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
-import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
-import com.tourcoo.xiantao.entity.goods.GoodsDetailEntity;
 import com.tourcoo.xiantao.entity.goods.GoodsEntity;
-import com.tourcoo.xiantao.entity.goods.Spec;
-import com.tourcoo.xiantao.entity.sku.Sku;
+import com.tourcoo.xiantao.entity.goods.TuanRule;
 import com.tourcoo.xiantao.entity.spec.SkuAttribute;
 import com.tourcoo.xiantao.entity.spec.SpecAttr;
 import com.tourcoo.xiantao.entity.spec.SpecData;
@@ -43,9 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.StyleRes;
-
-import org.litepal.util.LogUtil;
 
 /**
  * Created by liufei on 2017/11/30.
@@ -60,14 +50,23 @@ public class ProductSkuDialog extends Dialog {
     private String priceFormat;
     private String stockQuantityFormat;
 
-    public ProductSkuDialog(@NonNull Context context, GoodsEntity product, Callback callback) {
+    public static final int SHOPPING_CART = 1;
+    public static final int PING_TUAN = 2;
+    public static final int BUY_NOW = 3;
+    private int type;
+
+
+    public ProductSkuDialog(@NonNull Context context, GoodsEntity product, Callback callback, int type) {
         super(context, R.style.CommonBottomDialogStyle);
         this.context = context;
         this.product = product;
         this.callback = callback;
+        this.type = type;
     }
 
 
+    //标题
+    private TextView tvTitle;
     //减少商品
     private TextView btnSkuQuantityMinus;
     //增加商品
@@ -97,7 +96,9 @@ public class ProductSkuDialog extends Dialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_goods_select);
         setCanceledOnTouchOutside(true);
+        setCancelable(true);
 
+        tvTitle = findViewById(R.id.tvTitle);
         btnSkuQuantityMinus = findViewById(R.id.btn_sku_quantity_minus);
         etSkuQuantityInput = findViewById(R.id.et_sku_quantity_input);
         btnSkuQuantityPlus = findViewById(R.id.btn_sku_quantity_plus);
@@ -108,7 +109,6 @@ public class ProductSkuDialog extends Dialog {
         ivSkuLogo = findViewById(R.id.ivGoodsImage);
         tvSkuSellingPrice = findViewById(R.id.tv_sku_selling_price);
 //        tvSkuSellingPriceUnit =findViewById(R.id.tv_sku_selling_price_unit);
-
 
         btnSkuQuantityMinus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,7 +130,7 @@ public class ProductSkuDialog extends Dialog {
             @Override
             public void onClick(View v) {
                 String quantity = etSkuQuantityInput.getText().toString();
-                if (TextUtils.isEmpty(quantity) || selectedSku == null) {
+                if (TextUtils.isEmpty(quantity)) {
                     return;
                 }
                 int quantityInt = Integer.parseInt(quantity);
@@ -196,7 +196,7 @@ public class ProductSkuDialog extends Dialog {
                 tvSkuQuantity.setText(String.format(stockQuantityFormat, 0));
 
                 String firstUnselectedAttributeName = scrollSkuList.getFirstUnelectedAttributeName();
-                tvSkuInfo.setText("请选择：" + firstUnselectedAttributeName);
+                tvSkuInfo.setText("选择：" + firstUnselectedAttributeName);
                 btnSubmit.setEnabled(false);
                 String quantity = etSkuQuantityInput.getText().toString();
                 if (!TextUtils.isEmpty(quantity)) {
@@ -214,7 +214,7 @@ public class ProductSkuDialog extends Dialog {
             @Override
             public void onSelect(SkuAttribute selectAttribute) {
                 String firstUnselectedAttributeName = scrollSkuList.getFirstUnelectedAttributeName();
-                tvSkuInfo.setText("请选择：" + firstUnselectedAttributeName);
+                tvSkuInfo.setText("选择：" + firstUnselectedAttributeName);
             }
 
             /**
@@ -281,121 +281,170 @@ public class ProductSkuDialog extends Dialog {
                     return;
                 }
 
-                StringBuilder spec_sku_id = new StringBuilder();
-                String[] skuIds = selectedSku.getSpec_sku_id().split("_");
-                List<SpecAttr> specAttrList = product.getSpecData().getSpec_attr();
-                for (int i = 0; i < specAttrList.size(); i++) {
-                    List<SkuAttribute> skuAttributeList = specAttrList.get(i).getSpec_items();
-                    for (int j = 0; j < skuAttributeList.size(); j++) {
-                        SkuAttribute attribute = skuAttributeList.get(j);
-                        if (skuIds[i].equals("" + attribute.getItem_id())) {
-                            //选中的sku属性实体
-                            if (i == specAttrList.size() - 1) {
-                                spec_sku_id.append(attribute.getItem_id());
-                            } else {
-                                spec_sku_id.append(attribute.getItem_id() + "_");
+                if (product.getSpecData() != null && type != PING_TUAN) {
+
+                    if (scrollSkuList.getSelectedSku() == null) {
+                        String info = tvSkuInfo.getText().toString();
+                        if (StringUtils.isEmpty(info)) {
+                            ToastUtil.showFailed("请选择商品规格");
+                        } else {
+                            ToastUtil.showFailed(info);
+                        }
+                        return;
+                    }
+
+                    StringBuilder spec_sku_id = new StringBuilder();
+                    String[] skuIds = selectedSku.getSpec_sku_id().split("_");
+                    List<SpecAttr> specAttrList = product.getSpecData().getSpec_attr();
+                    for (int i = 0; i < specAttrList.size(); i++) {
+                        List<SkuAttribute> skuAttributeList = specAttrList.get(i).getSpec_items();
+                        for (int j = 0; j < skuAttributeList.size(); j++) {
+                            SkuAttribute attribute = skuAttributeList.get(j);
+                            if (skuIds[i].equals("" + attribute.getItem_id())) {
+                                //选中的sku属性实体
+                                if (i == specAttrList.size() - 1) {
+                                    spec_sku_id.append(attribute.getItem_id());
+                                } else {
+                                    spec_sku_id.append(attribute.getItem_id() + "_");
+                                }
                             }
                         }
                     }
-                }
+                    int quantityInt = Integer.parseInt(quantity);
 
-                int quantityInt = Integer.parseInt(quantity);
-
-                if (quantityInt > 0 && quantityInt <= selectedSku.getForm().getStock_num()) {
-                    callback.onAdded(spec_sku_id.toString(), quantityInt);
+                    if (quantityInt > 0 && quantityInt <= selectedSku.getForm().getStock_num()) {
+                        callback.onAdded(spec_sku_id.toString(), quantityInt);
+                        dismiss();
+                    } else {
+                        ToastUtil.showFailed("商品数量超出库存");
+                    }
+                }else {
+                    int quantityInt = Integer.parseInt(quantity);
+                    callback.onAdded("", quantityInt);
                     dismiss();
-                } else {
-                    Toast.makeText(getContext(), "商品数量超出库存，请修改数量", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
 
         priceFormat = context.getString(R.string.comm_price_format);
         stockQuantityFormat = context.getString(R.string.product_detail_sku_stock);
 
-        if (product.getSpecData() == null) {
-            SpecData specData = new SpecData();
-            specData.setSpec_attr(new ArrayList<>());
-            specData.setSpec_list(new ArrayList<>());
-            this.product.setSpecData(specData);
-            this.skuList = new ArrayList<>();
-        } else {
-            this.skuList = product.getSpecData().getSpec_attr();
-            updateSkuData();
+        switch (type) {
+            case SHOPPING_CART:
+                tvTitle.setText("加入购物车");
+                if (product.getSpecData() == null) {
+                    scrollSkuList.setVisibility(View.GONE);
+                    GlideManager.loadImg(product.getDetail().getImage(), ivSkuLogo);
+                    tvSkuSellingPrice.setText(String.format(priceFormat, product.getDetail().getSpec().get(0).getGoods_price()));
+                    btnSubmit.setEnabled(true);
+                    tvSkuInfo.setText("选择：数量");
+                    btnSkuQuantityMinus.setEnabled(false);
+                    btnSkuQuantityPlus.setEnabled(true);
+                } else {
+                    this.skuList = product.getSpecData().getSpec_attr();
+                    updateSkuData();
+                    updateQuantityOperator(1);
+                }
+                break;
+            case PING_TUAN:
+                tvTitle.setText("发起拼团");
+                scrollSkuList.setVisibility(View.GONE);
+                GlideManager.loadImg(product.getDetail().getImage(), ivSkuLogo);
+                if (product.getDetail().isTuan()) {
+                    tvSkuSellingPrice.setText(((TuanRule) (product.getDetail().getTuan_rule())).getName());
+                }
+                btnSubmit.setEnabled(true);
+                tvSkuInfo.setText("选择：数量");
+                btnSkuQuantityMinus.setEnabled(false);
+                btnSkuQuantityPlus.setEnabled(true);
+                break;
+            case BUY_NOW:
+                tvTitle.setText("单独购买");
+                if (product.getSpecData() == null) {
+                    scrollSkuList.setVisibility(View.GONE);
+                    GlideManager.loadImg(product.getDetail().getImage(), ivSkuLogo);
+                    tvSkuSellingPrice.setText(String.format(priceFormat, product.getDetail().getSpec().get(0).getGoods_price()));
+                    btnSubmit.setEnabled(true);
+                    tvSkuInfo.setText("选择：数量");
+                    btnSkuQuantityMinus.setEnabled(false);
+                    btnSkuQuantityPlus.setEnabled(true);
+                } else {
+                    this.skuList = product.getSpecData().getSpec_attr();
+                    updateSkuData();
+                    updateQuantityOperator(1);
+                }
+                break;
         }
-
-        updateQuantityOperator(1);
 
     }
 
     private void updateSkuData() {
         scrollSkuList.setSkuData(product.getSpecData());
-        SpecList firstSku = null;
-        for (SpecList first : product.getSpecData().getSpec_list()) {
-            if (first.getForm().getStock_num() >= 0) {
-                firstSku = first;
-                break;
-            }
-        }
-        if (firstSku != null) {
-            if (firstSku.getForm().getStock_num() > 0) {
-                selectedSku = firstSku;
-                currentSkuQuantity = firstSku.getForm().getStock_num();
-                // 选中第一个sku
-                scrollSkuList.setSelectedSku(product.getSpecData().getSpec_attr());
+//                SpecList firstSku = null;
+//                for (SpecList first : product.getSpecData().getSpec_list()) {
+//                    if (first.getForm().getStock_num() >= 0) {
+//                        firstSku = first;
+//                        TourCooLogUtil.e(first);
+//                        break;
+//                    }
+//                }
+//
+//                if (firstSku != null && firstSku.getForm().getStock_num() >= 0) {
+//
+//                    selectedSku = firstSku;
+//                    currentSkuQuantity = firstSku.getForm().getStock_num();
+//                     //选中第一个sku
+//                    scrollSkuList.setSelectedSku(firstSku);
+//
+//                    StringBuilder builder = new StringBuilder();
+//                    StringBuilder spec_sku_id = new StringBuilder();
+//                    String[] skuIds = selectedSku.getSpec_sku_id().split("_");
+//                    List<SpecAttr> specAttrList = product.getSpecData().getSpec_attr();
+//                    for (int i = 0; i < specAttrList.size(); i++) {
+//                        List<SkuAttribute> skuAttributeList = specAttrList.get(i).getSpec_items();
+//                        for (int j = 0; j < skuAttributeList.size(); j++) {
+//                            SkuAttribute attribute = skuAttributeList.get(j);
+//                            if (skuIds[i].equals("" + attribute.getItem_id())) {
+//                                //选中的sku属性实体
+//                                if (i == specAttrList.size() - 1) {
+//                                    spec_sku_id.append(attribute.getItem_id());
+//                                } else {
+//                                    spec_sku_id.append(attribute.getItem_id() + "_");
+//                                }
+//
+//                                if (i != 0) {
+//                                    builder.append(" ");
+//                                }
+//                                builder.append("\"" + attribute.getSpec_value() + "\"");
+//
+//                            }
+//                        }
+//                    }
+//
+//
+//                    if (selectedSku.getForm().getImgshow() == null) {
+//                        GlideManager.loadImg(product.getDetail().getImage(), ivSkuLogo);
+//                    } else {
+//                        GlideManager.loadImg(selectedSku.getForm().getImgshow().toString(), ivSkuLogo);
+//                    }
+//                    tvSkuSellingPrice.setText(String.format(priceFormat, NumberUtils.formatNumber(selectedSku.getForm().getGoods_price())));
+//                    tvSkuQuantity.setVisibility(View.VISIBLE);
+//                    tvSkuQuantity.setText(String.format(stockQuantityFormat, selectedSku.getForm().getStock_num()));
+//                    btnSubmit.setEnabled(selectedSku.getForm().getStock_num() >= 0);
+//
+//                    tvSkuInfo.setText("已选：" + builder.toString());
+//                } else {
+        GlideManager.loadImg(product.getDetail().getImage(), ivSkuLogo);
+        tvSkuSellingPrice.setText(((TuanRule) (product.getDetail().getTuan_rule())).getName());
+        btnSubmit.setEnabled(true);
+        tvSkuInfo.setText("选择：" + skuList.get(0).getGroup_name());
+//                }
 
-                StringBuilder builder = new StringBuilder();
-                StringBuilder spec_sku_id = new StringBuilder();
-                String[] skuIds = selectedSku.getSpec_sku_id().split("_");
-                List<SpecAttr> specAttrList = product.getSpecData().getSpec_attr();
-                for (int i = 0; i < specAttrList.size(); i++) {
-                    List<SkuAttribute> skuAttributeList = specAttrList.get(i).getSpec_items();
-                    for (int j = 0; j < skuAttributeList.size(); j++) {
-                        SkuAttribute attribute = skuAttributeList.get(j);
-                        if (skuIds[i].equals("" + attribute.getItem_id())) {
-                            //选中的sku属性实体
-                            if (i == specAttrList.size() - 1) {
-                                spec_sku_id.append(attribute.getItem_id());
-                            } else {
-                                spec_sku_id.append(attribute.getItem_id() + "_");
-                            }
 
-                            if (i != 0) {
-                                builder.append("　");
-                            }
-                            builder.append("\"" + attribute.getSpec_value() + "\"");
-
-                        }
-                    }
-                }
-
-
-                if (selectedSku.getForm().getImgshow() == null) {
-                    GlideManager.loadImg(product.getDetail().getImage(), ivSkuLogo);
-                } else {
-                    GlideManager.loadImg(selectedSku.getForm().getImgshow().toString(), ivSkuLogo);
-                }
-                tvSkuSellingPrice.setText(String.format(priceFormat, NumberUtils.formatNumber(selectedSku.getForm().getGoods_price() / 100)));
-                tvSkuQuantity.setVisibility(View.VISIBLE);
-                tvSkuQuantity.setText(String.format(stockQuantityFormat, selectedSku.getForm().getStock_num()));
-                btnSubmit.setEnabled(selectedSku.getForm().getStock_num() > 0);
-
-                tvSkuInfo.setText("已选：" + builder.toString());
-            } else {
-//            GlideManager.loadImg(product.getDetail().getImage(), ivSkuLogo);
-//            tvSkuSellingPrice.setText(String.format(priceFormat, NumberUtils.formatNumber(product.getSellingPrice())));
-////            tvSkuSellingPriceUnit.setText("/" + product.getMeasurementUnit());
-//            tvSkuQuantity.setText(String.format(stockQuantityFormat, product.getStockQuantity()));
-//            btnSubmit.setEnabled(false);
-//            tvSkuInfo.setText("请选择：" + skuList.get(0).getGroup_name());
-            }
-
-        }
     }
 
     private void updateQuantityOperator(int newQuantity) {
-        if (selectedSku == null) {
+        if (product.getSpecData() != null && selectedSku == null && type != PING_TUAN) {
             btnSkuQuantityMinus.setEnabled(false);
             btnSkuQuantityPlus.setEnabled(false);
             etSkuQuantityInput.setEnabled(false);
@@ -429,6 +478,7 @@ public class ProductSkuDialog extends Dialog {
         //设置Dialog距离底部的距离
         lp.y = 0;
         dialogWindow.setAttributes(lp);
+        AppUtils.transparencyBar(getWindow());
     }
 
 

@@ -28,7 +28,7 @@ public class OrderGoodsSettleAdapter extends BaseQuickAdapter<Goods, BaseViewHol
     @Override
     protected void convert(BaseViewHolder helper, @NonNull Goods goods) {
         helper.setText(R.id.tvGoodsName, goods.getGoods_name());
-        helper.setText(R.id.tvGoodsPrice, "￥ " + goods.getSpecBean().get(0).getGoods_price());
+        helper.setText(R.id.tvGoodsPrice, "￥ " + goods.getSpec().get(0).getGoods_price());
         //当前商品的数量
         helper.setText(R.id.goodsCount, "x" + goods.getTotal_num());
         RoundedImageView civGoodsIcon = helper.getView(R.id.civGoodsIcon);

@@ -53,6 +53,7 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
     public static final int TAB_INDEX_MINE = 3;
     private boolean isFirstLoad = true;
     private MineFragment mineFragment;
+    private ShoppingCarFragmentVersion2 shoppingCarFragment;
     /**
      * 当前购物车中商品数量
      */
@@ -79,9 +80,10 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
     public List<TabEntity> getTabList() {
         ArrayList<TabEntity> tabEntities = new ArrayList<>();
         mineFragment = MineFragment.newInstance();
+        shoppingCarFragment = ShoppingCarFragmentVersion2.newInstance();
         tabEntities.add(new TabEntity("首页", R.mipmap.tab_home_normal, R.mipmap.tab_home_selected, HomeFragment.newInstance()));
         tabEntities.add(new TabEntity("分类", R.mipmap.tab_classification_normal, R.mipmap.tab_classification_selected, ClassifyGoodsFragment.newInstance()));
-        tabEntities.add(new TabEntity("购物车", R.mipmap.tab_shopping_cart_normal, R.mipmap.tab_shopping_cart_selected, ShoppingCarFragmentVersion2.newInstance()));
+        tabEntities.add(new TabEntity("购物车", R.mipmap.tab_shopping_cart_normal, R.mipmap.tab_shopping_cart_selected, shoppingCarFragment));
         tabEntities.add(new TabEntity("个人中心", R.mipmap.tab_personal_center_normal, R.mipmap.tab_personal_center_selected, mineFragment));
         return tabEntities;
     }
@@ -245,6 +247,11 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
                                 if (entity.data != null) {
                                     currentGoodsCount = entity.data.getCart_total_num();
                                     showRedDot(currentGoodsCount);
+                                    if (currentGoodsCount > 0) {
+                                        shoppingCarFragment.refreshShoppingCarNoDialog();
+                                    }else {
+                                        shoppingCarFragment.showEmptyLayout();
+                                    }
                                 }
                             } else {
                                 ToastUtil.showFailed(entity.msg);

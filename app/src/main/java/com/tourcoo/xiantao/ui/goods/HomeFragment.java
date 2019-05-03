@@ -81,7 +81,6 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
     public static final String EXTRA_GOODS_ID = "EXTRA_GOODS_ID";
     private GoodsGridAdapter mGoodsGridAdapter;
     private List<HomeGoodsBean> mGuessLikeGoodsList = new ArrayList<>();
-
     private MainTabActivity mMainTabActivity;
     private StatusLayoutManager statusLayoutManager;
     private List<String> bannerImageList = new ArrayList<>();
@@ -246,7 +245,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.rlSearchLayout:
-                TourCoolUtil.startActivity(mContext,SearchGoodsActivity.class);
+                TourCoolUtil.startActivity(mContext, SearchGoodsActivity.class);
                 break;
             default:
                 break;

@@ -27,6 +27,7 @@
                 android:layout_height="@dimen/dp_80"
                 android:layout_marginLeft="@dimen/dp_5"
                 android:background="#F5F5F5"
+                app:riv_corner_radius="@dimen/dp_5"
                 app:src="@mipmap/ic_orange" />
 
 
@@ -59,19 +60,19 @@
                     style="@style/TextView12spGray666"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="特点标签" />
+                    android:text="" />
 
                 <TextView
                     style="@style/TextView12spGray666"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="特点标签" />
+                    android:text="" />
 
                 <TextView
                     style="@style/TextView12spGray666"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="特点标签" />
+                    android:text="" />
             </LinearLayout>
             <!--规格-->
             <LinearLayout
@@ -108,7 +109,7 @@
                 app:riv_corner_radius="@dimen/dp_5" />-->
 
             <!--加减控件-->
-            <LinearLayout
+           <!-- <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@id/ivGoodsIcon"
@@ -144,6 +145,55 @@
                     android:layout_gravity="center_vertical"
                     android:src="@mipmap/ic_add_number"
                     android:visibility="visible" />
+            </LinearLayout>-->
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/ivGoodsIcon"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/gray_green_radius_24"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvGoodsMinus"
+                    android:layout_width="@dimen/dp_24"
+                    android:layout_height="@dimen/dp_24"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/shape_green_circle"
+                    android:gravity="center"
+                    android:text="—"
+                    android:textColor="@color/colorWhite"
+                    android:textStyle="bold"
+                    android:visibility="visible" />
+
+                <EditText
+                    android:id="@+id/etNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@null"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:gravity="center"
+                    android:minWidth="@dimen/dp_30"
+                    android:text="1"
+                    android:textColor="@color/greenCommon"
+                    android:textSize="@dimen/sp_16" />
+
+                <TextView
+                    android:id="@+id/tvGoodsPlus"
+                    android:layout_width="@dimen/dp_24"
+                    android:layout_height="@dimen/dp_24"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/shape_green_circle"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="+"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/sp_20"
+                    android:visibility="visible" />
 
             </LinearLayout>
         </RelativeLayout>
@@ -152,10 +202,11 @@
             android:layout_width="@dimen/dp_100"
             android:layout_height="match_parent"
             android:orientation="horizontal">
+
             <View
                 android:layout_width="@dimen/dp_20"
-                android:layout_height="match_parent"
-                />
+                android:layout_height="match_parent" />
+
             <Button
                 android:id="@+id/btnDelete"
                 android:layout_width="@dimen/dp_80"

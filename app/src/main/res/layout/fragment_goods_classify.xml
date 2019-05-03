@@ -10,7 +10,7 @@
     <include layout="@layout/line_horizontal_gray_1half_dp" />
 
     <LinearLayout
-        android:id="@+id/rlContentView"
+        android:id="@+id/llContentView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">

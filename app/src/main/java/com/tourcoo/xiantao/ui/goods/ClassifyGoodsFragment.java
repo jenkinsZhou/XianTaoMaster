@@ -3,6 +3,7 @@ package com.tourcoo.xiantao.ui.goods;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -35,6 +36,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import me.bakumon.statuslayoutmanager.library.OnStatusChildClickListener;
+import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
+
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.ui.goods.HomeFragment.EXTRA_GOODS_ID;
 
@@ -50,6 +54,8 @@ public class ClassifyGoodsFragment extends BaseTitleFragment {
     private RecyclerView goodsRecyclerView;
     private ClassifyNameAdapter mClassifyNameAdapter;
     private ClassifyGoodsGridAdapter mGoodsGridAdapter;
+    private StatusLayoutManager statusLayoutManager;
+    private LinearLayout llContentView;
     /**
      * 商品的分类ID
      */
@@ -62,13 +68,13 @@ public class ClassifyGoodsFragment extends BaseTitleFragment {
 
     @Override
     public void initView(Bundle savedInstanceState) {
-//        initTitle();
         init();
+        setupStatusLayoutManager();
         getGoodsClassify();
     }
 
 
-    private void initTitle() {
+  /*  private void initTitle() {
         RelativeLayout rlSearch = mContentView.findViewById(R.id.rlSearch);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(rlSearch.getLayoutParams());
         //4个参数按顺序分别是左上右下
@@ -79,10 +85,11 @@ public class ClassifyGoodsFragment extends BaseTitleFragment {
                 .setTitleBarView(mTitleBar)
                 .setMinHeight(0)
                 .setMaxHeight(mMaxHeight);
-    }
+    }*/
 
 
     private void init() {
+        llContentView = mContentView.findViewById(R.id.llContentView);
         classifyRecyclerView = mContentView.findViewById(R.id.classifyRecyclerView);
         classifyRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         goodsRecyclerView = mContentView.findViewById(R.id.goodsRecyclerView);
@@ -121,6 +128,7 @@ public class ClassifyGoodsFragment extends BaseTitleFragment {
      * 请求商品分类信息
      */
     private void getGoodsClassify() {
+        statusLayoutManager.showLoadingLayout();
         ApiRepository.getInstance().getGoodsClassify().compose(bindUntilEvent(FragmentEvent.DESTROY)).
                 subscribe(new BaseObserver<BaseEntity>() {
                     @Override
@@ -132,8 +140,15 @@ public class ClassifyGoodsFragment extends BaseTitleFragment {
                                 }
                             } else {
                                 ToastUtil.showFailed(entity.msg);
+                                statusLayoutManager.showErrorLayout();
                             }
                         }
+                    }
+
+                    @Override
+                    public void onRequestError(Throwable e) {
+                        super.onRequestError(e);
+                        statusLayoutManager.showErrorLayout();
                     }
                 });
     }
@@ -164,6 +179,7 @@ public class ClassifyGoodsFragment extends BaseTitleFragment {
             TourCooLogUtil.e(TAG, TAG + ":" + "null");
             return;
         }
+        statusLayoutManager.showSuccessLayout();
         TourCooLogUtil.i(TAG, TAG + "集合长度:" + classifyEntityList.size());
         mClassifyNameAdapter.setNewData(classifyEntityList);
         List<GoodClassifyEntity> goodClassifyEntityList = mClassifyNameAdapter.getData();
@@ -244,14 +260,6 @@ public class ClassifyGoodsFragment extends BaseTitleFragment {
     }
 
 
-    private void skipGoodsDetail(int goodsId) {
-        Intent intent = new Intent();
-        intent.putExtra(EXTRA_GOODS_ID, goodsId);
-        intent.setClass(mContext, GoodsDetailActivity.class);
-        startActivity(intent);
-    }
-
-
     private void skipGoodsList(int categoryId) {
         Intent intent = new Intent();
         intent.putExtra(EXTRA_CATEGORY_ID, categoryId);
@@ -260,4 +268,70 @@ public class ClassifyGoodsFragment extends BaseTitleFragment {
     }
 
 
+    private void setupStatusLayoutManager() {
+        statusLayoutManager = new StatusLayoutManager.Builder(llContentView)
+                // 设置默认布局属性
+//                .setDefaultEmptyText("空白了，哈哈哈哈")
+//                .setDefaultEmptyImg(R.mipmap.ic_launcher)
+//                .setDefaultEmptyClickViewText("retry")
+//                .setDefaultEmptyClickViewTextColor(getResources().getColor(R.color.colorAccent))
+//                .setDefaultEmptyClickViewVisible(false)
+//
+//                .setDefaultErrorText(R.string.app_name)
+//                .setDefaultErrorImg(R.mipmap.ic_launcher)
+//                .setDefaultErrorClickViewText("重试一波")
+//                .setDefaultErrorClickViewTextColor(getResources().getColor(R.color.colorPrimaryDark))
+//                .setDefaultErrorClickViewVisible(true)
+//
+//                .setDefaultLayoutsBackgroundColor(Color.WHITE)
+
+                // 自定义布局
+                .setLoadingLayout(getLoadingLayout())
+//                .setEmptyLayout(inflate(R.layout.layout_empty))
+                .setErrorLayout(inflate(R.layout.custom_error_layout))
+                .setErrorClickViewID(R.id.tvRefresh)
+//
+//                .setLoadingLayout(R.layout.layout_loading)
+//                .setEmptyLayout(R.layout.layout_empty)
+//                .setErrorLayout(R.layout.layout_error)
+//
+//                .setEmptyClickViewID(R.id.tv_empty)
+//                .setErrorClickViewID(R.id.tv_error)
+
+                // 设置重试事件监听器
+                .setOnStatusChildClickListener(new OnStatusChildClickListener() {
+                    @Override
+                    public void onEmptyChildClick(View view) {
+                        statusLayoutManager.showLoadingLayout();
+                        ToastUtil.showSuccess("点击了Empty");
+                        getGoodsClassify();
+//                        statusLayoutManager.showLoadingLayout();
+//                        getData(1000);
+                    }
+
+                    @Override
+                    public void onErrorChildClick(View view) {
+                        statusLayoutManager.showLoadingLayout();
+                        getGoodsClassify();
+                    }
+
+                    @Override
+                    public void onCustomerChildClick(View view) {
+                        statusLayoutManager.showLoadingLayout();
+                        getGoodsClassify();
+                     /*   if (view.getId() == R.id.tv_customer) {
+                            Toast.makeText(MainActivity.this, R.string.request_access, Toast.LENGTH_SHORT).show();
+                        } else if (view.getId() == R.id.tv_customer1) {
+                            Toast.makeText(MainActivity.this, R.string.switch_account, Toast.LENGTH_SHORT).show();
+                        }*/
+
+                    }
+                })
+                .build();
+    }
+
+
+    private View inflate(int layoutId) {
+        return LayoutInflater.from(mContext).inflate(layoutId, null);
+    }
 }

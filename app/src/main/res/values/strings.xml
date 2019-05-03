@@ -66,7 +66,7 @@
     <string name="exception_http">HTTP Exception</string>
     <string name="exception_unknown_host">Unknown Host Exception</string>
     <string name="exception_json_syntax">Json Syntax Exception</string>
-    <string name="exception_time_out">Time Out Exception</string>
+    <string name="exception_time_out">连接超时</string>
     <string name="exception_class_cast">Class Cast Exception</string>
     <string name="exception_other_error">Other Exception</string>
 

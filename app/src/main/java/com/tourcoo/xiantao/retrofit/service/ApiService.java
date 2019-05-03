@@ -4,6 +4,7 @@ package com.tourcoo.xiantao.retrofit.service;
 import com.tourcoo.xiantao.entity.coin.CoinHistory;
 import com.tourcoo.xiantao.entity.comment.CommentDetail;
 import com.tourcoo.xiantao.entity.comment.CommentEntity;
+import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.goods.GoodsCollectEntity;
 import com.tourcoo.xiantao.entity.message.MessageBean;
 import com.tourcoo.xiantao.entity.message.MessageEntity;
@@ -326,6 +327,15 @@ public interface ApiService {
     Observable<BaseEntity> collectAdd(@QueryMap Map<String, Object> map);
 
     /**
+     * 取消收藏
+     *
+     * @param map
+     * @return
+     */
+    @POST("collect/cancel")
+    Observable<BaseEntity> collectCancel(@QueryMap Map<String, Object> map);
+
+    /**
      * 修改个人信息
      *
      * @param map
@@ -450,4 +460,18 @@ public interface ApiService {
     @POST("order/order_pay")
     Observable<BaseEntity> requestOrderPay(@QueryMap Map<String, Object> map);
 
+    /**
+     * 发起拼团接口
+     * @return
+     */
+    @POST("tuan/launch")
+    Observable<BaseEntity> startNewTuan(@QueryMap Map<String, Object> params);
+
+
+    /**
+     * 单个商品的拼团列表
+     * @return
+     */
+    @POST("tuan/goods")
+    Observable<BaseEntity<List<Goods.TuanListBean>>> tuanList(@QueryMap Map<String, Object> params);
 }

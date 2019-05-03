@@ -11,10 +11,70 @@ import java.io.Serializable;
  */
 public class TuanRule implements Serializable {
     /**
+     * id : 2
+     * name : 风光ix5  280TGDI CVT智尊型
+     * price : 2
+     * weigh : 3
+     * num : 5
+     * validity : 2
      * status_text :
      */
 
+    private int id;
+    private String name;
+    private int price;
+    private int weigh;
+    private int num;
+    private int validity;
     private String status_text;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public int getWeigh() {
+        return weigh;
+    }
+
+    public void setWeigh(int weigh) {
+        this.weigh = weigh;
+    }
+
+    public int getNum() {
+        return num;
+    }
+
+    public void setNum(int num) {
+        this.num = num;
+    }
+
+    public int getValidity() {
+        return validity;
+    }
+
+    public void setValidity(int validity) {
+        this.validity = validity;
+    }
 
     public String getStatus_text() {
         return status_text;
