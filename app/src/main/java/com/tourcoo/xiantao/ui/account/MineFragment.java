@@ -85,6 +85,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     private SmartRefreshLayout refreshLayout;
     public static final int REQUEST_CODE_EDIT_USER_INFO = 10;
     public static final int REQUEST_CODE_MESSAGE_CENTER = 11;
+    private TextView tvMessageCount;
     /**
      * 账户余额
      */
@@ -107,6 +108,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     public void initView(Bundle savedInstanceState) {
         refreshLayout = mContentView.findViewById(R.id.refreshLayout);
         refreshLayout.setOnRefreshListener(this);
+        tvMessageCount = mContentView.findViewById(R.id.tvMessageCount);
         mContentView.findViewById(R.id.accumulatePoints).setOnClickListener(this);
         mContentView.findViewById(R.id.llReturnGood).setOnClickListener(this);
         mContentView.findViewById(R.id.llWaitSend).setOnClickListener(this);
@@ -173,7 +175,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         mMenuItemList.add(new MenuItem(R.mipmap.ic_collection_goods, "收藏商品"));
         mMenuItemList.add(new MenuItem(R.mipmap.ic_shipping_address, "收货地址"));
         mMenuItemList.add(new MenuItem(R.mipmap.ic_customer_service_telephone, "客服电话"));
-        mMenuItemList.add(new MenuItem(R.mipmap.ic_invoice_information, "发票信息"));
+//        mMenuItemList.add(new MenuItem(R.mipmap.ic_invoice_information, "发票信息"));
         mMenuItemList.add(new MenuItem(R.mipmap.ic_problem_feedback, "问题反馈"));
     }
 
@@ -510,9 +512,16 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
 
     private void showMsg(int noReadCount) {
         if (noReadCount > 0) {
-            ivMsg.setImageResource(R.mipmap.ic_information_red);
+            if (noReadCount > 99) {
+                tvMessageCount.setText("99+");
+                tvMessageCount.setVisibility(View.VISIBLE);
+            } else {
+                tvMessageCount.setText(String.valueOf(noReadCount));
+                tvMessageCount.setVisibility(View.VISIBLE);
+            }
+
         } else {
-            ivMsg.setImageResource(R.mipmap.ic_information);
+            tvMessageCount.setVisibility(View.GONE);
         }
     }
 

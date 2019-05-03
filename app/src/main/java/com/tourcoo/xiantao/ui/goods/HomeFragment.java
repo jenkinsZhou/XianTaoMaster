@@ -46,6 +46,7 @@ import com.tourcoo.xiantao.entity.goods.GoodsDetailEntity;
 import com.tourcoo.xiantao.entity.HomeInfoBean;
 import com.tourcoo.xiantao.entity.banner.BannerDetail;
 import com.tourcoo.xiantao.entity.goods.HomeGoodsBean;
+import com.tourcoo.xiantao.entity.message.MessageBean;
 import com.tourcoo.xiantao.entity.news.NewsBean;
 import com.tourcoo.xiantao.helper.ShoppingCar;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
@@ -94,6 +95,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
      */
     private View footView;
     private ViewFlipper homeViewFlipper;
+    private TextView tvMessageCount;
 
     public static HomeFragment newInstance() {
         Bundle args = new Bundle();
@@ -126,6 +128,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
             getMyAddressList();
             //请求购物车数量
             mMainTabActivity.getTotalNum();
+            requestMessageNoReadCount();
         }
     }
 
@@ -161,6 +164,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
         mContentView.findViewById(R.id.rlSearchLayout).setOnClickListener(this);
         homeViewFlipper = mContentView.findViewById(R.id.homeViewFlipper);
         rlContentView = mContentView.findViewById(R.id.rlContentView);
+        tvMessageCount = mContentView.findViewById(R.id.tvMessageCount);
         rvHome = mContentView.findViewById(R.id.rvHome);
         footView = LayoutInflater.from(mContext).inflate(R.layout.item_view, null);
         rvHome.setLayoutManager(new GridLayoutManager(mContext, 2));
@@ -607,4 +611,39 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
     }
 
 
+    /**
+     * 查询消息列表
+     */
+    private void requestMessageNoReadCount() {
+        ApiRepository.getInstance().requestMessageNoReadCount().compose(bindUntilEvent(FragmentEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity<MessageBean>>() {
+                    @Override
+                    public void onRequestNext(BaseEntity<MessageBean> entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
+                                TourCooLogUtil.i(TAG, "未读消息数量:" + entity.data.getNum());
+                                showMsg(entity.data.getNum());
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+                });
+    }
+
+
+    private void showMsg(int noReadCount) {
+        if (noReadCount > 0) {
+            if (noReadCount > 99) {
+                tvMessageCount.setText("99+");
+                tvMessageCount.setVisibility(View.VISIBLE);
+            } else {
+                tvMessageCount.setText(String.valueOf(noReadCount));
+                tvMessageCount.setVisibility(View.VISIBLE);
+            }
+
+        } else {
+            tvMessageCount.setVisibility(View.GONE);
+        }
+    }
 }

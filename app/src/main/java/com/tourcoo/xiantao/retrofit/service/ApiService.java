@@ -461,7 +461,7 @@ public interface ApiService {
      * @return
      */
     @POST("comment/index")
-    Observable<BaseEntity<CommentEntity>> requestCommentList(@Body Map<String, Object> map);
+    Observable<BaseEntity<CommentEntity>> requestCommentList(@QueryMap Map<String, Object> map);
 
 
     /**
@@ -475,6 +475,7 @@ public interface ApiService {
 
     /**
      * 发起拼团接口
+     *
      * @return
      */
     @POST("tuan/launch")
@@ -483,15 +484,16 @@ public interface ApiService {
 
     /**
      * 单个商品的拼团列表
+     *
      * @return
      */
     @POST("tuan/goods")
     Observable<BaseEntity<List<Goods.TuanListBean>>> tuanList(@QueryMap Map<String, Object> params);
 
 
-
     /**
      * 加入拼团
+     *
      * @return
      */
     @POST("tuan/join")
@@ -499,15 +501,47 @@ public interface ApiService {
 
     /**
      * 单个团详情
+     *
      * @return
      */
     @POST("tuan/detail")
     Observable<BaseEntity<List<TuanDetails>>> tuanDetails(@QueryMap Map<String, Object> params);
 
+
+    /**
+     * 购物车支付
+     *
+     * @param params
+     * @return
+     */
+    @POST("order/cart_pay")
+    Observable<BaseEntity> requestCarPay(@QueryMap Map<String, Object> params);
+
+
     /**
      * news详情
+     *
      * @return
      */
     @POST("index/news")
     Observable<BaseEntity<NewsBean>> getNewsDetails(@QueryMap Map<String, Object> params);
+
+
+    /**
+     * 拼团结算接口
+     *
+     * @param params
+     * @return
+     */
+    @POST("order/tuan")
+    Observable<BaseEntity> requestPinSettle(@QueryMap Map<String, Object> params);
+
+    /**
+     * 拼团订单结算
+     *
+     * @param params
+     * @return
+     */
+    @POST("order/tuan_pay")
+    Observable<BaseEntity> requestPinPay(@QueryMap Map<String, Object> params);
 }

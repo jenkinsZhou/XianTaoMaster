@@ -51,6 +51,18 @@
                 android:layout_marginRight="@dimen/dp_10"
                 android:src="@mipmap/ic_information" />
 
+            <TextView
+                android:id="@+id/tvMessageCount"
+                android:background="@drawable/bg_circle_red_small"
+                android:layout_width="wrap_content"
+                android:textSize="@dimen/sp_6"
+                android:gravity="center"
+                android:textColor="@color/whiteCommon"
+                android:layout_alignParentRight="true"
+                android:visibility="gone"
+                android:layout_marginRight="@dimen/sp_7"
+                android:layout_marginTop="@dimen/dp_3"
+                android:layout_height="wrap_content" />
 
             <RelativeLayout
                 android:id="@+id/rlSearchLayout"

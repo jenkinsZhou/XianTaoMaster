@@ -73,6 +73,10 @@ import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.ui.goods.HomeFragment.EXTRA_GOODS_ID;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_PIN_USER_ID;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_SETTLE_TYPE;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SETTLE_TYPE_PIN;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SETTLE_TYPE_SINGLE;
 
 /**
  * @author :JenkinsZhou
@@ -521,7 +525,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
 
     /**
-     * 结算后跳转到结算页面显示
+     * 单独购买结算后跳转到结算页面显示
      *
      * @param settleEntity
      */
@@ -532,26 +536,37 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             return;
         }
         Intent intent = new Intent();
+        //单独购买结算类型
+        intent.putExtra(EXTRA_SETTLE_TYPE, SETTLE_TYPE_SINGLE);
         intent.putExtra(EXTRA_SETTLE, settleEntity);
         intent.setClass(mContext, OrderSettleDetailActivity.class);
         startActivity(intent);
     }
 
 
+    /**
+     * 发起拼团的结算跳转
+     *
+     * @param pinId
+     */
+    private void skipOrderSettleByPin(int pinId) {
+        Intent intent = new Intent();
+        //单独购买结算类型
+        intent.putExtra(EXTRA_SETTLE_TYPE, SETTLE_TYPE_PIN);
+        intent.putExtra(EXTRA_PIN_USER_ID, pinId);
+        intent.setClass(mContext, OrderSettleDetailActivity.class);
+        TourCooLogUtil.i(TAG, "value:" + pinId);
+        startActivity(intent);
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-        /*    case R.id.tvBuyNow:
-                //立即购买
-                mGoodsEntity.setGoodsCount(1);
-                settleGoods(mGoodsEntity);
-                break;*/
             case R.id.btnSeeTotal:
                 Intent intent = new Intent(GoodsDetailActivity.this, TuanListActivity.class);
                 intent.putExtra("goods_id", mGoodsId);
                 startActivity(intent);
                 break;
-
             case R.id.btnSeeComment:
             case R.id.btnSeeTotalComment:
                 intent = new Intent(GoodsDetailActivity.this, CommentListActivity.class);
@@ -641,7 +656,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
      */
     private void addGoods(int goodsId, int count, String skuId) {
         ApiRepository.getInstance().settleGoods(goodsId, count, skuId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
-                subscribe(new BaseObserver<BaseEntity>() {
+                subscribe(new BaseLoadingObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
@@ -673,8 +688,13 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     @Override
                     public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
-                            ToastUtil.showSuccess("发起拼团成功");
                             if (entity.code == CODE_REQUEST_SUCCESS) {
+                                if (entity.data != null) {
+                                    String info = JSON.toJSONString(entity.data);
+                                    JSONObject jsonObject = JSONObject.parseObject(info);
+                                    int pinId = jsonObject.getInteger("tuanuser_id");
+                                    skipOrderSettleByPin(pinId);
+                                }
                                 //todo:拼团列表
 //                                startActivity(new Intent(GoodsDetailActivity.this, ));
                             }
@@ -789,8 +809,6 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             }
         }
     }
-
-
 
 
 }

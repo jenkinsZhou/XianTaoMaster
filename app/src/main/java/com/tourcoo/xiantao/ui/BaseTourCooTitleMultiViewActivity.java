@@ -46,7 +46,6 @@ public abstract class BaseTourCooTitleMultiViewActivity extends BaseTourCooTitle
     private void setupStatusLayoutManager() {
         multiStatusView = getMultiStatusView();
         if (multiStatusView == null) {
-            TourCooLogUtil.e(TAG, "value:" + "c");
             return;
         }
         if (multiStatusView.getMultiStatusContentView() == null) {

@@ -327,7 +327,7 @@ public class ReturnGoodsActivity extends BaseTourCooTitleActivity implements Vie
         for (Goods goods : mGoodsAdapter.getData()) {
             TourCooLogUtil.i(TAG, TAG + ":" + goods.isSelect());
             if (goods.isSelect()) {
-                idList.add(goods.getGoods_id() + "");
+                idList.add(goods.getId() + "");
             }
         }
         if (idList.isEmpty()) {

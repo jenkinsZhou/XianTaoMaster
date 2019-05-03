@@ -302,7 +302,7 @@ public class ApiRepository extends BaseRepository {
     }
 
     /**
-     * 立即支付接口
+     * 单个购买立即支付接口
      *
      * @param map
      * @param payType
@@ -492,7 +492,6 @@ public class ApiRepository extends BaseRepository {
     }
 
 
-
     public Observable<BaseEntity> collectCancel(int goodsIds) {
         Map<String, Object> params = new HashMap<>(1);
         params.put("goods_id", goodsIds);
@@ -512,7 +511,6 @@ public class ApiRepository extends BaseRepository {
         params.put("type", tuanStatus);
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestTuanListInfo(params).retryWhen(new RetryWhen()));
     }
-
 
 
     /**
@@ -730,7 +728,6 @@ public class ApiRepository extends BaseRepository {
     }
 
 
-
     /**
      * 支付订单
      *
@@ -778,6 +775,44 @@ public class ApiRepository extends BaseRepository {
 
 
     /**
+     * 购物车结算
+     *
+     * @return
+     */
+    public Observable<BaseEntity> requestCarPay(int payType, boolean useCoin, String remark) {
+        Map<String, Object> params = new HashMap<>(1);
+        String payTypeString;
+        switch (payType) {
+            case PAY_TYPE_ALI:
+                payTypeString = "ali";
+                break;
+            case PAY_TYPE_WE_XIN:
+                payTypeString = "wx";
+                break;
+            case PAY_TYPE_BALANCE:
+                payTypeString = "cash";
+                break;
+            default:
+                payTypeString = "ali";
+                break;
+        }
+        params.put("pay_type", payTypeString);
+        if (useCoin) {
+            params.put("coin_status", 1);
+        } else {
+            params.put("coin_status", 0);
+        }
+        if (!TextUtils.isEmpty(remark)) {
+            params.put("remark", remark);
+        } else {
+            params.put("remark", "");
+        }
+        TourCooLogUtil.i(TAG, TAG + "提交的参数:" + params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestCarPay(params).retryWhen(new RetryWhen()));
+    }
+
+
+    /**
      * news详情
      *
      * @param id
@@ -787,6 +822,48 @@ public class ApiRepository extends BaseRepository {
         Map<String, Object> params = new HashMap<>(1);
         params.put("id", id);
         return TourCoolTransformer.switchSchedulersIo(getApiService().getNewsDetails(params).retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 参团结算
+     *
+     * @param pinId :参团id
+     * @return
+     */
+    public Observable<BaseEntity> requestPinSettle(int pinId) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("tuanuser_id", pinId);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestPinSettle(params).retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 拼团支付
+     *
+     * @param pinId :参团的id
+     * @return
+     */
+    public Observable<BaseEntity> requestPinPay(int pinId, int payType) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("tuanuser_id", pinId);
+        String payTypeString;
+        switch (payType) {
+            case PAY_TYPE_ALI:
+                payTypeString = "ali";
+                break;
+            case PAY_TYPE_WE_XIN:
+                payTypeString = "wx";
+                break;
+            case PAY_TYPE_BALANCE:
+                payTypeString = "cash";
+                break;
+            default:
+                payTypeString = "ali";
+                break;
+        }
+        params.put("pay_type", payTypeString);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestPinPay(params).retryWhen(new RetryWhen()));
     }
 
 }

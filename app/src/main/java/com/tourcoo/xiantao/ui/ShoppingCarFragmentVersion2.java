@@ -1,5 +1,6 @@
 package com.tourcoo.xiantao.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,6 +45,7 @@ import com.tourcoo.xiantao.helper.GoodsCount;
 import com.tourcoo.xiantao.helper.ShoppingCar;
 import com.tourcoo.xiantao.listener.OnAddDelCallback;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
+import com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -61,6 +63,9 @@ import me.bakumon.statuslayoutmanager.library.OnStatusChildClickListener;
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.ui.goods.GoodsDetailActivity.EXTRA_SETTLE;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_SETTLE_TYPE;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SETTLE_TYPE_CAR;
 
 /**
  * @author :JenkinsZhou
@@ -94,6 +99,10 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
 
     private RelativeLayout rlRootView;
 
+    private SettleEntity mSettleEntity;
+
+    private TextView tvSettleAccounts;
+
     @Override
     public int getContentLayout() {
         return R.layout.fragment_shopping_cart_version2;
@@ -118,10 +127,11 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
         emptyView = LayoutInflater.from(mContext).inflate(R.layout.layout_empty_view, null, false);
         emptyView.findViewById(R.id.tvGoShopping).setOnClickListener(this);
         rvGoods.setLayoutManager(new LinearLayoutManager(mContext));
+        mContentView.findViewById(R.id.tvSettleAccounts).setOnClickListener(this);
         initStatusLayout();
         initAdapter();
         if (AccountInfoHelper.getInstance().isLogin()) {
-            getMyShoppingCarList();
+            refreshShoppingCarNoDialog();
         }
     }
 
@@ -182,7 +192,13 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
 
     @Override
     public void onClick(View v) {
-
+        switch (v.getId()) {
+            case R.id.tvSettleAccounts:
+                skipOrderSettleDetail(mSettleEntity);
+                break;
+            default:
+                break;
+        }
     }
 
 
@@ -326,7 +342,8 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS) {
                                 if (entity.data != null) {
-                                    showGoodsList(parseGoodsList(entity.data));
+                                    mSettleEntity = parseGoodsList(entity.data);
+                                    showGoodsList(mSettleEntity);
                                 }
                             } else {
                                 ToastUtil.showFailed(entity.msg);
@@ -505,7 +522,8 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
                             if (entity != null) {
                                 if (entity.code == CODE_REQUEST_SUCCESS) {
                                     if (entity.data != null) {
-                                        showGoodsList(parseGoodsList(entity.data));
+                                        mSettleEntity = parseGoodsList(entity.data);
+                                        showGoodsList(mSettleEntity);
                                         refreshLayout.finishRefresh(true);
                                     }
                                 } else {
@@ -544,5 +562,22 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
     }
 
 
+    /**
+     * 结算后跳转到结算页面显示
+     *
+     * @param settleEntity
+     */
+    private void skipOrderSettleDetail(SettleEntity settleEntity) {
+        boolean skipEnable = settleEntity != null && settleEntity.getGoods_list() != null;
+        if (!skipEnable) {
+            ToastUtil.showFailed("未获取到商品信息");
+            return;
+        }
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_SETTLE, settleEntity);
+        intent.putExtra(EXTRA_SETTLE_TYPE, SETTLE_TYPE_CAR);
+        intent.setClass(mContext, OrderSettleDetailActivity.class);
+        startActivity(intent);
+    }
 
 }

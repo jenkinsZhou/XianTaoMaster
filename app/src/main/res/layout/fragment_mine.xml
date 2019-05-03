@@ -23,6 +23,17 @@
             android:layout_marginRight="@dimen/dp_10"
             android:padding="@dimen/dp_5"
             android:src="@mipmap/ic_information" />
+        <TextView
+            android:id="@+id/tvMessageCount"
+            android:background="@drawable/bg_circle_red_small"
+            android:layout_width="wrap_content"
+            android:textSize="@dimen/sp_6"
+            android:gravity="center"
+            android:visibility="gone"
+            android:textColor="@color/whiteCommon"
+            android:layout_alignEnd="@id/ivMsg"
+            android:layout_marginTop="@dimen/dp_8"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:layout_width="wrap_content"

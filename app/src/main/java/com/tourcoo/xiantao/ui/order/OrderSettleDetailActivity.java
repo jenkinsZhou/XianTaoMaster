@@ -16,6 +16,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alipay.sdk.app.PayTask;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
@@ -32,6 +33,7 @@ import com.tourcoo.xiantao.core.threadpool.ThreadPoolManager;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.event.BaseEvent;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.goods.Spec;
 import com.tourcoo.xiantao.entity.pay.WeiXinPay;
@@ -54,8 +56,13 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import static com.tourcoo.xiantao.constant.WxConfig.APP_ID;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_SUCCESS;
 import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.EXTRA_ADDRESS_INFO;
 import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.EXTRA_SKIP_TAG_SETTLE;
 import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.REQUEST_CODE_EDIT_ADDRESS;
@@ -73,6 +80,31 @@ import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
  */
 public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity implements View.OnClickListener {
     public static final int SKIP_TAG_SETTLE = 1002;
+    /**
+     * 默认的结算方式
+     */
+    private int mSettleType;
+    /**
+     * 结算方式
+     */
+    public static final String EXTRA_SETTLE_TYPE = "EXTRA_SETTLE_TYPE";
+
+    /**
+     * 拼团id
+     */
+    public static final String EXTRA_PIN_USER_ID = "EXTRA_PIN_USER_ID";
+    /**
+     * 单独购买结算方式
+     */
+    public static final int SETTLE_TYPE_SINGLE = 1;
+    /**
+     * 购物车结算方式
+     */
+    public static final int SETTLE_TYPE_CAR = 2;
+    /**
+     * 拼团购买结算方式
+     */
+    public static final int SETTLE_TYPE_PIN = 3;
     private IWXAPI api;
     public static final int USE_COIN = 1;
     private static final String TAG = "OrderDetailActivity";
@@ -140,6 +172,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
 
     private double payMoney;
 
+    private int pinId;
+
     @Override
     protected IMultiStatusView getMultiStatusView() {
         return null;
@@ -153,6 +187,9 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     @SuppressWarnings("unchecked")
     @Override
     public void initView(Bundle savedInstanceState) {
+        mSettleType = getIntent().getIntExtra(EXTRA_SETTLE_TYPE, -1);
+        //拼团id
+        pinId = getIntent().getIntExtra(EXTRA_PIN_USER_ID, -1);
         //金币抵扣布局
         tvCoinAmount = findViewById(R.id.tvCoinAmount);
         api = WXAPIFactory.createWXAPI(mContext, null);
@@ -176,6 +213,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         goodsOrderRecyclerView = findViewById(R.id.goodsOrderRecyclerView);
         goodsOrderRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mSettleEntity = (SettleEntity) getIntent().getSerializableExtra(EXTRA_SETTLE);
+        EventBus.getDefault().register(this);
         initCoinSwitch();
         listenCoinSwitch();
         requestPermission();
@@ -187,7 +225,11 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         initAdapter();
         requestBalance();
         //显示结算页面
-        showSettleInfo(mSettleEntity);
+        if (mSettleType == SETTLE_TYPE_PIN) {
+            requestPinSettle(pinId);
+        } else {
+            showSettleInfo(mSettleEntity);
+        }
     }
 
 
@@ -233,6 +275,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         tvShouldPayPrice.setText("￥" + settleEntity.getOrder_pay_price());
         //底部应支付金额
         String payMonty = "￥" + settleEntity.getOrder_pay_price();
+        payMoney = settleEntity.getOrder_pay_price();
         tvPayPrice.setText(payMonty);
         //显示金币
         showCoin(settleEntity);
@@ -336,7 +379,24 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             @Override
             public void pay(int payType, Dialog dialog) {
                 mPayType = payType;
-                createPay(payType);
+                switch (mSettleType) {
+                    case SETTLE_TYPE_SINGLE:
+                        //单独购买发起的结算
+                        createSinglePay(payType);
+                        break;
+                    case SETTLE_TYPE_CAR:
+                        //购物车结算支付
+                        createCarPay(payType);
+                        break;
+                    case SETTLE_TYPE_PIN:
+                        //拼团结算
+                        createPinPay(payType);
+                        break;
+                    default:
+                        ToastUtil.show("未获取到结算类型");
+                        break;
+                }
+
                 dialog.dismiss();
             }
         });
@@ -368,7 +428,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
      * 权限获取回调
      */
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case PERMISSIONS_REQUEST_CODE: {
                 // 用户取消了权限弹窗
@@ -393,9 +453,9 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     }
 
     /**
-     * 支付接口
+     * 单独支付接口
      */
-    private void createPay(int payType) {
+    private void createSinglePay(int payType) {
         if (mSettleEntity == null || mSettleEntity.getGoods_list() == null || mSettleEntity.getGoods_list().isEmpty()) {
             ToastUtil.show("未获取到订单信息");
             return;
@@ -408,10 +468,14 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         }
         Spec spec = specList.get(0);
         params.put("goods_id", goods.getGoods_id());
-        params.put("goods_num", 1);
+        params.put("goods_num", mSettleEntity.getOrder_total_num());
         params.put("remark", getRemark());
         params.put("goods_sku_id", spec.getSpec_sku_id());
-        params.put("coin_status", mSettleEntity.getCoin_status());
+        if (switchUseCoin.isChecked()) {
+            params.put("coin_status", 1);
+        } else {
+            params.put("coin_status", 0);
+        }
         ApiRepository.getInstance().buyNowPay(params, payType).compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseLoadingObserver<BaseEntity>() {
                     @Override
@@ -445,6 +509,47 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     }
 
 
+    /**
+     * 购物车支付接口
+     */
+    private void createCarPay(int payType) {
+        if (mSettleEntity == null || mSettleEntity.getGoods_list() == null || mSettleEntity.getGoods_list().isEmpty()) {
+            ToastUtil.show("未获取到订单信息");
+            return;
+        }
+        boolean useCoin = switchUseCoin.isChecked();
+        ApiRepository.getInstance().requestCarPay(payType, useCoin, getRemark()).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseLoadingObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                ThreadPoolManager.getThreadPoolProxy().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        switch (mPayType) {
+                                            case PAY_TYPE_WE_XIN:
+                                                weiChatPay(entity.data.toString());
+                                                break;
+                                            case PAY_TYPE_ALI:
+                                                aliPay(entity.data.toString());
+                                                break;
+                                            case PAY_TYPE_BALANCE:
+                                                skipOrderList();
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                });
+                            } else {
+                                ToastUtil.show(entity.msg);
+                            }
+                        }
+                    }
+                });
+    }
+
     private void aliPay(String payInfo) {
         PayTask aliPay = new PayTask(mContext);
         Map<String, String> result = aliPay.payV2(payInfo, true);
@@ -473,8 +578,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                         if (PAY_STATUS.equalsIgnoreCase(stringStringEntry.getKey())) {
                             boolean success = PAY_STATUS_SUCCESS.equals(stringStringEntry.getValue());
                             if (success) {
-                                ToastUtil.showSuccess("支付完成");
-//                                softReference.get().refreshStatus(TYPE_STATUS_ORDER_WAIT_EVALUATE);
+                                softReference.get().skipOrderList();
                             } else {
                                 ToastUtil.showFailed("支付失败");
                                 TourCooLogUtil.e(TAG, result);
@@ -535,6 +639,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     @Override
     protected void onDestroy() {
         mHandler.removeCallbacksAndMessages(null);
+        EventBus.getDefault().unregister(this);
         if (api != null) {
             api.detach();
         }
@@ -543,7 +648,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
 
 
     /**
-     * 查询账户信息
+     * 查询账户余额
      */
     private void requestBalance() {
         ApiRepository.getInstance().requestBalance().compose(bindUntilEvent(ActivityEvent.DESTROY)).
@@ -594,6 +699,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         mHandler.post(new Runnable() {
             @Override
             public void run() {
+                ToastUtil.showSuccess("支付成功");
                 Intent intent = new Intent();
                 intent.setClass(mContext, MyOrderListActivity.class);
                 startActivity(intent);
@@ -604,7 +710,111 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                 finish();
             }
         });
-
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onRechargeEvent(BaseEvent event) {
+        if (event == null) {
+            TourCooLogUtil.e(TAG, "直接拦截");
+            return;
+        }
+        switch (event.id) {
+            case EVENT_ACTION_PAY_FRESH_SUCCESS:
+                //支付成功 直接跳转到详情
+                skipOrderList();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 拼团结算
+     *
+     * @param pinId
+     */
+    private void requestPinSettle(int pinId) {
+        ApiRepository.getInstance().requestPinSettle(pinId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
+                                TourCooLogUtil.i(TAG, entity.data);
+                                mSettleEntity = parseSettleInfo(entity.data);
+                                if (mSettleEntity != null) {
+                                    showSettleInfo(mSettleEntity);
+                                }
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+                });
+    }
+
+
+    /**
+     * 结算实体
+     *
+     * @param data
+     * @return
+     */
+    private SettleEntity parseSettleInfo(Object data) {
+        if (data == null) {
+            return null;
+        }
+        try {
+            String homeInfo = JSONObject.toJSONString(data);
+            TourCooLogUtil.i(TAG, "准备解析:" + homeInfo);
+            return JSON.parseObject(homeInfo, SettleEntity.class);
+        } catch (Exception e) {
+            TourCooLogUtil.e(TAG, "解析异常:" + e.toString());
+            return null;
+        }
+    }
+
+
+
+
+    /**
+     * 拼团支付接口
+     */
+    private void createPinPay(int payType) {
+        if (mSettleEntity == null || mSettleEntity.getGoods_list() == null || mSettleEntity.getGoods_list().isEmpty()) {
+            ToastUtil.show("未获取到订单信息");
+            return;
+        }
+        ApiRepository.getInstance().requestPinPay(pinId,payType).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseLoadingObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                ThreadPoolManager.getThreadPoolProxy().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        switch (mPayType) {
+                                            case PAY_TYPE_WE_XIN:
+                                                weiChatPay(entity.data.toString());
+                                                break;
+                                            case PAY_TYPE_ALI:
+                                                aliPay(entity.data.toString());
+                                                break;
+                                            case PAY_TYPE_BALANCE:
+                                                skipOrderList();
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                });
+                            } else {
+                                ToastUtil.show(entity.msg);
+                            }
+                        }
+                    }
+                });
+    }
 }
