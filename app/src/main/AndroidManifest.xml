@@ -76,11 +76,13 @@
         <activity android:name=".ui.msg.MsgSystemActivity" />
         <activity android:name=".ui.msg.MessageDetailActivity" />
         <activity android:name=".ui.coin.MyCoinListActivity" />
+        <activity android:name=".ui.tuan.MyTuanListActivity" />
+
         <activity
-            android:name=".ui.coment.EvaluationActivity"
+            android:name=".ui.comment.EvaluationActivity"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".ui.coment.CommentListActivity" />
-        <activity android:name=".ui.comment.CommentListActivity" />
+
+        <activity android:name=".ui.comment.CommentListActivity"/>
         <activity android:name=".ui.goods.SearchGoodsActivity" />
         <activity android:name=".ui.order.ReturnOrderList" />
 

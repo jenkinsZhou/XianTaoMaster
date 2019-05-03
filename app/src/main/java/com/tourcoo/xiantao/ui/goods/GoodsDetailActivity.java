@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebView;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,7 +41,6 @@ import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
-import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.goods.GoodsEntity;
 import com.tourcoo.xiantao.entity.goods.Spec;
@@ -49,11 +50,11 @@ import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
 import com.tourcoo.xiantao.ui.base.WebViewActivity;
 import com.tourcoo.xiantao.ui.comment.CommentListActivity;
 import com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity;
+import com.tourcoo.xiantao.util.FormatDuration;
 import com.tourcoo.xiantao.widget.dialog.ProductSkuDialog;
 import com.tourcoo.xiantao.widget.ratingstar.RatingStarView;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
-import org.greenrobot.eventbus.EventBus;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -85,6 +86,9 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private List<String> imageList = new ArrayList<>();
     private TextView tvComment;
     private GoodsEntity mGoodsEntity;
+    //用于退出activity,避免countdown，造成资源浪费。
+    private SparseArray<CountDownTimer> countDownMap;
+
 
     /**
      * 结算明细实体
@@ -133,6 +137,8 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     }
 
     private void init() {
+        countDownMap = new SparseArray<>();
+
         cbCollect = findViewById(R.id.cbCollect);
         cbCollect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -335,14 +341,13 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 tvNickName.setText(detail.getTuan_list().get(i).getNickname());
                 tvSurplus.setText(detail.getTuan_list().get(i).getSurplus() + "kg");
 
-                long totalTime = detail.getTuan_list().get(i).getDeadline() * 1000L;
+                long totalTime = detail.getTuan_list().get(i).getDeadline() * 1000L - System.currentTimeMillis();
 
-                SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
                 CountDownTimer timer = new CountDownTimer(totalTime, 1000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
-                        Date date = TimeUtils.millis2Date(millisUntilFinished);
-                        tvEndTime.setText("剩余" + format.format(date));
+                        LogUtils.e(millisUntilFinished);
+                        tvEndTime.setText("剩余" + FormatDuration.format(new Long(millisUntilFinished).intValue()));
                     }
 
                     @Override
@@ -351,6 +356,8 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                         btnJoinTuan.setEnabled(false);
                     }
                 }.start();
+
+                countDownMap.put(view.hashCode(), timer);
 
                 llTuanContainer.addView(view);
             }
@@ -620,7 +627,6 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
                             ToastUtil.showSuccess(entity.msg);
-                            EventBus.getDefault().postSticky(new RefreshEvent());
                         }
                     }
                 });
@@ -752,6 +758,28 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
         //加载使用 jsoup 处理过的 html 文本
         webView.loadData(data, "text/html; charset=UTF-8", null);
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        cancelAllTimers();
+    }
+
+    /**
+     * 清空资源
+     */
+    private void cancelAllTimers() {
+        if (countDownMap == null) {
+            return;
+        }
+        for (int i = 0, length = countDownMap.size(); i < length; i++) {
+            CountDownTimer cdt = countDownMap.get(countDownMap.keyAt(i));
+            if (cdt != null) {
+                cdt.cancel();
+            }
+        }
     }
 
 }

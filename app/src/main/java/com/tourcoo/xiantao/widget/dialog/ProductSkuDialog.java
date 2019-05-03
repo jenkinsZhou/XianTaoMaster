@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.StringUtils;
+import com.google.gson.Gson;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
@@ -351,7 +352,8 @@ public class ProductSkuDialog extends Dialog {
                 scrollSkuList.setVisibility(View.GONE);
                 GlideManager.loadImg(product.getDetail().getImage(), ivSkuLogo);
                 if (product.getDetail().isTuan()) {
-                    tvSkuSellingPrice.setText(((TuanRule) (product.getDetail().getTuan_rule())).getName());
+                    TuanRule tuanRule = new Gson().fromJson(product.getDetail().getTuan_rule().toString(),TuanRule.class);
+                    tvSkuSellingPrice.setText(tuanRule.getName());
                 }
                 btnSubmit.setEnabled(true);
                 tvSkuInfo.setText("选择：数量");
@@ -435,7 +437,8 @@ public class ProductSkuDialog extends Dialog {
 //                    tvSkuInfo.setText("已选：" + builder.toString());
 //                } else {
         GlideManager.loadImg(product.getDetail().getImage(), ivSkuLogo);
-        tvSkuSellingPrice.setText(((TuanRule) (product.getDetail().getTuan_rule())).getName());
+        TuanRule tuanRule = new Gson().fromJson(product.getDetail().getTuan_rule().toString(),TuanRule.class);
+        tvSkuSellingPrice.setText(tuanRule.getName());
         btnSubmit.setEnabled(true);
         tvSkuInfo.setText("选择：" + skuList.get(0).getGroup_name());
 //                }

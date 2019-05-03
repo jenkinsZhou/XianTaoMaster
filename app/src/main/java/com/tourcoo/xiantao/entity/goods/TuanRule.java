@@ -22,8 +22,8 @@ public class TuanRule implements Serializable {
 
     private int id;
     private String name;
-    private int price;
-    private int weigh;
+    private String price;
+    private String weigh;
     private int num;
     private int validity;
     private String status_text;
@@ -44,19 +44,19 @@ public class TuanRule implements Serializable {
         this.name = name;
     }
 
-    public int getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 
-    public int getWeigh() {
+    public String getWeigh() {
         return weigh;
     }
 
-    public void setWeigh(int weigh) {
+    public void setWeigh(String weigh) {
         this.weigh = weigh;
     }
 

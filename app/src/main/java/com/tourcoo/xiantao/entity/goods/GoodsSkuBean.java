@@ -34,7 +34,7 @@ public class GoodsSkuBean implements Serializable {
     private String line_price;
     private int stock_num;
     private int goods_sales;
-    private int goods_weight;
+    private String goods_weight;
     private String spec_sku_id;
     private String spec_image;
     private int create_time;
@@ -97,11 +97,11 @@ public class GoodsSkuBean implements Serializable {
         this.goods_sales = goods_sales;
     }
 
-    public int getGoods_weight() {
+    public String getGoods_weight() {
         return goods_weight;
     }
 
-    public void setGoods_weight(int goods_weight) {
+    public void setGoods_weight(String goods_weight) {
         this.goods_weight = goods_weight;
     }
 

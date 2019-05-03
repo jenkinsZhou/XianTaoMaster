@@ -14,6 +14,7 @@ import com.blankj.utilcode.util.TimeUtils;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.entity.goods.Goods;
+import com.tourcoo.xiantao.util.FormatDuration;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,7 +30,6 @@ public class TuanListAdapter extends RecyclerView.Adapter<TuanListAdapter.ViewHo
     //用于退出activity,避免countdown，造成资源浪费。
     private SparseArray<CountDownTimer> countDownMap;
     private Context context;
-    private SimpleDateFormat format;
 
     public TuanListAdapter(Context context, List<Goods.TuanListBean> datas) {
         this.context = context;
@@ -38,7 +38,6 @@ public class TuanListAdapter extends RecyclerView.Adapter<TuanListAdapter.ViewHo
         }
         mDatas = datas;
         countDownMap = new SparseArray<>();
-        format = new SimpleDateFormat("HH:mm:ss");
     }
 
     @Override
@@ -99,8 +98,7 @@ public class TuanListAdapter extends RecyclerView.Adapter<TuanListAdapter.ViewHo
         if (time > 0) {
             holder.countDownTimer = new CountDownTimer(time, 1000) {
                 public void onTick(long millisUntilFinished) {
-                    Date date = TimeUtils.millis2Date(millisUntilFinished);
-                    holder.tvEndTime.setText("剩余" + format.format(date));
+                    holder.tvEndTime.setText("剩余" + FormatDuration.format(new Long(millisUntilFinished).intValue()));
                 }
 
                 public void onFinish() {

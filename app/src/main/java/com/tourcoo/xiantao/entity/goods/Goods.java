@@ -45,27 +45,9 @@ public class Goods implements Serializable {
      * comment_list : [{"id":29,"goods_id":0,"user_id":2,"order_id":302,"nickname":"嘻哈江湖","avatar":"https://ahxtao.hfcoco.top/uploads/20190429/db00fae60f092ccf9bef0607cef4924f.jpg","star":5,"detail":"很好","images":"https://ahxtao.hfcoco.top/uploads/20190501/37b99a4245257091f7f9076ca129edf0.jpg","createtime":1556717549,"updatetime":1556717549,"status":"normal","reply":null,"admin_id":0},{"id":21,"goods_id":0,"user_id":2,"order_id":214,"nickname":"嘻哈江湖","avatar":"https://ahxtao.hfcoco.top/uploads/20190429/db00fae60f092ccf9bef0607cef4924f.jpg","star":5,"detail":"测试八张图片","images":null,"createtime":1556615329,"updatetime":1556615329,"status":"normal","reply":null,"admin_id":0}]
      * coin : 0
      */
-    private GoodsSkuBean goods_sku;
-
-    private String goods_sku_id;
-
-    public String getGoods_sku_id() {
-        return goods_sku_id;
-    }
-
-    public void setGoods_sku_id(String goods_sku_id) {
-        this.goods_sku_id = goods_sku_id;
-    }
-
-    public GoodsSkuBean getGoods_sku() {
-        return goods_sku;
-    }
-
-    public void setGoods_sku(GoodsSkuBean goods_sku) {
-        this.goods_sku = goods_sku;
-    }
 
     private int goods_id;
+    private String goods_sku_id;
     private String goods_name;
     private int category_id;
     private String images;
@@ -98,6 +80,15 @@ public class Goods implements Serializable {
     private List<SpecRelBean> spec_rel;
     private List<TuanListBean> tuan_list;
     private List<CommentListBean> comment_list;
+    private GoodsSkuBean goods_sku;
+
+    public String getGoods_sku_id() {
+        return goods_sku_id;
+    }
+
+    public void setGoods_sku_id(String goods_sku_id) {
+        this.goods_sku_id = goods_sku_id;
+    }
 
     public int getGoods_id() {
         return goods_id;
@@ -361,6 +352,14 @@ public class Goods implements Serializable {
 
     public void setGoods_price(double goods_price) {
         this.goods_price = goods_price;
+    }
+
+    public GoodsSkuBean getGoods_sku() {
+        return goods_sku;
+    }
+
+    public void setGoods_sku(GoodsSkuBean goods_sku) {
+        this.goods_sku = goods_sku;
     }
 
     public static class CategoryBean {

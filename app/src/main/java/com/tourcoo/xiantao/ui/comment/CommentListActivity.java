@@ -1,5 +1,6 @@
 package com.tourcoo.xiantao.ui.comment;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -13,13 +14,17 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.tourcoo.xiantao.R;
+import com.tourcoo.xiantao.adapter.CoinHistoryAdapter;
 import com.tourcoo.xiantao.adapter.CommentAdapter;
 import com.tourcoo.xiantao.core.frame.UiConfigManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
+import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.core.widget.divider.TourCoolRecycleViewDivider;
 import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.coin.CoinDetail;
+import com.tourcoo.xiantao.entity.coin.CoinHistory;
 import com.tourcoo.xiantao.entity.comment.CommentDetail;
 import com.tourcoo.xiantao.entity.comment.CommentEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
@@ -33,38 +38,29 @@ import static com.tourcoo.xiantao.ui.goods.HomeFragment.EXTRA_GOODS_ID;
 
 /**
  * @author :JenkinsZhou
- * @description :商品的评价列表
+ * @description :
  * @company :途酷科技
  * @date 2019年04月30日17:57
  * @Email: 971613168@qq.com
  */
-public class CommentListActivity extends BaseTourCooRefreshLoadActivity<CommentDetail> implements View.OnClickListener {
+public class CommentListActivity extends BaseTourCooRefreshLoadActivity<CommentDetail> {
     private CommentAdapter adapter;
     private int goodsId;
 
     @Override
     public int getContentLayout() {
-        return R.layout.activity_goods_comment;
+        return R.layout.activity_comment_list;
     }
 
     @Override
     public void initView(Bundle savedInstanceState) {
         goodsId = getIntent().getIntExtra(EXTRA_GOODS_ID, -1);
-        TourCoolRecycleViewDivider divider = new TourCoolRecycleViewDivider(
-                mContext, LinearLayoutManager.HORIZONTAL, 1, ContextCompat.getColor(mContext, R.color.grayDividerDeep));
-        mRecyclerView.addItemDecoration(divider);
     }
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         super.setTitleBar(titleBar);
         titleBar.setTitleMainText("全部评价");
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, 0, 20, 0);
-        TextView textView = titleBar.getTextView(Gravity.END);
-        textView.setLayoutParams(params);
-
     }
 
 
@@ -93,7 +89,7 @@ public class CommentListActivity extends BaseTourCooRefreshLoadActivity<CommentD
 
 
     /**
-     * 评论列表
+     * 查询评价记录
      */
     private void requestCommentList(int orderId, int page) {
         ApiRepository.getInstance().requestCommentList(orderId, page).compose(bindUntilEvent(ActivityEvent.DESTROY)).
@@ -116,18 +112,6 @@ public class CommentListActivity extends BaseTourCooRefreshLoadActivity<CommentD
                         mStatusManager.showErrorLayout();
                     }
                 });
-    }
-
-
-    @Override
-    public void onClick(View v) {
-       /* switch (v.getId()) {
-            case R.id.tvConvertGold:
-               ,
-                break;
-            default:
-                break;
-        }*/
     }
 
 

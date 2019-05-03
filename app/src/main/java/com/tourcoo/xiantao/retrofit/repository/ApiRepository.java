@@ -379,8 +379,8 @@ public class ApiRepository extends BaseRepository {
         Map<String, Object> params = new HashMap<>(1);
         params.put("goods_id", goodsId);
         params.put("goods_sku_id", skuId);
-        TourCooLogUtil.i("购物车参数:", params);
-        return TourCoolTransformer.switchSchedulersIo(getNoCacheApiService().reduceGoods(params).retryWhen(new RetryWhen()));
+        TourCooLogUtil.i(TAG, TAG + ":" + goodsId);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().reduceGoods(params).retryWhen(new RetryWhen()));
     }
 
     /**
@@ -490,12 +490,27 @@ public class ApiRepository extends BaseRepository {
     }
 
 
+
     public Observable<BaseEntity> collectCancel(int goodsIds) {
         Map<String, Object> params = new HashMap<>(1);
         params.put("goods_id", goodsIds);
         TourCooLogUtil.i(TAG, TAG + ":" + params);
         return TourCoolTransformer.switchSchedulersIo(getApiService().collectCancel(params).retryWhen(new RetryWhen()));
     }
+
+
+    /**
+     * 获取我的拼团记录
+     *
+     * @return
+     */
+    public Observable<BaseEntity> requestTuanListInfo(int tuanStatus, int page) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("p", page);
+        params.put("type", tuanStatus);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestTuanListInfo(params).retryWhen(new RetryWhen()));
+    }
+
 
 
     /**
