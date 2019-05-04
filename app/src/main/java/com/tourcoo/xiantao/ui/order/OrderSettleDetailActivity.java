@@ -767,6 +767,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         }
         try {
             String homeInfo = JSONObject.toJSONString(data);
+
             TourCooLogUtil.i(TAG, "准备解析:" + homeInfo);
             return JSON.parseObject(homeInfo, SettleEntity.class);
         } catch (Exception e) {

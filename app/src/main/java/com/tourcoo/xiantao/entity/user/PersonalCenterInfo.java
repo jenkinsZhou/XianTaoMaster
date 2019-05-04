@@ -38,7 +38,7 @@ public class PersonalCenterInfo extends LitePalSupport {
     private int au;
     private String avatar;
     private String birthday;
-    private int cash;
+    private String cash;
     private int gender;
     private String mobile;
     private String nickname;
@@ -81,11 +81,11 @@ public class PersonalCenterInfo extends LitePalSupport {
         this.birthday = birthday;
     }
 
-    public int getCash() {
+    public String getCash() {
         return cash;
     }
 
-    public void setCash(int cash) {
+    public void setCash(String cash) {
         this.cash = cash;
     }
 

@@ -367,7 +367,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         TourCooLogUtil.i(TAG, TAG + "头像:" + url);
         TourCooLogUtil.i(TAG, TAG + "昵称:" + data.getNickname());
         GlideManager.loadImg(url, civUserAvatar);
-        tvBalance.setText("￥" + data.getCash());
+        tvBalance.setText("¥" + data.getCash());
         String coin = data.getAu() + "金币" + data.getAg() + "银币";
         tvAccumulatePoints.setText(coin);
         showMineInfo(data);
