@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -60,6 +61,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
+
 import static com.tourcoo.xiantao.constant.WxConfig.APP_ID;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_FAILED;
@@ -81,6 +84,7 @@ import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
  */
 public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity implements View.OnClickListener {
     public static final int SKIP_TAG_SETTLE = 1002;
+    private RelativeLayout contentView;
     /**
      * 默认的结算方式
      */
@@ -177,7 +181,47 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
 
     @Override
     protected IMultiStatusView getMultiStatusView() {
-        return null;
+        return new IMultiStatusView() {
+            @Override
+            public View getMultiStatusContentView() {
+                return contentView ;
+            }
+
+            @Override
+            public void setMultiStatusView(StatusLayoutManager.Builder statusView) {
+
+            }
+
+            @Override
+            public View.OnClickListener getEmptyClickListener() {
+                return new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                };
+            }
+
+            @Override
+            public View.OnClickListener getErrorClickListener() {
+                return new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                };
+            }
+
+            @Override
+            public View.OnClickListener getCustomerClickListener() {
+                return new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        doRequestByCondition();
+                    }
+                };
+            }
+        };
     }
 
     @Override
@@ -193,6 +237,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         pinId = getIntent().getIntExtra(EXTRA_PIN_USER_ID, -1);
         //金币抵扣布局
         tvCoinAmount = findViewById(R.id.tvCoinAmount);
+        contentView = findViewById(R.id.contentView);
         api = WXAPIFactory.createWXAPI(mContext, null);
         etRemark = findViewById(R.id.etRemark);
         fillAddress = findViewById(R.id.fillAddress);
@@ -223,14 +268,10 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     @Override
     public void loadData() {
         super.loadData();
+        mStatusLayoutManager.showLoadingLayout();
         initAdapter();
         requestBalance();
-        //显示结算页面
-        if (mSettleType == SETTLE_TYPE_PIN) {
-            requestPinSettle(pinId);
-        } else {
-            showSettleInfo(mSettleEntity);
-        }
+        doRequestByCondition();
     }
 
 
@@ -261,6 +302,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     private void showSettleInfo(SettleEntity settleEntity) {
         if (settleEntity == null || settleEntity.getGoods_list() == null) {
             ToastUtil.showFailed("未获取到商品信息");
+            mStatusLayoutManager.showErrorLayout();
             return;
         }
         List<Goods> goodsList = settleEntity.getGoods_list();
@@ -280,6 +322,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         tvPayPrice.setText(payMonty);
         //显示金币
         showCoin(settleEntity);
+        mStatusLayoutManager.showSuccessLayout();
     }
 
 
@@ -752,8 +795,15 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                                 }
                             } else {
                                 ToastUtil.showFailed(entity.msg);
+                                mStatusLayoutManager.showErrorLayout();
                             }
                         }
+                    }
+
+                    @Override
+                    public void onRequestError(Throwable e) {
+                        super.onRequestError(e);
+                        mStatusLayoutManager.showErrorLayout();
                     }
                 });
     }
@@ -831,5 +881,15 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         finish();
     }
 
+
+    private void doRequestByCondition(){
+        mStatusLayoutManager.showLoadingLayout();
+        //显示结算页面
+        if (mSettleType == SETTLE_TYPE_PIN) {
+            requestPinSettle(pinId);
+        } else {
+            showSettleInfo(mSettleEntity);
+        }
+    }
 
 }

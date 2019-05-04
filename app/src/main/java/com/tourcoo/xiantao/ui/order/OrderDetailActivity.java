@@ -87,6 +87,7 @@ import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
  */
 public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity implements View.OnClickListener {
     private static final int REQUEST_CODE_EVALUATE = 1001;
+    private static final int REQUEST_CODE_RETURN_GOODS = 1002;
     private IWXAPI api;
     private LinearLayout llAddressInfo;
     public static final String EXTRA_ORDER_ID = "EXTRA_ORDER_ID";
@@ -375,8 +376,21 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         List<OrderDetailEntity.OrderBean.GoodsBean> goodsList = orderBean.getGoods();
         mGoodsAdapter.setNewData(goodsList);
         loadBottomButtonFunction(orderBean);
+        if (orderBean.getTuan() == 1) {
+            //表示当前订单为拼团订单
+            setViewVisible(llBottomToolBar, false);
+        } else {
+            setViewVisible(llBottomToolBar, true);
+        }
     }
 
+    private void setViewVisible(View view, boolean visible) {
+        if (visible) {
+            view.setVisibility(View.INVISIBLE);
+        } else {
+            view.setVisibility(View.VISIBLE);
+        }
+    }
 
     /**
      * 显示地址区域信息
@@ -625,7 +639,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         intent.putExtra(EXTRA_GOODS_LIST, (Serializable) goodsList);
         intent.putExtra(EXTRA_ORDER_ID, orderBean.getId());
         intent.setClass(mContext, ReturnGoodsActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_CODE_RETURN_GOODS);
     }
 
 
@@ -694,6 +708,13 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 if (resultCode == RESULT_OK) {
                     refreshRequest();
                     setResult(RESULT_OK);
+                }
+                break;
+            case REQUEST_CODE_RETURN_GOODS:
+                if (resultCode == RESULT_OK) {
+                    setResult(RESULT_OK);
+                    ToastUtil.show("接收到回调");
+                    refreshRequest();
                 }
                 break;
             default:
