@@ -120,9 +120,9 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
             @Override
             public void onClick(View v) {
                 if (listener != null) {
-                    ToastUtil.show("支付状态："+mDatas.get(position).getUser_status()+"\n" +
-                            "    订单状态 "+mDatas.get(position).getStatus());
-//                    listener.onItemClick(mDatas.get(position).getId());
+//                    ToastUtil.show("支付状态：" + mDatas.get(position).getUser_status() + "\n" +
+//                            "订单状态 " + mDatas.get(position).getStatus());
+                    listener.onItemClick(mDatas.get(position).getId());
                 }
 
             }
@@ -143,8 +143,8 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
 
                 TourCooLogUtil.e(item);
                 LogUtils.e(position, time);
-                //已经过了截止时间 或者已经满团    订单状态 ---> 已完成
-                if (Double.parseDouble(item.getTuan().getSurplus()) == 0.0 || time <= 0) {
+                //已经过了截止时间 或者已经满团并支付    订单状态 ---> 已完成
+                if ((Double.parseDouble(item.getTuan().getSurplus()) == 0.0 && item.getUser_status() == 1) || time <= 0) {
                     holder.llStatus.setVisibility(View.GONE);
                     holder.tvEndTime.setVisibility(View.GONE);
                     holder.tvTuanStatus.setVisibility(View.GONE);
@@ -162,7 +162,7 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
                                 }
                             }
                         });
-                    }else {
+                    } else {
                         holder.btnPay.setVisibility(View.GONE);
                     }
 
