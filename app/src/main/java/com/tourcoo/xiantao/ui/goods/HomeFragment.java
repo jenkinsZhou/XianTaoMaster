@@ -15,6 +15,8 @@ import android.widget.ViewFlipper;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationListener;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -42,6 +44,8 @@ import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.banner.BannerBean;
+import com.tourcoo.xiantao.entity.event.MessageEvent;
+import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.entity.goods.GoodsDetailEntity;
 import com.tourcoo.xiantao.entity.HomeInfoBean;
 import com.tourcoo.xiantao.entity.banner.BannerDetail;
@@ -52,7 +56,12 @@ import com.tourcoo.xiantao.helper.ShoppingCar;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.base.WebViewActivity;
 import com.tourcoo.xiantao.ui.msg.HomeNewsDetailActivity;
+import com.tourcoo.xiantao.util.LocateHelper;
 import com.trello.rxlifecycle3.android.FragmentEvent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +85,7 @@ import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS
  * @Email: 971613168@qq.com
  */
 public class HomeFragment extends BaseTitleFragment implements View.OnClickListener, OnRefreshListener, OnLoadMoreListener {
+    private AMapLocation mapLocation;
     private SmartRefreshLayout mRefreshLayout;
     private Handler mHandler = new Handler();
     private BGABanner banner;
@@ -112,9 +122,11 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
     @Override
     public void initView(Bundle savedInstanceState) {
         initView();
+        EventBus.getDefault().register(this);
         initBanner();
         initAdapter();
         initTitle();
+        locate();
         statusLayoutManager.showLoadingLayout();
         initGoodsItemClick();
         getHomeInfo();
@@ -465,6 +477,8 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
         if (mHandler != null) {
             mHandler.removeCallbacksAndMessages(null);
         }
+        EventBus.getDefault().unregister(this);
+        LocateHelper.getInstance().destroyLocationInstance();
         super.onDestroy();
     }
 
@@ -641,9 +655,45 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
                 tvMessageCount.setText(String.valueOf(noReadCount));
                 tvMessageCount.setVisibility(View.VISIBLE);
             }
-
         } else {
             tvMessageCount.setVisibility(View.GONE);
         }
     }
+
+
+    /**
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onMessageRefreshEvent(MessageEvent messageEvent) {
+        //todo 执行购物车列表刷新
+        if (messageEvent == null) {
+            return;
+        }
+        showMsg(messageEvent.getMsgCount());
+    }
+
+
+    /***
+     * 定位
+     */
+    private void locate() {
+        LocateHelper.getInstance().startLocation(new AMapLocationListener() {
+            @Override
+            public void onLocationChanged(AMapLocation aMapLocation) {
+                mapLocation = aMapLocation;
+                if (mapLocation != null) {
+                    if (mapLocation.getErrorCode() == 0) {
+                        TourCooLogUtil.d(TAG, "回调结果:" + mapLocation.getCity());
+                    } else {
+                        ToastUtil.showFailed("定位失败");
+                    }
+                } else {
+                    ToastUtil.showFailed("定位失败");
+                }
+                LocateHelper.getInstance().stopLocation();
+            }
+        });
+    }
+
+
 }

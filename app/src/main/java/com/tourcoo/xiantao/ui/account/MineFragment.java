@@ -36,6 +36,7 @@ import com.tourcoo.xiantao.core.widget.divider.TourCoolRecycleViewDivider;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.MenuItem;
 import com.tourcoo.xiantao.entity.TokenInfo;
+import com.tourcoo.xiantao.entity.event.MessageEvent;
 import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.entity.event.TabChangeEvent;
 import com.tourcoo.xiantao.entity.message.MessageBean;
@@ -470,9 +471,9 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     }
 
     /**
-     * 校验token是否失效
+     * 校验token是否失效并刷新个人信息
      */
-    private void checkTokenAndRequestUserInfo() {
+    public void checkTokenAndRequestUserInfo() {
         ApiRepository.getInstance().checkToken().compose(bindUntilEvent(FragmentEvent.DESTROY)).
                 subscribe(new BaseObserver<BaseEntity<TokenInfo>>() {
                     @Override
@@ -543,6 +544,8 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
                                 TourCooLogUtil.i(TAG, "未读消息数量:" + entity.data.getNum());
+                                //并且将消息数量发送出去
+                                EventBus.getDefault().post(new MessageEvent(entity.data.getNum()));
                                 showMsg(entity.data.getNum());
                             } else {
                                 ToastUtil.showFailed(entity.msg);
@@ -571,19 +574,6 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
 
 
     /**
-     * 刷新请求
-     */
-    public void refreshUI() {
-        TourCooLogUtil.i(TAG, "刷新了UI");
-        if (AccountInfoHelper.getInstance().isLogin()) {
-            checkTokenAndRequestUserInfo();
-        } else {
-            showUnLoginUI();
-        }
-    }
-
-
-    /**
      * @param refreshEvent
      */
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
@@ -592,7 +582,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         if (refreshEvent == null) {
             return;
         }
-        refreshUI();
+        checkTokenAndRequestUserInfo();
     }
 
     @Override

@@ -16,4 +16,9 @@ public class RefreshEvent extends BaseEvent {
 
     public RefreshEvent() {
     }
+
+    public RefreshEvent(int id) {
+        super.id = id;
+    }
+
 }

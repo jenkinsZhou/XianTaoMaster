@@ -130,7 +130,7 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
                         getTotalNum();
                     }
                     if (position == TAB_INDEX_MINE) {
-                        mineFragment.refreshUI();
+                        mineFragment.checkTokenAndRequestUserInfo();
                     }
                 }
 
