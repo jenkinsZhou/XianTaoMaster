@@ -106,7 +106,7 @@ dependencies {
     //滑动返回Activity
     implementation 'cn.bingoogolapple:bga-swipebacklayout:1.2.0@aar'
     //快速Tab库
-    implementation 'com.github.AriesHoo:TabLayout:1.0.2'
+    implementation 'com.github.AriesHoo:TabLayout:1.0.6'
     //页面事件交互
     implementation 'org.simple:androideventbus:1.0.5.1'
     //多状态视图切换

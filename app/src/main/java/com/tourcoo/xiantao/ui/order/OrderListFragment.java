@@ -1,7 +1,9 @@
 package com.tourcoo.xiantao.ui.order;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 
 import com.alibaba.fastjson.JSON;
@@ -12,14 +14,17 @@ import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.OrderListAdapter;
 import com.tourcoo.xiantao.core.frame.UiConfigManager;
 import com.tourcoo.xiantao.core.frame.base.fragment.BaseRefreshFragment;
+import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
+import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.order.OrderEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.comment.EvaluationActivity;
+import com.trello.rxlifecycle3.android.ActivityEvent;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import java.io.Serializable;
@@ -28,6 +33,7 @@ import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_ALL;
+import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_BACK;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_COMMENT;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_PAY;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_RECIEVE;
@@ -46,6 +52,8 @@ import static com.tourcoo.xiantao.ui.order.ReturnGoodsActivity.EXTRA_GOODS_LIST;
 public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo> {
     private OrderListAdapter mAdapter;
     private int orderStatus = ORDER_STATUS_ALL;
+    private int currentSelectPosition;
+    private int currentOrderId;
     /**
      * 订单详情
      */
@@ -152,6 +160,8 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 OrderEntity.OrderInfo orderInfo = mAdapter.getData().get(position);
+                currentOrderId = orderInfo.getId();
+                currentSelectPosition = position;
                 switch (view.getId()) {
                     case R.id.photoRecyclerView:
                     case R.id.llOrderInfo:
@@ -164,7 +174,7 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
                         ToastUtil.show("2");
                         break;
                     case R.id.btnThree:
-                        ToastUtil.show("3");
+                        setButtonThreeFunction();
                         break;
                     case R.id.btnFour:
                         loadButton4Function(orderInfo);
@@ -193,8 +203,17 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
     private void loadButton4Function(OrderEntity.OrderInfo orderInfo) {
         switch (orderInfo.getOrder_status()) {
             case ORDER_STATUS_WAIT_SEND:
-                //申请退单
-                skipReturnGoods(orderInfo);
+                //先判断是否是拼团订单
+                int pin = orderInfo.getTuan();
+                //1表示拼团订单
+                if (pin == 1) {
+                    //查看详情
+                    skipOrderDetail(orderInfo.getId());
+                } else {
+                    //申请退单
+                    skipReturnGoods(orderInfo);
+                }
+
                 break;
             case ORDER_STATUS_WAIT_COMMENT:
                 //待评价状态 去评价
@@ -217,7 +236,8 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
         intent.putExtra(EXTRA_GOODS_LIST, (Serializable) goodsList);
         intent.putExtra(EXTRA_ORDER_ID, orderInfo.getId());
         intent.setClass(mContext, ReturnGoodsActivity.class);
-        startActivity(intent);
+        TourCooLogUtil.i(TAG, TAG + ":" + "订单状态");
+        startActivityForResult(intent, orderStatus);
     }
 
     /**
@@ -228,8 +248,9 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
     private void skipEvaluation(OrderEntity.OrderInfo orderInfo) {
         Intent intent = new Intent();
         intent.putExtra(EXTRA_ORDER_ID, orderInfo.getId());
+        TourCooLogUtil.i(TAG, TAG + ":" + "订单状态");
         intent.setClass(mContext, EvaluationActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, orderStatus);
     }
 
     @Override
@@ -251,10 +272,108 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
                 case ORDER_STATUS_WAIT_RECIEVE:
                     mRefreshLayout.autoRefresh();
                     break;
+                case ORDER_STATUS_BACK:
+                    mRefreshLayout.autoRefresh();
+                    break;
                 default:
                     break;
             }
         }
+    }
+
+
+    /**
+     * 取消订单
+     *
+     * @param orderId
+     */
+    private void requestCancelOrder(int orderId) {
+        TourCooLogUtil.i(TAG, TAG + "操作的订单id:" + orderId);
+        ApiRepository.getInstance().requestCancelOrder(orderId).compose(bindUntilEvent(FragmentEvent.DESTROY)).
+                subscribe(new BaseLoadingObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                ToastUtil.showSuccess("订单已取消");
+                                refreshWaitPayList(currentSelectPosition);
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+                });
+    }
+
+
+    /**
+     * 确认取消订单
+     */
+    private void showCancelOrderDialog(int orderId) {
+        ConfirmDialog.Builder builder = new ConfirmDialog.Builder(
+                mContext);
+        builder.setPositiveButtonPosition(ConfirmDialog.RIGHT);
+        builder.setTitle("取消订单");
+        builder.setMessageGravity(Gravity.CENTER_HORIZONTAL);
+        builder.setFirstMessage("是否取消订单?").setNegativeButtonButtonBold(true);
+        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                requestCancelOrder(orderId);
+            }
+        });
+        builder.setNegativeButton("取消",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.create().show();
+    }
+
+    /**
+     * 刷新待付款列表
+     */
+    private void refreshWaitPayList(int position) {
+        if (orderStatus == ORDER_STATUS_ALL) {
+            mRefreshLayout.autoRefresh();
+        }
+        if (orderStatus != ORDER_STATUS_WAIT_PAY) {
+            TourCooLogUtil.e(TAG, TAG + ":" + "当前不是待付款列表");
+            return;
+        }
+        if (position < 0 || position >= mAdapter.getData().size()) {
+            return;
+        }
+        TourCooLogUtil.i(TAG, TAG + "当前操作的位置:" + position);
+        mAdapter.remove(position);
+        mAdapter.refreshNotifyItemChanged(position);
+        if (mAdapter.getData().isEmpty()) {
+            mRefreshLayout.autoRefresh();
+        }
 
     }
+
+
+    /**
+     * 第三个按钮的功能
+     */
+    private void setButtonThreeFunction() {
+        switch (orderStatus) {
+            case ORDER_STATUS_WAIT_PAY:
+                showCancelOrderDialog(currentOrderId);
+                break;
+            case ORDER_STATUS_ALL:
+                showCancelOrderDialog(currentOrderId);
+                break;
+            default:
+                break;
+        }
+    }
+
+
+
+
 }

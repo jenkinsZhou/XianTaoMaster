@@ -3,6 +3,7 @@ package com.tourcoo.xiantao.ui.order;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -53,10 +54,9 @@ public class ReturnGoodsActivity extends BaseTourCooTitleActivity implements Vie
     private List<LocalMedia> selectList = new ArrayList<>();
     private List<String> imageList = new ArrayList<>();
     private ReturnGoodsAdapter mGoodsAdapter;
-
     private RecyclerView goodsRecyclerView;
     private int mOrderId;
-
+    private String images;
 
     private TextView tvReturnType;
 
@@ -70,6 +70,7 @@ public class ReturnGoodsActivity extends BaseTourCooTitleActivity implements Vie
      */
     public static final String EXTRA_GOODS_LIST = "EXTRA_GOODS_LIST";
     public static final String EXTRA_ORDER_ID = "EXTRA_ORDER_ID";
+    private EditText etDetail;
 
     @Override
     public int getContentLayout() {
@@ -80,6 +81,10 @@ public class ReturnGoodsActivity extends BaseTourCooTitleActivity implements Vie
     @Override
     public void initView(Bundle savedInstanceState) {
         mGoodsList = (List<Goods>) getIntent().getSerializableExtra(EXTRA_GOODS_LIST);
+        for (Goods goods : mGoodsList) {
+            TourCooLogUtil.i(TAG, TAG + "goods id = " + "" + goods.getId());
+        }
+        etDetail = findViewById(R.id.etDetail);
         mOrderId = getIntent().getIntExtra(EXTRA_ORDER_ID, -1);
         mRecyclerView = findViewById(R.id.rvUploadImage);
         findViewById(R.id.btnCommit).setOnClickListener(this);
@@ -94,7 +99,7 @@ public class ReturnGoodsActivity extends BaseTourCooTitleActivity implements Vie
         goodsRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mGoodsAdapter.bindToRecyclerView(goodsRecyclerView);
         mGoodsAdapter.setNewData(mGoodsList);
-        TourCooLogUtil.i(TAG, mGoodsList);
+        TourCooLogUtil.i("退单商品列表", mGoodsList);
         init();
         initAdapterClick();
     }
@@ -117,7 +122,7 @@ public class ReturnGoodsActivity extends BaseTourCooTitleActivity implements Vie
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         super.setTitleBar(titleBar);
-        titleBar.setTitleMainText("申请");
+        titleBar.setTitleMainText("申请退单");
     }
 
     private UploadImageAdapter.OnAddPictureClickListener onAddPicClickListener = new UploadImageAdapter.OnAddPictureClickListener() {
@@ -251,13 +256,17 @@ public class ReturnGoodsActivity extends BaseTourCooTitleActivity implements Vie
             ToastUtil.showFailed("未获取到订单id");
             return;
         }
+        String detail = etDetail.getText().toString();
+        String reason = getTextValue(tvReturnReason);
+        String type = getTextValue(tvReturnType);
         TourCooLogUtil.i(TAG, TAG + "操作的订单id:" + mOrderId);
-        ApiRepository.getInstance().requestReturnGoods(mOrderId, goodIds).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+        ApiRepository.getInstance().requestReturnGoods(mOrderId, goodIds, detail, images, reason, type).compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseLoadingObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS) {
+                                setResult(RESULT_OK);
                                 ToastUtil.showSuccess(entity.msg);
                             } else {
                                 ToastUtil.showFailed(entity.msg);
@@ -343,6 +352,7 @@ public class ReturnGoodsActivity extends BaseTourCooTitleActivity implements Vie
         String goodsIds = StringUtils.join(idList, ",");
         TourCooLogUtil.i(TAG, TAG + ":" + "退货id:" + goodsIds);
         requestReturnGoods(goodsIds);
+
     }
 
 
@@ -369,5 +379,6 @@ public class ReturnGoodsActivity extends BaseTourCooTitleActivity implements Vie
             dialog.dismiss();
         }
     };
+
 
 }

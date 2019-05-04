@@ -46,6 +46,7 @@ public class ReturnOrderList extends BaseTourCooRefreshLoadActivity<OrderEntity.
     private OrderListAdapter mAdapter;
     private int orderStatus = ORDER_STATUS_BACK;
     public static final String EXTRA_ORDER_STATUS = "EXTRA_ORDER_STATUS";
+    public static final int REQUEST_CODE_RETURN_DETAIL = 1005;
 
     @Override
     public int getContentLayout() {
@@ -151,7 +152,7 @@ public class ReturnOrderList extends BaseTourCooRefreshLoadActivity<OrderEntity.
                 switch (view.getId()) {
                     case R.id.photoRecyclerView:
                     case R.id.llOrderInfo:
-                        skipGoodsDetail(orderInfo.getId());
+                        skipOrderDetail(orderInfo.getId());
                         break;
                     case R.id.btnOne:
                         ToastUtil.show("1");
@@ -177,10 +178,11 @@ public class ReturnOrderList extends BaseTourCooRefreshLoadActivity<OrderEntity.
      *
      * @param orderId
      */
-    private void skipGoodsDetail(int orderId) {
+    private void skipOrderDetail(int orderId) {
         Intent intent = new Intent();
         intent.putExtra(EXTRA_ORDER_ID, orderId);
         intent.setClass(mContext, OrderDetailActivity.class);
+        //跳转至订单详情
         startActivity(intent);
     }
 
@@ -212,7 +214,8 @@ public class ReturnOrderList extends BaseTourCooRefreshLoadActivity<OrderEntity.
         intent.putExtra(EXTRA_GOODS_LIST, (Serializable) goodsList);
         intent.putExtra(EXTRA_ORDER_ID, orderInfo.getId());
         intent.setClass(mContext, ReturnGoodsActivity.class);
-        startActivity(intent);
+        //跳转至退货页面
+        startActivityForResult(intent, REQUEST_CODE_RETURN_DETAIL);
     }
 
     /**
@@ -230,5 +233,21 @@ public class ReturnOrderList extends BaseTourCooRefreshLoadActivity<OrderEntity.
     @Override
     public void onClick(View v) {
 
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_CODE_RETURN_DETAIL:
+                    //退货成功 刷新列表
+                    mRefreshLayout.autoRefresh();
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

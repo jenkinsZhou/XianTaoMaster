@@ -475,11 +475,17 @@ public class ApiRepository extends BaseRepository {
      * @param orderId
      * @return
      */
-    public Observable<BaseEntity> requestReturnGoods(int orderId, String goodsIds) {
+    public Observable<BaseEntity> requestReturnGoods(int orderId, String goodsIds, String detail, String images, String reason, String type) {
         Map<String, Object> params = new HashMap<>(2);
         params.put("id", orderId);
         params.put("goods_id", goodsIds);
-        TourCooLogUtil.i(TAG, TAG + ":" + params);
+        params.put("detail", detail);
+        if (!TextUtils.isEmpty(images)) {
+            params.put("images", images);
+        }
+        params.put("reason", reason);
+        params.put("type", type);
+        TourCooLogUtil.i(TAG, TAG + "退货提交的参数:" + params);
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestReturnGoods(params).retryWhen(new RetryWhen()));
     }
 

@@ -570,7 +570,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS) {
-                                ToastUtil.showSuccess("取消成功");
+                                ToastUtil.showSuccess("订单已取消");
                                 setResult(RESULT_OK);
                                 finish();
                             } else {
@@ -587,7 +587,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
      */
     private void refreshRequest() {
         ApiRepository.getInstance().requestOrderDetail(orderId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
-                subscribe(new BaseObserver<BaseEntity>() {
+                subscribe(new BaseLoadingObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
@@ -637,6 +637,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         Goods currentGoods;
         for (OrderDetailEntity.OrderBean.GoodsBean good : orderBean.getGoods()) {
             currentGoods = new Goods();
+            currentGoods.setId(good.getId());
             currentGoods.setGoods_name(good.getGoods_name());
             currentGoods.setGoods_price(good.getGoods_price());
             currentGoods.setGoods_id(good.getGoods_id());
@@ -672,8 +673,10 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS) {
-                                refreshRequest();
+//                                refreshRequest();
                                 ToastUtil.showSuccess("收货完成");
+                                setResult(RESULT_OK);
+                                finish();
                             } else {
                                 ToastUtil.showFailed(entity.msg);
                             }
@@ -690,6 +693,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             case REQUEST_CODE_EVALUATE:
                 if (resultCode == RESULT_OK) {
                     refreshRequest();
+                    setResult(RESULT_OK);
                 }
                 break;
             default:
@@ -793,7 +797,6 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                                                 refreshRequest();
                                                 break;
                                             default:
-
                                                 break;
                                         }
                                     }
