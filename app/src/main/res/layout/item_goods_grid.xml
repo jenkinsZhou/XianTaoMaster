@@ -33,7 +33,7 @@
         android:paddingTop="@dimen/dp_4"
         android:paddingRight="@dimen/dp_9"
         android:paddingBottom="@dimen/dp_4"
-        android:text="拼团价半价"
+        android:text="拼团钜惠"
         android:textColor="@color/greenCommon"
         android:textSize="10sp" />
 

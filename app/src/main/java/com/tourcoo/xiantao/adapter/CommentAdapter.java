@@ -71,6 +71,9 @@ public class CommentAdapter extends BaseQuickAdapter<CommentDetail, BaseViewHold
                     onThumbnailClick(imageUrlList.get(position));
                 }
             });
+        }else {
+            RecyclerView commentImageRecyclerView = helper.getView(R.id.commentImageRecyclerView);
+            commentImageRecyclerView.setAdapter(null);
         }
 
         RatingStarView ratingStarView = helper.getView(R.id.rsvRating);

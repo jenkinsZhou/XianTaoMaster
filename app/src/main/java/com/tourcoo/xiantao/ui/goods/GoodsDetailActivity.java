@@ -52,6 +52,7 @@ import com.tourcoo.xiantao.ui.base.WebViewActivity;
 import com.tourcoo.xiantao.ui.comment.CommentListActivity;
 import com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity;
 import com.tourcoo.xiantao.util.FormatDuration;
+import com.tourcoo.xiantao.widget.dialog.PinTuanDialog;
 import com.tourcoo.xiantao.widget.dialog.ProductSkuDialog;
 import com.tourcoo.xiantao.widget.ratingstar.RatingStarView;
 import com.trello.rxlifecycle3.android.ActivityEvent;
@@ -335,7 +336,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             int size = detail.getTuan_list().size() == 1 ? 1 : 2;
 
             for (int i = 0; i < size; i++) {
-
+                Goods.TuanListBean tuanListBean = detail.getTuan_list().get(i);
                 View view = View.inflate(this, R.layout.item_goods_details_tuan_person_layout, null);
                 ImageView ivAvatar = view.findViewById(R.id.ivAvatar);
                 TextView tvNickName = view.findViewById(R.id.tvNickName);
@@ -343,11 +344,11 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 TextView tvEndTime = view.findViewById(R.id.tvEndTime);
                 TextView btnJoinTuan = view.findViewById(R.id.btnJoinTuan);
 
-                GlideManager.loadCircleImg(detail.getTuan_list().get(i).getAvatar(), ivAvatar);
-                tvNickName.setText(detail.getTuan_list().get(i).getNickname());
-                tvSurplus.setText(detail.getTuan_list().get(i).getSurplus() + "kg");
+                GlideManager.loadCircleImg(tuanListBean.getAvatar(), ivAvatar);
+                tvNickName.setText(tuanListBean.getNickname());
+                tvSurplus.setText(tuanListBean.getSurplus() + "kg");
 
-                long totalTime = detail.getTuan_list().get(i).getDeadline() * 1000L - System.currentTimeMillis();
+                long totalTime = tuanListBean.getDeadline() * 1000L - System.currentTimeMillis();
 
                 CountDownTimer timer = new CountDownTimer(totalTime, 1000) {
                     @Override
@@ -361,6 +362,21 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                         btnJoinTuan.setEnabled(false);
                     }
                 }.start();
+
+                btnJoinTuan.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        LogUtils.e(tuanListBean.getNum(), tuanListBean.getSurplus(), tuanListBean.getDeadline() * 1000L);
+                        PinTuanDialog pinTuanDialog = new PinTuanDialog(GoodsDetailActivity.this, tuanListBean.getNum(),
+                                tuanListBean.getSurplus(), tuanListBean.getDeadline()* 1000L, new PinTuanDialog.Callback() {
+                            @Override
+                            public void onAdded(int quantity) {
+                                joinTuan(tuanListBean.getId(), quantity);
+                            }
+                        });
+                        pinTuanDialog.show();
+                    }
+                });
 
                 countDownMap.put(view.hashCode(), timer);
 
@@ -477,6 +493,36 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             }
         });
 
+    }
+
+    /**
+     * 加入拼团
+     */
+    private void joinTuan(int tuan_id, int num) {
+        ApiRepository.getInstance().joinTuan(tuan_id, num).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                if (entity.data != null) {
+                                    String info = JSON.toJSONString(entity.data);
+                                    JSONObject jsonObject = JSONObject.parseObject(info);
+                                    int pinId = jsonObject.getInteger("tuanuser_id");
+                                    skipOrderSettleByPin(pinId);
+                                }
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onRequestError(Throwable e) {
+                        super.onRequestError(e);
+                        TourCooLogUtil.e(TAG, TAG + "异常:" + e.toString());
+                    }
+                });
     }
 
     private void onThumbnailClick(String imageUrl) {
@@ -695,8 +741,6 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                                     int pinId = jsonObject.getInteger("tuanuser_id");
                                     skipOrderSettleByPin(pinId);
                                 }
-                                //todo:拼团列表
-//                                startActivity(new Intent(GoodsDetailActivity.this, ));
                             }
                         }
                     }

@@ -386,7 +386,7 @@ public class Goods implements Serializable {
         private int pid;
         private String name;
         private String image;
-        private int weigh;
+        private String weigh;
         private int createtime;
         private int updatetime;
 
@@ -422,11 +422,11 @@ public class Goods implements Serializable {
             this.image = image;
         }
 
-        public int getWeigh() {
+        public String getWeigh() {
             return weigh;
         }
 
-        public void setWeigh(int weigh) {
+        public void setWeigh(String weigh) {
             this.weigh = weigh;
         }
 
@@ -524,7 +524,7 @@ public class Goods implements Serializable {
     }
 
 
-    public static class SpecRelBean {
+    public static class SpecRelBean implements Serializable{
         /**
          * id : 44
          * spec_value : 亮黑色
@@ -589,7 +589,7 @@ public class Goods implements Serializable {
             this.spec = spec;
         }
 
-        public static class PivotBean {
+        public static class PivotBean implements Serializable{
             /**
              * id : 328
              * goods_id : 22

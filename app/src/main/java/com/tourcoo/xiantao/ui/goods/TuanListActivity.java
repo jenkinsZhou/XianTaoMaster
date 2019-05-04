@@ -1,5 +1,6 @@
 package com.tourcoo.xiantao.ui.goods;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -8,6 +9,8 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -25,12 +28,16 @@ import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
+import com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity;
 import com.tourcoo.xiantao.widget.dialog.PinTuanDialog;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
 import java.util.List;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_PIN_USER_ID;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_SETTLE_TYPE;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SETTLE_TYPE_PIN;
 
 
 public class TuanListActivity extends BaseTourCooTitleActivity implements OnRefreshListener {
@@ -70,7 +77,7 @@ public class TuanListActivity extends BaseTourCooTitleActivity implements OnRefr
                 dialog = new PinTuanDialog(TuanListActivity.this, num,surplus,time, new PinTuanDialog.Callback() {
                     @Override
                     public void onAdded(int quantity) {
-                        joinTuan(tuan_id, num);
+                        joinTuan(tuan_id, quantity);
                     }
                 });
                 dialog.show();
@@ -131,7 +138,12 @@ public class TuanListActivity extends BaseTourCooTitleActivity implements OnRefr
                     public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS) {
-                                ToastUtil.showSuccess("加入拼团成功，请支付费用");
+                                if (entity.data != null) {
+                                    String info = JSON.toJSONString(entity.data);
+                                    JSONObject jsonObject = JSONObject.parseObject(info);
+                                    int pinId = jsonObject.getInteger("tuanuser_id");
+                                    skipOrderSettleByPin(pinId);
+                                }
                             } else {
                                 ToastUtil.showFailed(entity.msg);
                             }
@@ -144,6 +156,22 @@ public class TuanListActivity extends BaseTourCooTitleActivity implements OnRefr
                         TourCooLogUtil.e(TAG, TAG + "异常:" + e.toString());
                     }
                 });
+    }
+
+
+    /**
+     * 发起拼团的结算跳转
+     *
+     * @param pinId
+     */
+    private void skipOrderSettleByPin(int pinId) {
+        Intent intent = new Intent();
+        //单独购买结算类型
+        intent.putExtra(EXTRA_SETTLE_TYPE, SETTLE_TYPE_PIN);
+        intent.putExtra(EXTRA_PIN_USER_ID, pinId);
+        intent.setClass(mContext, OrderSettleDetailActivity.class);
+        TourCooLogUtil.i(TAG, "value:" + pinId);
+        startActivity(intent);
     }
 
 

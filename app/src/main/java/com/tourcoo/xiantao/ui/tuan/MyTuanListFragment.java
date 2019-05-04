@@ -39,10 +39,14 @@ import com.tourcoo.xiantao.core.widget.custom.SharePopupWindow;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.tuan.TuanEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
+import com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import static com.tourcoo.xiantao.constant.TuanConstant.TUAN_STATUS_MINE;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_PIN_USER_ID;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_SETTLE_TYPE;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SETTLE_TYPE_PIN;
 
 /**
  * @author :JenkinsZhou
@@ -147,11 +151,28 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
 
             @Override
             public void onPayClick(int tuanuser_id) {
-
+                skipOrderSettleByPin(tuanuser_id);
             }
         });
         loadData(mDefaultPage);
     }
+
+
+    /**
+     * 发起拼团的结算跳转
+     *
+     * @param pinId
+     */
+    private void skipOrderSettleByPin(int pinId) {
+        Intent intent = new Intent();
+        //单独购买结算类型
+        intent.putExtra(EXTRA_SETTLE_TYPE, SETTLE_TYPE_PIN);
+        intent.putExtra(EXTRA_PIN_USER_ID, pinId);
+        intent.setClass(mContext, OrderSettleDetailActivity.class);
+        TourCooLogUtil.i(TAG, "value:" + pinId);
+        startActivity(intent);
+    }
+
 
     private void loadData(int page) {
         requestTuanListInfo(page);

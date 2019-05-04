@@ -35,6 +35,7 @@ import com.tourcoo.xiantao.entity.pay.WeiXinPay;
 import com.tourcoo.xiantao.entity.user.CashEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
+import com.tourcoo.xiantao.util.MoneyTextWatcher;
 import com.tourcoo.xiantao.widget.dialog.PayDialog;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
@@ -108,19 +109,10 @@ public class AccountBalanceActivity extends BaseTourCooTitleActivity implements 
 
 
     private void setInputListener() {
-        etRechargeAmount.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
+        etRechargeAmount.addTextChangedListener(new MoneyTextWatcher(etRechargeAmount){
             @Override
             public void afterTextChanged(Editable s) {
+                super.afterTextChanged(s);
                 //如果长度不等于0
                 if (s.length() != 0) {
                     for (RechargeEntity datum : mRechargeAmountAdapter.getData()) {
@@ -130,6 +122,23 @@ public class AccountBalanceActivity extends BaseTourCooTitleActivity implements 
                 }
             }
         });
+
+//        etRechargeAmount.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//
+//            }
+//        });
 
     }
 

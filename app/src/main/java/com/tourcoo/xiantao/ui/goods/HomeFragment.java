@@ -56,6 +56,7 @@ import com.tourcoo.xiantao.helper.ShoppingCar;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.base.WebViewActivity;
 import com.tourcoo.xiantao.ui.msg.HomeNewsDetailActivity;
+import com.tourcoo.xiantao.ui.msg.MsgSystemActivity;
 import com.tourcoo.xiantao.util.LocateHelper;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 
@@ -106,7 +107,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
     private View footView;
     private ViewFlipper homeViewFlipper;
     private TextView tvMessageCount;
-
+    private ImageView ivMsg;
     public static HomeFragment newInstance() {
         Bundle args = new Bundle();
         HomeFragment fragment = new HomeFragment();
@@ -177,6 +178,8 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
         homeViewFlipper = mContentView.findViewById(R.id.homeViewFlipper);
         rlContentView = mContentView.findViewById(R.id.rlContentView);
         tvMessageCount = mContentView.findViewById(R.id.tvMessageCount);
+        ivMsg = mContentView.findViewById(R.id.ivMsg);
+        ivMsg.setOnClickListener(this);
         rvHome = mContentView.findViewById(R.id.rvHome);
         footView = LayoutInflater.from(mContext).inflate(R.layout.item_view, null);
         rvHome.setLayoutManager(new GridLayoutManager(mContext, 2));
@@ -264,11 +267,20 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
             case R.id.rlSearchLayout:
                 TourCoolUtil.startActivity(mContext, SearchGoodsActivity.class);
                 break;
+            case R.id.ivMsg:
+                skipToMessageCenter();
+                break;
             default:
                 break;
         }
     }
 
+
+    private void skipToMessageCenter() {
+        Intent intent = new Intent();
+        intent.setClass(mContext, MsgSystemActivity.class);
+        startActivity(intent);
+    }
 
     @Override
     public void onRefresh(RefreshLayout refreshLayout) {
