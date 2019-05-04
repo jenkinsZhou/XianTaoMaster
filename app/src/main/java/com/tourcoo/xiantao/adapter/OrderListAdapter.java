@@ -87,13 +87,20 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
         helper.addOnClickListener(R.id.btnTwo);
         helper.addOnClickListener(R.id.btnThree);
         helper.addOnClickListener(R.id.btnFour);
+        int pin = orderInfo.getTuan();
+        boolean isPin = pin == 1;
         //待付款状态
         if (orderInfo.getPay_status() == NOT_FINISH) {
             orderInfo.setOrder_status(ORDER_STATUS_WAIT_PAY);
             tvOrderStatus.setText("待付款");
             hindView(btnOne);
             hindView(btnTwo);
-            setTextGray(btnThree, "取消订单");
+            if (isPin) {
+                //拼团不能取消订单
+                hindView(btnThree);
+            } else {
+                setTextGray(btnThree, "取消订单");
+            }
             setTextGray(btnFour, "立即支付");
             TourCooLogUtil.i(TAG, TAG + "订单id:" + orderInfo.getId());
         } else {
@@ -106,7 +113,12 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                     hindView(btnOne);
                     hindView(btnTwo);
                     hindView(btnThree);
-                    setTextGray(btnFour, "申请退单");
+                    if (isPin) {
+                        hindView(btnFour);
+                        //拼团不让退单
+                    } else {
+                        setTextGray(btnFour, "申请退单");
+                    }
                     TourCooLogUtil.i(TAG, TAG + "订单id:" + orderInfo.getId());
                     break;
                 case FINISH:
@@ -122,15 +134,15 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                     } else {
                         //已经收货 判断 是否评论
                         if (orderInfo.getComment_status() == NOT_FINISH) {
-                            //todo 待评论
+                            //todo 待评价
                             tvOrderStatus.setText("待评价");
                             orderInfo.setOrder_status(ORDER_STATUS_WAIT_COMMENT);
                             tvOrderStatus.setTextColor(TourCooUtil.getColor(R.color.greenCommon));
                             hindView(btnOne);
                             hindView(btnTwo);
-                            hindView(btnThree);
-                          /*  setTextGray(btnTwo, "申请退单");
-                            setTextGray(btnThree, "查看物流");*/
+                            /*  setTextGray(btnTwo, "申请退单");
+                             */
+                            setTextGray(btnThree, "查看物流");
                             setTextGray(btnFour, "立即评价");
                             TourCooLogUtil.i(TAG, TAG + "订单id:" + orderInfo.getId());
                         } else {
@@ -183,15 +195,15 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                 default:
                     break;
             }
-            int pin = orderInfo.getTuan();
+
             //1表示拼团订单
-            if (pin == 1) {
-                //拼团订单 只保留查看拼团功能
+            if (isPin) {
                 helper.setGone(R.id.tvPin, true);
+              /*  //拼团订单 只保留查看拼团功能
                 hindView(btnOne);
                 hindView(btnTwo);
                 hindView(btnThree);
-                setTextGray(btnFour, "查看详情");
+                setTextGray(btnFour, "查看详情");*/
             } else {
                 helper.setGone(R.id.tvPin, false);
             }

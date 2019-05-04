@@ -190,7 +190,6 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         mGoodsId = getIntent().getIntExtra(EXTRA_GOODS_ID, -1);
         init();
         TourCooLogUtil.i(TAG, TAG + ":" + "商品=" + mGoodsId);
-        getGoodsDetail(mGoodsId);
     }
 
     @Override
@@ -219,7 +218,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                getGoodsDetail(mGoodsId);
             }
         };
     }
@@ -248,8 +247,9 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
      * 请求商品详情
      */
     private void getGoodsDetail(int goodsId) {
+        mStatusLayoutManager.showLoadingLayout();
         ApiRepository.getInstance().getGoodsDetail(goodsId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
-                subscribe(new BaseLoadingObserver<BaseEntity>() {
+                subscribe(new BaseObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
@@ -382,14 +382,10 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
                 llTuanContainer.addView(view);
             }
-
-
         }
 
         if (detail.getComment_list() != null && detail.getComment_list().size() > 0) {
-
             int size = detail.getComment_list().size() == 1 ? 1 : 2;
-
             for (int i = 0; i < size; i++) {
                 Goods.CommentListBean item = detail.getComment_list().get(i);
                 View view = View.inflate(this, R.layout.item_comment, null);
@@ -414,8 +410,6 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                             }
                         }
                     }
-
-
                     commentImageRecyclerView.setLayoutManager(new GridLayoutManager(mContext, 4));
                     GridImageAdapter gridImageAdapter = new GridImageAdapter(imageUrlList);
                     gridImageAdapter.bindToRecyclerView(commentImageRecyclerView);
@@ -492,7 +486,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 dialog.show();
             }
         });
-
+        mStatusLayoutManager.showSuccessLayout();
     }
 
     /**
@@ -836,6 +830,11 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         webView.loadData(data, "text/html; charset=UTF-8", null);
     }
 
+    @Override
+    public void loadData() {
+        super.loadData();
+        getGoodsDetail(mGoodsId);
+    }
 
     @Override
     protected void onDestroy() {

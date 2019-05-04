@@ -758,7 +758,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
 
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void onRechargeEvent(BaseEvent event) {
+    public void onPayEvent(BaseEvent event) {
         if (event == null) {
             TourCooLogUtil.e(TAG, "直接拦截");
             return;

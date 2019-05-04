@@ -75,9 +75,11 @@ import cn.bingoogolapple.bgabanner.BGABanner;
 import me.bakumon.statuslayoutmanager.library.OnStatusChildClickListener;
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
+import static android.app.Activity.RESULT_OK;
 import static com.tourcoo.xiantao.adapter.AddressInfoAdapter.ADDRESS_DEFAULT;
 import static com.tourcoo.xiantao.core.common.RequestConfig.BASE_URL;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.ui.account.MineFragment.REQUEST_CODE_MESSAGE_CENTER;
 
 /**
  * @author :zhoujian
@@ -281,7 +283,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
     private void skipToMessageCenter() {
         Intent intent = new Intent();
         intent.setClass(mContext, MsgSystemActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_CODE_MESSAGE_CENTER);
     }
 
     @Override
@@ -711,4 +713,17 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
         });
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_MESSAGE_CENTER:
+                if (resultCode == RESULT_OK) {
+                    requestMessageNoReadCount();
+                }
+                break;
+            default:
+                break;
+        }
+    }
 }

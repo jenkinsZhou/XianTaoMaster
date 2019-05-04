@@ -484,6 +484,20 @@
             android:textColor="#ff666666"
             android:textSize="@dimen/sp_13" />
 
+
+
+        <TextView
+            android:id="@+id/tvLookComment"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_30"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_weight="1"
+            android:background="@drawable/selector_bg_radius_15_gray_hollow"
+            android:gravity="center"
+            android:visibility="gone"
+            android:text="查看评价"
+            android:textColor="#ff666666"
+            android:textSize="@dimen/sp_13" />
         <TextView
             android:id="@+id/tvCancelOrder"
             android:layout_width="0dp"

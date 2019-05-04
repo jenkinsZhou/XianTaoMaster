@@ -44,6 +44,7 @@ public class MsgSystemActivity extends BaseRefreshLoadActivity<MessageEntity> {
     private SystemMsgAdapter systemMsgAdapter;
     public static final String EXTRA_MESSAGE_DETAIL = "EXTRA_MESSAGE_DETAIL";
     public static final int EXTRA_MESSAGE_CODE = 102;
+
     @Override
     public int getContentLayout() {
         return R.layout.layout_title_refresh_recycler;
@@ -136,6 +137,7 @@ public class MsgSystemActivity extends BaseRefreshLoadActivity<MessageEntity> {
     public void finish() {
         //发送消息
         EventBus.getDefault().post(new BaseEvent(EVENT_REQUEST_MSG_COUNT));
+        setResult(RESULT_OK);
         super.finish();
     }
 
@@ -147,7 +149,7 @@ public class MsgSystemActivity extends BaseRefreshLoadActivity<MessageEntity> {
                 Intent intent = new Intent();
                 intent.putExtra("id", systemMsgAdapter.getData().get(position).getId());
                 intent.setClass(mContext, MessageDetailActivity.class);
-                startActivityForResult(intent,EXTRA_MESSAGE_CODE);
+                startActivityForResult(intent, EXTRA_MESSAGE_CODE);
             }
         });
     }
@@ -163,11 +165,13 @@ public class MsgSystemActivity extends BaseRefreshLoadActivity<MessageEntity> {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case EXTRA_MESSAGE_CODE:
-                 TourCooLogUtil.i(TAG,TAG+":"+ "刷新了列表");
+                TourCooLogUtil.i(TAG, TAG + ":" + "刷新了列表");
                 getMsgList(false, 1);
                 break;
             default:
                 break;
         }
     }
+
+
 }

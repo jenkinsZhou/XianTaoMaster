@@ -11,12 +11,14 @@ import android.widget.FrameLayout;
 
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.UiConfigManager;
+import com.tourcoo.xiantao.core.frame.base.activity.BaseActivity;
 import com.tourcoo.xiantao.core.frame.interfaces.IBaseView;
 import com.tourcoo.xiantao.core.frame.interfaces.IRefreshLoadView;
 import com.tourcoo.xiantao.core.frame.manager.RxJavaManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.widget.custom.BounceLoadingView;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 import com.trello.rxlifecycle3.components.support.RxFragment;
@@ -290,4 +292,7 @@ public abstract class BaseFragment extends RxFragment implements IBaseView {
         }
         return loadingLayout;
     }
+
+
+
 }

@@ -120,9 +120,9 @@ public class GoodsCategoryListActivity extends BaseTourCooTitleActivity implemen
         //销量
         GoodsCategorySaleFragment categoryFragment1 = GoodsCategorySaleFragment.newInstance();
         //新品
-        GoodsCategoryPriceFragment categoryFragment2 = GoodsCategoryPriceFragment.newInstance();
+        GoodsCategoryNormalFragment categoryFragment2 = GoodsCategoryNormalFragment.newInstance();
         //价格
-        GoodsCategoryNormalFragment categoryFragment3 = GoodsCategoryNormalFragment.newInstance();
+        GoodsCategoryPriceFragment categoryFragment3 = GoodsCategoryPriceFragment.newInstance();
         fragmentList.add(categoryFragment1);
         fragmentList.add(categoryFragment2);
         fragmentList.add(categoryFragment3);
