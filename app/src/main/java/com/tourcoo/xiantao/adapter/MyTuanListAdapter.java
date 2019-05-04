@@ -96,9 +96,9 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
 
 
     @Override
-    public MyTuanListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_my_tuan_list_recycler_view_layout, parent, false);
-        return new MyTuanListAdapter.ViewHolder(view);
+        return new ViewHolder(view);
     }
 
     @Override
@@ -120,6 +120,10 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
 
         switch (item.getStatus()) {
             case TUAN_STATUS_FAIL:
+                holder.tvEndTime.setVisibility(View.GONE);
+                holder.tvTuanStatus.setVisibility(View.GONE);
+                holder.btnClick.setVisibility(View.GONE);
+                holder.btnPay.setVisibility(View.GONE);
                 break;
             case TUAN_STATUS_RUNNING:
 
@@ -188,7 +192,10 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
 
                 break;
             case TUAN_STATUS_COMPLETE:
-
+                holder.tvEndTime.setVisibility(View.GONE);
+                holder.tvTuanStatus.setVisibility(View.GONE);
+                holder.btnClick.setVisibility(View.GONE);
+                holder.btnPay.setVisibility(View.GONE);
                 break;
         }
 

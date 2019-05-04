@@ -188,7 +188,7 @@ public class ReturnOrderList extends BaseTourCooRefreshLoadActivity<OrderEntity.
     private void loadButton4Function(OrderEntity.OrderInfo orderInfo) {
         switch (orderInfo.getOrder_status()) {
             case ORDER_STATUS_WAIT_SEND:
-                //申请退货
+                //申请退单
                 skipReturnGoods(orderInfo);
                 break;
             case ORDER_STATUS_WAIT_COMMENT:

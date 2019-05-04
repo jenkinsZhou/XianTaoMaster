@@ -63,6 +63,7 @@ public class ProductSkuDialog extends Dialog {
         this.product = product;
         this.callback = callback;
         this.type = type;
+
     }
 
 
@@ -319,10 +320,22 @@ public class ProductSkuDialog extends Dialog {
                     } else {
                         ToastUtil.showFailed("商品数量超出库存");
                     }
-                }else {
+                } else {
                     int quantityInt = Integer.parseInt(quantity);
-                    callback.onAdded("", quantityInt);
-                    dismiss();
+                    if (type == PING_TUAN) {
+                        TuanRule tuanRule = new Gson().fromJson(product.getDetail().getTuan_rule().toString(), TuanRule.class);
+                        if (quantityInt > 0 && quantityInt <= tuanRule.getNum()){
+                            callback.onAdded("", quantityInt);
+                            dismiss();
+                        }else {
+                            ToastUtil.showFailed("已达到商品数量上限");
+                        }
+                    }else {
+                        callback.onAdded("", quantityInt);
+                        dismiss();
+                    }
+
+
                 }
             }
         });
@@ -352,8 +365,9 @@ public class ProductSkuDialog extends Dialog {
                 scrollSkuList.setVisibility(View.GONE);
                 GlideManager.loadImg(product.getDetail().getImage(), ivSkuLogo);
                 if (product.getDetail().isTuan()) {
-                    TuanRule tuanRule = new Gson().fromJson(product.getDetail().getTuan_rule().toString(),TuanRule.class);
+                    TuanRule tuanRule = new Gson().fromJson(product.getDetail().getTuan_rule().toString(), TuanRule.class);
                     tvSkuSellingPrice.setText(tuanRule.getName());
+                    currentSkuQuantity = tuanRule.getNum();
                 }
                 btnSubmit.setEnabled(true);
                 tvSkuInfo.setText("选择：数量");
@@ -437,7 +451,7 @@ public class ProductSkuDialog extends Dialog {
 //                    tvSkuInfo.setText("已选：" + builder.toString());
 //                } else {
         GlideManager.loadImg(product.getDetail().getImage(), ivSkuLogo);
-        TuanRule tuanRule = new Gson().fromJson(product.getDetail().getTuan_rule().toString(),TuanRule.class);
+        TuanRule tuanRule = new Gson().fromJson(product.getDetail().getTuan_rule().toString(), TuanRule.class);
         tvSkuSellingPrice.setText(tuanRule.getName());
         btnSubmit.setEnabled(true);
         tvSkuInfo.setText("选择：" + skuList.get(0).getGroup_name());

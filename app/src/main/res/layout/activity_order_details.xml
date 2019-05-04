@@ -468,7 +468,7 @@
             android:layout_weight="1"
             android:background="@drawable/selector_bg_radius_15_gray_hollow"
             android:gravity="center"
-            android:text="申请退货"
+            android:text="申请退单"
             android:textColor="#ff666666"
             android:textSize="@dimen/sp_13" />
 

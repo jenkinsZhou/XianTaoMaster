@@ -510,6 +510,8 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                                     JSONObject jsonObject = JSONObject.parseObject(info);
                                     int pinId = jsonObject.getInteger("tuanuser_id");
                                     skipOrderSettleByPin(pinId);
+                                }else{
+                                    ToastUtil.showFailed(entity.msg);
                                 }
                             } else {
                                 ToastUtil.showFailed(entity.msg);
@@ -741,6 +743,8 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                                     int pinId = jsonObject.getInteger("tuanuser_id");
                                     skipOrderSettleByPin(pinId);
                                 }
+                            }else {
+                                ToastUtil.showFailed(entity.msg);
                             }
                         }
                     }

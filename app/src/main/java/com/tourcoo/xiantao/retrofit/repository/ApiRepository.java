@@ -470,7 +470,7 @@ public class ApiRepository extends BaseRepository {
     }
 
     /**
-     * 申请退货
+     * 申请退单
      *
      * @param orderId
      * @return

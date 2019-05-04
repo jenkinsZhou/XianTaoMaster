@@ -132,6 +132,9 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
         initAdapter();
         if (AccountInfoHelper.getInstance().isLogin()) {
             refreshShoppingCarNoDialog();
+        } else {
+            mStatusLayoutManager.showEmptyLayout();
+            hideView(llBottomLayout);
         }
     }
 

@@ -503,7 +503,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 //立即支付
                 requestBalanceAndShowPayDialog();
                 break;
-            //申请退货
+            //申请退单
             case R.id.tvReturn:
                 skipReturnGoods(mOrderEntity.getOrder());
                 break;
@@ -570,9 +570,9 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS) {
-                                if (entity.data != null) {
-                                    refreshRequest();
-                                }
+                                ToastUtil.showSuccess("取消成功");
+                                setResult(RESULT_OK);
+                                finish();
                             } else {
                                 ToastUtil.showFailed(entity.msg);
                             }
@@ -886,6 +886,8 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             }
         }
     }
+
+
 }
 
 

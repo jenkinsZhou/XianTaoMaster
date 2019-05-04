@@ -128,10 +128,11 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
                     if (AccountInfoHelper.getInstance().isLogin()) {
                         //获取购物车中商品数量
                         getTotalNum();
+                        if (position == TAB_INDEX_MINE) {
+                            mineFragment.checkTokenAndRequestUserInfo();
+                        }
                     }
-                    if (position == TAB_INDEX_MINE) {
-                        mineFragment.checkTokenAndRequestUserInfo();
-                    }
+
                 }
 
                 @Override
@@ -266,6 +267,7 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
         if (count <= 0) {
             mTabLayout.hideMsg(2);
         } else {
+            mTabLayout.setMsgMargin(2,-15,0);
             mTabLayout.showMsg(2, count);
         }
     }

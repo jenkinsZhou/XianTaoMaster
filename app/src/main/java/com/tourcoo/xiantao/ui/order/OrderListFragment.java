@@ -26,8 +26,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.app.Activity.RESULT_OK;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_ALL;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_COMMENT;
+import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_PAY;
+import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_RECIEVE;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_SEND;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.ui.order.OrderDetailActivity.EXTRA_ORDER_ID;
@@ -43,6 +46,10 @@ import static com.tourcoo.xiantao.ui.order.ReturnGoodsActivity.EXTRA_GOODS_LIST;
 public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo> {
     private OrderListAdapter mAdapter;
     private int orderStatus = ORDER_STATUS_ALL;
+    /**
+     * 订单详情
+     */
+//    public static final int REQUEST_CODE_ORDER_DETAIL = 2;
     public static final String EXTRA_ORDER_STATUS = "EXTRA_ORDER_STATUS";
 
     @Override
@@ -148,7 +155,7 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
                 switch (view.getId()) {
                     case R.id.photoRecyclerView:
                     case R.id.llOrderInfo:
-                        skipGoodsDetail(orderInfo.getId());
+                        skipOrderDetail(orderInfo.getId());
                         break;
                     case R.id.btnOne:
                         ToastUtil.show("1");
@@ -174,18 +181,19 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
      *
      * @param orderId
      */
-    private void skipGoodsDetail(int orderId) {
+    private void skipOrderDetail(int orderId) {
         Intent intent = new Intent();
         intent.putExtra(EXTRA_ORDER_ID, orderId);
         intent.setClass(mContext, OrderDetailActivity.class);
-        startActivity(intent);
+        TourCooLogUtil.i(TAG, TAG + ":" + "订单状态");
+        startActivityForResult(intent, orderStatus);
     }
 
 
     private void loadButton4Function(OrderEntity.OrderInfo orderInfo) {
         switch (orderInfo.getOrder_status()) {
             case ORDER_STATUS_WAIT_SEND:
-                //申请退货
+                //申请退单
                 skipReturnGoods(orderInfo);
                 break;
             case ORDER_STATUS_WAIT_COMMENT:
@@ -222,5 +230,31 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
         intent.putExtra(EXTRA_ORDER_ID, orderInfo.getId());
         intent.setClass(mContext, EvaluationActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                //订单详情回调
+                case ORDER_STATUS_WAIT_PAY:
+                    TourCooLogUtil.i(TAG, TAG + ":" + "代付款回调");
+                    mRefreshLayout.autoRefresh();
+                    break;
+                case ORDER_STATUS_WAIT_COMMENT:
+                    mRefreshLayout.autoRefresh();
+                    break;
+                case ORDER_STATUS_WAIT_SEND:
+                    mRefreshLayout.autoRefresh();
+                    break;
+                case ORDER_STATUS_WAIT_RECIEVE:
+                    mRefreshLayout.autoRefresh();
+                    break;
+                default:
+                    break;
+            }
+        }
+
     }
 }

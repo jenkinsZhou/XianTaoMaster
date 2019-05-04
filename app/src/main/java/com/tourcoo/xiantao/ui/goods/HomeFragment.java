@@ -58,6 +58,7 @@ import com.tourcoo.xiantao.ui.base.WebViewActivity;
 import com.tourcoo.xiantao.ui.msg.HomeNewsDetailActivity;
 import com.tourcoo.xiantao.ui.msg.MsgSystemActivity;
 import com.tourcoo.xiantao.util.LocateHelper;
+import com.tourcoo.xiantao.util.LocateHelper;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -108,6 +109,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
     private ViewFlipper homeViewFlipper;
     private TextView tvMessageCount;
     private ImageView ivMsg;
+
     public static HomeFragment newInstance() {
         Bundle args = new Bundle();
         HomeFragment fragment = new HomeFragment();
@@ -338,6 +340,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
      */
     private void showGoodsCount(int count) {
         if (mMainTabActivity != null) {
+            mMainTabActivity.mTabLayout.setMsgMargin(2, -15, 0);
             mMainTabActivity.mTabLayout.showMsg(2, count);
         }
     }
@@ -674,6 +677,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
 
 
     /**
+     *
      */
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onMessageRefreshEvent(MessageEvent messageEvent) {
@@ -706,6 +710,5 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
             }
         });
     }
-
 
 }

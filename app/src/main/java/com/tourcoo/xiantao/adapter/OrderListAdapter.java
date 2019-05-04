@@ -1,6 +1,8 @@
 package com.tourcoo.xiantao.adapter;
 
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -43,6 +45,7 @@ import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_SEND;
  * @Email: 971613168@qq.com
  */
 public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, BaseViewHolder> {
+
     public OrderListAdapter() {
         super(R.layout.item_order_recycler_view_layout);
     }
@@ -63,22 +66,27 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
         }
         GridImageAdapter gridImageAdapter = new GridImageAdapter(imageList);
         gridImageAdapter.bindToRecyclerView(commentImageRecyclerView);
-        helper.getView(R.id.tvOrderNumber);
-        helper.setText(R.id.tvNum, orderInfo.getGoods().size() + "");
-        helper.setText(R.id.tvOrderNumber, orderInfo.getOrder_no());
-        helper.setText(R.id.tvCreateTime, DateUtil.parseDate(orderInfo.getCreatetime()) + "");
         TextView tvOrderStatus = helper.getView(R.id.tvOrderStatus);
         TextView btnOne = helper.getView(R.id.btnOne);
         TextView btnTwo = helper.getView(R.id.btnTwo);
         TextView btnThree = helper.getView(R.id.btnThree);
         TextView btnFour = helper.getView(R.id.btnFour);
+        LinearLayout llOrderInfo = helper.getView(R.id.llOrderInfo);
+        commentImageRecyclerView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return llOrderInfo.onTouchEvent(event);
+            }
+        });
+        helper.getView(R.id.tvOrderNumber);
+        helper.setText(R.id.tvNum, orderInfo.getGoods().size() + "");
+        helper.setText(R.id.tvOrderNumber, orderInfo.getOrder_no());
+        helper.setText(R.id.tvCreateTime, DateUtil.parseDate(orderInfo.getCreatetime()) + "");
         helper.addOnClickListener(R.id.llOrderInfo);
         helper.addOnClickListener(R.id.btnOne);
         helper.addOnClickListener(R.id.btnTwo);
         helper.addOnClickListener(R.id.btnThree);
         helper.addOnClickListener(R.id.btnFour);
-        helper.addOnClickListener(R.id.photoRecyclerView);
-//        initItemButtonClick(helper);
         //待付款状态
         if (orderInfo.getPay_status() == NOT_FINISH) {
             orderInfo.setOrder_status(ORDER_STATUS_WAIT_PAY);
@@ -98,7 +106,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                     hindView(btnOne);
                     hindView(btnTwo);
                     hindView(btnThree);
-                    setTextGray(btnFour, "申请退货");
+                    setTextGray(btnFour, "申请退单");
                     TourCooLogUtil.i(TAG, TAG + "订单id:" + orderInfo.getId());
                     break;
                 case FINISH:
@@ -107,7 +115,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                         tvOrderStatus.setText("待收货");
                         orderInfo.setOrder_status(ORDER_STATUS_WAIT_RECIEVE);
                         hindView(btnOne);
-                        setTextGray(btnTwo, "申请退货");
+                        setTextGray(btnTwo, "申请退单");
                         setTextGray(btnThree, "查看物流");
                         setTextGray(btnFour, "确认收货");
                         TourCooLogUtil.i(TAG, TAG + "订单id:" + orderInfo.getId());
@@ -121,7 +129,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                             hindView(btnOne);
                             hindView(btnTwo);
                             hindView(btnThree);
-                          /*  setTextGray(btnTwo, "申请退货");
+                          /*  setTextGray(btnTwo, "申请退单");
                             setTextGray(btnThree, "查看物流");*/
                             setTextGray(btnFour, "立即评价");
                             TourCooLogUtil.i(TAG, TAG + "订单id:" + orderInfo.getId());
@@ -175,13 +183,18 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                 default:
                     break;
             }
-        }
-        int pin = orderInfo.getTuan();
-        //1表示拼团订单
-        if (pin == 1) {
-            helper.setGone(R.id.tvPin, true);
-        } else {
-            helper.setGone(R.id.tvPin, false);
+            int pin = orderInfo.getTuan();
+            //1表示拼团订单
+            if (pin == 1) {
+                //拼团订单 只保留查看拼团功能
+                helper.setGone(R.id.tvPin, true);
+                hindView(btnOne);
+                hindView(btnTwo);
+                hindView(btnThree);
+                setTextGray(btnFour, "查看详情");
+            } else {
+                helper.setGone(R.id.tvPin, false);
+            }
         }
     }
 
@@ -207,6 +220,9 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
         view.setVisibility(View.GONE);
     }
 
+    private void showView(View view) {
+        view.setVisibility(View.VISIBLE);
+    }
 
 }
 

@@ -161,7 +161,7 @@
                     android:paddingTop="@dimen/dp_3"
                     android:paddingRight="@dimen/dp_3"
                     android:paddingBottom="@dimen/dp_3"
-                    android:text="申请退货"
+                    android:text="申请退单"
                     android:textColor="#ff666666"
                     android:textSize="@dimen/sp_12" />
 

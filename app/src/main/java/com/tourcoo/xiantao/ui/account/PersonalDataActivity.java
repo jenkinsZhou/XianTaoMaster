@@ -116,7 +116,6 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
         findViewById(R.id.rlUserBirthDate).setOnClickListener(this);
         crvAvatar.setOnClickListener(this);
         tvNickName.setOnClickListener(this);
-        tvBirthday.setOnClickListener(this);
         tvSaveData.setOnClickListener(this);
         tvMobile.setOnClickListener(this);
         initTimePicker();

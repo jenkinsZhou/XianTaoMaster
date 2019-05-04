@@ -62,6 +62,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import static com.tourcoo.xiantao.constant.WxConfig.APP_ID;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_FAILED;
 import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_SUCCESS;
 import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.EXTRA_ADDRESS_INFO;
 import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.EXTRA_SKIP_TAG_SETTLE;
@@ -443,7 +444,6 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                         return;
                     }
                 }
-
                 // 所需的权限均正常获取
 //                ToastUtil.show(getString(R.string.permission_granted));
             }
@@ -582,6 +582,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                             } else {
                                 ToastUtil.showFailed("支付失败");
                                 TourCooLogUtil.e(TAG, result);
+                                softReference.get().skipToOrderListAndFinish();
                             }
                             break;
                         }
@@ -724,6 +725,9 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                 //支付成功 直接跳转到详情
                 skipOrderList();
                 break;
+            case EVENT_ACTION_PAY_FRESH_FAILED:
+                skipToOrderListAndFinish();
+                break;
             default:
                 break;
         }
@@ -777,8 +781,6 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     }
 
 
-
-
     /**
      * 拼团支付接口
      */
@@ -787,7 +789,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             ToastUtil.show("未获取到订单信息");
             return;
         }
-        ApiRepository.getInstance().requestPinPay(pinId,payType).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+        ApiRepository.getInstance().requestPinPay(pinId, payType).compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseLoadingObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {
@@ -818,4 +820,16 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                     }
                 });
     }
+
+    /**
+     * 支付失败 跳转至订单列表 并finish页面
+     */
+    private void skipToOrderListAndFinish() {
+        Intent intent = new Intent();
+        intent.setClass(mContext, MyOrderListActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+
 }
