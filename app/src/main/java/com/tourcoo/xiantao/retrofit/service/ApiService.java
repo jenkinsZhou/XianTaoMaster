@@ -406,6 +406,16 @@ public interface ApiService {
     Observable<BaseEntity<MessageBean>> requestMessageNoReadCount();
 
 
+
+    /**
+     * 信息详情
+     * @param map
+     * @return
+     */
+    @POST("msg/detail")
+    Observable<BaseEntity<MessageBean>> requestMessageBean(@QueryMap Map<String, Object> map);
+
+
     /**
      * 商品收藏列表
      *

@@ -68,6 +68,11 @@ public class MyTuanListActivity extends BaseTourCooTitleActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ((MyTuanListFragment) fragmentList.get(tuanTabLayout.getSelectedTabPosition())).updateDate();
+    }
 
     class MyPagerAdapter extends FragmentPagerAdapter {
         private List<Fragment> fragmentList;

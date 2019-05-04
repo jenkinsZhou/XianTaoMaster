@@ -142,6 +142,8 @@ public class ProductSkuDialog extends Dialog {
                         etSkuQuantityInput.setText(newQuantity);
                         etSkuQuantityInput.setSelection(newQuantity.length());
                         updateQuantityOperator(quantityInt + 1);
+                    }else {
+                        ToastUtil.showFailed("已达到商品数量上限");
                     }
                 } else {
                     String newQuantity = String.valueOf(quantityInt + 1);
@@ -493,7 +495,7 @@ public class ProductSkuDialog extends Dialog {
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
         lp.width = AbsListView.LayoutParams.MATCH_PARENT;
         //设置Dialog距离底部的距离
-        lp.y = 0;
+        lp.y = 30;
         dialogWindow.setAttributes(lp);
         AppUtils.transparencyBar(getWindow());
     }

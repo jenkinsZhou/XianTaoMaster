@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#F8F8F8"
+    android:descendantFocusability="blocksDescendants"
     android:paddingLeft="@dimen/dp_10"
     android:paddingTop="@dimen/dp_10"
     android:paddingRight="@dimen/dp_10"
@@ -115,6 +116,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/photoRecyclerView"
             android:layout_width="match_parent"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_height="wrap_content"
             android:minHeight="@dimen/dp_80"
             android:padding="@dimen/dp_15">

@@ -72,6 +72,8 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
     private int tuanStatus = TUAN_STATUS_MINE;
     public static final String EXTRA_TUAN_STATUS = "EXTRA_TUAN_STATUS";
 
+    private boolean isInit = false;
+
     public static MyTuanListFragment newInstance(int tuanStatus) {
         Bundle args = new Bundle();
         args.putInt(EXTRA_TUAN_STATUS, tuanStatus);
@@ -79,6 +81,18 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
         fragment.setArguments(args);
         return fragment;
     }
+
+
+    public void updateDate() {
+        if (isInit) {
+            mDefaultPage = 1;
+            mRefreshLayout.setNoMoreData(false);
+            mRefreshLayout.setEnableLoadMore(true);
+            isLoadMore = false;
+            loadData(mDefaultPage);
+        }
+    }
+
 
     @Override
     public int getContentLayout() {
@@ -91,11 +105,12 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
             ToastUtil.show("未获取到数据");
             return;
         }
+        isInit = true;
 
         api = WXAPIFactory.createWXAPI(getContext(), WxConfig.APP_ID);
         sharePopupWindow = new SharePopupWindow(getContext(), true);
 
-        tuanStatus = getArguments().getInt(EXTRA_TUAN_STATUS, -1);
+        tuanStatus = getArguments().getInt(EXTRA_TUAN_STATUS, 1);
 
         footView = LayoutInflater.from(mContext).inflate(R.layout.item_view, null);
 

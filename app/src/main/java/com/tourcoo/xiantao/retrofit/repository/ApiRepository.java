@@ -607,6 +607,20 @@ public class ApiRepository extends BaseRepository {
     }
 
 
+
+    /**
+     * 信息详情
+     *
+     * @return
+     */
+    public Observable<BaseEntity<MessageBean>> requestMessageBean(String id) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("id", id);
+        TourCooLogUtil.i(TAG, TAG + ":" + params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestMessageBean(params).retryWhen(new RetryWhen()));
+    }
+
+
     /**
      * 获取商品收藏列表
      *

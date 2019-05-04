@@ -145,7 +145,7 @@ public class MsgSystemActivity extends BaseRefreshLoadActivity<MessageEntity> {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent();
-                intent.putExtra(EXTRA_MESSAGE_DETAIL, systemMsgAdapter.getData().get(position));
+                intent.putExtra("id", systemMsgAdapter.getData().get(position).getId());
                 intent.setClass(mContext, MessageDetailActivity.class);
                 startActivityForResult(intent,EXTRA_MESSAGE_CODE);
             }

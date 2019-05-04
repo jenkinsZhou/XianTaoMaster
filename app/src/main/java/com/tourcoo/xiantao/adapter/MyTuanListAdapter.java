@@ -7,6 +7,7 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,6 +22,7 @@ import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.log.widget.utils.DateUtil;
+import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.entity.goods.Goods;
@@ -59,6 +61,8 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
     private static final int TUAN_STATUS_RUNNING = 1;
     private static final int TUAN_STATUS_COMPLETE = 2;
 
+    //1我发起的  2我参与的
+    private int type = 1;
 
     public MyTuanListAdapter(Context context, List<TuanEntity.DataBean> datas) {
         this.context = context;
@@ -67,6 +71,7 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
         }
         mDatas = datas;
         countDownMap = new SparseArray<>();
+
     }
 
     public void setNewData(List<TuanEntity.DataBean> data) {
@@ -114,12 +119,18 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(listener != null) listener.onItemClick(mDatas.get(position).getId());
+                if (listener != null) {
+                    ToastUtil.show("支付状态："+mDatas.get(position).getUser_status()+"\n" +
+                            "    订单状态 "+mDatas.get(position).getStatus());
+//                    listener.onItemClick(mDatas.get(position).getId());
+                }
+
             }
         });
 
         switch (item.getStatus()) {
             case TUAN_STATUS_FAIL:
+                holder.llStatus.setVisibility(View.GONE);
                 holder.tvEndTime.setVisibility(View.GONE);
                 holder.tvTuanStatus.setVisibility(View.GONE);
                 holder.btnClick.setVisibility(View.GONE);
@@ -134,12 +145,13 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
                 LogUtils.e(position, time);
                 //已经过了截止时间 或者已经满团    订单状态 ---> 已完成
                 if (Double.parseDouble(item.getTuan().getSurplus()) == 0.0 || time <= 0) {
+                    holder.llStatus.setVisibility(View.GONE);
                     holder.tvEndTime.setVisibility(View.GONE);
                     holder.tvTuanStatus.setVisibility(View.GONE);
                     holder.btnClick.setVisibility(View.GONE);
                     holder.btnPay.setVisibility(View.GONE);
                 } else {
-
+                    holder.llStatus.setVisibility(View.VISIBLE);
                     if (item.getUser_status() == 0) {
                         holder.btnPay.setVisibility(View.VISIBLE);
                         holder.btnPay.setOnClickListener(new View.OnClickListener() {
@@ -150,6 +162,8 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
                                 }
                             }
                         });
+                    }else {
+                        holder.btnPay.setVisibility(View.GONE);
                     }
 
                     holder.tvEndTime.setVisibility(View.VISIBLE);
@@ -192,6 +206,7 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
 
                 break;
             case TUAN_STATUS_COMPLETE:
+                holder.llStatus.setVisibility(View.GONE);
                 holder.tvEndTime.setVisibility(View.GONE);
                 holder.tvTuanStatus.setVisibility(View.GONE);
                 holder.btnClick.setVisibility(View.GONE);
@@ -217,11 +232,13 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
         private TextView tvEndTime;
         private TextView btnClick;
         private TextView btnPay;
+        private LinearLayout llStatus;
         private RoundedImageView ivGoodsImage;
         private CountDownTimer countDownTimer;
 
         ViewHolder(View itemView) {
             super(itemView);
+            llStatus = itemView.findViewById(R.id.llStatus);
             tvTuanStatus = itemView.findViewById(R.id.tvTuanStatus);
             ivGoodsImage = itemView.findViewById(R.id.ivGoodsImage);
             tvGoodsName = itemView.findViewById(R.id.tvGoodsName);
@@ -241,7 +258,9 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
 
     public interface IOnItemClickListener {
         void onItemClick(int tuan_id);
+
         void onBtnClick(int tuanuser_id);
+
         void onPayClick(int tuanuser_id);
     }
 
