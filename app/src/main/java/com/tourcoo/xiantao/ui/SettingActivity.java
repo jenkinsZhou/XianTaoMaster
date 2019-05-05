@@ -8,6 +8,7 @@ import com.allen.library.SuperTextView;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
+import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.frame.util.SharedPreferencesUtil;
 import com.tourcoo.xiantao.core.frame.util.StackUtil;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
@@ -16,6 +17,7 @@ import com.tourcoo.xiantao.core.module.MainTabActivity;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.SystemSettingEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.account.EditPasswordActivity;
 import com.tourcoo.xiantao.ui.account.LoginActivity;
@@ -47,6 +49,7 @@ public class SettingActivity extends BaseTourCooTitleActivity implements View.On
         stvClearCache.setOnClickListener(this);
         findViewById(R.id.btnExitLogin).setOnClickListener(this);
         findViewById(R.id.stvResetPassword).setOnClickListener(this);
+        findViewById(R.id.stvAboutUs).setOnClickListener(this);
         showCache();
     }
 
@@ -68,6 +71,10 @@ public class SettingActivity extends BaseTourCooTitleActivity implements View.On
                 break;
             case R.id.stvResetPassword:
                 TourCooUtil.startActivity(mContext, EditPasswordActivity.class);
+                break;
+            case R.id.stvAboutUs:
+                //关于我们
+                TourCooUtil.startActivity(mContext, AboutUsActivity.class);
                 break;
             default:
                 break;
@@ -139,5 +146,24 @@ public class SettingActivity extends BaseTourCooTitleActivity implements View.On
         }
         TourCooUtil.startActivity(mContext, LoginActivity.class);
         finish();
+    }
+
+
+    /**
+     * 获取系统相关信息
+     */
+    private void requestSystemConfig() {
+        ApiRepository.getInstance().requestSystemConfig().compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity<SystemSettingEntity>>() {
+                    @Override
+                    public void onRequestNext(BaseEntity<SystemSettingEntity> entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+                });
     }
 }

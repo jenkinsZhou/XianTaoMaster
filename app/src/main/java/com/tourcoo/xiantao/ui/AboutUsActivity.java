@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.TextView;
 
 import com.allen.library.SuperTextView;
 
@@ -13,8 +14,12 @@ import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.frame.util.SharedPreferencesUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
+import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.SystemSettingEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.trello.rxlifecycle3.android.ActivityEvent;
+
+import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 
 
 /**
@@ -28,6 +33,7 @@ public class AboutUsActivity extends BaseTourCooTitleActivity implements View.On
     private String phone;
     private SuperTextView stvPhoneNumber;
     public static final String PREF_TEL_PHONE_KEY = "PREF_TEL_PHONE_KEY";
+    private TextView tvAppVersion;
 
     @Override
     public int getContentLayout() {
@@ -38,12 +44,17 @@ public class AboutUsActivity extends BaseTourCooTitleActivity implements View.On
     public void initView(Bundle savedInstanceState) {
 //        findViewById(R.id.stvAppVersion).setOnClickListener(this);
 //        findViewById(R.id.stvPhoneNumber).setOnClickListener(this);
-//        stvPhoneNumber = findViewById(R.id.stvPhoneNumber);
+        stvPhoneNumber = findViewById(R.id.stvPhoneNumber);
+        tvAppVersion = findViewById(R.id.tvAppVersion);
+        stvPhoneNumber.setOnClickListener(this);
         phone = (String) SharedPreferencesUtil.get(PREF_TEL_PHONE_KEY, "");
-        showPhone(phone);
-//        getServicePhone();
     }
 
+    @Override
+    public void loadData() {
+        requestSystemConfig();
+        super.loadData();
+    }
 
     private void showPhone(String phone) {
         if (TextUtils.isEmpty(phone)) {
@@ -71,6 +82,13 @@ public class AboutUsActivity extends BaseTourCooTitleActivity implements View.On
                 }
                 call(phone);
                 break;*/
+            case R.id.stvPhoneNumber:
+                if (TextUtils.isEmpty(phone)) {
+                    ToastUtil.show("未获取到客服号码");
+                    return;
+                }
+                call(phone);
+                break;
             default:
                 break;
         }
@@ -88,19 +106,31 @@ public class AboutUsActivity extends BaseTourCooTitleActivity implements View.On
         startActivity(intent);
     }
 
-  /*  private void getServicePhone() {
-        ApiRepository.getInstance().getServicePhone().compose(bindUntilEvent(ActivityEvent.DESTROY)).
-                subscribe(new BaseObserver<String>() {
+
+    /**
+     * 获取系统相关信息
+     */
+    private void requestSystemConfig() {
+        ApiRepository.getInstance().requestSystemConfig().compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity<SystemSettingEntity>>() {
                     @Override
-                    public void onRequestNext(String entity) {
-                        closeLoadingDialog();
-                        if (entity != null && entity.length() != 0) {
-                            phone = entity;
-                            SharedPreferencesUtil.put(PREF_TEL_PHONE_KEY, phone);
-                            showPhone(phone);
-//                                ToastUtil.showFailed(entity.message);
+                    public void onRequestNext(BaseEntity<SystemSettingEntity> entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                SystemSettingEntity settingEntity = entity.data;
+                                if (settingEntity != null) {
+                                    phone = settingEntity.getKefu();
+                                    String version = "V" + settingEntity.getAndroid_version();
+                                    tvAppVersion.setText(version);
+                                    showPhone(phone);
+                                }
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
                         }
                     }
                 });
-    }*/
+    }
+
+
 }

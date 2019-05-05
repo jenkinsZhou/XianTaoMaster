@@ -43,7 +43,6 @@
                 android:layout_marginTop="@dimen/dp_20"
                 android:layout_marginBottom="@dimen/dp_12"
                 android:textStyle="bold"
-                android:visibility="gone"
                 app:sDividerLineType="none"
                 app:sLeftTextColor="@color/blackCommon"
                 app:sLeftTextSize="@dimen/sp_15"

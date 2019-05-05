@@ -14,6 +14,7 @@ import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
+import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.order.LogisticsBean;
@@ -111,7 +112,7 @@ public class SeeLogisticsActivity extends BaseTourCooTitleActivity {
                     @Override
                     public void onRequestNext(BaseEntity entity) {
                         if (entity == null) {
-                            ToastUtil.showFailed("服务器异常");
+                            ToastUtil.showFailed("服务器出了点小差");
                             return;
                         }
                         if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
@@ -127,9 +128,10 @@ public class SeeLogisticsActivity extends BaseTourCooTitleActivity {
 
     private void setLogisticsData(LogisticsBean model) {
         if (model != null) {
-//            GlideManager.loadImg(model.getImage(), ivPhoto);
+            GlideManager.loadImg(TourCooUtil.getUrl(model.getImage()), ivPhoto);
             tvNu.setText(model.getNo());
             tvNickName.setText(model.getAddress().getName());
+            tvMobile.setText(model.getAddress().getPhone());
             tvCompany.setText(model.getCompany() + "：");
             tvStatus.setText(model.getStatus());
             tvAddress.setText("[收货地址]" + model.getAddress().getAddress());

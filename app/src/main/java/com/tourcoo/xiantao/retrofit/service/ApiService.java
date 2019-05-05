@@ -1,6 +1,7 @@
 package com.tourcoo.xiantao.retrofit.service;
 
 
+import com.tourcoo.xiantao.entity.SystemSettingEntity;
 import com.tourcoo.xiantao.entity.coin.CoinHistory;
 import com.tourcoo.xiantao.entity.comment.CommentDetail;
 import com.tourcoo.xiantao.entity.comment.CommentEntity;
@@ -577,11 +578,20 @@ public interface ApiService {
 
     /**
      * 查看物流
+     *
      * @param params
      * @return
      */
     @POST("order/logistics")
     Observable<BaseEntity> requestLogistics(@QueryMap Map<String, Object> params);
 
+
+    /**
+     * 获取系统信息
+     *
+     * @return
+     */
+    @POST("index/sysconfig")
+    Observable<BaseEntity<SystemSettingEntity>> requestSystemConfig();
 
 }

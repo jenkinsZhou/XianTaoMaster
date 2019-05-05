@@ -86,11 +86,12 @@ public class MyCoinListActivity extends BaseTourCooRefreshLoadActivity<CoinDetai
 
     @Override
     public void loadData(int page) {
-        requestMyCoinList(page);
+        requestCoinList(page);
     }
 
     @Override
     public void loadData() {
+        mDefaultPageSize = 10;
         super.loadData();
     }
 
@@ -105,7 +106,11 @@ public class MyCoinListActivity extends BaseTourCooRefreshLoadActivity<CoinDetai
     /**
      * 查询充值记录
      */
-    private void requestMyCoinList(int page) {
+    private void requestCoinList(int page) {
+        if (page == 1) {
+            adapter.getData().clear();
+        }
+         TourCooLogUtil.i(TAG,TAG+":"+ "执行了");
         ApiRepository.getInstance().requestMyCoinList(page).compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseObserver<BaseEntity<CoinHistory>>() {
                     @Override
@@ -167,7 +172,8 @@ public class MyCoinListActivity extends BaseTourCooRefreshLoadActivity<CoinDetai
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS) {
                                 ToastUtil.showSuccess("兑换成功");
-                                mRefreshLayout.autoRefresh();
+                                setResult(RESULT_OK);
+                                requestCoinList(1);
                             } else {
                                 ToastUtil.showFailed(entity.msg);
                             }
@@ -190,10 +196,13 @@ public class MyCoinListActivity extends BaseTourCooRefreshLoadActivity<CoinDetai
             public void onClick(DialogInterface dialog, int which) {
                 requestExchange();
                 dialog.dismiss();
-                mRefreshLayout.autoRefresh();
             }
         });
         showConfirmDialog(builder);
     }
 
+    @Override
+    public boolean isRefreshEnable() {
+        return false;
+    }
 }

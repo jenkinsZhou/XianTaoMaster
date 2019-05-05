@@ -79,7 +79,7 @@ public class OrderDetailEntity {
         private int receipt_status;
         private int receipt_time;
         private int order_status;
-        private int transaction_id;
+        private String transaction_id;
         private int user_id;
         private long createtime;
         private long updatetime;
@@ -213,11 +213,11 @@ public class OrderDetailEntity {
             this.order_status = order_status;
         }
 
-        public int getTransaction_id() {
+        public String getTransaction_id() {
             return transaction_id;
         }
 
-        public void setTransaction_id(int transaction_id) {
+        public void setTransaction_id(String transaction_id) {
             this.transaction_id = transaction_id;
         }
 

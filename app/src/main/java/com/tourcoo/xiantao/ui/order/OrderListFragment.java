@@ -236,7 +236,8 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
             //表示当前是拼团订单
             intent.putExtra(EXTRA_PIN_TAG, 1);
         }
-        TourCooLogUtil.i(TAG, TAG + ":" + "订单状态");
+        TourCooLogUtil.i(TAG, TAG + ":" + "订单状态:"+orderStatus);
+        TourCooLogUtil.i(TAG, TAG + ":" + "订单id:"+orderId);
         startActivityForResult(intent, orderStatus);
     }
 

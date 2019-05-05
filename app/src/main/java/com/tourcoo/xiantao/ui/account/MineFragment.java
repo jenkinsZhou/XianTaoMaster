@@ -130,6 +130,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         civUserAvatar.setOnClickListener(this);
         tvBalance = mContentView.findViewById(R.id.tvBalance);
         tvAccumulatePoints = mContentView.findViewById(R.id.tvAccumulatePoints);
+        tvAccumulatePoints.setOnClickListener(this);
         RelativeLayout rlSearch = mContentView.findViewById(R.id.rlTitleBar);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(rlSearch.getLayoutParams());
         //4个参数按顺序分别是左上右下
@@ -192,14 +193,26 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                 switch (position) {
                     case 0:
                         //账户余额
-                        TourCoolUtil.startActivity(mContext, AccountBalanceActivity.class);
+                        if (!AccountInfoHelper.getInstance().isLogin()) {
+                            TourCoolUtil.startActivity(mContext, LoginActivity.class);
+                            return;
+                        }
+                        skipAccount();
                         break;
                     case 1:
                         //拼团记录
+                        if (!AccountInfoHelper.getInstance().isLogin()) {
+                            TourCoolUtil.startActivity(mContext, LoginActivity.class);
+                            return;
+                        }
                         TourCoolUtil.startActivity(mContext, MyTuanListActivity.class);
                         break;
                     case 2:
                         //收藏商品
+                        if (!AccountInfoHelper.getInstance().isLogin()) {
+                            TourCoolUtil.startActivity(mContext, LoginActivity.class);
+                            return;
+                        }
                         TourCoolUtil.startActivity(mContext, CollectionGoodsListActivity.class);
                         break;
                     case 3:
@@ -611,6 +624,12 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     }
 
 
+
+    private void skipAccount(){
+        Intent coinIntent = new Intent();
+        coinIntent.setClass(mContext, AccountBalanceActivity.class);
+        startActivityForResult(coinIntent, REQUEST_CODE_EDIT_USER_INFO);
+    }
 }
 
 

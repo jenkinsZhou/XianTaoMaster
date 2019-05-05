@@ -75,7 +75,7 @@ public class ReturnOrderList extends BaseTourCooRefreshLoadActivity<OrderEntity.
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         super.setTitleBar(titleBar);
-        titleBar.setTitleMainText("退货列表");
+        titleBar.setTitleMainText("退单列表");
     }
 
     @Override

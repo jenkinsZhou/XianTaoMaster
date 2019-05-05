@@ -7,6 +7,7 @@ import com.tourcoo.xiantao.core.frame.retrofit.RetryWhen;
 import com.tourcoo.xiantao.core.frame.retrofit.TourCoolRetrofit;
 import com.tourcoo.xiantao.core.frame.retrofit.TourCoolTransformer;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
+import com.tourcoo.xiantao.entity.SystemSettingEntity;
 import com.tourcoo.xiantao.entity.coin.CoinHistory;
 import com.tourcoo.xiantao.entity.comment.CommentDetail;
 import com.tourcoo.xiantao.entity.comment.CommentEntity;
@@ -924,4 +925,8 @@ public class ApiRepository extends BaseRepository {
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestLogistics(params).retryWhen(new RetryWhen()));
     }
 
+
+    public Observable<BaseEntity<SystemSettingEntity>> requestSystemConfig() {
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestSystemConfig().retryWhen(new RetryWhen()));
+    }
 }

@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
+import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -111,6 +112,8 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
     private ViewFlipper homeViewFlipper;
     private TextView tvMessageCount;
     private ImageView ivMsg;
+    private ImageView ivLocate;
+    private TextView tvCity;
 
     public static HomeFragment newInstance() {
         Bundle args = new Bundle();
@@ -178,6 +181,10 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
 
     private void initView() {
         mMainTabActivity = (MainTabActivity) mContext;
+        ivLocate = mContentView.findViewById(R.id.ivLocate);
+        tvCity = mContentView.findViewById(R.id.tvCity);
+        tvCity.setOnClickListener(this);
+        ivLocate.setOnClickListener(this);
         mContentView.findViewById(R.id.rlSearchLayout).setOnClickListener(this);
         homeViewFlipper = mContentView.findViewById(R.id.homeViewFlipper);
         rlContentView = mContentView.findViewById(R.id.rlContentView);
@@ -240,7 +247,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
                     }
                     BannerBean bannerBean = mBannerBeanList.get(position);
                     if (bannerBean != null) {
-                        getBannerDetail(bannerBean.getId() + "",position);
+                        getBannerDetail(bannerBean.getId() + "", position);
                     }
                 }
             });
@@ -273,6 +280,12 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
                 break;
             case R.id.ivMsg:
                 skipToMessageCenter();
+                break;
+            case R.id.tvCity:
+                refreshLocate();
+                break;
+            case R.id.ivLocate:
+                refreshLocate();
                 break;
             default:
                 break;
@@ -512,14 +525,14 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
     /**
      * 获取banner详情
      */
-    private void getBannerDetail(String id,int position) {
+    private void getBannerDetail(String id, int position) {
         ApiRepository.getInstance().getBannerDetail(id).compose(bindUntilEvent(FragmentEvent.DESTROY)).
                 subscribe(new BaseObserver<BaseEntity<BannerDetail>>() {
                     @Override
                     public void onRequestNext(BaseEntity<BannerDetail> entity) {
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS) {
-                                doSkipBannerDetail(entity.data,position);
+                                doSkipBannerDetail(entity.data, position);
                             } else {
                                 ToastUtil.showFailed(entity.msg);
                             }
@@ -539,7 +552,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
 //        String url = BASE_URL + bannerDetail.getImage();
 //        String url =  TourCooUtil.getUrl(bannerDetail.getImage());
         String url = bannerImageList.get(position);
-         TourCooLogUtil.i(TAG,TAG+":图片路径:"+url );
+        TourCooLogUtil.i(TAG, TAG + ":图片路径:" + url);
         WebViewActivity.start(mContext, url, false);
     }
 
@@ -703,13 +716,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
             public void onLocationChanged(AMapLocation aMapLocation) {
                 mapLocation = aMapLocation;
                 if (mapLocation != null) {
-                    if (mapLocation.getErrorCode() == 0) {
-                        TourCooLogUtil.d(TAG, "回调结果:" + mapLocation.getCity());
-                    } else {
-//                        ToastUtil.showFailed("定位失败");
-                    }
-                } else {
-//                    ToastUtil.showFailed("定位失败");
+                    showLocate(aMapLocation);
                 }
                 LocateHelper.getInstance().stopLocation();
             }
@@ -728,5 +735,31 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
             default:
                 break;
         }
+    }
+
+
+    private void showLocate(AMapLocation mapLocation) {
+        if (mapLocation != null) {
+            if (mapLocation.getErrorCode() == 0) {
+                TourCooLogUtil.d(TAG, "回调结果:" + mapLocation.getCity());
+                tvCity.setText(mapLocation.getCity());
+            }
+        }
+    }
+
+
+    private void refreshLocate() {
+        showLoadingDialog();
+        LocateHelper.getInstance().startLocation(new AMapLocationListener() {
+            @Override
+            public void onLocationChanged(AMapLocation aMapLocation) {
+                mapLocation = aMapLocation;
+                if (mapLocation != null) {
+                    showLocate(aMapLocation);
+                }
+                LocateHelper.getInstance().stopLocation();
+                closeLoadingDialog();
+            }
+        });
     }
 }

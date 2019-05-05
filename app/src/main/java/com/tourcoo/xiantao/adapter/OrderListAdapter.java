@@ -175,7 +175,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                     orderInfo.setOrder_status(ORDER_STATUS_BACK_ING);
                     hindView(btnOne);
                     hindView(btnTwo);
-                    setTextGray(btnThree, "取消退货");
+                    setTextGray(btnThree, "取消退单");
                     setTextGray(btnFour, "查看详情");
                     break;
                 case 30:

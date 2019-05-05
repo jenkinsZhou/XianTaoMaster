@@ -28,6 +28,8 @@ import java.util.concurrent.TimeoutException;
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 import retrofit2.HttpException;
 
+import static com.tourcoo.xiantao.core.common.CommonConfig.DEBUG_MODE;
+
 /**
  * @author :zhoujian
  * @description :网络请求成功实现类
@@ -76,7 +78,7 @@ public class HttpRequestControlImpl implements HttpRequestControl {
             return;
         }
         statusLayoutManager.showSuccessLayout();
-        boolean refresh = smartRefreshLayout != null && (smartRefreshLayout.isRefreshing() || page == 1);
+        boolean refresh = smartRefreshLayout != null && (smartRefreshLayout.isRefreshing() || page == 1 || page == 0);
         if (refresh) {
             adapter.setNewData(new ArrayList());
         }
@@ -131,7 +133,11 @@ public class HttpRequestControlImpl implements HttpRequestControl {
             }
         }
         if (requestControl == null || requestControl.getStatusLayoutManager() == null) {
-            ToastUtil.show(reason);
+            if (DEBUG_MODE) {
+                ToastUtil.show(reason);
+            } else {
+                ToastUtil.show("服务器出了点小差");
+            }
             return;
         }
         SmartRefreshLayout smartRefreshLayout = requestControl.getRefreshLayout();

@@ -269,6 +269,7 @@ public class AccountBalanceActivity extends BaseTourCooTitleActivity implements 
                             if (success) {
                                 softReference.get().requestBalance();
                                 ToastUtil.showSuccess("支付完成");
+                                softReference.get().setResult(RESULT_OK);
                             } else {
                                 ToastUtil.showFailed("支付失败");
                                 TourCooLogUtil.e(TAG, result);
@@ -410,6 +411,7 @@ public class AccountBalanceActivity extends BaseTourCooTitleActivity implements 
             case EVENT_ACTION_PAY_FRESH_SUCCESS:
                 //充值成功 刷新账户余额
                 requestBalance();
+                setResult(RESULT_OK);
                 break;
             default:
                 break;

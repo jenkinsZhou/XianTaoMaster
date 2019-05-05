@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/dp_10"
-                android:text="合肥"
+                android:text="未获取"
                 android:textColor="@color/greenCommon" />
 
             <ImageView
@@ -38,6 +38,9 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/dp_3"
+                android:paddingRight="@dimen/dp_5"
+                android:paddingTop="@dimen/dp_5"
+                android:paddingBottom="@dimen/dp_5"
                 android:layout_toRightOf="@id/tvCity"
                 android:src="@mipmap/ic_area_location"
                 android:textColor="@color/greenCommon" />

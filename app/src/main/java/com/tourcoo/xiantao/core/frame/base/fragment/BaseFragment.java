@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.luck.picture.lib.dialog.PictureDialog;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.UiConfigManager;
 import com.tourcoo.xiantao.core.frame.base.activity.BaseActivity;
@@ -47,6 +48,8 @@ public abstract class BaseFragment extends RxFragment implements IBaseView {
     private boolean mIsInViewPager;
     protected Bundle mSavedInstanceState;
     private List<BounceLoadingView> mBounceLoadingViewList = new ArrayList<>();
+
+    protected PictureDialog loadingDialog;
 
     @Override
     public boolean isEventBusEnable() {
@@ -294,5 +297,19 @@ public abstract class BaseFragment extends RxFragment implements IBaseView {
     }
 
 
+    protected void showLoadingDialog() {
+        if (loadingDialog == null) {
+            loadingDialog = new PictureDialog(mContext);
+            loadingDialog.setCancelable(false);
+            loadingDialog.setCanceledOnTouchOutside(false);
+        }
+        loadingDialog.show();
+    }
+
+    protected void closeLoadingDialog() {
+        if (loadingDialog != null) {
+            loadingDialog.dismiss();
+        }
+    }
 
 }
