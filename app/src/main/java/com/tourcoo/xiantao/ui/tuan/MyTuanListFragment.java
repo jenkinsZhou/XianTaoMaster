@@ -132,7 +132,7 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
             }
 
             @Override
-            public void onBtnClick(int tuanuser_id,Bitmap bitmap) {
+            public void onBtnClick(int tuan_id,Bitmap bitmap) {
 
                 sharePopupWindow.setISharePopupWindowClickListener(new SharePopupWindow.ISharePopupWindowClickListener() {
                     @Override
@@ -140,7 +140,7 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
                         WXMiniProgramObject miniProgram = new WXMiniProgramObject();
                         miniProgram.webpageUrl = "https://www.baidu.com";//自定义
                         miniProgram.userName = WxConfig.MINI_PROGRAM_USERNAME;//小程序端提供参数
-                        miniProgram.path = WxConfig.MINI_PROGRAM_PATH + tuanuser_id;//小程序端提供参数
+                        miniProgram.path = WxConfig.MINI_PROGRAM_PATH + tuan_id;//小程序端提供参数
                         miniProgram.miniprogramType = WXMiniProgramObject.MINIPROGRAM_TYPE_TEST;// 正式版:0，测试版:1，体验版:2
                         WXMediaMessage mediaMessage = new WXMediaMessage(miniProgram);
                         mediaMessage.title = "邀请拼团";//自定义

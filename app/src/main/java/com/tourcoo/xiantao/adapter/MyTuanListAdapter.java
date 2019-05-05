@@ -4,11 +4,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.Image;
 import android.os.CountDownTimer;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -135,6 +137,7 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
 
         switch (item.getStatus()) {
             case TUAN_STATUS_FAIL:
+                holder.ivStatus.setImageResource(R.mipmap.ic_failure);
                 holder.llStatus.setVisibility(View.GONE);
                 holder.tvEndTime.setVisibility(View.GONE);
                 holder.tvTuanStatus.setVisibility(View.GONE);
@@ -150,12 +153,14 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
                 LogUtils.e(position, time);
                 //已经过了截止时间 或者已经满团并支付    订单状态 ---> 已完成
                 if ((Double.parseDouble(item.getTuan().getSurplus()) == 0.0 && item.getUser_status() == 1) || time <= 0) {
+                    holder.ivStatus.setImageResource(R.mipmap.ic_completed);
                     holder.llStatus.setVisibility(View.GONE);
                     holder.tvEndTime.setVisibility(View.GONE);
                     holder.tvTuanStatus.setVisibility(View.GONE);
                     holder.btnClick.setVisibility(View.GONE);
                     holder.btnPay.setVisibility(View.GONE);
                 } else {
+                    holder.ivStatus.setImageResource(R.mipmap.ic_ongoing);
                     holder.llStatus.setVisibility(View.VISIBLE);
                     if (item.getUser_status() == 0) {
                         holder.btnPay.setVisibility(View.VISIBLE);
@@ -184,18 +189,7 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
                         @Override
                         public void onClick(View v) {
                             if (listener != null) {
-//                                Glide.with(context)
-//                                        .load(uri)
-//                                        .asBitmap()
-//                                        .centerCrop()
-//                                        .override(150, 150)
-//                                        .into(new SimpleTarget<Bitmap>() {
-//                                            @Override
-//                                            public void onResourceReady(Bitmap bitmap, GlideAnimation anim) {
-//                                                callback.getBitmapCallback(bitmap);
-//                                            }
-//                                        });
-                                listener.onBtnClick(item.getTuanuser_id(), ConvertUtils.view2Bitmap(holder.ivGoodsImage));
+                                listener.onBtnClick(item.getId(), ConvertUtils.view2Bitmap(holder.ivGoodsImage));
                             }
                         }
                     });
@@ -222,6 +216,7 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
 
                 break;
             case TUAN_STATUS_COMPLETE:
+                holder.ivStatus.setImageResource(R.mipmap.ic_completed);
                 holder.llStatus.setVisibility(View.GONE);
                 holder.tvEndTime.setVisibility(View.GONE);
                 holder.tvTuanStatus.setVisibility(View.GONE);
@@ -241,6 +236,7 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
+        private ImageView ivStatus;
         private TextView tvTuanStatus;
         private TextView tvGoodsName;
         private TextView tvTuanRuleName;
@@ -254,6 +250,7 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
 
         ViewHolder(View itemView) {
             super(itemView);
+            ivStatus = itemView.findViewById(R.id.ivStatus);
             llStatus = itemView.findViewById(R.id.llStatus);
             tvTuanStatus = itemView.findViewById(R.id.tvTuanStatus);
             ivGoodsImage = itemView.findViewById(R.id.ivGoodsImage);
@@ -275,7 +272,7 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
     public interface IOnItemClickListener {
         void onItemClick(int tuan_id);
 
-        void onBtnClick(int tuanuser_id, Bitmap bitmap);
+        void onBtnClick(int tuan_id, Bitmap bitmap);
 
         void onPayClick(int tuanuser_id);
     }
