@@ -17,6 +17,12 @@ public class WxConfig {
     /**
      * 微信分享小程序
      */
-    public static final String MINI_PROGRAM_USERNAME = "gh_ee1858213f8f"; //小程序ID
-    public static final String MINI_PROGRAM_PATH = "/pages/progress/progress?from=out&tuan_id="; //小程序路径
+    /**
+     * 小程序ID
+     */
+    public static final String MINI_PROGRAM_USERNAME = "gh_a16418673486";
+    /**
+     * 小程序路径
+     */
+    public static final String MINI_PROGRAM_PATH = "/pages/progress/progress?from=out&tuan_id=";
 }

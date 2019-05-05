@@ -7,8 +7,13 @@ package com.tourcoo.xiantao.entity.event;
  * @date 2019年04月18日20:48
  * @Email: 971613168@qq.com
  */
-public class EventConstant  {
+public class EventConstant {
 
     public static final int EVENT_ACTION_PAY_FRESH_SUCCESS = 1001;
     public static final int EVENT_ACTION_PAY_FRESH_FAILED = 1000;
+
+    /**
+     * 刷新评价列表
+     */
+    public static final int EVENT_ACTION_REFRESH_COMMENT = 1002;
 }

@@ -31,16 +31,15 @@ import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.event.BaseEvent;
 import com.tourcoo.xiantao.entity.goods.Goods;
-import com.tourcoo.xiantao.entity.order.OrderDetailEntity;
 import com.tourcoo.xiantao.entity.order.OrderEntity;
 import com.tourcoo.xiantao.entity.pay.WeiXinPay;
 import com.tourcoo.xiantao.entity.user.CashEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.comment.EvaluationActivity;
 import com.tourcoo.xiantao.widget.dialog.PayDialog;
-import com.trello.rxlifecycle3.android.ActivityEvent;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -53,6 +52,7 @@ import java.util.Map;
 import static android.app.Activity.RESULT_OK;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_ALL;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_BACK;
+import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_FINISH;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_COMMENT;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_PAY;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_RECIEVE;
@@ -61,9 +61,9 @@ import static com.tourcoo.xiantao.constant.WxConfig.APP_ID;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_FAILED;
 import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_SUCCESS;
+import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_REFRESH_COMMENT;
 import static com.tourcoo.xiantao.ui.order.OrderDetailActivity.EXTRA_ORDER_ID;
 import static com.tourcoo.xiantao.ui.order.OrderDetailActivity.EXTRA_PIN_TAG;
-import static com.tourcoo.xiantao.ui.order.OrderDetailActivity.REQUEST_CODE_RETURN_GOODS;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.PAY_STATUS;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.PAY_STATUS_SUCCESS;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SDK_PAY_FLAG;
@@ -91,7 +91,6 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
     /**
      * 订单详情
      */
-//    public static final int REQUEST_CODE_ORDER_DETAIL = 2;
     public static final String EXTRA_ORDER_STATUS = "EXTRA_ORDER_STATUS";
 
     @Override
@@ -110,6 +109,7 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
         api = WXAPIFactory.createWXAPI(mContext, null);
         orderStatus = getArguments().getInt(EXTRA_ORDER_STATUS, -1);
         TourCooLogUtil.i(TAG, TAG + "订单状态:" + orderStatus);
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -205,13 +205,13 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
                         skipOrderDetail(orderInfo.getId(), pin);
                         break;
                     case R.id.btnOne:
-                        ToastUtil.show("1");
+//                        ToastUtil.show("1");
                         break;
                     case R.id.btnTwo:
                         setButton2Function(orderInfo);
                         break;
                     case R.id.btnThree:
-                        setButton3Function();
+                        setButton3Function(orderInfo);
                         break;
                     case R.id.btnFour:
                         loadButton4Function(orderInfo);
@@ -236,8 +236,8 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
             //表示当前是拼团订单
             intent.putExtra(EXTRA_PIN_TAG, 1);
         }
-        TourCooLogUtil.i(TAG, TAG + ":" + "订单状态:"+orderStatus);
-        TourCooLogUtil.i(TAG, TAG + ":" + "订单id:"+orderId);
+        TourCooLogUtil.i(TAG, TAG + ":" + "订单状态:" + orderStatus);
+        TourCooLogUtil.i(TAG, TAG + ":" + "订单id:" + orderId);
         startActivityForResult(intent, orderStatus);
     }
 
@@ -267,6 +267,10 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
             case ORDER_STATUS_WAIT_RECIEVE:
                 //确认收货
                 showConfirmFinishDialog();
+                break;
+            case ORDER_STATUS_FINISH:
+                //查看物流
+                skipSeeLogistics(currentOrderId);
                 break;
             default:
                 break;
@@ -410,7 +414,8 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
      * 第二个按钮的功能
      */
     private void setButton2Function(OrderEntity.OrderInfo orderInfo) {
-        switch (orderStatus) {
+        TourCooLogUtil.i(TAG, TAG + ":" + "当前状态:" + orderInfo.getOrder_status());
+        switch (orderInfo.getOrder_status()) {
             case ORDER_STATUS_WAIT_PAY:
 //                showCancelOrderDialog(currentOrderId);
                 break;
@@ -432,8 +437,8 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
     /**
      * 第三个按钮的功能
      */
-    private void setButton3Function() {
-        switch (orderStatus) {
+    private void setButton3Function(OrderEntity.OrderInfo orderInfo) {
+        switch (orderInfo.getOrder_status()) {
             case ORDER_STATUS_WAIT_PAY:
                 showCancelOrderDialog(currentOrderId);
                 break;
@@ -633,6 +638,10 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
 //                skipToOrderListAndFinish();
                 ToastUtil.showFailed("支付失败");
                 break;
+            case EVENT_ACTION_REFRESH_COMMENT:
+                 TourCooLogUtil.i(TAG,TAG+":"+ "刷新评价");
+                mRefreshLayout.autoRefresh();
+                break;
             default:
                 break;
         }
@@ -643,6 +652,7 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
         if (api != null) {
             api.detach();
         }
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 

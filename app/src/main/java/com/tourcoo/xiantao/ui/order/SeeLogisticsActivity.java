@@ -10,6 +10,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.StringUtils;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.tourcoo.xiantao.R;
+import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
@@ -22,7 +23,10 @@ import com.tourcoo.xiantao.entity.order.LogisticsModel;
 import com.tourcoo.xiantao.entity.user.PersonalCenterInfo;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
+import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
 import com.trello.rxlifecycle3.android.ActivityEvent;
+
+import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.ui.order.OrderDetailActivity.EXTRA_ORDER_ID;
@@ -30,7 +34,7 @@ import static com.tourcoo.xiantao.ui.order.OrderDetailActivity.EXTRA_ORDER_ID;
 /**
  * 查看物流
  */
-public class SeeLogisticsActivity extends BaseTourCooTitleActivity {
+public class SeeLogisticsActivity extends BaseTourCooTitleMultiViewActivity {
 
     private RoundedImageView ivPhoto;
     private TextView tvNickName;
@@ -40,6 +44,7 @@ public class SeeLogisticsActivity extends BaseTourCooTitleActivity {
     private TextView tvCompany;
     private TextView tvNu;
     private TextView tvAddressInfo;
+    private LinearLayout llContentView;
 
     private LinearLayout llLastLayout;
     private TextView tvLastTime;
@@ -55,7 +60,7 @@ public class SeeLogisticsActivity extends BaseTourCooTitleActivity {
     private TextView tvFirstTime;
     private TextView tvFirstContent;
 
-
+    private int id;
     @Override
     public int getContentLayout() {
         return R.layout.activity_see_logistics;
@@ -69,19 +74,18 @@ public class SeeLogisticsActivity extends BaseTourCooTitleActivity {
 
     @Override
     public void initView(Bundle savedInstanceState) {
-        int id = getIntent().getIntExtra(EXTRA_ORDER_ID, 0);
+         id = getIntent().getIntExtra(EXTRA_ORDER_ID, 0);
         String photoUrl = getIntent().getStringExtra("photo");
         initViews();
         if (photoUrl != null && !StringUtils.isEmpty(photoUrl)) {
             GlideManager.loadImg(photoUrl, ivPhoto);
         }
         TourCooLogUtil.i(TAG, TAG + ":" + "订单id=" + id);
-        getLogisticsDetails(id);
-
     }
 
     private void initViews() {
         ivPhoto = findViewById(R.id.ivPhoto);
+        llContentView = findViewById(R.id.llContentView);
         tvNickName = findViewById(R.id.tvNickName);
         tvMobile = findViewById(R.id.tvMobile);
         tvAddress = findViewById(R.id.tvAddress);
@@ -102,24 +106,32 @@ public class SeeLogisticsActivity extends BaseTourCooTitleActivity {
         tvFirstContent = findViewById(R.id.tvFirstContent);
     }
 
+    @Override
+    public void loadData() {
+        super.loadData();
+        getLogisticsDetails(id);
+    }
 
     /**
      * 查看物流详情
      */
     private void getLogisticsDetails(int orderId) {
+        mStatusLayoutManager.showLoadingLayout();
         ApiRepository.getInstance().requestLogistics(orderId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseLoadingObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {
                         if (entity == null) {
                             ToastUtil.showFailed("服务器出了点小差");
+                            mStatusLayoutManager.showErrorLayout();
                             return;
                         }
                         if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
+                            mStatusLayoutManager.showSuccessLayout();
                             LogisticsBean logisticsBean = parseInfo(entity.data);
                             setLogisticsData(logisticsBean);
                         } else {
-                            ToastUtil.showFailed(entity.msg);
+                            mStatusLayoutManager.showEmptyLayout();
                         }
                     }
                 });
@@ -173,7 +185,7 @@ public class SeeLogisticsActivity extends BaseTourCooTitleActivity {
                     llSecondLayout.setVisibility(View.VISIBLE);
                     llFirstLayout.setVisibility(View.VISIBLE);
 
-                    tvLastTime.setText(model.getInfo().get(0).getTime() + "\n");
+                    tvLastTime.setText(model.getInfo().get(0).getTime());
                     tvLastContent.setText(model.getInfo().get(0).getContext());
                     int addIndex = model.getInfo().size() - 3;
                     for (int i = addIndex - 1; i >= 0; i--) {
@@ -209,4 +221,48 @@ public class SeeLogisticsActivity extends BaseTourCooTitleActivity {
     }
 
 
+    @Override
+    protected IMultiStatusView getMultiStatusView() {
+        return new IMultiStatusView() {
+            @Override
+            public View getMultiStatusContentView() {
+                return llContentView ;
+            }
+
+            @Override
+            public void setMultiStatusView(StatusLayoutManager.Builder statusView) {
+
+            }
+
+            @Override
+            public View.OnClickListener getEmptyClickListener() {
+                return new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        getLogisticsDetails(id);
+                    }
+                };
+            }
+
+            @Override
+            public View.OnClickListener getErrorClickListener() {
+                return new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        getLogisticsDetails(id);
+                    }
+                };
+            }
+
+            @Override
+            public View.OnClickListener getCustomerClickListener() {
+                return new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        getLogisticsDetails(id);
+                    }
+                };
+            }
+        };
+    }
 }

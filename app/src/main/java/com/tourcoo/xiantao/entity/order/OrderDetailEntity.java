@@ -2,6 +2,7 @@ package com.tourcoo.xiantao.entity.order;
 
 import com.tourcoo.xiantao.entity.address.AddressEntity;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -18,6 +19,9 @@ public class OrderDetailEntity {
 
     private OrderBean order;
 
+
+
+
     public OrderBean getOrder() {
         return order;
     }
@@ -26,7 +30,7 @@ public class OrderDetailEntity {
         this.order = order;
     }
 
-    public static class OrderBean {
+    public static class OrderBean implements Serializable {
         /**
          * id : 38
          * order_no : 2019042552101575
@@ -100,6 +104,15 @@ public class OrderDetailEntity {
         private String order_status_text;
         private String creattime_text;
         private List<GoodsBean> goods;
+        private ReturnInfo return_info;
+
+        public ReturnInfo getReturn_info() {
+            return return_info;
+        }
+
+        public void setReturn_info(ReturnInfo return_info) {
+            this.return_info = return_info;
+        }
 
         public int getId() {
             return id;

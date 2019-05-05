@@ -89,9 +89,15 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
         helper.addOnClickListener(R.id.btnFour);
         int pin = orderInfo.getTuan();
         boolean isPin = pin == 1;
-        TourCooLogUtil.i(TAG, TAG + "是否拼团:" +pin);
+//        TourCooLogUtil.i(TAG, TAG + "是否拼团:" +pin+"订单编号:"+orderInfo.getOrder_no());
         //待付款状态
         if (orderInfo.getPay_status() == NOT_FINISH) {
+            //1表示拼团订单
+            if (isPin) {
+                helper.setGone(R.id.tvPin, true);
+            } else {
+                helper.setGone(R.id.tvPin, false);
+            }
             orderInfo.setOrder_status(ORDER_STATUS_WAIT_PAY);
             tvOrderStatus.setText("待付款");
             hindView(btnOne);
@@ -106,6 +112,12 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
             setTextGray(btnFour, "立即支付");
             TourCooLogUtil.i(TAG, TAG + "订单id:" + orderInfo.getId());
         } else {
+            //1表示拼团订单
+            if (isPin) {
+                helper.setGone(R.id.tvPin, true);
+            } else {
+                helper.setGone(R.id.tvPin, false);
+            }
             //判断 待发货
             switch (orderInfo.getFreight_status()) {
                 case NOT_FINISH:
@@ -124,6 +136,12 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                     TourCooLogUtil.i(TAG, TAG + "订单id:" + orderInfo.getId());
                     break;
                 case FINISH:
+                    //1表示拼团订单
+                    if (isPin) {
+                        helper.setGone(R.id.tvPin, true);
+                    } else {
+                        helper.setGone(R.id.tvPin, false);
+                    }
                     //已经发货 判断待收货状态
                     if (orderInfo.getReceipt_status() == NOT_FINISH) {
                         tvOrderStatus.setText("待收货");
@@ -139,6 +157,12 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                         TourCooLogUtil.i(TAG, TAG + "订单id:" + orderInfo.getId());
                     } else {
                         //已经收货 判断 是否评论
+                        //1表示拼团订单
+                        if (isPin) {
+                            helper.setGone(R.id.tvPin, true);
+                        } else {
+                            helper.setGone(R.id.tvPin, false);
+                        }
                         if (orderInfo.getComment_status() == NOT_FINISH) {
                             //todo 待评价
                             tvOrderStatus.setText("待评价");
@@ -152,6 +176,12 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                             setTextGray(btnFour, "立即评价");
                             TourCooLogUtil.i(TAG, TAG + "订单id:" + orderInfo.getId());
                         } else {
+                            //1表示拼团订单
+                            if (isPin) {
+                                helper.setGone(R.id.tvPin, true);
+                            } else {
+                                helper.setGone(R.id.tvPin, false);
+                            }
                             //已经评价
                             //todo 已完成
                             tvOrderStatus.setText("已完成");
@@ -159,18 +189,31 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                             hindView(btnOne);
                             hindView(btnTwo);
                             hindView(btnThree);
-                            hindView(btnFour);
+                            setTextGray(btnFour, "查看物流");
+//                            hindView(btnFour);
 //                            setTextGray(btnFour, "立即评价");
                             TourCooLogUtil.i(TAG, TAG + "订单id:" + orderInfo.getId());
                         }
                     }
                     break;
                 default:
+                    //1表示拼团订单
+                    if (isPin) {
+                        helper.setGone(R.id.tvPin, true);
+                    } else {
+                        helper.setGone(R.id.tvPin, false);
+                    }
                     break;
             }
             switch (orderInfo.getReturn_status()) {
                 //todo 退货中 20
                 case FINISH:
+                    //1表示拼团订单
+                    if (isPin) {
+                        helper.setGone(R.id.tvPin, true);
+                    } else {
+                        helper.setGone(R.id.tvPin, false);
+                    }
                     setTextGreen(tvOrderStatus, "退货中");
                     orderInfo.setOrder_status(ORDER_STATUS_BACK_ING);
                     hindView(btnOne);
@@ -179,6 +222,12 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                     setTextGray(btnFour, "查看详情");
                     break;
                 case 30:
+                    //1表示拼团订单
+                    if (isPin) {
+                        helper.setGone(R.id.tvPin, true);
+                    } else {
+                        helper.setGone(R.id.tvPin, false);
+                    }
                     //已经退货
                     tvOrderStatus.setText("已退货");
                     tvOrderStatus.setTextColor(TourCooUtil.getColor(R.color.redTextCommon));
@@ -190,6 +239,12 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                     hindView(btnFour);
                     break;
                 case 40:
+                    //1表示拼团订单
+                    if (isPin) {
+                        helper.setGone(R.id.tvPin, true);
+                    } else {
+                        helper.setGone(R.id.tvPin, false);
+                    }
                     //退货被拒绝
                     setTextRed(tvOrderStatus, "退货被拒绝");
                     orderInfo.setOrder_status(ORDER_STATUS_BACK_REFUSE);
@@ -201,19 +256,13 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                 default:
                     break;
             }
-
-            //1表示拼团订单
-            if (isPin) {
-                helper.setGone(R.id.tvPin, true);
-              /*  //拼团订单 只保留查看拼团功能
-                hindView(btnOne);
-                hindView(btnTwo);
-                hindView(btnThree);
-                setTextGray(btnFour, "查看详情");*/
-            } else {
-                helper.setGone(R.id.tvPin, false);
-            }
-        }
+         /*   //1表示拼团订单
+        if (isPin) {
+            helper.setGone(R.id.tvPin, true);
+        } else {
+            helper.setGone(R.id.tvPin, false);
+        }*/
+    }
     }
 
 
@@ -241,6 +290,9 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
     private void showView(View view) {
         view.setVisibility(View.VISIBLE);
     }
+
+
+
 
 }
 

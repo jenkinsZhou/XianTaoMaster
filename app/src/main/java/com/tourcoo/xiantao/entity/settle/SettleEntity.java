@@ -33,14 +33,14 @@ public class SettleEntity implements Serializable {
      */
 
     private String order_total_num;
-    private String order_total_price;
+    private double order_total_price;
     private int coin;
     private String remark;
     private int coin_status;
     private double order_pay_price;
     private AddressEntity address;
     private AddressEntity exist_address;
-    private String express_price;
+    private double express_price;
     private boolean intra_region;
     private boolean has_error;
     private Object error_msg;
@@ -54,11 +54,11 @@ public class SettleEntity implements Serializable {
         this.order_total_num = order_total_num;
     }
 
-    public String getOrder_total_price() {
+    public double getOrder_total_price() {
         return order_total_price;
     }
 
-    public void setOrder_total_price(String order_total_price) {
+    public void setOrder_total_price(double order_total_price) {
         this.order_total_price = order_total_price;
     }
 
@@ -110,11 +110,11 @@ public class SettleEntity implements Serializable {
         this.exist_address = exist_address;
     }
 
-    public String getExpress_price() {
+    public double getExpress_price() {
         return express_price;
     }
 
-    public void setExpress_price(String express_price) {
+    public void setExpress_price(double express_price) {
         this.express_price = express_price;
     }
 

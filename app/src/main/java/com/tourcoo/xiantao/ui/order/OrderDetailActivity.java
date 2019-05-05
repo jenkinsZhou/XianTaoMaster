@@ -9,9 +9,12 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,12 +22,16 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.sdk.app.PayTask;
 import com.blankj.utilcode.util.LogUtils;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tourcoo.xiantao.R;
+import com.tourcoo.xiantao.adapter.GridImageAdapter;
 import com.tourcoo.xiantao.adapter.OrderGoodsDetailAdapter;
+import com.tourcoo.xiantao.core.common.RequestConfig;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
+import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
@@ -41,6 +48,7 @@ import com.tourcoo.xiantao.entity.event.BaseEvent;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.goods.Spec;
 import com.tourcoo.xiantao.entity.order.OrderDetailEntity;
+import com.tourcoo.xiantao.entity.order.ReturnInfo;
 import com.tourcoo.xiantao.entity.pay.WeiXinPay;
 import com.tourcoo.xiantao.entity.user.CashEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
@@ -49,6 +57,7 @@ import com.tourcoo.xiantao.ui.comment.EvaluationActivity;
 import com.tourcoo.xiantao.widget.dialog.PayDialog;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -94,6 +103,8 @@ import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
 public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity implements View.OnClickListener {
     private static final int REQUEST_CODE_EVALUATE = 1001;
     public static final int REQUEST_CODE_RETURN_GOODS = 1002;
+    private List<String> mImageList = new ArrayList<>();
+    private GridImageAdapter gridImageAdapter;
     private IWXAPI api;
     private LinearLayout llAddressInfo;
     public static final String EXTRA_ORDER_ID = "EXTRA_ORDER_ID";
@@ -120,6 +131,10 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private TextView tvCoin;
 
     private TextView tvExpressPrice;
+    /**
+     * 退货的商品图片列表
+     */
+    private RecyclerView rvReturnGoods;
     /**
      * 订单id
      */
@@ -149,6 +164,11 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
      */
     private TextView tvCancelReturn;
 
+    private LinearLayout llReturnGood;
+    private TextView tvReturnDetail;
+    private TextView tvReturnReason;
+
+    private TextView tvReturnImage;
 
     @Override
     public int getContentLayout() {
@@ -166,6 +186,10 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     public void initView(Bundle savedInstanceState) {
         api = WXAPIFactory.createWXAPI(mContext, null);
         tvCoin = findViewById(R.id.tvCoin);
+        tvReturnDetail = findViewById(R.id.tvReturnDetail);
+        rvReturnGoods = findViewById(R.id.rvReturnGoods);
+        tvReturnReason = findViewById(R.id.tvReturnReason);
+        llReturnGood = findViewById(R.id.llReturnGood);
         tvCancelReturn = findViewById(R.id.tvCancelReturn);
         tvCommentNow = findViewById(R.id.tvCommentNow);
         tvConfirmReceive = findViewById(R.id.tvConfirmReceive);
@@ -199,11 +223,13 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         tvMobile = findViewById(R.id.tvMobile);
         tvOrderNumber = findViewById(R.id.tvOrderNumber);
         tvCreateTime = findViewById(R.id.tvCreateTime);
+        tvReturnImage = findViewById(R.id.tvReturnImage);
         orderId = getIntent().getIntExtra(EXTRA_ORDER_ID, -1);
         pinTag = getIntent().getIntExtra(EXTRA_PIN_TAG, -1);
         TourCooLogUtil.i(TAG, TAG + "订单详情id:" + orderId);
         TourCooLogUtil.i(TAG, TAG + "pinTag:" + pinTag);
         isPin = pinTag == 1;
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -400,13 +426,14 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         List<OrderDetailEntity.OrderBean.GoodsBean> goodsList = orderBean.getGoods();
         mGoodsAdapter.setNewData(goodsList);
         loadBottomButtonFunction(orderBean);
+        showReturnInfo(orderDetailEntity.getOrder().getReturn_info());
     }
 
     private void setViewVisible(View view, boolean visible) {
         if (visible) {
             view.setVisibility(View.VISIBLE);
         } else {
-            view.setVisibility(View.INVISIBLE);
+            view.setVisibility(View.GONE);
         }
     }
 
@@ -653,32 +680,38 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
      * 刷新请求
      */
     private void refreshRequest() {
-        ApiRepository.getInstance().requestOrderDetail(orderId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
-                subscribe(new BaseLoadingObserver<BaseEntity>() {
-                    @Override
-                    public void onRequestNext(BaseEntity entity) {
-                        if (entity != null) {
-                            if (entity.code == CODE_REQUEST_SUCCESS) {
-                                if (entity.data != null) {
-                                    LogUtils.i(JSON.toJSONString(entity.data));
-                                    OrderDetailEntity orderEntity = parseOrderDetailEntity(entity.data);
-                                    if (orderEntity != null && orderEntity.getOrder() != null) {
-                                        //todo 显示订单详情
-                                        //转换一下订单状态
-                                        parseOrderStatus(orderEntity);
-                                        mOrderEntity = orderEntity;
-                                        TourCooLogUtil.i(TAG, TAG + "orderEntity状态:" + orderEntity.getOrder().getOrder_status());
-                                        showOrderDetail(orderEntity);
+        paymentHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                ApiRepository.getInstance().requestOrderDetail(orderId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                        subscribe(new BaseLoadingObserver<BaseEntity>() {
+                            @Override
+                            public void onRequestNext(BaseEntity entity) {
+                                if (entity != null) {
+                                    if (entity.code == CODE_REQUEST_SUCCESS) {
+                                        if (entity.data != null) {
+                                            LogUtils.i(JSON.toJSONString(entity.data));
+                                            OrderDetailEntity orderEntity = parseOrderDetailEntity(entity.data);
+                                            if (orderEntity != null && orderEntity.getOrder() != null) {
+                                                //todo 显示订单详情
+                                                //转换一下订单状态
+                                                parseOrderStatus(orderEntity);
+                                                mOrderEntity = orderEntity;
+                                                TourCooLogUtil.i(TAG, TAG + "orderEntity状态:" + orderEntity.getOrder().getOrder_status());
+                                                showOrderDetail(orderEntity);
+                                            } else {
+                                                ToastUtil.showFailed(entity.msg);
+                                            }
+                                        }
                                     } else {
                                         ToastUtil.showFailed(entity.msg);
                                     }
                                 }
-                            } else {
-                                ToastUtil.showFailed(entity.msg);
                             }
-                        }
-                    }
-                });
+                        });
+            }
+        });
+
     }
 
     /**
@@ -868,6 +901,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                                             case PAY_TYPE_BALANCE:
                                                 TourCooLogUtil.i("支付结果", entity);
                                                 ToastUtil.showSuccess("支付完成");
+                                                setResult(RESULT_OK);
                                                 refreshRequest();
                                                 break;
                                             default:
@@ -950,6 +984,8 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                             boolean success = PAY_STATUS_SUCCESS.equals(stringStringEntry.getValue());
                             if (success) {
                                 ToastUtil.showSuccess("支付完成");
+                                softReference.get().setResult(RESULT_OK);
+                                softReference.get().refreshRequest();
 //                                softReference.get().refreshStatus(TYPE_STATUS_ORDER_WAIT_EVALUATE);
                             } else {
                                 ToastUtil.showFailed("支付失败");
@@ -975,6 +1011,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             case EVENT_ACTION_PAY_FRESH_SUCCESS:
                 //支付成功 直接跳转到详情
                 refreshRequest();
+                setResult(RESULT_OK);
                 break;
             case EVENT_ACTION_PAY_FRESH_FAILED:
 //                skipToOrderListAndFinish();
@@ -989,6 +1026,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         if (api != null) {
             api.detach();
         }
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
@@ -1026,6 +1064,68 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         startActivity(intent);
     }
 
+
+    /**
+     * 显示退货信息
+     */
+    private void showReturnInfo(ReturnInfo returnInfo) {
+        if (returnInfo == null) {
+            setViewVisible(llReturnGood, false);
+            setViewVisible(tvReturnImage, false);
+            TourCooLogUtil.e(TAG, TAG + ":" + "退货信息为空");
+            return;
+        }
+        setViewVisible(llReturnGood, true);
+        tvReturnDetail.setText(returnInfo.getDetail());
+        String reason = returnInfo.getReason();
+        TourCooLogUtil.i(TAG, TAG + ":" + "reason=" + reason);
+        tvReturnReason.setText(returnInfo.getReason());
+        if (TextUtils.isEmpty(returnInfo.getImages())) {
+            setViewVisible(tvReturnImage, false);
+        } else {
+            //显示退货图片
+            gridImageAdapter = new GridImageAdapter(mImageList);
+            gridImageAdapter.bindToRecyclerView(rvReturnGoods);
+            rvReturnGoods.setLayoutManager(new GridLayoutManager(mContext, 4));
+            String[] images = returnInfo.getImages().split(",");
+            for (String image : images) {
+                mImageList.add(TourCooUtil.getUrl(image));
+            }
+            gridImageAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                    onThumbnailClick(view, gridImageAdapter.getData().get(position));
+                }
+            });
+        }
+    }
+
+
+    public void onThumbnailClick(View v, String imageUrl) {
+// 全屏显示的方法
+        /* android.R.style.Theme_Black_NoTitleBar_Fullscreen*/
+        final Dialog dialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        ImageView imgView = getView();
+        dialog.setContentView(imgView);
+        dialog.show();
+        GlideManager.loadImg(imageUrl, imgView);
+// 点击图片消失
+        imgView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
+
+
+
+    private ImageView getView() {
+        ImageView imgView = new ImageView(this);
+        imgView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        imgView.setLayoutParams(new WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT));
+        return imgView;
+    }
 
 }
 

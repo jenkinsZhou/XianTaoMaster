@@ -27,6 +27,7 @@ import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.entity.upload.UploadEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.retrofit.repository.UploadProgressBody;
@@ -34,6 +35,7 @@ import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
 import org.apache.commons.lang.StringUtils;
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -48,6 +50,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_REFRESH_COMMENT;
 import static com.tourcoo.xiantao.ui.order.ReturnGoodsActivity.EXTRA_ORDER_ID;
 
 /**
@@ -72,8 +75,6 @@ public class EvaluationActivity extends BaseTourCooTitleActivity implements View
     private MyHandler mHandler = new MyHandler(this);
     private Message message;
     private String imageUrls = "";
-
-
     @Override
     public int getContentLayout() {
         return R.layout.activity_fill_evaluation;
@@ -251,6 +252,8 @@ public class EvaluationActivity extends BaseTourCooTitleActivity implements View
                             if (entity.code == CODE_REQUEST_SUCCESS) {
                                 ToastUtil.showSuccess("评价已提交");
                                 setResult(RESULT_OK);
+                                //刷新评价列表
+                                EventBus.getDefault().postSticky(new RefreshEvent(EVENT_ACTION_REFRESH_COMMENT));
                                 finish();
                             } else {
                                 ToastUtil.showFailed(entity.msg);
