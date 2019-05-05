@@ -27,6 +27,7 @@ import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.threadpool.ThreadPoolManager;
 import com.tourcoo.xiantao.core.util.ToastUtil;
+import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.event.BaseEvent;
@@ -36,6 +37,7 @@ import com.tourcoo.xiantao.entity.pay.WeiXinPay;
 import com.tourcoo.xiantao.entity.user.CashEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.comment.EvaluationActivity;
+import com.tourcoo.xiantao.ui.comment.LookEvaluationActivity;
 import com.tourcoo.xiantao.widget.dialog.PayDialog;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 
@@ -64,9 +66,12 @@ import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FR
 import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_REFRESH_COMMENT;
 import static com.tourcoo.xiantao.ui.order.OrderDetailActivity.EXTRA_ORDER_ID;
 import static com.tourcoo.xiantao.ui.order.OrderDetailActivity.EXTRA_PIN_TAG;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_PIN_USER_ID;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_SETTLE_TYPE;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.PAY_STATUS;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.PAY_STATUS_SUCCESS;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SDK_PAY_FLAG;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SETTLE_TYPE_PIN;
 import static com.tourcoo.xiantao.ui.order.ReturnGoodsActivity.EXTRA_GOODS_LIST;
 import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_ALI;
 import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_BALANCE;
@@ -289,6 +294,10 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
         intent.putExtra(EXTRA_GOODS_LIST, (Serializable) goodsList);
         intent.putExtra(EXTRA_ORDER_ID, orderInfo.getId());
         intent.setClass(mContext, ReturnGoodsActivity.class);
+        for (Goods goods : goodsList) {
+            TourCooLogUtil.i(TAG, TAG + ":goods数量：" + goods.getTotal_num());
+        }
+
         TourCooLogUtil.i(TAG, TAG + ":" + "订单状态");
         startActivityForResult(intent, orderStatus);
     }
@@ -313,7 +322,7 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
             switch (requestCode) {
                 //订单详情回调
                 case ORDER_STATUS_WAIT_PAY:
-                    TourCooLogUtil.i(TAG, TAG + ":" + "代付款回调");
+                    TourCooLogUtil.i(TAG, TAG + ":" + "待付款回调");
                     mRefreshLayout.autoRefresh();
                     break;
                 case ORDER_STATUS_WAIT_COMMENT:
@@ -326,6 +335,9 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
                     mRefreshLayout.autoRefresh();
                     break;
                 case ORDER_STATUS_BACK:
+                    mRefreshLayout.autoRefresh();
+                    break;
+                case ORDER_STATUS_ALL:
                     mRefreshLayout.autoRefresh();
                     break;
                 default:
@@ -452,6 +464,11 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
             case ORDER_STATUS_WAIT_RECIEVE:
                 //查看物流
                 skipSeeLogistics(currentOrderId);
+                break;
+            case ORDER_STATUS_FINISH:
+                //查看评价
+//                TourCooUtil.startActivity(mContext, LookEvaluationActivity.class);
+                skipLookComment(currentOrderId);
                 break;
             default:
                 break;
@@ -639,7 +656,7 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
                 ToastUtil.showFailed("支付失败");
                 break;
             case EVENT_ACTION_REFRESH_COMMENT:
-                 TourCooLogUtil.i(TAG,TAG+":"+ "刷新评价");
+                TourCooLogUtil.i(TAG, TAG + ":" + "刷新评价");
                 mRefreshLayout.autoRefresh();
                 break;
             default:
@@ -734,6 +751,13 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
         Intent intent = new Intent();
         intent.putExtra(EXTRA_ORDER_ID, orderId);
         intent.setClass(mContext, SeeLogisticsActivity.class);
+        startActivity(intent);
+    }
+
+    private void skipLookComment(int orderId) {
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_ORDER_ID, orderId);
+        intent.setClass(mContext, LookEvaluationActivity.class);
         startActivity(intent);
     }
 }

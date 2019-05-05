@@ -68,7 +68,7 @@ public class RegisterActivity extends BaseTourCooTitleActivity implements View.O
     private boolean confirmPasswordShowFlag = true;
 
     private CheckBox cBoxAgree;
-
+    private TextView tvLicensing;
     private List<Disposable> disposableList = new ArrayList<>();
     private static final long SECOND = 1000;
     private static final int COUNT = 60;
@@ -88,6 +88,8 @@ public class RegisterActivity extends BaseTourCooTitleActivity implements View.O
     private void init() {
         findViewById(R.id.tvSkipLogin).setOnClickListener(this);
         findViewById(R.id.tvLogin).setOnClickListener(this);
+        tvLicensing = findViewById(R.id.tvLicensing);
+        tvLicensing.setOnClickListener(this);
         tvSendVerificationCode = findViewById(R.id.tvSendVerificationCode);
         tvSendVerificationCode.setOnClickListener(this);
         cBoxAgree = findViewById(R.id.cBoxAgree);
@@ -181,6 +183,9 @@ public class RegisterActivity extends BaseTourCooTitleActivity implements View.O
                 break;
             case R.id.tvSkipLogin:
                 TourCoolUtil.startActivity(mContext, LoginActivity.class);
+                break;
+            case R.id.tvLicensing:
+                TourCoolUtil.startActivity(mContext, RegistrationOrdinanceActivity.class);
                 break;
             default:
                 break;

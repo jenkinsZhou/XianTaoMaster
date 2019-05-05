@@ -79,7 +79,11 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
             }
         });
         helper.getView(R.id.tvOrderNumber);
-        helper.setText(R.id.tvNum, orderInfo.getGoods().size() + "");
+        if (orderInfo.getGoods() != null) {
+            helper.setText(R.id.tvNum, orderInfo.getGoods().size() + "");
+        } else {
+            helper.setText(R.id.tvNum, "");
+        }
         helper.setText(R.id.tvOrderNumber, orderInfo.getOrder_no());
         helper.setText(R.id.tvCreateTime, DateUtil.parseDate(orderInfo.getCreatetime()) + "");
         helper.addOnClickListener(R.id.llOrderInfo);
@@ -147,9 +151,9 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                         tvOrderStatus.setText("待收货");
                         orderInfo.setOrder_status(ORDER_STATUS_WAIT_RECIEVE);
                         hindView(btnOne);
-                        if(isPin){
+                        if (isPin) {
                             hindView(btnTwo);
-                        }else {
+                        } else {
                             setTextGray(btnTwo, "申请退单");
                         }
                         setTextGray(btnThree, "查看物流");
@@ -188,7 +192,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                             orderInfo.setOrder_status(ORDER_STATUS_FINISH);
                             hindView(btnOne);
                             hindView(btnTwo);
-                            hindView(btnThree);
+                            setTextGray(btnThree, "查看评价");
                             setTextGray(btnFour, "查看物流");
 //                            hindView(btnFour);
 //                            setTextGray(btnFour, "立即评价");
@@ -262,7 +266,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
         } else {
             helper.setGone(R.id.tvPin, false);
         }*/
-    }
+        }
     }
 
 
@@ -290,8 +294,6 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
     private void showView(View view) {
         view.setVisibility(View.VISIBLE);
     }
-
-
 
 
 }

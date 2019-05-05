@@ -20,6 +20,15 @@ public class SystemSettingEntity {
      * android_download :
      * kefu : 000-0000000
      */
+    private String register;
+
+    public String getRegister() {
+        return register;
+    }
+
+    public void setRegister(String register) {
+        this.register = register;
+    }
 
     private String cashrule;
     private String ios_version;
@@ -28,7 +37,7 @@ public class SystemSettingEntity {
     private String ios_download;
     private String android_version;
     private String android_info;
-    private String android_update;
+    private int android_update;
     private String android_download;
     private String kefu;
 
@@ -88,11 +97,11 @@ public class SystemSettingEntity {
         this.android_info = android_info;
     }
 
-    public String getAndroid_update() {
+    public int getAndroid_update() {
         return android_update;
     }
 
-    public void setAndroid_update(String android_update) {
+    public void setAndroid_update(int android_update) {
         this.android_update = android_update;
     }
 

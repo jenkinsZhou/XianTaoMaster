@@ -96,6 +96,8 @@
         <activity android:name=".ui.order.ReturnOrderList" />
         <activity android:name=".ui.FeedbackActivity" />
         <activity android:name=".ui.AboutUsActivity" />
+        <activity android:name=".ui.comment.LookEvaluationActivity" />
+        <activity android:name=".ui.account.RegistrationOrdinanceActivity" />
     </application>
 
 </manifest>

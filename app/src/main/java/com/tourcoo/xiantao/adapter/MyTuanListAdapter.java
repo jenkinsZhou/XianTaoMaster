@@ -145,7 +145,7 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
                 holder.btnPay.setVisibility(View.GONE);
                 break;
             case TUAN_STATUS_RUNNING:
-
+                //进行中
                 long time = item.getDeadline() * 1000L;
                 time = time - System.currentTimeMillis();
 
@@ -178,7 +178,12 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
 
                     holder.tvEndTime.setVisibility(View.VISIBLE);
                     holder.tvTuanStatus.setVisibility(View.VISIBLE);
-                    holder.btnClick.setVisibility(View.VISIBLE);
+                    double d = Double.parseDouble(item.getTuan().getSurplus());
+                    if (d == 0) {
+                        holder.btnClick.setVisibility(View.GONE);
+                    } else {
+                        holder.btnClick.setVisibility(View.VISIBLE);
+                    }
                     holder.tvTuanStatus.setText(new SpanUtils()
                             .append("还差").setForegroundColor(TourCoolUtil.getColor(R.color.colorTextGray))
                             .append(item.getTuan().getSurplus() + "kg").setForegroundColor(TourCoolUtil.getColor(R.color.redTextCommon))
@@ -222,6 +227,8 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
                 holder.tvTuanStatus.setVisibility(View.GONE);
                 holder.btnClick.setVisibility(View.GONE);
                 holder.btnPay.setVisibility(View.GONE);
+                break;
+            default:
                 break;
         }
 

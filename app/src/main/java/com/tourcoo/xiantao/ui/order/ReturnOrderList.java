@@ -1,5 +1,6 @@
 package com.tourcoo.xiantao.ui.order;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -15,6 +16,7 @@ import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
+import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.order.OrderEntity;
@@ -198,13 +200,25 @@ public class ReturnOrderList extends BaseTourCooRefreshLoadActivity<OrderEntity.
         TourCooLogUtil.i(TAG, TAG + "订单状态:" + orderInfo.getOrder_status());
         switch (orderInfo.getOrder_status()) {
             case ORDER_STATUS_BACK_ING:
-                requestCancelReturn(orderInfo.getId());
+                showConfirmCancelDialog(orderInfo);
+                break;
+            case ORDER_STATUS_FINISH:
+                skipSeeLogistics(orderInfo.getId());
                 break;
             default:
                 break;
         }
     }
 
+    /**
+     * 查看物流
+     */
+    private void skipSeeLogistics(int orderId) {
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_ORDER_ID, orderId);
+        intent.setClass(mContext, SeeLogisticsActivity.class);
+        startActivity(intent);
+    }
 
     private void loadButton4Function(OrderEntity.OrderInfo orderInfo) {
         TourCooLogUtil.i(TAG, TAG + "订单状态:" + orderInfo.getOrder_status());
@@ -305,4 +319,26 @@ public class ReturnOrderList extends BaseTourCooRefreshLoadActivity<OrderEntity.
                     }
                 });
     }
+
+    private void showConfirmCancelDialog(OrderEntity.OrderInfo orderInfo) {
+        //删除地址
+        ConfirmDialog.Builder builder = new ConfirmDialog.Builder(mContext);
+        builder.setTitle("取消退单").setFirstMessage("是否取消退单？")
+                .setFirstMsgSize(15).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        })
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        requestCancelReturn(orderInfo.getId());
+                        dialog.dismiss();
+//                        ApiRepository.getInstance().updateApp()
+                    }
+                });
+        showConfirmDialog(builder);
+    }
+
 }

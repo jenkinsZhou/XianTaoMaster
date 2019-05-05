@@ -18,6 +18,8 @@
             style="@style/CustomCheckBoxGoodsTheme"
             android:layout_width="@dimen/dp_18"
             android:layout_height="@dimen/dp_18"
+            android:clickable="false"
+            android:focusable="false"
             android:layout_centerVertical="true"
             />
 

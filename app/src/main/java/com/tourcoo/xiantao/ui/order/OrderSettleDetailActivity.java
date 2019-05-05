@@ -37,6 +37,7 @@ import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.event.BaseEvent;
 import com.tourcoo.xiantao.entity.goods.Goods;
+import com.tourcoo.xiantao.entity.goods.GoodsSkuBean;
 import com.tourcoo.xiantao.entity.goods.Spec;
 import com.tourcoo.xiantao.entity.pay.WeiXinPay;
 import com.tourcoo.xiantao.entity.settle.SettleEntity;
@@ -325,11 +326,11 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
 
         double shouldPrice;
         boolean userCoin = settleEntity.getCoin() > 0;
-        if(userCoin){
+        if (userCoin) {
             //有积分
-            shouldPrice = settleEntity.getOrder_pay_price()+settleEntity.getCoin();
-            tvShouldPayPrice.setText("￥" +shouldPrice);
-        }else {
+            shouldPrice = settleEntity.getOrder_pay_price() + settleEntity.getCoin();
+            tvShouldPayPrice.setText("￥" + shouldPrice);
+        } else {
             //没有积分
             tvShouldPayPrice.setText("￥" + settleEntity.getOrder_pay_price());
         }
@@ -532,15 +533,15 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         }
         Map<String, Object> params = new HashMap<>(1);
         Goods goods = mSettleEntity.getGoods_list().get(0);
-        List<Spec> specList = goods.getSpec();
-        for (Spec spec : specList) {
-            TourCooLogUtil.i(TAG, spec);
+        GoodsSkuBean goodsSkuBean = goods.getGoods_sku();
+        if (goodsSkuBean == null) {
+            ToastUtil.showFailed("未获取到商品信息");
+            return;
         }
-        Spec spec = specList.get(0);
         params.put("goods_id", goods.getGoods_id());
         params.put("goods_num", mSettleEntity.getOrder_total_num());
         params.put("remark", getRemark());
-        params.put("goods_sku_id", spec.getSpec_sku_id());
+        params.put("goods_sku_id", goodsSkuBean.getSpec_sku_id());
         if (switchUseCoin.isChecked()) {
             params.put("coin_status", 1);
         } else {

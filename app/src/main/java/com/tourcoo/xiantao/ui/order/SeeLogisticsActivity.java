@@ -129,7 +129,11 @@ public class SeeLogisticsActivity extends BaseTourCooTitleMultiViewActivity {
                         if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
                             mStatusLayoutManager.showSuccessLayout();
                             LogisticsBean logisticsBean = parseInfo(entity.data);
-                            setLogisticsData(logisticsBean);
+                            try {
+                                setLogisticsData(logisticsBean);
+                            }catch (Exception e){
+                                mStatusLayoutManager.showEmptyLayout();
+                            }
                         } else {
                             mStatusLayoutManager.showEmptyLayout();
                         }

@@ -1,21 +1,35 @@
 package com.tourcoo.xiantao.core.module;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Environment;
+import android.widget.TextView;
 
+import com.allenliu.versionchecklib.v2.AllenVersionChecker;
+import com.allenliu.versionchecklib.v2.builder.DownloadBuilder;
+import com.allenliu.versionchecklib.v2.builder.UIData;
+import com.allenliu.versionchecklib.v2.callback.CustomVersionDialogListener;
+import com.allenliu.versionchecklib.v2.callback.ForceUpdateListener;
 import com.aries.ui.view.tab.CommonTabLayout;
 import com.aries.ui.view.tab.listener.OnTabSelectListener;
+import com.blankj.utilcode.util.ActivityUtils;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.base.activity.BaseMainActivity;
 import com.tourcoo.xiantao.core.frame.delegate.MainTabDelegate;
 import com.tourcoo.xiantao.core.frame.entity.TabEntity;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.frame.util.NetworkUtil;
+import com.tourcoo.xiantao.core.frame.util.SharedPreferencesUtil;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
+import com.tourcoo.xiantao.core.widget.core.action.BaseDialog;
+import com.tourcoo.xiantao.core.widget.core.action.BaseUpdateDialog;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.SystemSettingEntity;
 import com.tourcoo.xiantao.entity.TokenInfo;
 import com.tourcoo.xiantao.entity.event.TabChangeEvent;
 import com.tourcoo.xiantao.helper.GoodsCount;
@@ -28,6 +42,7 @@ import com.tourcoo.xiantao.ui.account.MineFragment;
 import com.tourcoo.xiantao.ui.goods.ClassifyGoodsFragment;
 import com.tourcoo.xiantao.ui.goods.HomeFragment;
 import com.trello.rxlifecycle3.android.ActivityEvent;
+import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -39,6 +54,8 @@ import androidx.annotation.NonNull;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_PHONE_KEY;
+import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_REGISTER_KEY;
 
 /**
  * @author :zhoujian
@@ -250,7 +267,7 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
                                     showRedDot(currentGoodsCount);
                                     if (currentGoodsCount > 0) {
                                         shoppingCarFragment.refreshShoppingCarNoDialog();
-                                    }else {
+                                    } else {
                                         shoppingCarFragment.showEmptyLayout();
                                     }
                                 }
@@ -267,10 +284,106 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
         if (count <= 0) {
             mTabLayout.hideMsg(2);
         } else {
-            mTabLayout.setMsgMargin(2,-15,0);
+            mTabLayout.setMsgMargin(2, -15, 0);
             mTabLayout.showMsg(2, count);
         }
     }
 
 
+    /**
+     * 获取系统相关信息
+     */
+    private void requestSystemConfig() {
+        ApiRepository.getInstance().requestSystemConfig().compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity<SystemSettingEntity>>() {
+                    @Override
+                    public void onRequestNext(BaseEntity<SystemSettingEntity> entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                SystemSettingEntity settingEntity = entity.data;
+                                if (settingEntity != null) {
+                                    String register = settingEntity.getRegister();
+                                    String phone = settingEntity.getKefu();
+                                    //保存注册条例
+                                    SharedPreferencesUtil.put(PREF_TEL_REGISTER_KEY, register);
+                                    SharedPreferencesUtil.put(PREF_TEL_PHONE_KEY, phone);
+                                    boolean needUpdate = needUpdate(settingEntity.getAndroid_version());
+                                    boolean isForce = isForce(settingEntity.getAndroid_update());
+                                    if (needUpdate) {
+                                        updateVersion(mContext, settingEntity.getAndroid_download(), settingEntity.getAndroid_info(), isForce);
+                                    }
+                                }
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+                });
+    }
+
+
+    private boolean needUpdate(String versionInfo) {
+        return !TourCooUtil.getVersionName(mContext).equalsIgnoreCase(versionInfo);
+    }
+
+    private boolean isForce(int code) {
+        return code == 1;
+    }
+
+    public void updateVersion(Context context, String downloadUrl, String content, boolean isForce) {
+        try {
+            DownloadBuilder builder = AllenVersionChecker.getInstance()
+                    .downloadOnly(
+                            UIData.create().setDownloadUrl(downloadUrl).setContent(content)
+                    );
+
+            if (isForce) {
+//        强制更新 取消回调
+                builder.setForceUpdateListener(new ForceUpdateListener() {
+                    @Override
+                    public void onShouldForceUpdate() {
+                        ActivityUtils.finishAllActivities();
+                    }
+                });
+            }
+            //静默下载
+            builder.setSilentDownload(false);
+            //如果本地有安装包缓存也会重新下载apk
+            builder.setForceRedownload(true);
+            //更新界面选择
+            builder.setCustomVersionDialogListener(createCustomDialogOne());
+            //自定义下载路径
+            builder.setDownloadAPKPath(Environment.getExternalStorageDirectory() + "/XianTao/download/");
+            builder.executeMission(context);
+        } catch (Exception e) {
+            ToastUtil.showFailed("下载地址有误");
+            TourCooLogUtil.e(TAG, TAG + "更新异常:" + e.toString());
+        }
+
+    }
+
+    /**
+     * 务必用库传回来的context 实例化你的dialog
+     * 自定义的dialog UI参数展示，使用versionBundle
+     *
+     * @return
+     */
+    private CustomVersionDialogListener createCustomDialogOne() {
+        CustomVersionDialogListener listener = new CustomVersionDialogListener() {
+            @Override
+            public Dialog getCustomVersionDialog(Context context, UIData versionBundle) {
+                BaseUpdateDialog baseDialog = new BaseUpdateDialog(context, R.style.UpdateDialog, R.layout.custom_dialog_one_layout);
+                TextView textView = baseDialog.findViewById(R.id.tv_msg);
+                textView.setText(versionBundle.getContent());
+                return baseDialog;
+            }
+        };
+        return listener;
+    }
+
+    @Override
+    public void loadData() {
+        super.loadData();
+        requestSystemConfig();
+    }
 }

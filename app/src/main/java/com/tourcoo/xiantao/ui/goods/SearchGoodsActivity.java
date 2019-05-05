@@ -9,6 +9,7 @@ import android.view.SearchEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,6 +72,7 @@ public class SearchGoodsActivity extends BaseTourCooTitleActivity implements Vie
         tvCancel = findViewById(R.id.tvCancel);
         tvCancel.setOnClickListener(this);
         findViewById(R.id.tvClearSearch).setOnClickListener(this);
+        findViewById(R.id.header_back_image).setOnClickListener(this);
         rlSearchHistory = findViewById(R.id.rlSearchHistory);
         labelLayout = findViewById(R.id.labelLayout);
         init();
@@ -86,6 +88,9 @@ public class SearchGoodsActivity extends BaseTourCooTitleActivity implements Vie
                 break;
             case R.id.tvClearSearch:
                 clearSearch();
+                break;
+            case R.id.header_back_image:
+                finish();
                 break;
             default:
                 break;

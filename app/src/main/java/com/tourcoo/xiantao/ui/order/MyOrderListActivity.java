@@ -7,6 +7,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
+import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
 import com.tourcoo.xiantao.ui.account.MineFragment;
@@ -83,6 +84,12 @@ public class MyOrderListActivity extends BaseTourCooTitleActivity implements Vie
         }
     }
 
+
+    @Override
+    public void setTitleBar(TitleBarView titleBar) {
+        super.setTitleBar(titleBar);
+        titleBar.setTitleMainText("订单列表");
+    }
 
     class MyPagerAdapter extends FragmentPagerAdapter {
         private List<Fragment> fragmentList;

@@ -298,12 +298,12 @@ public class ApiRepository extends BaseRepository {
         params.put("goods_id", goodsId);
         params.put("goods_num", goodsCount);
         params.put("goods_sku_id", skuId);
-        TourCooLogUtil.i(TAG, TAG + ":" + goodsId);
+        TourCooLogUtil.i("结算订单", params);
         return TourCoolTransformer.switchSchedulersIo(getApiService().settleGoods(params).retryWhen(new RetryWhen()));
     }
 
     /**
-     * 单个购买立即支付接口
+     * 单个购买立即支付接口y
      *
      * @param map
      * @param payType
@@ -330,7 +330,16 @@ public class ApiRepository extends BaseRepository {
                 break;
         }
         params.put("pay_type", payTypeString);
-        TourCooLogUtil.i(TAG, params);
+        TourCooLogUtil.i("订单结算", params);
+
+        /**
+         * goods_id	string	是	商品id
+         * goods_num	string	是	数量
+         * goods_sku_id	string	是	规格sku_id
+         * coin_status	string	是	1使用金币抵扣,0不使用
+         * remark	string	是	订单备注
+         * pay_type	string	是	cash余额,ali支付宝,wx微信
+         */
         return TourCoolTransformer.switchSchedulersIo(getApiService().buyNowPay(params).retryWhen(new RetryWhen()));
     }
 
@@ -707,6 +716,21 @@ public class ApiRepository extends BaseRepository {
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestCommentList(params).retryWhen(new RetryWhen()));
     }
 
+
+
+    /**
+     * 商品的评论列表
+     *
+     * @param orderId
+     * @return
+     */
+    public Observable<BaseEntity<CommentEntity>> requestOrderCommentList(int orderId, int page) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("order_id", orderId);
+        params.put("p", page);
+        TourCooLogUtil.i(TAG, TAG + "商品id:" + params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestCommentList(params).retryWhen(new RetryWhen()));
+    }
 
     /**
      * 发起拼团接口

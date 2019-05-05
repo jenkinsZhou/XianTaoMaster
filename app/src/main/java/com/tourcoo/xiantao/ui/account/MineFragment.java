@@ -2,6 +2,7 @@ package com.tourcoo.xiantao.ui.account;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -24,6 +25,7 @@ import com.tourcoo.xiantao.adapter.MenuAdapter;
 import com.tourcoo.xiantao.core.frame.base.fragment.BaseTitleFragment;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
+import com.tourcoo.xiantao.core.frame.util.SharedPreferencesUtil;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
@@ -35,6 +37,7 @@ import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.core.widget.divider.TourCoolRecycleViewDivider;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.MenuItem;
+import com.tourcoo.xiantao.entity.SystemSettingEntity;
 import com.tourcoo.xiantao.entity.TokenInfo;
 import com.tourcoo.xiantao.entity.event.MessageEvent;
 import com.tourcoo.xiantao.entity.event.RefreshEvent;
@@ -50,6 +53,7 @@ import com.tourcoo.xiantao.ui.order.MyOrderListActivity;
 import com.tourcoo.xiantao.ui.order.ReturnOrderList;
 import com.tourcoo.xiantao.ui.recharge.AccountBalanceActivity;
 import com.tourcoo.xiantao.ui.tuan.MyTuanListActivity;
+import com.trello.rxlifecycle3.android.ActivityEvent;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -68,6 +72,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_OK;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_PHONE_KEY;
 import static com.tourcoo.xiantao.ui.order.MyOrderListActivity.EXTRA_CURRENT_TAB_INDEX;
 
 /**
@@ -83,6 +88,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     private RecyclerView rvMineMenu;
     private TextView tvUserNickName;
     private CircleImageView civUserAvatar;
+    private String phone;
     private SmartRefreshLayout refreshLayout;
     public static final int REQUEST_CODE_EDIT_USER_INFO = 10;
     public static final int REQUEST_CODE_MESSAGE_CENTER = 11;
@@ -162,6 +168,8 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     public void loadData() {
         super.loadData();
         init();
+        phone = (String) SharedPreferencesUtil.get(PREF_TEL_PHONE_KEY, "");
+        requestSystemConfig();
         if (AccountInfoHelper.getInstance().isLogin()) {
             checkTokenAndRequestUserInfo();
         } else {
@@ -246,7 +254,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     private void showPhoneDialog() {
         //客服电话
         ConfirmDialog.Builder builder = new ConfirmDialog.Builder(mContext);
-        builder.setTitle("客服电话").setFirstMessage(getString(R.string.customer_service_telephone_numbers))
+        builder.setTitle("客服电话").setFirstMessage(phone)
                 .setFirstMsgSize(15).setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -256,7 +264,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                 .setPositiveButton("呼叫", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ToastUtil.show("呼叫");
+                        call(phone);
                         dialog.dismiss();
 //                        ApiRepository.getInstance().updateApp()
                     }
@@ -268,6 +276,11 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.llAllOrder:
+                //订单列表
+                if (!AccountInfoHelper.getInstance().isLogin()) {
+                    TourCooUtil.startActivity(mContext, LoginActivity.class);
+                    return;
+                }
                 TourCooUtil.startActivity(mContext, MyOrderListActivity.class);
                 break;
             case R.id.llWaitPay:
@@ -624,12 +637,47 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     }
 
 
-
-    private void skipAccount(){
+    private void skipAccount() {
         Intent coinIntent = new Intent();
         coinIntent.setClass(mContext, AccountBalanceActivity.class);
         startActivityForResult(coinIntent, REQUEST_CODE_EDIT_USER_INFO);
     }
+
+
+    /**
+     * 获取系统相关信息
+     */
+    private void requestSystemConfig() {
+        ApiRepository.getInstance().requestSystemConfig().compose(bindUntilEvent(FragmentEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity<SystemSettingEntity>>() {
+                    @Override
+                    public void onRequestNext(BaseEntity<SystemSettingEntity> entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                SystemSettingEntity settingEntity = entity.data;
+                                if (settingEntity != null) {
+                                    phone = settingEntity.getKefu();
+                                    SharedPreferencesUtil.put(PREF_TEL_PHONE_KEY, phone);
+                                }
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 调用拨号功能
+     *
+     * @param phone 电话号码
+     */
+    private void call(String phone) {
+        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phone));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
 }
 
 

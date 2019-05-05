@@ -45,6 +45,7 @@ import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.event.BaseEvent;
+import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.goods.Spec;
 import com.tourcoo.xiantao.entity.order.OrderDetailEntity;
@@ -54,6 +55,7 @@ import com.tourcoo.xiantao.entity.user.CashEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
 import com.tourcoo.xiantao.ui.comment.EvaluationActivity;
+import com.tourcoo.xiantao.ui.comment.LookEvaluationActivity;
 import com.tourcoo.xiantao.widget.dialog.PayDialog;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
@@ -568,6 +570,26 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 hideView(tvLookComment);
                 showView(tvCancelReturn);
                 break;
+            case ORDER_STATUS_BACK_FINISH:
+                hideView(tvCommentNow);
+                hideView(tvPayNow);
+                hideView(tvCancelOrder);
+                hideView(tvReturn);
+                hideView(tvConfirmReceive);
+                hideView(tvLookExpress);
+                hideView(tvLookComment);
+                hideView(tvCancelReturn);
+                break;
+            case ORDER_STATUS_BACK_REFUSE:
+                hideView(tvCommentNow);
+                hideView(tvPayNow);
+                hideView(tvCancelOrder);
+                hideView(tvReturn);
+                hideView(tvConfirmReceive);
+                hideView(tvLookExpress);
+                hideView(tvLookComment);
+                hideView(tvCancelReturn);
+                break;
             default:
                 break;
         }
@@ -610,10 +632,10 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 skipEvaluation(mOrderEntity.getOrder());
                 break;
             case R.id.tvLookComment:
-                ToastUtil.show("查看评价");
+                skipLookComment(mOrderEntity.getOrder().getId());
                 break;
             case R.id.tvCancelReturn:
-                requestCancelReturn(mOrderEntity.getOrder().getId());
+                showCancelReturnDialog();
                 break;
             default:
                 break;
@@ -1045,6 +1067,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 //                                refreshRequest();
                                 ToastUtil.showSuccess("已取消退单");
                                 setResult(RESULT_OK);
+                                EventBus.getDefault().postSticky(new RefreshEvent());
                                 finish();
                             } else {
                                 ToastUtil.showFailed(entity.msg);
@@ -1119,7 +1142,6 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     }
 
 
-
     private ImageView getView() {
         ImageView imgView = new ImageView(this);
         imgView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
@@ -1127,6 +1149,41 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         return imgView;
     }
 
+
+    /**
+     * 确认取消退货
+     */
+    private void showCancelReturnDialog() {
+        ConfirmDialog.Builder builder = new ConfirmDialog.Builder(
+                mContext);
+        builder.setPositiveButtonPosition(ConfirmDialog.RIGHT);
+        builder.setTitle("取消退单");
+        builder.setMessageGravity(Gravity.CENTER_HORIZONTAL);
+        builder.setFirstMessage("是否取消退单?").setNegativeButtonButtonBold(true);
+        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                requestCancelReturn(mOrderEntity.getOrder().getId());
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("取消",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.create().show();
+    }
+
+
+    private void skipLookComment(int orderId) {
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_ORDER_ID, orderId);
+        intent.setClass(mContext, LookEvaluationActivity.class);
+        startActivity(intent);
+    }
 }
 
 

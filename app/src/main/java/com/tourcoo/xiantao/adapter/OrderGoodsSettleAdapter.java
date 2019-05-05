@@ -7,13 +7,14 @@ import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.goods.GoodsEntity;
+import com.tourcoo.xiantao.entity.goods.GoodsSkuBean;
 
 import androidx.annotation.NonNull;
 
 
 /**
  * @author :JenkinsZhou
- * @description :订单列表中的商品适配器
+ * @description :结算列表中的商品适配器
  * @company :途酷科技
  * @date 2019年04月25日12:58
  * @Email: 971613168@qq.com
@@ -28,10 +29,16 @@ public class OrderGoodsSettleAdapter extends BaseQuickAdapter<Goods, BaseViewHol
     @Override
     protected void convert(BaseViewHolder helper, @NonNull Goods goods) {
         helper.setText(R.id.tvGoodsName, goods.getGoods_name());
-        helper.setText(R.id.tvGoodsPrice, "￥ " + goods.getSpec().get(0).getGoods_price());
+        GoodsSkuBean goodsSkuBean = goods.getGoods_sku();
+        if(goodsSkuBean != null){
+            helper.setText(R.id.tvGoodsPrice, "￥ " + goods.getGoods_sku().getGoods_price());
+        }else {
+            helper.setText(R.id.tvGoodsPrice, "￥ " +goods.getGoods_price());
+        }
         //当前商品的数量
         helper.setText(R.id.goodsCount, "x" + goods.getTotal_num());
         RoundedImageView civGoodsIcon = helper.getView(R.id.civGoodsIcon);
         GlideManager.loadImg(goods.getImage(), civGoodsIcon);
+
     }
 }

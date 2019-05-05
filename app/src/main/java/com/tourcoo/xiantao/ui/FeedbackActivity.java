@@ -444,6 +444,7 @@ public class FeedbackActivity extends BaseTourCooTitleActivity implements View.O
                     // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
                     // 如果裁剪并压缩了，已取压缩路径为准，因为是先裁剪后压缩的
                     uploadImageAdapter.setList(selectList);
+                    imagePathList.clear();
                     for (LocalMedia localMedia : selectList) {
                         imagePathList.add(localMedia.getCompressPath());
                     }

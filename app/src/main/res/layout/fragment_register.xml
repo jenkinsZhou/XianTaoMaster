@@ -300,7 +300,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/dp_12"
-                android:text="已有账户,去登陆"
+                android:text="已有账户,去登录"
                 android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/sp_12" />
 

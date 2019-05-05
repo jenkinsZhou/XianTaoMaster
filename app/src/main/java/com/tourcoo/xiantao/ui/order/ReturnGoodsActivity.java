@@ -33,6 +33,7 @@ import com.tourcoo.xiantao.core.widget.core.action.BaseDialog;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.upload.UploadEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
@@ -42,6 +43,7 @@ import com.tourcoo.xiantao.ui.comment.EvaluationActivity;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
 import org.apache.commons.lang.StringUtils;
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -237,6 +239,7 @@ public class ReturnGoodsActivity extends BaseTourCooTitleActivity implements Vie
                     // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
                     // 如果裁剪并压缩了，已取压缩路径为准，因为是先裁剪后压缩的
                     uploadImageAdapter.setList(selectList);
+                    imagePathList.clear();
                     for (LocalMedia localMedia : selectList) {
                         imagePathList.add(localMedia.getCompressPath());
                     }
@@ -289,6 +292,8 @@ public class ReturnGoodsActivity extends BaseTourCooTitleActivity implements Vie
                             if (entity.code == CODE_REQUEST_SUCCESS) {
                                 setResult(RESULT_OK);
                                 ToastUtil.showSuccess(entity.msg);
+                                //通知个人中心刷新数据
+                                EventBus.getDefault().postSticky(new RefreshEvent());
                                 finish();
                             } else {
                                 ToastUtil.showFailed(entity.msg);
@@ -333,10 +338,10 @@ public class ReturnGoodsActivity extends BaseTourCooTitleActivity implements Vie
                 showReasonDialog();
                 break;
             case R.id.btnCommit:
-                if(selectList.isEmpty()){
+                if (selectList.isEmpty()) {
                     doReturnGoods();
-                }else {
-                   uploadImage(imagePathList);
+                } else {
+                    uploadImage(imagePathList);
                 }
                 break;
             default:
@@ -555,4 +560,6 @@ public class ReturnGoodsActivity extends BaseTourCooTitleActivity implements Vie
         }
         hud = null;
     }
+
+
 }

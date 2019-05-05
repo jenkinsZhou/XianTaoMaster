@@ -24,6 +24,12 @@ public class AccountInfoHelper {
     private String token = "";
     private AddressEntity defaultAddress;
     private PersonalCenterInfo mPersonalCenterInfo;
+    public static final String PREF_TEL_PHONE_KEY = "PREF_TEL_PHONE_KEY";
+
+    /**
+     * 注册条例
+     */
+    public static final String PREF_TEL_REGISTER_KEY = "PREF_TEL_REGISTER_KEY";
 
     public String getToken() {
         if (TextUtils.isEmpty(token)) {
