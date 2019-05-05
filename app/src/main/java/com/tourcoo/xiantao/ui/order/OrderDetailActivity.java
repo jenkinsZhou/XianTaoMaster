@@ -37,6 +37,7 @@ import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.address.AddressEntity;
+import com.tourcoo.xiantao.entity.event.BaseEvent;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.goods.Spec;
 import com.tourcoo.xiantao.entity.order.OrderDetailEntity;
@@ -47,6 +48,9 @@ import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
 import com.tourcoo.xiantao.ui.comment.EvaluationActivity;
 import com.tourcoo.xiantao.widget.dialog.PayDialog;
 import com.trello.rxlifecycle3.android.ActivityEvent;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
@@ -69,6 +73,8 @@ import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_RECIE
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_SEND;
 import static com.tourcoo.xiantao.constant.WxConfig.APP_ID;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_FAILED;
+import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_SUCCESS;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.NOT_USE_COIN;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.PAY_STATUS;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.PAY_STATUS_SUCCESS;
@@ -87,14 +93,19 @@ import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
  */
 public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity implements View.OnClickListener {
     private static final int REQUEST_CODE_EVALUATE = 1001;
-    private static final int REQUEST_CODE_RETURN_GOODS = 1002;
+    public static final int REQUEST_CODE_RETURN_GOODS = 1002;
     private IWXAPI api;
     private LinearLayout llAddressInfo;
     public static final String EXTRA_ORDER_ID = "EXTRA_ORDER_ID";
+    public static final String EXTRA_PIN_TAG = "EXTRA_PIN_TAG";
     private RecyclerView goodsOrderRecyclerView;
     private OrderDetailEntity mOrderEntity;
     private PaymentHandler paymentHandler = new PaymentHandler(OrderDetailActivity.this);
     private int mPayType;
+    /**
+     * 是否是拼团订单
+     */
+    private int pinTag;
     /**
      * 商品订单适配器
      */
@@ -129,8 +140,10 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private TextView tvReturn;
     private TextView tvCancelOrder;
     private TextView tvConfirmReceive;
+    //查看评价
+    private TextView tvLookComment;
 
-    private LinearLayout llBottomToolBar;
+    private boolean isPin;
 
 
     @Override
@@ -149,9 +162,9 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     public void initView(Bundle savedInstanceState) {
         api = WXAPIFactory.createWXAPI(mContext, null);
         tvCoin = findViewById(R.id.tvCoin);
-        llBottomToolBar = findViewById(R.id.llBottomToolBar);
         tvCommentNow = findViewById(R.id.tvCommentNow);
         tvConfirmReceive = findViewById(R.id.tvConfirmReceive);
+        tvLookComment = findViewById(R.id.tvLookComment);
         tvCancelOrder = findViewById(R.id.tvCancelOrder);
         llRemark = findViewById(R.id.llRemark);
         tvPayNow = findViewById(R.id.tvPayNow);
@@ -163,6 +176,8 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         tvConfirmReceive.setOnClickListener(this);
         tvPayNow.setOnClickListener(this);
         tvReturn.setOnClickListener(this);
+        tvLookExpress.setOnClickListener(this);
+        tvLookComment.setOnClickListener(this);
         goodsOrderRecyclerView = findViewById(R.id.goodsOrderRecyclerView);
         goodsOrderRecyclerView = findViewById(R.id.goodsOrderRecyclerView);
         goodsOrderRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
@@ -179,7 +194,10 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         tvOrderNumber = findViewById(R.id.tvOrderNumber);
         tvCreateTime = findViewById(R.id.tvCreateTime);
         orderId = getIntent().getIntExtra(EXTRA_ORDER_ID, -1);
+        pinTag = getIntent().getIntExtra(EXTRA_PIN_TAG, -1);
         TourCooLogUtil.i(TAG, TAG + "订单详情id:" + orderId);
+        TourCooLogUtil.i(TAG, TAG + "pinTag:" + pinTag);
+        isPin = pinTag == 1;
     }
 
     @Override
@@ -376,19 +394,13 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         List<OrderDetailEntity.OrderBean.GoodsBean> goodsList = orderBean.getGoods();
         mGoodsAdapter.setNewData(goodsList);
         loadBottomButtonFunction(orderBean);
-        if (orderBean.getTuan() == 1) {
-            //表示当前订单为拼团订单
-            setViewVisible(llBottomToolBar, false);
-        } else {
-            setViewVisible(llBottomToolBar, true);
-        }
     }
 
     private void setViewVisible(View view, boolean visible) {
         if (visible) {
-            view.setVisibility(View.INVISIBLE);
-        } else {
             view.setVisibility(View.VISIBLE);
+        } else {
+            view.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -441,6 +453,12 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         }
     }
 
+
+    /**
+     * 根据不同状态加载底部按钮功能
+     *
+     * @param orderBean
+     */
     private void loadBottomButtonFunction(OrderDetailEntity.OrderBean orderBean) {
         if (orderBean == null) {
             return;
@@ -463,34 +481,47 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 hideView(tvLookExpress);
                 hideView(tvReturn);
                 hideView(tvCancelOrder);
-
-                showView(tvReturn);
+                if (isPin) {
+                    //拼团订单不允许退单
+                    hideView(tvReturn);
+                } else {
+                    showView(tvReturn);
+                }
                 break;
             case ORDER_STATUS_WAIT_RECIEVE:
                 //待收货
                 hideView(tvCommentNow);
                 hideView(tvPayNow);
                 hideView(tvCancelOrder);
-                showView(tvReturn);
+                //查看物流
                 showView(tvLookExpress);
+                //确认收货
                 showView(tvConfirmReceive);
+                if (isPin) {
+                    //拼团订单不允许退单
+                    hideView(tvReturn);
+                } else {
+                    //申请退货
+                    showView(tvReturn);
+                }
                 break;
             case ORDER_STATUS_WAIT_COMMENT:
                 //待评价
-                showView(tvCommentNow);
                 hideView(tvPayNow);
                 hideView(tvCancelOrder);
                 hideView(tvReturn);
-                hideView(tvLookExpress);
                 hideView(tvConfirmReceive);
+                showView(tvCommentNow);
+                showView(tvLookExpress);
                 break;
             case ORDER_STATUS_FINISH:
                 hideView(tvCommentNow);
                 hideView(tvPayNow);
                 hideView(tvCancelOrder);
                 hideView(tvReturn);
-                hideView(tvLookExpress);
                 hideView(tvConfirmReceive);
+                showView(tvLookExpress);
+                showView(tvLookComment);
                 break;
             default:
                 break;
@@ -521,12 +552,10 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             case R.id.tvReturn:
                 skipReturnGoods(mOrderEntity.getOrder());
                 break;
-
             //查看物流
             case R.id.tvLookExpress:
-
+                ToastUtil.show("查看物流");
                 break;
-
             //确认收货
             case R.id.tvConfirmReceive:
                 showConfirmFinishDialog();
@@ -534,6 +563,9 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             case R.id.tvCommentNow:
                 //立即评价
                 skipEvaluation(mOrderEntity.getOrder());
+                break;
+            case R.id.tvLookComment:
+                ToastUtil.show("查看评价");
                 break;
             default:
                 break;
@@ -706,6 +738,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         switch (requestCode) {
             case REQUEST_CODE_EVALUATE:
                 if (resultCode == RESULT_OK) {
+                     TourCooLogUtil.i(TAG,TAG+":"+ "测试");
                     refreshRequest();
                     setResult(RESULT_OK);
                 }
@@ -912,6 +945,32 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     }
 
 
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onPayEvent(BaseEvent event) {
+        if (event == null) {
+            TourCooLogUtil.e(TAG, "直接拦截");
+            return;
+        }
+        switch (event.id) {
+            case EVENT_ACTION_PAY_FRESH_SUCCESS:
+                //支付成功 直接跳转到详情
+                refreshRequest();
+                break;
+            case EVENT_ACTION_PAY_FRESH_FAILED:
+//                skipToOrderListAndFinish();
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (api != null) {
+            api.detach();
+        }
+        super.onDestroy();
+    }
 }
 
 

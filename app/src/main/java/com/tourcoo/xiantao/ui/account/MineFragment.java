@@ -38,7 +38,6 @@ import com.tourcoo.xiantao.entity.MenuItem;
 import com.tourcoo.xiantao.entity.TokenInfo;
 import com.tourcoo.xiantao.entity.event.MessageEvent;
 import com.tourcoo.xiantao.entity.event.RefreshEvent;
-import com.tourcoo.xiantao.entity.event.TabChangeEvent;
 import com.tourcoo.xiantao.entity.message.MessageBean;
 import com.tourcoo.xiantao.entity.user.PersonalCenterInfo;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
@@ -318,6 +317,11 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQUEST_CODE_EDIT_USER_INFO:
+                if (resultCode == RESULT_OK) {
+                    checkTokenAndRequestUserInfo();
+                    TourCooLogUtil.i(TAG, TAG + ":" + "刷新了");
+                }
+            case REQUEST_CODE_MESSAGE_CENTER:
                 if (resultCode == RESULT_OK) {
                     checkTokenAndRequestUserInfo();
                     TourCooLogUtil.i(TAG, TAG + ":" + "刷新了");
@@ -605,6 +609,8 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
 //                startActivityForResult(returnIntent, REQUEST_CODE_EDIT_USER_INFO);
         startActivity(returnIntent);
     }
+
+
 }
 
 
