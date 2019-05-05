@@ -15,6 +15,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.ImageUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.Utils;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.util.Util;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -130,7 +132,7 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
             }
 
             @Override
-            public void onBtnClick(int tuanuser_id) {
+            public void onBtnClick(int tuanuser_id,Bitmap bitmap) {
 
                 sharePopupWindow.setISharePopupWindowClickListener(new SharePopupWindow.ISharePopupWindowClickListener() {
                     @Override
@@ -139,11 +141,11 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
                         miniProgram.webpageUrl = "https://www.baidu.com";//自定义
                         miniProgram.userName = WxConfig.MINI_PROGRAM_USERNAME;//小程序端提供参数
                         miniProgram.path = WxConfig.MINI_PROGRAM_PATH + tuanuser_id;//小程序端提供参数
-                        miniProgram.miniprogramType = WXMiniProgramObject.MINIPROGRAM_TYPE_PREVIEW;// 正式版:0，测试版:1，体验版:2
+                        miniProgram.miniprogramType = WXMiniProgramObject.MINIPROGRAM_TYPE_TEST;// 正式版:0，测试版:1，体验版:2
                         WXMediaMessage mediaMessage = new WXMediaMessage(miniProgram);
                         mediaMessage.title = "邀请拼团";//自定义
                         mediaMessage.description = "拼团钜惠";//自定义
-                        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_orange);
+
                         Bitmap sendBitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, true);
                         bitmap.recycle();
                         mediaMessage.thumbData = ImageUtils.bitmap2Bytes(sendBitmap, Bitmap.CompressFormat.PNG);

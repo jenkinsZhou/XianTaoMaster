@@ -1,6 +1,8 @@
 package com.tourcoo.xiantao.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.util.SparseArray;
@@ -13,8 +15,11 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SpanUtils;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.makeramen.roundedimageview.RoundedImageView;
@@ -179,7 +184,18 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
                         @Override
                         public void onClick(View v) {
                             if (listener != null) {
-                                listener.onBtnClick(item.getTuanuser_id());
+//                                Glide.with(context)
+//                                        .load(uri)
+//                                        .asBitmap()
+//                                        .centerCrop()
+//                                        .override(150, 150)
+//                                        .into(new SimpleTarget<Bitmap>() {
+//                                            @Override
+//                                            public void onResourceReady(Bitmap bitmap, GlideAnimation anim) {
+//                                                callback.getBitmapCallback(bitmap);
+//                                            }
+//                                        });
+                                listener.onBtnClick(item.getTuanuser_id(), ConvertUtils.view2Bitmap(holder.ivGoodsImage));
                             }
                         }
                     });
@@ -259,7 +275,7 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
     public interface IOnItemClickListener {
         void onItemClick(int tuan_id);
 
-        void onBtnClick(int tuanuser_id);
+        void onBtnClick(int tuanuser_id, Bitmap bitmap);
 
         void onPayClick(int tuanuser_id);
     }
