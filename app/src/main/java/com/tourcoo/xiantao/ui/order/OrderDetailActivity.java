@@ -144,6 +144,10 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private TextView tvLookComment;
 
     private boolean isPin;
+    /**
+     * 取消退单
+     */
+    private TextView tvCancelReturn;
 
 
     @Override
@@ -162,11 +166,13 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     public void initView(Bundle savedInstanceState) {
         api = WXAPIFactory.createWXAPI(mContext, null);
         tvCoin = findViewById(R.id.tvCoin);
+        tvCancelReturn = findViewById(R.id.tvCancelReturn);
         tvCommentNow = findViewById(R.id.tvCommentNow);
         tvConfirmReceive = findViewById(R.id.tvConfirmReceive);
         tvLookComment = findViewById(R.id.tvLookComment);
         tvCancelOrder = findViewById(R.id.tvCancelOrder);
         llRemark = findViewById(R.id.llRemark);
+        tvCancelReturn.setOnClickListener(this);
         tvPayNow = findViewById(R.id.tvPayNow);
         tvLookExpress = findViewById(R.id.tvLookExpress);
         tvReturn = findViewById(R.id.tvReturn);
@@ -463,6 +469,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         if (orderBean == null) {
             return;
         }
+        TourCooLogUtil.i(TAG, TAG + "订单状态:" + orderBean.getOrder_status());
         switch (orderBean.getOrder_status()) {
             case ORDER_STATUS_WAIT_PAY:
                 //待支付
@@ -523,6 +530,17 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 showView(tvLookExpress);
                 showView(tvLookComment);
                 break;
+            //退货中
+            case ORDER_STATUS_BACK_ING:
+                hideView(tvCommentNow);
+                hideView(tvPayNow);
+                hideView(tvCancelOrder);
+                hideView(tvReturn);
+                hideView(tvConfirmReceive);
+                hideView(tvLookExpress);
+                hideView(tvLookComment);
+                showView(tvCancelReturn);
+                break;
             default:
                 break;
         }
@@ -554,7 +572,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 break;
             //查看物流
             case R.id.tvLookExpress:
-                ToastUtil.show("查看物流");
+                skipSeeLogistics(mOrderEntity.getOrder().getId());
                 break;
             //确认收货
             case R.id.tvConfirmReceive:
@@ -566,6 +584,9 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 break;
             case R.id.tvLookComment:
                 ToastUtil.show("查看评价");
+                break;
+            case R.id.tvCancelReturn:
+                requestCancelReturn(mOrderEntity.getOrder().getId());
                 break;
             default:
                 break;
@@ -738,7 +759,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         switch (requestCode) {
             case REQUEST_CODE_EVALUATE:
                 if (resultCode == RESULT_OK) {
-                     TourCooLogUtil.i(TAG,TAG+":"+ "测试");
+                    TourCooLogUtil.i(TAG, TAG + ":" + "测试");
                     refreshRequest();
                     setResult(RESULT_OK);
                 }
@@ -746,7 +767,6 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             case REQUEST_CODE_RETURN_GOODS:
                 if (resultCode == RESULT_OK) {
                     setResult(RESULT_OK);
-                    ToastUtil.show("接收到回调");
                     refreshRequest();
                 }
                 break;
@@ -971,6 +991,42 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         }
         super.onDestroy();
     }
+
+
+    /**
+     * 取消退单
+     */
+    private void requestCancelReturn(int orderId) {
+        TourCooLogUtil.i(TAG, TAG + "订单id:" + orderId);
+        ApiRepository.getInstance().requestCancelReturn(orderId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+//                                refreshRequest();
+                                ToastUtil.showSuccess("已取消退单");
+                                setResult(RESULT_OK);
+                                finish();
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 查看物流
+     */
+    private void skipSeeLogistics(int orderId) {
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_ORDER_ID, orderId);
+        intent.setClass(mContext, SeeLogisticsActivity.class);
+        startActivity(intent);
+    }
+
+
 }
 
 

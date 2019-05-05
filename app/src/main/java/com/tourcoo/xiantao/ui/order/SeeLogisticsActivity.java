@@ -5,19 +5,26 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.StringUtils;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
+import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.order.LogisticsBean;
 import com.tourcoo.xiantao.entity.order.LogisticsModel;
+import com.tourcoo.xiantao.entity.user.PersonalCenterInfo;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.ui.order.OrderDetailActivity.EXTRA_ORDER_ID;
 
 /**
  * 查看物流
@@ -54,17 +61,20 @@ public class SeeLogisticsActivity extends BaseTourCooTitleActivity {
     }
 
     @Override
+    public void setTitleBar(TitleBarView titleBar) {
+        super.setTitleBar(titleBar);
+        titleBar.setTitleMainText("物流详情");
+    }
+
+    @Override
     public void initView(Bundle savedInstanceState) {
-        mTitleBar.setTitleMainText("查看物流");
-        int id = getIntent().getIntExtra("id", 0);
+        int id = getIntent().getIntExtra(EXTRA_ORDER_ID, 0);
         String photoUrl = getIntent().getStringExtra("photo");
-
         initViews();
-
         if (photoUrl != null && !StringUtils.isEmpty(photoUrl)) {
             GlideManager.loadImg(photoUrl, ivPhoto);
         }
-
+        TourCooLogUtil.i(TAG, TAG + ":" + "订单id=" + id);
         getLogisticsDetails(id);
 
     }
@@ -95,8 +105,8 @@ public class SeeLogisticsActivity extends BaseTourCooTitleActivity {
     /**
      * 查看物流详情
      */
-    private void getLogisticsDetails(int id) {
-        ApiRepository.getInstance().logout().compose(bindUntilEvent(ActivityEvent.DESTROY)).
+    private void getLogisticsDetails(int orderId) {
+        ApiRepository.getInstance().requestLogistics(orderId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseLoadingObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {
@@ -104,8 +114,9 @@ public class SeeLogisticsActivity extends BaseTourCooTitleActivity {
                             ToastUtil.showFailed("服务器异常");
                             return;
                         }
-                        if (entity.code == CODE_REQUEST_SUCCESS) {
-//                            setLogisticsData(entity.data);
+                        if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
+                            LogisticsBean logisticsBean = parseInfo(entity.data);
+                            setLogisticsData(logisticsBean);
                         } else {
                             ToastUtil.showFailed(entity.msg);
                         }
@@ -114,53 +125,45 @@ public class SeeLogisticsActivity extends BaseTourCooTitleActivity {
     }
 
 
-    private void setLogisticsData(LogisticsModel model) {
-
+    private void setLogisticsData(LogisticsBean model) {
         if (model != null) {
-            GlideManager.loadImg(model.getImage(), ivPhoto);
-
-            tvNu.setText(model.getNu());
+//            GlideManager.loadImg(model.getImage(), ivPhoto);
+            tvNu.setText(model.getNo());
+            tvNickName.setText(model.getAddress().getName());
             tvCompany.setText(model.getCompany() + "：");
-            tvStatus.setText(model.getState());
-            tvAddress.setText("[收货地址]" + model.getAddress());
-            tvAddressInfo.setText("收货地址：" + model.getAddress());
-
-            switch (model.getData().size()) {
+            tvStatus.setText(model.getStatus());
+            tvAddress.setText("[收货地址]" + model.getAddress().getAddress());
+            tvAddressInfo.setText("收货地址：" + model.getAddress().getAddress());
+            switch (model.getInfo().size()) {
                 case 0:
                     break;
-
                 case 1:
                     llLastLayout.setVisibility(View.VISIBLE);
-                    tvLastTime.setText(model.getData().get(0).getDate() + "\n" + model.getData().get(0).getTime());
-                    tvLastContent.setText(model.getData().get(0).getContext());
+                    tvLastTime.setText(model.getInfo().get(0).getTime());
+                    tvLastContent.setText(model.getInfo().get(0).getContext());
                     break;
 
                 case 2:
                     llLastLayout.setVisibility(View.VISIBLE);
                     llFirstLayout.setVisibility(View.VISIBLE);
-
-                    tvLastTime.setText(model.getData().get(0).getDate() + "\n" + model.getData().get(0).getTime());
-                    tvLastContent.setText(model.getData().get(0).getContext());
-
-                    tvFirstTime.setText(model.getData().get(1).getDate() + "\n" + model.getData().get(1).getTime());
-                    tvFirstContent.setText(model.getData().get(1).getContext());
-
+                    tvLastTime.setText(model.getInfo().get(0).getTime());
+//                    tvLastTime.setText(model.getData().get(0).getDate() + "\n" + model.getData().get(0).getTime());
+//                    tvLastContent.setText(model.getData().get(0).getContext());
+                    tvLastContent.setText(model.getInfo().get(0).getContext());
+                    tvFirstTime.setText(model.getInfo().get(1).getTime());
+                    tvFirstContent.setText(model.getInfo().get(1).getContext());
                     break;
 
                 case 3:
                     llLastLayout.setVisibility(View.VISIBLE);
                     llSecondLayout.setVisibility(View.VISIBLE);
                     llFirstLayout.setVisibility(View.VISIBLE);
-
-
-                    tvLastTime.setText(model.getData().get(0).getDate() + "\n" + model.getData().get(0).getTime());
-                    tvLastContent.setText(model.getData().get(0).getContext());
-
-                    tvSecondTime.setText(model.getData().get(1).getDate() + "\n" + model.getData().get(1).getTime());
-                    tvSecondContent.setText(model.getData().get(1).getContext());
-
-                    tvFirstTime.setText(model.getData().get(2).getDate() + "\n" + model.getData().get(2).getTime());
-                    tvFirstContent.setText(model.getData().get(2).getContext());
+                    tvLastTime.setText(model.getInfo().get(0).getTime());
+                    tvLastContent.setText(model.getInfo().get(0).getContext());
+                    tvSecondTime.setText(model.getInfo().get(1).getTime());
+                    tvSecondContent.setText(model.getInfo().get(1).getContext());
+                    tvFirstTime.setText(model.getInfo().get(2).getTime());
+                    tvFirstContent.setText(model.getInfo().get(2).getContext());
 
                     break;
                 default:
@@ -168,26 +171,38 @@ public class SeeLogisticsActivity extends BaseTourCooTitleActivity {
                     llSecondLayout.setVisibility(View.VISIBLE);
                     llFirstLayout.setVisibility(View.VISIBLE);
 
-                    tvLastTime.setText(model.getData().get(0).getDate() + "\n" + model.getData().get(0).getTime());
-                    tvLastContent.setText(model.getData().get(0).getContext());
-
-                    int addIndex = model.getData().size() - 3;
+                    tvLastTime.setText(model.getInfo().get(0).getTime() + "\n");
+                    tvLastContent.setText(model.getInfo().get(0).getContext());
+                    int addIndex = model.getInfo().size() - 3;
                     for (int i = addIndex - 1; i >= 0; i--) {
                         View view = View.inflate(this, R.layout.item_add_logistics_view_layout, null);
-                        ((TextView) view.findViewById(R.id.tvTime)).setText(model.getData().get(i + 2).getDate() + "\n" + model.getData().get(i + 2).getTime());
-                        ((TextView) view.findViewById(R.id.tvContent)).setText(model.getData().get(i + 2).getContext());
+                        ((TextView) view.findViewById(R.id.tvTime)).setText(model.getInfo().get(i + 2).getTime());
+                        ((TextView) view.findViewById(R.id.tvContent)).setText(model.getInfo().get(i + 2).getContext());
                         container.addView(view, 0);
                     }
 
-                    tvSecondTime.setText(model.getData().get(model.getData().size() - 2).getDate() + "\n" + model.getData().get(model.getData().size() - 2).getTime());
-                    tvSecondContent.setText(model.getData().get(model.getData().size() - 2).getContext());
+                    tvSecondTime.setText(model.getInfo().get(model.getInfo().size() - 2).getTime());
+                    tvSecondContent.setText(model.getInfo().get(model.getInfo().size() - 2).getContext());
 
-                    tvFirstTime.setText(model.getData().get(model.getData().size() - 1).getDate() + "\n" + model.getData().get(model.getData().size() - 1).getTime());
-                    tvFirstContent.setText(model.getData().get(model.getData().size() - 1).getContext());
-
+                    tvFirstTime.setText(model.getInfo().get(model.getInfo().size() - 1).getTime());
+                    tvFirstContent.setText(model.getInfo().get(model.getInfo().size() - 1).getContext());
                     break;
-
             }
+        }
+    }
+
+
+    private LogisticsBean parseInfo(Object object) {
+        if (object == null) {
+            return null;
+        }
+        try {
+            String info = JSONObject.toJSONString(object);
+            TourCooLogUtil.i(TAG, "准备解析:" + info);
+            return JSON.parseObject(info, LogisticsBean.class);
+        } catch (Exception e) {
+            TourCooLogUtil.e(TAG, "解析异常:" + e.toString());
+            return null;
         }
     }
 

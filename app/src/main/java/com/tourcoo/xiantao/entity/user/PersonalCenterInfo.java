@@ -1,6 +1,5 @@
 package com.tourcoo.xiantao.entity.user;
 
-import com.google.gson.annotations.SerializedName;
 
 import org.litepal.crud.LitePalSupport;
 
@@ -46,8 +45,7 @@ public class PersonalCenterInfo extends LitePalSupport {
     private int nofreight;
     private int nopay;
     private int noreceipt;
-    @SerializedName("return")
-    private int returnX;
+    private int returnnum;
 
     public int getAg() {
         return ag;
@@ -145,11 +143,12 @@ public class PersonalCenterInfo extends LitePalSupport {
         this.noreceipt = noreceipt;
     }
 
-    public int getReturnX() {
-        return returnX;
+
+    public int getReturnnum() {
+        return returnnum;
     }
 
-    public void setReturnX(int returnX) {
-        this.returnX = returnX;
+    public void setReturnnum(int returnnum) {
+        this.returnnum = returnnum;
     }
 }

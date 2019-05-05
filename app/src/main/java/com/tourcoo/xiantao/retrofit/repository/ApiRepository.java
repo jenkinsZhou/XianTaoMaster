@@ -607,7 +607,6 @@ public class ApiRepository extends BaseRepository {
     }
 
 
-
     /**
      * 信息详情
      *
@@ -884,6 +883,45 @@ public class ApiRepository extends BaseRepository {
         }
         params.put("pay_type", payTypeString);
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestPinPay(params).retryWhen(new RetryWhen()));
+    }
+
+
+    public Observable<BaseEntity> requestFeedback(String detail, String images, String type) {
+        Map<String, Object> params = new HashMap<>(2);
+        params.put("type", type);
+        params.put("detail", detail);
+        if (!TextUtils.isEmpty(images)) {
+            params.put("images", images);
+        }
+        TourCooLogUtil.i(TAG, TAG + "问题反馈提交的参数:" + params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestFeedback(params).retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 取消退单
+     *
+     * @param orderId
+     * @return
+     */
+    public Observable<BaseEntity> requestCancelReturn(int orderId) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("id", orderId);
+        TourCooLogUtil.i(TAG, TAG + ":" + params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestCancelReturn(params).retryWhen(new RetryWhen()));
+    }
+
+    /**
+     * 查看物流
+     *
+     * @param orderId
+     * @return
+     */
+    public Observable<BaseEntity> requestLogistics(int orderId) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("id", orderId);
+        TourCooLogUtil.i(TAG, TAG + ":" + params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestLogistics(params).retryWhen(new RetryWhen()));
     }
 
 }

@@ -441,11 +441,11 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
                 break;
             case ORDER_STATUS_WAIT_COMMENT:
                 //查看物流
-                ToastUtil.show("查看物流");
+                skipSeeLogistics(currentOrderId);
                 break;
             case ORDER_STATUS_WAIT_RECIEVE:
                 //查看物流
-                ToastUtil.show("查看物流");
+                skipSeeLogistics(currentOrderId);
                 break;
             default:
                 break;
@@ -714,5 +714,15 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
                 mRefreshLayout.autoRefresh();
             }
         });
+    }
+
+    /**
+     * 查看物流
+     */
+    private void skipSeeLogistics(int orderId) {
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_ORDER_ID, orderId);
+        intent.setClass(mContext, SeeLogisticsActivity.class);
+        startActivity(intent);
     }
 }

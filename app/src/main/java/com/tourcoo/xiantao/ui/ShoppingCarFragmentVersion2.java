@@ -133,7 +133,7 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
         if (AccountInfoHelper.getInstance().isLogin()) {
             refreshShoppingCarNoDialog();
         } else {
-            mStatusLayoutManager.showEmptyLayout();
+            showEmptyLayout();
             hideView(llBottomLayout);
         }
     }
@@ -383,7 +383,7 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
      */
     private void showGoodsList(SettleEntity settleEntity) {
         if (settleEntity == null || settleEntity.getGoods_list() == null) {
-            mStatusLayoutManager.showErrorLayout();
+            showErrorLayout();
             return;
         }
         List<Goods> goodsList = settleEntity.getGoods_list();
@@ -400,7 +400,7 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
             showView(llBottomLayout);
         } else {
             hideView(llBottomLayout);
-            mStatusLayoutManager.showEmptyLayout();
+            showEmptyLayout();
             mMainTabActivity.showRedDot(0);
         }
 
@@ -554,13 +554,17 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
 
     public void showEmptyLayout() {
         mShoppingCartAdapter.getData().clear();
-        mStatusLayoutManager.showEmptyLayout();
+        if (mStatusLayoutManager != null) {
+            mStatusLayoutManager.showEmptyLayout();
+        }
         hideView(llBottomLayout);
     }
 
 
     public void showErrorLayout() {
-        mStatusLayoutManager.showErrorLayout();
+        if (mStatusLayoutManager != null) {
+            mStatusLayoutManager.showErrorLayout();
+        }
         hideView(llBottomLayout);
     }
 
@@ -582,5 +586,6 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
         intent.setClass(mContext, OrderSettleDetailActivity.class);
         startActivity(intent);
     }
+
 
 }

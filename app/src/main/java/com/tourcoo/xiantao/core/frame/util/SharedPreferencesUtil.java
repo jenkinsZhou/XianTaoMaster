@@ -3,23 +3,25 @@ package com.tourcoo.xiantao.core.frame.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.tourcoo.xiantao.XianTaoApplication;
+
 import java.util.Map;
 import java.util.Set;
 
 /**
  * @author :zhoujian
- * @description : zj
- * @company :途酷科技
+ * @description : SharedPreferences工具类
+ * @company :翼迈科技
  * @date 2019年03月04日下午 03:56
  * @Email: 971613168@qq.com
  */
 public class SharedPreferencesUtil {
 
-    public static boolean put(Context context, String key, Object object) {
-        if (context == null) {
+    public static boolean put(String key, Object object) {
+        if (XianTaoApplication.getContext() == null) {
             return false;
         }
-        return put(context, context.getPackageName(), key, object);
+        return put(XianTaoApplication.getContext(), XianTaoApplication.getContext().getPackageName(), key, object);
     }
 
     /**
@@ -52,11 +54,8 @@ public class SharedPreferencesUtil {
         return editor.commit();
     }
 
-    public static Object get(Context context, String key, Object def) {
-        if (context == null) {
-            return def;
-        }
-        return get(context, context.getPackageName(), key, def);
+    public static Object get(String key, Object def) {
+        return get(XianTaoApplication.getInstance(), XianTaoApplication.getInstance().getPackageName(), key, def);
     }
 
     /**

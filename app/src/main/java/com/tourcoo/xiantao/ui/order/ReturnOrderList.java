@@ -29,6 +29,8 @@ import java.util.List;
 
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_BACK;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_BACK_ING;
+import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_BACK_REFUSE;
+import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_FINISH;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_COMMENT;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_SEND;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
@@ -37,7 +39,7 @@ import static com.tourcoo.xiantao.ui.order.ReturnGoodsActivity.EXTRA_GOODS_LIST;
 
 /**
  * @author :zhoujian
- * @description :退货订单列表
+ * @description :退货列表
  * @company :翼迈科技
  * @date 2019年 04月 30日 23时11分
  * @Email: 971613168@qq.com
@@ -47,6 +49,10 @@ public class ReturnOrderList extends BaseTourCooRefreshLoadActivity<OrderEntity.
     private int orderStatus = ORDER_STATUS_BACK;
     public static final String EXTRA_ORDER_STATUS = "EXTRA_ORDER_STATUS";
     public static final int REQUEST_CODE_RETURN_DETAIL = 1005;
+    /**
+     * 跳转订单详情
+     */
+    public static final int REQUEST_CODE_ORDER_DETAIL = 1006;
 
     @Override
     public int getContentLayout() {
@@ -161,7 +167,7 @@ public class ReturnOrderList extends BaseTourCooRefreshLoadActivity<OrderEntity.
                         ToastUtil.show("2");
                         break;
                     case R.id.btnThree:
-                        ToastUtil.show("3");
+                        loadButton3Function(orderInfo);
                         break;
                     case R.id.btnFour:
                         loadButton4Function(orderInfo);
@@ -173,6 +179,7 @@ public class ReturnOrderList extends BaseTourCooRefreshLoadActivity<OrderEntity.
         });
     }
 
+
     /**
      * 跳转到订单详情
      *
@@ -183,11 +190,24 @@ public class ReturnOrderList extends BaseTourCooRefreshLoadActivity<OrderEntity.
         intent.putExtra(EXTRA_ORDER_ID, orderId);
         intent.setClass(mContext, OrderDetailActivity.class);
         //跳转至订单详情
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_CODE_ORDER_DETAIL);
+    }
+
+
+    private void loadButton3Function(OrderEntity.OrderInfo orderInfo) {
+        TourCooLogUtil.i(TAG, TAG + "订单状态:" + orderInfo.getOrder_status());
+        switch (orderInfo.getOrder_status()) {
+            case ORDER_STATUS_BACK_ING:
+                requestCancelReturn(orderInfo.getId());
+                break;
+            default:
+                break;
+        }
     }
 
 
     private void loadButton4Function(OrderEntity.OrderInfo orderInfo) {
+        TourCooLogUtil.i(TAG, TAG + "订单状态:" + orderInfo.getOrder_status());
         switch (orderInfo.getOrder_status()) {
             case ORDER_STATUS_WAIT_SEND:
                 //申请退单
@@ -196,6 +216,13 @@ public class ReturnOrderList extends BaseTourCooRefreshLoadActivity<OrderEntity.
             case ORDER_STATUS_WAIT_COMMENT:
                 //待评价状态 去评价
                 skipEvaluation(orderInfo);
+                break;
+            case ORDER_STATUS_BACK:
+            case ORDER_STATUS_FINISH:
+            case ORDER_STATUS_BACK_ING:
+            case ORDER_STATUS_BACK_REFUSE:
+                //查看退货详情
+                skipOrderDetail(orderInfo.getId());
                 break;
             default:
                 break;
@@ -245,9 +272,37 @@ public class ReturnOrderList extends BaseTourCooRefreshLoadActivity<OrderEntity.
                     //退货成功 刷新列表
                     mRefreshLayout.autoRefresh();
                     break;
+                case REQUEST_CODE_ORDER_DETAIL:
+                    //退货成功 刷新列表
+                    mRefreshLayout.autoRefresh();
+                    break;
                 default:
                     break;
             }
         }
+    }
+
+
+    /**
+     * 取消退单
+     */
+    private void requestCancelReturn(int orderId) {
+        TourCooLogUtil.i(TAG, TAG + "订单id:" + orderId);
+        ApiRepository.getInstance().requestCancelReturn(orderId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+//                                refreshRequest();
+                                ToastUtil.showSuccess("已取消退单");
+                                setResult(RESULT_OK);
+                                finish();
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+                });
     }
 }

@@ -240,7 +240,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
                     }
                     BannerBean bannerBean = mBannerBeanList.get(position);
                     if (bannerBean != null) {
-                        getBannerDetail(bannerBean.getId() + "");
+                        getBannerDetail(bannerBean.getId() + "",position);
                     }
                 }
             });
@@ -512,14 +512,14 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
     /**
      * 获取banner详情
      */
-    private void getBannerDetail(String id) {
+    private void getBannerDetail(String id,int position) {
         ApiRepository.getInstance().getBannerDetail(id).compose(bindUntilEvent(FragmentEvent.DESTROY)).
                 subscribe(new BaseObserver<BaseEntity<BannerDetail>>() {
                     @Override
                     public void onRequestNext(BaseEntity<BannerDetail> entity) {
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS) {
-                                doSkipBannerDetail(entity.data);
+                                doSkipBannerDetail(entity.data,position);
                             } else {
                                 ToastUtil.showFailed(entity.msg);
                             }
@@ -531,12 +531,15 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
     /**
      * 跳转banner详情
      */
-    private void doSkipBannerDetail(BannerDetail bannerDetail) {
+    private void doSkipBannerDetail(BannerDetail bannerDetail, int position) {
         if (bannerDetail == null) {
             ToastUtil.showFailed("未获取到图片信息");
             return;
         }
-        String url = BASE_URL + bannerDetail.getImage();
+//        String url = BASE_URL + bannerDetail.getImage();
+//        String url =  TourCooUtil.getUrl(bannerDetail.getImage());
+        String url = bannerImageList.get(position);
+         TourCooLogUtil.i(TAG,TAG+":图片路径:"+url );
         WebViewActivity.start(mContext, url, false);
     }
 
@@ -703,10 +706,10 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
                     if (mapLocation.getErrorCode() == 0) {
                         TourCooLogUtil.d(TAG, "回调结果:" + mapLocation.getCity());
                     } else {
-                        ToastUtil.showFailed("定位失败");
+//                        ToastUtil.showFailed("定位失败");
                     }
                 } else {
-                    ToastUtil.showFailed("定位失败");
+//                    ToastUtil.showFailed("定位失败");
                 }
                 LocateHelper.getInstance().stopLocation();
             }

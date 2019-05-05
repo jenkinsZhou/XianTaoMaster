@@ -94,6 +94,8 @@
         <activity android:name=".ui.comment.CommentListActivity"/>
         <activity android:name=".ui.goods.SearchGoodsActivity" />
         <activity android:name=".ui.order.ReturnOrderList" />
+        <activity android:name=".ui.FeedbackActivity" />
+        <activity android:name=".ui.AboutUsActivity" />
     </application>
 
 </manifest>

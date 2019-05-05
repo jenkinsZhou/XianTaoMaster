@@ -41,6 +41,7 @@ import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.entity.message.MessageBean;
 import com.tourcoo.xiantao.entity.user.PersonalCenterInfo;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
+import com.tourcoo.xiantao.ui.FeedbackActivity;
 import com.tourcoo.xiantao.ui.SettingActivity;
 import com.tourcoo.xiantao.ui.coin.MyCoinListActivity;
 import com.tourcoo.xiantao.ui.goods.CollectionGoodsListActivity;
@@ -214,8 +215,8 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                         showPhoneDialog();
                         break;
                     case 5:
-                        //发票信息
-                        TourCoolUtil.startActivity(mContext, InvoiceInformationActivity.class);
+                        //问题反馈
+                        TourCoolUtil.startActivity(mContext, FeedbackActivity.class);
                         break;
                     case 6:
                         break;
@@ -463,7 +464,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
             return;
         }
         showRedDot(tvRedDotWaitEvaluate, data.getNocomment());
-        showRedDot(tvRedDotWaitReturn, data.getReturnX());
+        showRedDot(tvRedDotWaitReturn, data.getReturnnum());
         showRedDot(tvRedDotWaitPay, data.getNopay());
         showRedDot(tvRedDotWaitSend, data.getNofreight());
         showRedDot(tvRedDotWaitReceive, data.getNoreceipt());
@@ -606,8 +607,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         }
         Intent returnIntent = new Intent();
         returnIntent.setClass(mContext, ReturnOrderList.class);
-//                startActivityForResult(returnIntent, REQUEST_CODE_EDIT_USER_INFO);
-        startActivity(returnIntent);
+        startActivityForResult(returnIntent, REQUEST_CODE_EDIT_USER_INFO);
     }
 
 

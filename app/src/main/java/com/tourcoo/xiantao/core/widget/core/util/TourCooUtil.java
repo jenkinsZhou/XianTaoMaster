@@ -42,6 +42,7 @@ public class TourCooUtil {
     private static int ACTIVITY_SINGLE_FLAG = Intent.FLAG_ACTIVITY_SINGLE_TOP;
     private static final String STRING_EMPTY = "";
     private static final String URL_TAG = "http";
+    private static final String URL_TAG_HTTPS = "https";
 
     /**
      * 获取应用名称
@@ -397,7 +398,7 @@ public class TourCooUtil {
         if (TextUtils.isEmpty(url)) {
             return STRING_EMPTY;
         }
-        if (url.contains(URL_TAG)) {
+        if (url.contains(URL_TAG) || url.contains(URL_TAG_HTTPS)) {
             return url;
         } else {
             if (url.startsWith("/")) {

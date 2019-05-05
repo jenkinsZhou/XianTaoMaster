@@ -89,6 +89,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
         helper.addOnClickListener(R.id.btnFour);
         int pin = orderInfo.getTuan();
         boolean isPin = pin == 1;
+        TourCooLogUtil.i(TAG, TAG + "是否拼团:" +pin);
         //待付款状态
         if (orderInfo.getPay_status() == NOT_FINISH) {
             orderInfo.setOrder_status(ORDER_STATUS_WAIT_PAY);
@@ -101,6 +102,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
             } else {
                 setTextGray(btnThree, "取消订单");
             }
+            setTextGray(btnThree, "取消订单");
             setTextGray(btnFour, "立即支付");
             TourCooLogUtil.i(TAG, TAG + "订单id:" + orderInfo.getId());
         } else {
@@ -127,7 +129,11 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                         tvOrderStatus.setText("待收货");
                         orderInfo.setOrder_status(ORDER_STATUS_WAIT_RECIEVE);
                         hindView(btnOne);
-                        setTextGray(btnTwo, "申请退单");
+                        if(isPin){
+                            hindView(btnTwo);
+                        }else {
+                            setTextGray(btnTwo, "申请退单");
+                        }
                         setTextGray(btnThree, "查看物流");
                         setTextGray(btnFour, "确认收货");
                         TourCooLogUtil.i(TAG, TAG + "订单id:" + orderInfo.getId());
@@ -169,7 +175,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                     orderInfo.setOrder_status(ORDER_STATUS_BACK_ING);
                     hindView(btnOne);
                     hindView(btnTwo);
-                    hindView(btnThree);
+                    setTextGray(btnThree, "取消退货");
                     setTextGray(btnFour, "查看详情");
                     break;
                 case 30:

@@ -406,9 +406,9 @@ public interface ApiService {
     Observable<BaseEntity<MessageBean>> requestMessageNoReadCount();
 
 
-
     /**
      * 信息详情
+     *
      * @param map
      * @return
      */
@@ -554,4 +554,34 @@ public interface ApiService {
      */
     @POST("order/tuan_pay")
     Observable<BaseEntity> requestPinPay(@QueryMap Map<String, Object> params);
+
+
+    /**
+     * 问题反馈
+     *
+     * @param params
+     * @return
+     */
+    @POST("index/feedback")
+    Observable<BaseEntity> requestFeedback(@QueryMap Map<String, Object> params);
+
+    /**
+     * 取消退单
+     *
+     * @param params
+     * @return
+     */
+    @POST("order/cancel_return")
+    Observable<BaseEntity> requestCancelReturn(@QueryMap Map<String, Object> params);
+
+
+    /**
+     * 查看物流
+     * @param params
+     * @return
+     */
+    @POST("order/logistics")
+    Observable<BaseEntity> requestLogistics(@QueryMap Map<String, Object> params);
+
+
 }

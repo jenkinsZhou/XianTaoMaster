@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import com.tourcoo.xiantao.R;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.widget.core.util.DrawableUtil;
 import com.tourcoo.xiantao.core.widget.core.util.FindViewUtil;
 import com.tourcoo.xiantao.core.widget.core.util.StatusBarUtil;
@@ -56,8 +57,13 @@ public class StatusViewHelper {
 
     private StatusViewHelper(Activity activity) {
         mActivity = new WeakReference<>(activity);
-        mContentView = ((ViewGroup) activity.getWindow().getDecorView()
-                .findViewById(android.R.id.content)).getChildAt(0);
+        try {
+            mContentView = ((ViewGroup) activity.getWindow().getDecorView()
+                    .findViewById(android.R.id.content)).getChildAt(0);
+        } catch (Exception e) {
+            TourCooLogUtil.e(TAG, TAG + ":" + e.toString());
+        }
+
     }
 
     public static StatusViewHelper with(Activity activity) {
