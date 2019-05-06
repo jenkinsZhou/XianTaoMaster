@@ -204,6 +204,7 @@ public class SplashActivity extends BaseTitleActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sp_bg:
+                AccountInfoHelper.getInstance().getUserInfo();
                 doSkipByCondition(mAdvertisEntity);
                 break;
             default:
@@ -304,7 +305,7 @@ public class SplashActivity extends BaseTitleActivity implements View.OnClickLis
         try {
             Intent intent = new Intent();
             if (advertisEntity.getId() == 0) {
-                TourCooLogUtil.e(TAG, TAG + ":" + "广告id为0" );
+                TourCooLogUtil.e(TAG, TAG + ":" + "广告id为0");
                 return;
             }
             finish = true;
@@ -322,17 +323,20 @@ public class SplashActivity extends BaseTitleActivity implements View.OnClickLis
     private void skipGoodsDetail(int goodsId) {
         try {
             if (goodsId <= 0) {
-                TourCooLogUtil.e(TAG, TAG + ":" + "商品id为0" );
+                TourCooLogUtil.e(TAG, TAG + ":" + "商品id为0");
                 return;
             }
             finish = true;
             Intent intent = new Intent();
+            Intent mainIntent = new Intent();
+            mainIntent.setClass(mContext, MainTabActivity.class);
             intent.putExtra(EXTRA_GOODS_ID, goodsId);
             //广告的tag
             intent.putExtra(EXTRA_ADV_TAG, "EXTRA_ADV_TAG");
             intent.setClass(mContext, GoodsDetailActivity.class);
             //跳转广告详情
-            startActivity(intent);
+            Intent[] intents = new Intent[]{mainIntent, intent};
+            startActivities(intents);
             finish();
         } catch (Exception e) {
             TourCooLogUtil.e(TAG, TAG + ":" + "异常了：" + e.toString());

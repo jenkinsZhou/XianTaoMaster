@@ -25,7 +25,6 @@ import com.tourcoo.xiantao.core.frame.util.SharedPreferencesUtil;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
-import com.tourcoo.xiantao.core.widget.core.action.BaseDialog;
 import com.tourcoo.xiantao.core.widget.core.action.BaseUpdateDialog;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.entity.BaseEntity;
