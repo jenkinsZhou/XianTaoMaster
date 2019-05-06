@@ -922,7 +922,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         WXMediaMessage msg = new WXMediaMessage(webpageObject);
         // 填写网页标题、描述、位图
         msg.title = goods.getGoods_name();
-        msg.description = "儒江铺子,您的生活管家";
+        msg.description = "濡江铺子,您的生活管家";
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.icon_share_weixin);
         // 如果没有位图，可以传null，会显示默认的图片
         if (bitmap != null) {

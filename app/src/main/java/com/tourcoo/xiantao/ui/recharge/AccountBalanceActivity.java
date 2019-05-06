@@ -24,6 +24,7 @@ import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.RechargeAmountAdapter;
 import com.tourcoo.xiantao.core.frame.UiConfigManager;
 import com.tourcoo.xiantao.core.frame.entity.TabEntity;
+import com.tourcoo.xiantao.core.frame.impl.SwipeBackControlImpl;
 import com.tourcoo.xiantao.core.frame.interfaces.IHomeView;
 import com.tourcoo.xiantao.core.frame.interfaces.SwipeBackControl;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
@@ -245,12 +246,12 @@ public class AccountBalanceActivity extends BaseTourCooTitleActivity implements 
 
     @Override
     public boolean isSwipeBackEnable(Activity activity) {
-        return true;
+        return false;
     }
 
     @Override
     public void setSwipeBack(Activity activity, BGASwipeBackHelper bgaSwipeBackHelper) {
-
+        bgaSwipeBackHelper.setSwipeBackEnable(false);
     }
 
     @Override

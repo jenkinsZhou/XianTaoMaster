@@ -508,8 +508,13 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 hideView(tvReturn);
                 hideView(tvCommentNow);
                 hideView(tvConfirmReceive);
-                showView(tvCancelOrder);
                 showView(tvPayNow);
+                if (isPin) {
+                    //拼团订单不允许取消退单
+                    hideView(tvCancelOrder);
+                } else {
+                    showView(tvCancelOrder);
+                }
                 break;
             case ORDER_STATUS_WAIT_SEND:
                 //待发货
@@ -917,7 +922,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                                     public void run() {
                                         switch (mPayType) {
                                             case PAY_TYPE_WE_XIN:
-                                                weiChatPay(entity.data.toString(),WEI_XIN_PAY_TAG_NORMAL);
+                                                weiChatPay(entity.data.toString(), WEI_XIN_PAY_TAG_NORMAL);
                                                 break;
                                             case PAY_TYPE_ALI:
                                                 aliPay(entity.data.toString());
