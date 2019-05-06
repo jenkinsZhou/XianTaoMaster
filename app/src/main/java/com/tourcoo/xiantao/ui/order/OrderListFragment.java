@@ -19,6 +19,7 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.OrderListAdapter;
+import com.tourcoo.xiantao.constant.WxConfig;
 import com.tourcoo.xiantao.core.frame.UiConfigManager;
 import com.tourcoo.xiantao.core.frame.base.activity.BaseActivity;
 import com.tourcoo.xiantao.core.frame.base.fragment.BaseRefreshFragment;
@@ -60,6 +61,7 @@ import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_PAY;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_RECIEVE;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_SEND;
 import static com.tourcoo.xiantao.constant.WxConfig.APP_ID;
+import static com.tourcoo.xiantao.constant.WxConfig.WEI_XIN_PAY_TAG_NORMAL;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_FAILED;
 import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_SUCCESS;
@@ -491,7 +493,7 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
                                     public void run() {
                                         switch (mPayType) {
                                             case PAY_TYPE_WE_XIN:
-                                                weiChatPay(entity.data.toString());
+                                                weiChatPay(entity.data.toString(), WEI_XIN_PAY_TAG_NORMAL);
                                                 break;
                                             case PAY_TYPE_ALI:
                                                 aliPay(entity.data.toString());
@@ -533,7 +535,7 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
      *
      * @param payInfo
      */
-    private void weiChatPay(String payInfo) {
+    private void weiChatPay(String payInfo, int payAction) {
         WeiXinPay weiXinPay = parseWeiXinPay(payInfo);
         if (weiXinPay != null) {
             PayReq req = new PayReq();
@@ -547,6 +549,7 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
             req.prepayId = weiXinPay.getPrepayid();
             api.registerApp(APP_ID);
             api.sendReq(req);
+            WxConfig.weiXinPayTag = payAction;
         } else {
             ToastUtil.showFailed("解析失败");
         }

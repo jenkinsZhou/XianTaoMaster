@@ -24,6 +24,16 @@ public class BannerDetail {
     private String image;
     private String content;
     private String status;
+    private String name = "";
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     private int createtime;
     private int updatetime;
     private int admin_id;

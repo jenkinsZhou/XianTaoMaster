@@ -142,7 +142,7 @@ public class ProductSkuDialog extends Dialog {
                         etSkuQuantityInput.setText(newQuantity);
                         etSkuQuantityInput.setSelection(newQuantity.length());
                         updateQuantityOperator(quantityInt + 1);
-                    }else {
+                    } else {
                         ToastUtil.showFailed("已达到商品数量上限");
                     }
                 } else {
@@ -192,10 +192,13 @@ public class ProductSkuDialog extends Dialog {
              */
             @Override
             public void onUnselected(SkuAttribute unselectedAttribute) {
+                if (unselectedAttribute == null) {
+                    ToastUtil.show("未获取到商品对应属性");
+                    return;
+                }
                 selectedSku = null;
                 currentSkuQuantity = -1;
                 GlideManager.loadImg(product.getDetail().getImage(), ivSkuLogo);
-
                 tvSkuQuantity.setVisibility(View.GONE);
                 tvSkuQuantity.setText(String.format(stockQuantityFormat, 0));
 
@@ -217,6 +220,10 @@ public class ProductSkuDialog extends Dialog {
              */
             @Override
             public void onSelect(SkuAttribute selectAttribute) {
+                if (selectAttribute == null) {
+                    ToastUtil.show("未获取到商品对应属性");
+                    return;
+                }
                 String firstUnselectedAttributeName = scrollSkuList.getFirstUnelectedAttributeName();
                 tvSkuInfo.setText("选择：" + firstUnselectedAttributeName);
             }
@@ -228,6 +235,10 @@ public class ProductSkuDialog extends Dialog {
              */
             @Override
             public void onSkuSelected(SpecList specList) {
+                if (specList == null || specList.getForm() == null) {
+                    ToastUtil.show("未获取到商品对应属性");
+                    return;
+                }
                 selectedSku = specList;
                 currentSkuQuantity = specList.getForm().getStock_num();
                 StringBuilder builder = new StringBuilder();
@@ -326,13 +337,13 @@ public class ProductSkuDialog extends Dialog {
                     int quantityInt = Integer.parseInt(quantity);
                     if (type == PING_TUAN) {
                         TuanRule tuanRule = new Gson().fromJson(product.getDetail().getTuan_rule().toString(), TuanRule.class);
-                        if (quantityInt > 0 && quantityInt <= tuanRule.getNum()){
+                        if (quantityInt > 0 && quantityInt <= tuanRule.getNum()) {
                             callback.onAdded("", quantityInt);
                             dismiss();
-                        }else {
+                        } else {
                             ToastUtil.showFailed("已达到商品数量上限");
                         }
-                    }else {
+                    } else {
                         callback.onAdded("", quantityInt);
                         dismiss();
                     }

@@ -1,16 +1,13 @@
 package com.tourcoo.xiantao.ui.order;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.tabs.TabLayout;
 import com.tourcoo.xiantao.R;
-import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
-import com.tourcoo.xiantao.ui.account.MineFragment;
 
 import org.greenrobot.eventbus.EventBus;
 

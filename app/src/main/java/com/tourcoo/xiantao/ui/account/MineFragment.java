@@ -594,7 +594,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
      */
     private void skipToOrderList(int index) {
         if (!AccountInfoHelper.getInstance().isLogin()) {
-            ToastUtil.show("您还没有登录");
+            TourCoolUtil.startActivity(mContext, LoginActivity.class);
             return;
         }
         Intent intent = new Intent();

@@ -53,6 +53,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import static com.tourcoo.xiantao.constant.WxConfig.APP_ID;
+import static com.tourcoo.xiantao.constant.WxConfig.WEI_XIN_PAY_TAG_RECHARGE;
+import static com.tourcoo.xiantao.constant.WxConfig.weiXinPayTag;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_SUCCESS;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.PAY_STATUS;
@@ -109,7 +111,7 @@ public class AccountBalanceActivity extends BaseTourCooTitleActivity implements 
 
 
     private void setInputListener() {
-        etRechargeAmount.addTextChangedListener(new MoneyTextWatcher(etRechargeAmount){
+        etRechargeAmount.addTextChangedListener(new MoneyTextWatcher(etRechargeAmount) {
             @Override
             public void afterTextChanged(Editable s) {
                 super.afterTextChanged(s);
@@ -230,7 +232,7 @@ public class AccountBalanceActivity extends BaseTourCooTitleActivity implements 
                                     public void run() {
                                         switch (payType) {
                                             case PAY_TYPE_WE_XIN:
-                                                weiChatPay(entity.data.toString());
+                                                weiChatPay(entity.data.toString(),WEI_XIN_PAY_TAG_RECHARGE);
                                                 break;
                                             case PAY_TYPE_ALI:
                                                 aliPay(entity.data.toString());
@@ -300,7 +302,7 @@ public class AccountBalanceActivity extends BaseTourCooTitleActivity implements 
      *
      * @param payInfo
      */
-    private void weiChatPay(String payInfo) {
+    private void weiChatPay(String payInfo, int payAction) {
         WeiXinPay weiXinPay = parseWeiXinPay(payInfo);
         if (weiXinPay != null) {
             PayReq req = new PayReq();
@@ -314,6 +316,7 @@ public class AccountBalanceActivity extends BaseTourCooTitleActivity implements 
             req.prepayId = weiXinPay.getPrepayid();
             api.registerApp(APP_ID);
             api.sendReq(req);
+            weiXinPayTag = payAction;
         } else {
             ToastUtil.showFailed("解析失败");
         }
@@ -417,7 +420,6 @@ public class AccountBalanceActivity extends BaseTourCooTitleActivity implements 
                 break;
         }
     }
-
 
 
 }

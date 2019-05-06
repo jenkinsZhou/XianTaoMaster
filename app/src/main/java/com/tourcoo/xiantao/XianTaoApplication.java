@@ -101,10 +101,14 @@ public class XianTaoApplication extends LitePalApplication {
                 //设置统一超时--也可单独调用read/write/connect超时(可以设置时间单位TimeUnit)
                 //默认20 s
                 .setTimeout(10);
-        if (LeakCanary.isInAnalyzerProcess(mContext)) {
-            return;
+
+        if (DEBUG_MODE) {
+            if (LeakCanary.isInAnalyzerProcess(mContext)) {
+                return;
+            }
+            LeakCanary.install(mContext);
         }
-        LeakCanary.install(mContext);
+
     }
 
     public static Application getInstance() {

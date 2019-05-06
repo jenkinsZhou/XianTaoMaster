@@ -532,11 +532,21 @@ public interface ApiService {
     /**
      * news详情
      *
+     * @param params
      * @return
      */
     @POST("index/news")
     Observable<BaseEntity<NewsBean>> getNewsDetails(@QueryMap Map<String, Object> params);
 
+
+    /**
+     * banner详情
+     *
+     * @param params
+     * @return
+     */
+    @POST("index/banner")
+    Observable<BaseEntity<BannerDetail>> getBannerDetails(@QueryMap Map<String, Object> params);
 
     /**
      * 拼团结算接口

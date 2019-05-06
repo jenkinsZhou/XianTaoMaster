@@ -717,7 +717,6 @@ public class ApiRepository extends BaseRepository {
     }
 
 
-
     /**
      * 商品的评论列表
      *
@@ -866,6 +865,18 @@ public class ApiRepository extends BaseRepository {
         Map<String, Object> params = new HashMap<>(1);
         params.put("id", id);
         return TourCoolTransformer.switchSchedulersIo(getApiService().getNewsDetails(params).retryWhen(new RetryWhen()));
+    }
+
+    /**
+     * banner详情
+     *
+     * @param id
+     * @return
+     */
+    public Observable<BaseEntity<BannerDetail>> getBannerDetails(int id) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("id", id);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().getBannerDetails(params).retryWhen(new RetryWhen()));
     }
 
 

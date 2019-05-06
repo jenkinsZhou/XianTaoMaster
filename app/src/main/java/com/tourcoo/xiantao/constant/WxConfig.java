@@ -25,4 +25,19 @@ public class WxConfig {
      * 小程序路径
      */
     public static final String MINI_PROGRAM_PATH = "/pages/progress/progress?from=out&tuan_id=";
+
+    /**
+     * 微信支付的tag
+     */
+    public static int weiXinPayTag = 1;
+
+    /**
+     * 微信支付充值标记
+     */
+    public static final int WEI_XIN_PAY_TAG_RECHARGE = 2;
+
+    /**
+     * 微信支付普通标记
+     */
+    public static final int WEI_XIN_PAY_TAG_NORMAL = 1;
 }

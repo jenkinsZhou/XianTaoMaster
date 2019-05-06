@@ -2,19 +2,14 @@ package com.tourcoo.xiantao.ui.msg;
 
 import android.os.Bundle;
 import android.webkit.WebView;
-import android.widget.TextView;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.tourcoo.xiantao.R;
-import com.tourcoo.xiantao.core.frame.UiConfigManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
-import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
-import com.tourcoo.xiantao.entity.goods.GoodsCollectEntity;
-import com.tourcoo.xiantao.entity.message.MessageBean;
+import com.tourcoo.xiantao.entity.banner.BannerDetail;
 import com.tourcoo.xiantao.entity.news.NewsBean;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
@@ -25,21 +20,19 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.util.ArrayList;
-
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
-import static com.tourcoo.xiantao.ui.msg.MsgSystemActivity.EXTRA_MESSAGE_DETAIL;
 
 /**
  * @author :JenkinsZhou
- * @description :消息详情
+ * @description :
  * @company :途酷科技
- * @date 2019年04月29日19:33
+ * @date 2019年05月06日11:40
  * @Email: 971613168@qq.com
  */
-public class HomeNewsDetailActivity extends BaseTourCooTitleActivity {
+public class BannerDetailActivity extends BaseTourCooTitleActivity {
 
     private WebView webView;
+    private TitleBarView mTitleBarView;
 
     @Override
     public int getContentLayout() {
@@ -49,27 +42,29 @@ public class HomeNewsDetailActivity extends BaseTourCooTitleActivity {
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         super.setTitleBar(titleBar);
-        titleBar.setTitleMainText("鲜淘快报");
+        mTitleBarView = titleBar;
     }
 
     @Override
     public void initView(Bundle savedInstanceState) {
-        int id = getIntent().getIntExtra("id",0);
+        int id = getIntent().getIntExtra("id", 0);
         webView = findViewById(R.id.webView);
-        getNewsDetails(id);
+        TourCooLogUtil.i(TAG, TAG + "传递的id:" + id);
+        getBannerDetails(id);
     }
 
 
     /**
      * 查询news详情
      */
-    private void getNewsDetails(int id) {
-        ApiRepository.getInstance().getNewsDetails(id).compose(bindUntilEvent(ActivityEvent.DESTROY)).
-                subscribe(new BaseObserver<BaseEntity<NewsBean>>() {
+    private void getBannerDetails(int id) {
+        ApiRepository.getInstance().getBannerDetails(id).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity<BannerDetail>>() {
                     @Override
-                    public void onRequestNext(BaseEntity<NewsBean> entity) {
+                    public void onRequestNext(BaseEntity<BannerDetail> entity) {
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
+                                mTitleBarView.setTitleMainText(entity.data.getName());
                                 imageFillWidth(webView, entity.data.getContent());
                             } else {
                                 ToastUtil.showFailed(entity.msg);
@@ -112,5 +107,6 @@ public class HomeNewsDetailActivity extends BaseTourCooTitleActivity {
         //加载使用 jsoup 处理过的 html 文本
         webView.loadData(data, "text/html; charset=UTF-8", null);
     }
+
 
 }

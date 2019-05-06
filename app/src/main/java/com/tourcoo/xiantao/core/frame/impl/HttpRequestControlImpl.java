@@ -136,7 +136,11 @@ public class HttpRequestControlImpl implements HttpRequestControl {
             if (DEBUG_MODE) {
                 ToastUtil.show(reason);
             } else {
-                ToastUtil.show("服务器出了点小差");
+                if (NetworkUtil.isConnected(XianTaoApplication.getContext())) {
+                    ToastUtil.show("服务器出了点小差");
+                } else {
+                    ToastUtil.show("未检测到网络");
+                }
             }
             return;
         }

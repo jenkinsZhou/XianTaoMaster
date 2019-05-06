@@ -130,6 +130,8 @@ public class SettingActivity extends BaseTourCooTitleActivity implements View.On
                             //todo 注销登录
                             doLogoutCallback();
                         } else {
+                            //说明此时token已经失效 需要重新登录
+                            AccountInfoHelper.getInstance().deleteUserAccount();
                             ToastUtil.showFailed(entity.msg);
                         }
                     }

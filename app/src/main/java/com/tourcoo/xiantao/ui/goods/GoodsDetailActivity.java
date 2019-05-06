@@ -256,14 +256,22 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                             if (entity.code == CODE_REQUEST_SUCCESS) {
                                 if (entity.data != null) {
                                     //显示回调
+                                    mStatusLayoutManager.showSuccessLayout();
                                     mGoodsEntity = parseGoodsDetail(entity.data);
                                     showGoodsDetail(mGoodsEntity);
                                     TourCooLogUtil.i(TAG, mGoodsEntity);
                                 }
                             } else {
                                 ToastUtil.showFailed(entity.msg);
+                                mStatusLayoutManager.showErrorLayout();
                             }
                         }
+                    }
+
+                    @Override
+                    public void onRequestError(Throwable e) {
+                        super.onRequestError(e);
+                        mStatusLayoutManager.showErrorLayout();
                     }
                 });
     }
@@ -368,7 +376,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     public void onClick(View v) {
                         LogUtils.e(tuanListBean.getNum(), tuanListBean.getSurplus(), tuanListBean.getDeadline() * 1000L);
                         PinTuanDialog pinTuanDialog = new PinTuanDialog(GoodsDetailActivity.this, tuanListBean.getNum(),
-                                tuanListBean.getSurplus(), tuanListBean.getDeadline()* 1000L, new PinTuanDialog.Callback() {
+                                tuanListBean.getSurplus(), tuanListBean.getDeadline() * 1000L, new PinTuanDialog.Callback() {
                             @Override
                             public void onAdded(int quantity) {
                                 joinTuan(tuanListBean.getId(), quantity);
@@ -504,7 +512,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                                     JSONObject jsonObject = JSONObject.parseObject(info);
                                     int pinId = jsonObject.getInteger("tuanuser_id");
                                     skipOrderSettleByPin(pinId);
-                                }else{
+                                } else {
                                     ToastUtil.showFailed(entity.msg);
                                 }
                             } else {
@@ -622,39 +630,6 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
 
     /**
-     * 直接购买结算页接口
-     */
-    private void settleGoods(GoodsEntity goodsEntity) {
-        if (goodsEntity == null || goodsEntity.getDetail() == null) {
-            return;
-        }
-        Goods goods = goodsEntity.getDetail();
-        Spec spec = goods.getSpec().get(0);
-        ApiRepository.getInstance().settleGoods(goods.getGoods_id(), goodsEntity.getGoodsCount(), spec.getSpec_sku_id()).compose(bindUntilEvent(ActivityEvent.DESTROY)).
-                subscribe(new BaseLoadingObserver<BaseEntity>() {
-                    @Override
-                    public void onRequestNext(BaseEntity entity) {
-                        if (entity != null) {
-                            if (entity.code == CODE_REQUEST_SUCCESS) {
-                                if (entity.data != null) {
-                                    //显示回调
-                                    SettleEntity settleEntity = parseSettleInfo(entity.data);
-                                    if (settleEntity != null) {
-                                        skipOrderSettleDetail(settleEntity);
-                                    } else {
-                                        ToastUtil.showFailed("失败");
-                                    }
-                                }
-                            } else {
-                                ToastUtil.showFailed(entity.msg);
-                            }
-                        }
-                    }
-                });
-    }
-
-
-    /**
      * 结算实体
      *
      * @param data
@@ -737,7 +712,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                                     int pinId = jsonObject.getInteger("tuanuser_id");
                                     skipOrderSettleByPin(pinId);
                                 }
-                            }else {
+                            } else {
                                 ToastUtil.showFailed(entity.msg);
                             }
                         }

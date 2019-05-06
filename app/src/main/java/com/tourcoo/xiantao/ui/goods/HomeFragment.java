@@ -56,6 +56,7 @@ import com.tourcoo.xiantao.entity.news.NewsBean;
 import com.tourcoo.xiantao.helper.ShoppingCar;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.base.WebViewActivity;
+import com.tourcoo.xiantao.ui.msg.BannerDetailActivity;
 import com.tourcoo.xiantao.ui.msg.HomeNewsDetailActivity;
 import com.tourcoo.xiantao.ui.msg.MsgSystemActivity;
 import com.tourcoo.xiantao.util.LocateHelper;
@@ -247,7 +248,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
                     }
                     BannerBean bannerBean = mBannerBeanList.get(position);
                     if (bannerBean != null) {
-                        getBannerDetail(bannerBean.getId() + "", position);
+                        doSkipBannerDetail(bannerBean.getId());
                     }
                 }
             });
@@ -523,37 +524,17 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
 
 
     /**
-     * 获取banner详情
-     */
-    private void getBannerDetail(String id, int position) {
-        ApiRepository.getInstance().getBannerDetail(id).compose(bindUntilEvent(FragmentEvent.DESTROY)).
-                subscribe(new BaseObserver<BaseEntity<BannerDetail>>() {
-                    @Override
-                    public void onRequestNext(BaseEntity<BannerDetail> entity) {
-                        if (entity != null) {
-                            if (entity.code == CODE_REQUEST_SUCCESS) {
-                                doSkipBannerDetail(entity.data, position);
-                            } else {
-                                ToastUtil.showFailed(entity.msg);
-                            }
-                        }
-                    }
-                });
-    }
-
-    /**
      * 跳转banner详情
      */
-    private void doSkipBannerDetail(BannerDetail bannerDetail, int position) {
-        if (bannerDetail == null) {
-            ToastUtil.showFailed("未获取到图片信息");
-            return;
-        }
-//        String url = BASE_URL + bannerDetail.getImage();
+    private void doSkipBannerDetail(int id) {
+        Intent intent = new Intent(mContext, BannerDetailActivity.class);
+        intent.putExtra("id", id);
+        startActivity(intent);
+/*//        String url = BASE_URL + bannerDetail.getImage();
 //        String url =  TourCooUtil.getUrl(bannerDetail.getImage());
         String url = bannerImageList.get(position);
         TourCooLogUtil.i(TAG, TAG + ":图片路径:" + url);
-        WebViewActivity.start(mContext, url, false);
+        WebViewActivity.start(mContext, url, false);*/
     }
 
 

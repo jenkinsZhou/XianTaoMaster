@@ -1,5 +1,6 @@
 package com.tourcoo.xiantao.widget.dialog;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -77,6 +78,7 @@ public class PayDialog extends Dialog implements View.OnClickListener {
         findViewById(R.id.rlAliPay).setOnClickListener(this);
         tvBalanceAmount = findViewById(R.id.tvBalanceAmount);
         btnRecharge = findViewById(R.id.btnRecharge);
+        btnRecharge.setOnClickListener(this);
         ivBalancePayCheckBox = findViewById(R.id.ivBalancePayCheckBox);
         RelativeLayout rlBalancePay = findViewById(R.id.rlBalancePay);
         rlBalancePay.setOnClickListener(this);
@@ -132,6 +134,9 @@ public class PayDialog extends Dialog implements View.OnClickListener {
             case R.id.btnRecharge:
                 //立即充值
                 TourCooUtil.startActivity(context, AccountBalanceActivity.class);
+                if (context instanceof Activity) {
+                    ((Activity) context).finish();
+                }
                 dismiss();
                 break;
             default:

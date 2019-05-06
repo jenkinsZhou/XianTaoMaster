@@ -146,7 +146,9 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
                         //获取购物车中商品数量
                         getTotalNum();
                         if (position == TAB_INDEX_MINE) {
-                            mineFragment.checkTokenAndRequestUserInfo();
+                            if (mineFragment != null) {
+                                mineFragment.checkTokenAndRequestUserInfo();
+                            }
                         }
                     }
 
@@ -266,9 +268,13 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
                                     currentGoodsCount = entity.data.getCart_total_num();
                                     showRedDot(currentGoodsCount);
                                     if (currentGoodsCount > 0) {
-                                        shoppingCarFragment.refreshShoppingCarNoDialog();
+                                        if (shoppingCarFragment != null) {
+                                            shoppingCarFragment.refreshShoppingCarNoDialog();
+                                        }
                                     } else {
-                                        shoppingCarFragment.showEmptyLayout();
+                                        if (shoppingCarFragment != null) {
+                                            shoppingCarFragment.showEmptyLayout();
+                                        }
                                     }
                                 }
                             } else {
@@ -323,6 +329,8 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
 
 
     private boolean needUpdate(String versionInfo) {
+         TourCooLogUtil.i(TAG,TAG+"后台的版本号:"+versionInfo );
+        TourCooLogUtil.i(TAG,TAG+"本地的版本号:"+TourCooUtil.getVersionName(mContext) );
         return !TourCooUtil.getVersionName(mContext).equalsIgnoreCase(versionInfo);
     }
 

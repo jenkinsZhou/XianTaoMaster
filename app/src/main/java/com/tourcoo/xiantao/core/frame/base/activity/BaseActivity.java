@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -59,6 +60,8 @@ public abstract class BaseActivity extends RxAppCompatActivity implements IBaseV
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //强制竖屏
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         if (isEventBusEnable()) {
             EventBus.getDefault().register(this);
         }
@@ -349,5 +352,10 @@ public abstract class BaseActivity extends RxAppCompatActivity implements IBaseV
             builder.setPositiveButton(buttonText, clickListener);
             builder.create().show();
         }
+    }
+
+    @Override
+    public void setRequestedOrientation(int requestedOrientation) {
+        return;
     }
 }

@@ -24,6 +24,7 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.OrderGoodsSettleAdapter;
+import com.tourcoo.xiantao.constant.WxConfig;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
@@ -32,6 +33,7 @@ import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.threadpool.ThreadPoolManager;
 import com.tourcoo.xiantao.core.util.ToastUtil;
+import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.BaseEntity;
@@ -66,6 +68,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
 import static com.tourcoo.xiantao.constant.WxConfig.APP_ID;
+import static com.tourcoo.xiantao.constant.WxConfig.WEI_XIN_PAY_TAG_NORMAL;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_FAILED;
 import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_SUCCESS;
@@ -558,7 +561,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                                     public void run() {
                                         switch (mPayType) {
                                             case PAY_TYPE_WE_XIN:
-                                                weiChatPay(entity.data.toString());
+                                                weiChatPay(entity.data.toString(), WEI_XIN_PAY_TAG_NORMAL);
                                                 break;
                                             case PAY_TYPE_ALI:
                                                 aliPay(entity.data.toString());
@@ -600,7 +603,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                                     public void run() {
                                         switch (mPayType) {
                                             case PAY_TYPE_WE_XIN:
-                                                weiChatPay(entity.data.toString());
+                                                weiChatPay(entity.data.toString(), WEI_XIN_PAY_TAG_NORMAL);
                                                 break;
                                             case PAY_TYPE_ALI:
                                                 aliPay(entity.data.toString());
@@ -670,7 +673,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
      *
      * @param payInfo
      */
-    private void weiChatPay(String payInfo) {
+    private void weiChatPay(String payInfo, int payAction) {
         WeiXinPay weiXinPay = parseWeiXinPay(payInfo);
         if (weiXinPay != null) {
             PayReq req = new PayReq();
@@ -684,6 +687,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             req.prepayId = weiXinPay.getPrepayid();
             api.registerApp(APP_ID);
             api.sendReq(req);
+            WxConfig.weiXinPayTag = payAction;
         } else {
             ToastUtil.showFailed("解析失败");
         }
@@ -785,7 +789,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPayEvent(BaseEvent event) {
         if (event == null) {
             TourCooLogUtil.e(TAG, "直接拦截");
@@ -794,10 +798,14 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         switch (event.id) {
             case EVENT_ACTION_PAY_FRESH_SUCCESS:
                 //支付成功 直接跳转到详情
-                skipOrderList();
+                if (WxConfig.weiXinPayTag == WEI_XIN_PAY_TAG_NORMAL) {
+                    skipOrderList();
+                }
                 break;
             case EVENT_ACTION_PAY_FRESH_FAILED:
-                skipToOrderListAndFinish();
+                if (WxConfig.weiXinPayTag == WEI_XIN_PAY_TAG_NORMAL) {
+                    skipToOrderListAndFinish();
+                }
                 break;
             default:
                 break;
@@ -878,7 +886,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                                     public void run() {
                                         switch (mPayType) {
                                             case PAY_TYPE_WE_XIN:
-                                                weiChatPay(entity.data.toString());
+                                                weiChatPay(entity.data.toString(), WEI_XIN_PAY_TAG_NORMAL);
                                                 break;
                                             case PAY_TYPE_ALI:
                                                 aliPay(entity.data.toString());
