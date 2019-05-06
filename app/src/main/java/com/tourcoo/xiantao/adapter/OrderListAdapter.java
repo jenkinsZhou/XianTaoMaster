@@ -112,7 +112,6 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
             } else {
                 setTextGray(btnThree, "取消订单");
             }
-            setTextGray(btnThree, "取消订单");
             setTextGray(btnFour, "立即支付");
             TourCooLogUtil.i(TAG, TAG + "订单id:" + orderInfo.getId());
         } else {

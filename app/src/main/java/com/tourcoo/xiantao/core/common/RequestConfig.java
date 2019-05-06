@@ -13,7 +13,7 @@ public class RequestConfig {
     public static final int CODE_REQUEST_SUCCESS_NOT_REGISTER = -100;
 
     /**
-     * 鲜淘网
+     * 濡江铺子
      */
 
     public static final String BASE_URL = "http://ahxtao.hfcoco.top/";
@@ -22,7 +22,7 @@ public class RequestConfig {
     public static final String BASE_URL_NO_LINE = "http://ahxtao.hfcoco.top";
 
     /**
-     * 鲜淘网
+     * 濡江铺子
      */
     public static final String BASE_URL_API = BASE_URL + "api/";
 

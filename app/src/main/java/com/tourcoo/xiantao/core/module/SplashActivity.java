@@ -1,26 +1,63 @@
 package com.tourcoo.xiantao.core.module;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.base.activity.BaseTitleActivity;
+import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.frame.manager.RxJavaManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
+import com.tourcoo.xiantao.core.frame.util.NetworkUtil;
+import com.tourcoo.xiantao.core.frame.util.SharedPreferencesUtil;
 import com.tourcoo.xiantao.core.frame.util.StackUtil;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
+import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.core.util.StatusBarUtil;
+import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
+import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.SystemSettingEntity;
+import com.tourcoo.xiantao.entity.advertisement.AdverDetailEntity;
+import com.tourcoo.xiantao.entity.advertisement.AdvertisEntity;
 import com.tourcoo.xiantao.entity.user.UserInfo;
+import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.account.LoginActivity;
+import com.tourcoo.xiantao.ui.goods.GoodsDetailActivity;
+import com.tourcoo.xiantao.ui.msg.AdvDetailActivity;
+import com.tourcoo.xiantao.ui.order.OrderDetailActivity;
+import com.tourcoo.xiantao.ui.recharge.AccountBalanceActivity;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
 import androidx.core.content.ContextCompat;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+
+import static com.tourcoo.xiantao.core.common.CommonConfig.PREF_IMAGE_ADVERTISEMENT;
+import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_PHONE_KEY;
+import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_REGISTER_KEY;
+import static com.tourcoo.xiantao.ui.goods.HomeFragment.EXTRA_GOODS_ID;
+import static com.tourcoo.xiantao.ui.order.OrderDetailActivity.EXTRA_ORDER_ID;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.PAY_STATUS;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.PAY_STATUS_SUCCESS;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SDK_PAY_FLAG;
 
 /**
  * @author :zhoujian
@@ -29,7 +66,17 @@ import androidx.core.content.ContextCompat;
  * @date 2019年03月06日上午 11:43
  * @Email: 971613168@qq.com
  */
-public class SplashActivity extends BaseTitleActivity {
+public class SplashActivity extends BaseTitleActivity implements View.OnClickListener {
+    private String imageUrl;
+    private ImageView sp_bg;
+    private TextView tvSecond;
+    private static final int MSG_TIME = 1;
+    private TimeHandler mTimeHandler = new TimeHandler(this);
+    private List<Disposable> mDisposableList = new ArrayList<>();
+    private int time = 3;
+    private AdvertisEntity mAdvertisEntity;
+    private boolean finish = false;
+    public static final String EXTRA_ADV_TAG = "EXTRA_ADV_TAG";
 
     @Override
     public int getContentLayout() {
@@ -44,6 +91,8 @@ public class SplashActivity extends BaseTitleActivity {
             finish();
             return;
         }
+        imageUrl = (String) SharedPreferencesUtil.get(PREF_IMAGE_ADVERTISEMENT, "");
+        TourCooLogUtil.i(TAG, TAG + "保存的广告url:" + imageUrl);
         super.beforeSetContentView();
     }
 
@@ -56,16 +105,29 @@ public class SplashActivity extends BaseTitleActivity {
             //隐藏状态栏
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
+        sp_bg = findViewById(R.id.sp_bg);
+        sp_bg.setOnClickListener(this);
+        tvSecond = findViewById(R.id.tvSecond);
+        if (NetworkUtil.isConnected(mContext)) {
+            requestAdvertisement();
+        }
         Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_back);
+        if (imageUrl != null && imageUrl.contains("http")) {
+            GlideManager.loadImg(imageUrl, sp_bg, R.mipmap.img_start_page);
+        }
+        //todo
+        countDownTime();
         TourCoolUtil.getTintDrawable(drawable, Color.WHITE);
-        RxJavaManager.getInstance().setTimer(500)
+        RxJavaManager.getInstance().setTimer(3000)
                 .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(new BaseObserver<Long>() {
 
                     @Override
                     public void onComplete() {
                         super.onComplete();
-                        TourCoolUtil.startActivity(mContext, MainTabActivity.class);
+                        if (!finish) {
+                            TourCoolUtil.startActivity(mContext, MainTabActivity.class);
+                        }
                         finish();
                     }
 
@@ -90,6 +152,10 @@ public class SplashActivity extends BaseTitleActivity {
 
     @Override
     protected void onDestroy() {
+        cancelTime();
+        if (mTimeHandler != null) {
+            mTimeHandler.removeCallbacksAndMessages(null);
+        }
         super.onDestroy();
     }
 
@@ -105,4 +171,172 @@ public class SplashActivity extends BaseTitleActivity {
         }
         finish();
     }
+
+
+    /**
+     * 获取广告相关信息
+     */
+    private void requestAdvertisement() {
+        ApiRepository.getInstance().requestAdvertisement().compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity<AdvertisEntity>>() {
+                    @Override
+                    public void onRequestNext(BaseEntity<AdvertisEntity> entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                AdvertisEntity advertisEntity = entity.data;
+                                if (advertisEntity != null) {
+                                    //todo
+                                    TourCooLogUtil.i("广告实体", advertisEntity);
+                                    mAdvertisEntity = advertisEntity;
+                                    String url = TourCooUtil.getUrl(advertisEntity.getImage());
+                                    TourCooLogUtil.i(TAG, TAG + "图片url:" + url);
+                                    SharedPreferencesUtil.put(PREF_IMAGE_ADVERTISEMENT, url);
+                                }
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.sp_bg:
+                doSkipByCondition(mAdvertisEntity);
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    @SuppressWarnings("unchecked")
+    private static class TimeHandler extends Handler {
+        private WeakReference<SplashActivity> softReference;
+
+        public TimeHandler(SplashActivity activity) {
+            softReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case MSG_TIME:
+//                    int time = softReference.get().cuttentTime--;
+//                    softReference.get().showTime(time);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+
+    private void showTime(int second) {
+        String secondString = second + "秒";
+        if (tvSecond != null) {
+            tvSecond.setText(secondString);
+        }
+    }
+
+
+    private void countDownTime() {
+        RxJavaManager.getInstance().doEventByInterval(1000, new Observer<Long>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                mDisposableList.add(d);
+            }
+
+            @Override
+            public void onNext(Long aLong) {
+                showTime(time);
+                time--;
+                TourCooLogUtil.i(TAG, TAG + "当前aLong:" + aLong);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+    }
+
+
+    private void cancelTime() {
+        if (mDisposableList != null && !mDisposableList.isEmpty()) {
+            Disposable disposable;
+            for (int i = 0; i < mDisposableList.size(); i++) {
+                disposable = mDisposableList.get(i);
+                if (disposable != null && !disposable.isDisposed()) {
+                    disposable.dispose();
+                    mDisposableList.remove(disposable);
+                }
+            }
+        }
+    }
+
+    private void doSkipByCondition(AdvertisEntity advertisEntity) {
+        if (advertisEntity == null) {
+            return;
+        }
+        switch (advertisEntity.getType()) {
+            case 1:
+                skipAdvDetail(advertisEntity);
+                break;
+            case 2:
+                skipGoodsDetail(advertisEntity.getGoods_id());
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    private void skipAdvDetail(AdvertisEntity advertisEntity) {
+        try {
+            Intent intent = new Intent();
+            if (advertisEntity.getId() == 0) {
+                TourCooLogUtil.e(TAG, TAG + ":" + "广告id为0" );
+                return;
+            }
+            finish = true;
+            intent.putExtra("id", advertisEntity.getId());
+            intent.setClass(mContext, AdvDetailActivity.class);
+            //跳转广告详情
+            startActivity(intent);
+            finish();
+        } catch (Exception e) {
+            TourCooLogUtil.e(TAG, TAG + "异常了:" + e.toString());
+        }
+    }
+
+
+    private void skipGoodsDetail(int goodsId) {
+        try {
+            if (goodsId <= 0) {
+                TourCooLogUtil.e(TAG, TAG + ":" + "商品id为0" );
+                return;
+            }
+            finish = true;
+            Intent intent = new Intent();
+            intent.putExtra(EXTRA_GOODS_ID, goodsId);
+            //广告的tag
+            intent.putExtra(EXTRA_ADV_TAG, "EXTRA_ADV_TAG");
+            intent.setClass(mContext, GoodsDetailActivity.class);
+            //跳转广告详情
+            startActivity(intent);
+            finish();
+        } catch (Exception e) {
+            TourCooLogUtil.e(TAG, TAG + ":" + "异常了：" + e.toString());
+        }
+    }
+
 }

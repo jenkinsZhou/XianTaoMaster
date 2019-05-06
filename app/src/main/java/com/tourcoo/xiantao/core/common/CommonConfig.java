@@ -25,4 +25,9 @@ public class CommonConfig {
      */
     public static long TOAST_DURATION = TOAST_DURATION_DEFAULT;
 
+    /**
+     * 图片广告的KEY
+     */
+    public static final String PREF_IMAGE_ADVERTISEMENT = "PREF_IMAGE_ADVERTISEMENT";
+
 }

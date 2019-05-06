@@ -145,7 +145,6 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
                         WXMediaMessage mediaMessage = new WXMediaMessage(miniProgram);
                         mediaMessage.title = "邀请拼团";//自定义
                         mediaMessage.description = "拼团钜惠";//自定义
-
                         Bitmap sendBitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, true);
                         bitmap.recycle();
                         mediaMessage.thumbData = ImageUtils.bitmap2Bytes(sendBitmap, Bitmap.CompressFormat.PNG);
@@ -162,8 +161,8 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
                         sharePopupWindow.dismiss();
                     }
                 });
-
                 sharePopupWindow.showAtScreenBottom(mRefreshLayout);
+
             }
 
             @Override

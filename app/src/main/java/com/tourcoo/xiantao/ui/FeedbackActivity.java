@@ -28,6 +28,7 @@ import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.action.ActionSheetDialog;
 import com.tourcoo.xiantao.core.widget.core.action.BaseDialog;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
+import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.upload.UploadEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
@@ -102,6 +103,11 @@ public class FeedbackActivity extends BaseTourCooTitleActivity implements View.O
         initItemClick();
     }
 
+    @Override
+    public void setTitleBar(TitleBarView titleBar) {
+        super.setTitleBar(titleBar);
+        titleBar.setTitleMainText("问题反馈");
+    }
 
     private void initItemClick() {
         uploadImageAdapter.setOnItemClickListener(new UploadImageAdapter.OnItemClickListener() {

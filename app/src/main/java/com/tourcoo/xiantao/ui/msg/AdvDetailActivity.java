@@ -6,9 +6,12 @@ import android.webkit.WebView;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
+import com.tourcoo.xiantao.core.module.MainTabActivity;
 import com.tourcoo.xiantao.core.util.ToastUtil;
+import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.advertisement.AdverDetailEntity;
 import com.tourcoo.xiantao.entity.banner.BannerDetail;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
@@ -25,10 +28,10 @@ import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS
  * @author :JenkinsZhou
  * @description :
  * @company :途酷科技
- * @date 2019年05月06日11:40
+ * @date 2019年05月06日15:24
  * @Email: 971613168@qq.com
  */
-public class BannerDetailActivity extends BaseTourCooTitleActivity {
+public class AdvDetailActivity extends BaseTourCooTitleActivity {
 
     private WebView webView;
     private TitleBarView mTitleBarView;
@@ -49,18 +52,18 @@ public class BannerDetailActivity extends BaseTourCooTitleActivity {
         int id = getIntent().getIntExtra("id", 0);
         webView = findViewById(R.id.webView);
         TourCooLogUtil.i(TAG, TAG + "传递的id:" + id);
-        getBannerDetails(id);
+        requestAdvertisementDetail(id);
     }
 
 
     /**
      * 查询news详情
      */
-    private void getBannerDetails(int id) {
-        ApiRepository.getInstance().getBannerDetails(id).compose(bindUntilEvent(ActivityEvent.DESTROY)).
-                subscribe(new BaseObserver<BaseEntity<BannerDetail>>() {
+    private void requestAdvertisementDetail(int id) {
+        ApiRepository.getInstance().requestAdvertisementDetail(id).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity<AdverDetailEntity>>() {
                     @Override
-                    public void onRequestNext(BaseEntity<BannerDetail> entity) {
+                    public void onRequestNext(BaseEntity<AdverDetailEntity> entity) {
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
                                 mTitleBarView.setTitleMainText(entity.data.getName());
@@ -107,5 +110,9 @@ public class BannerDetailActivity extends BaseTourCooTitleActivity {
         webView.loadData(data, "text/html; charset=UTF-8", null);
     }
 
-
+    @Override
+    public void onBackPressed() {
+        TourCooUtil.startActivity(mContext, MainTabActivity.class);
+        super.onBackPressed();
+    }
 }

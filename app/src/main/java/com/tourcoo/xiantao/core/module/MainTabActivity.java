@@ -42,7 +42,6 @@ import com.tourcoo.xiantao.ui.account.MineFragment;
 import com.tourcoo.xiantao.ui.goods.ClassifyGoodsFragment;
 import com.tourcoo.xiantao.ui.goods.HomeFragment;
 import com.trello.rxlifecycle3.android.ActivityEvent;
-import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import org.greenrobot.eventbus.EventBus;
 

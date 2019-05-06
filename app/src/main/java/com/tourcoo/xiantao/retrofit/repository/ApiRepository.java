@@ -8,6 +8,8 @@ import com.tourcoo.xiantao.core.frame.retrofit.TourCoolRetrofit;
 import com.tourcoo.xiantao.core.frame.retrofit.TourCoolTransformer;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.entity.SystemSettingEntity;
+import com.tourcoo.xiantao.entity.advertisement.AdverDetailEntity;
+import com.tourcoo.xiantao.entity.advertisement.AdvertisEntity;
 import com.tourcoo.xiantao.entity.coin.CoinHistory;
 import com.tourcoo.xiantao.entity.comment.CommentDetail;
 import com.tourcoo.xiantao.entity.comment.CommentEntity;
@@ -964,4 +966,28 @@ public class ApiRepository extends BaseRepository {
     public Observable<BaseEntity<SystemSettingEntity>> requestSystemConfig() {
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestSystemConfig().retryWhen(new RetryWhen()));
     }
+
+
+    /**
+     * 获取广告信息
+     *
+     * @return
+     */
+    public Observable<BaseEntity<AdvertisEntity>> requestAdvertisement() {
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestAdvertisement().retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 获取广告详情
+     *
+     * @return
+     */
+    public Observable<BaseEntity<AdverDetailEntity>> requestAdvertisementDetail(int id) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("id", id);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestAdvertisementDetail(params).retryWhen(new RetryWhen()));
+    }
+
+
 }

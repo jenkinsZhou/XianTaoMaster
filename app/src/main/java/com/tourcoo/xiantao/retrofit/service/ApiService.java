@@ -2,6 +2,8 @@ package com.tourcoo.xiantao.retrofit.service;
 
 
 import com.tourcoo.xiantao.entity.SystemSettingEntity;
+import com.tourcoo.xiantao.entity.advertisement.AdverDetailEntity;
+import com.tourcoo.xiantao.entity.advertisement.AdvertisEntity;
 import com.tourcoo.xiantao.entity.coin.CoinHistory;
 import com.tourcoo.xiantao.entity.comment.CommentDetail;
 import com.tourcoo.xiantao.entity.comment.CommentEntity;
@@ -603,5 +605,21 @@ public interface ApiService {
      */
     @POST("index/sysconfig")
     Observable<BaseEntity<SystemSettingEntity>> requestSystemConfig();
+
+    /**
+     * 获取广告页
+     *
+     * @return
+     */
+    @POST("ad/index")
+    Observable<BaseEntity<AdvertisEntity>> requestAdvertisement();
+
+
+    /**
+     * 广告详情
+     * @return
+     */
+    @POST("ad/detail")
+    Observable<BaseEntity<AdverDetailEntity>> requestAdvertisementDetail(@QueryMap Map<String, Object> params);
 
 }

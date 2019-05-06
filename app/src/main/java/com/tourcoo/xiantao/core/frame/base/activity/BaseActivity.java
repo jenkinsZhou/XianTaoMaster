@@ -60,8 +60,6 @@ public abstract class BaseActivity extends RxAppCompatActivity implements IBaseV
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //强制竖屏
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         if (isEventBusEnable()) {
             EventBus.getDefault().register(this);
         }
@@ -354,8 +352,5 @@ public abstract class BaseActivity extends RxAppCompatActivity implements IBaseV
         }
     }
 
-    @Override
-    public void setRequestedOrientation(int requestedOrientation) {
-        return;
-    }
+
 }

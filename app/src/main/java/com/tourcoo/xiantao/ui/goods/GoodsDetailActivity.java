@@ -2,6 +2,8 @@ package com.tourcoo.xiantao.ui.goods;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -23,23 +25,34 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.blankj.utilcode.util.ImageUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SpanUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.TimeUtils;
+import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject;
+import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.GridImageAdapter;
+import com.tourcoo.xiantao.constant.WxConfig;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.log.widget.utils.DateUtil;
+import com.tourcoo.xiantao.core.module.MainTabActivity;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
+import com.tourcoo.xiantao.core.widget.custom.SharePopupWindow;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.entity.goods.Goods;
@@ -73,6 +86,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.core.module.SplashActivity.EXTRA_ADV_TAG;
 import static com.tourcoo.xiantao.ui.goods.HomeFragment.EXTRA_GOODS_ID;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_PIN_USER_ID;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_SETTLE_TYPE;
@@ -88,14 +102,18 @@ import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SETTLE_TYPE
  */
 public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity implements IMultiStatusView, View.OnClickListener {
     private RelativeLayout rlContentView;
+    private SharePopupWindow sharePopupWindow;
+    private IWXAPI api;
     private int count;
     private BGABanner bgaBanner;
     private List<String> imageList = new ArrayList<>();
     private TextView tvComment;
     private GoodsEntity mGoodsEntity;
-    //用于退出activity,避免countdown，造成资源浪费。
+    /**
+     * 用于退出activity,避免countdown，造成资源浪费。
+     */
     private SparseArray<CountDownTimer> countDownMap;
-
+    private String skipTag;
 
     /**
      * 结算明细实体
@@ -137,6 +155,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
 
     private ProductSkuDialog dialog;
+    private Goods currentGoods;
 
     @Override
     public int getContentLayout() {
@@ -144,8 +163,11 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     }
 
     private void init() {
+        //判断是否是从广告页跳转过来的
+        api = WXAPIFactory.createWXAPI(mContext, WxConfig.APP_ID);
+        sharePopupWindow = new SharePopupWindow(mContext, false);
+        skipTag = getIntent().getStringExtra(EXTRA_ADV_TAG);
         countDownMap = new SparseArray<>();
-
         cbCollect = findViewById(R.id.cbCollect);
         cbCollect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -196,6 +218,13 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     public void setTitleBar(TitleBarView titleBar) {
         super.setTitleBar(titleBar);
         titleBar.setTitleMainText("商品详情");
+        titleBar.setRightText("分享");
+        titleBar.setOnRightTextClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showShare(currentGoods);
+            }
+        });
     }
 
     @Override
@@ -323,6 +352,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             mStatusLayoutManager.showErrorLayout();
             return;
         }
+        currentGoods = detail;
         setBanner(detail.getImgs_url());
         //显示名称
         tvGoodsName.setText(detail.getGoods_name());
@@ -833,4 +863,79 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     }
 
 
+    @Override
+    public void onBackPressed() {
+        //如果是从广告页跳转的说明主页面没有创建
+        if (EXTRA_ADV_TAG.equals(skipTag)) {
+            TourCooUtil.startActivity(mContext, MainTabActivity.class);
+        }
+        super.onBackPressed();
+    }
+
+
+    /**
+     * 显示分享
+     *
+     * @param goods
+     */
+    private void showShare(Goods goods) {
+        sharePopupWindow.setISharePopupWindowClickListener(new SharePopupWindow.ISharePopupWindowClickListener() {
+            @Override
+            public void onWxClick() {
+                doShare(goods, true);
+                sharePopupWindow.dismiss();
+            }
+
+            @Override
+            public void onWxFriendClick() {
+                doShare(goods, false);
+                sharePopupWindow.dismiss();
+            }
+        });
+        sharePopupWindow.showAtScreenBottom(rlContentView);
+    }
+
+
+    private void doShare(Goods goods, boolean isFrend) {
+        // 检查手机或者模拟器是否安装了微信
+        if (goods == null) {
+            ToastUtil.showFailed("未获取到商品信息");
+            return;
+        }
+        if (!api.isWXAppInstalled()) {
+            ToastUtil.showFailed("您还没有安装微信");
+            return;
+        }
+        // 初始化一个WXWebpageObject对象
+        WXWebpageObject webpageObject = new WXWebpageObject();
+        // 填写网页的url
+        webpageObject.webpageUrl = "http://www.ahxtao.com/";
+        // 用WXWebpageObject对象初始化一个WXMediaMessage对象
+        WXMediaMessage msg = new WXMediaMessage(webpageObject);
+        // 填写网页标题、描述、位图
+        msg.title = goods.getGoods_name();
+        msg.description = "儒江铺子,您的生活管家";
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.icon_share_weixin);
+        // 如果没有位图，可以传null，会显示默认的图片
+        if (bitmap != null) {
+            Bitmap sendBitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, true);
+            msg.setThumbImage(sendBitmap);
+        }
+        // 构造一个Req
+        SendMessageToWX.Req req = new SendMessageToWX.Req();
+        // transaction用于唯一标识一个请求（可自定义）
+        req.transaction = "webpage";
+        // 上文的WXMediaMessage对象
+        req.message = msg;
+        // SendMessageToWX.Req.WXSceneSession是分享到好友会话
+        // SendMessageToWX.Req.WXSceneTimeline是分享到朋友圈
+        if (isFrend) {
+            req.scene = SendMessageToWX.Req.WXSceneSession;
+        } else {
+            req.scene = SendMessageToWX.Req.WXSceneTimeline;
+        }
+        // 向微信发送请求
+        api.sendReq(req);
+
+    }
 }

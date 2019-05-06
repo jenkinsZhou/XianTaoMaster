@@ -527,14 +527,12 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
      * 跳转banner详情
      */
     private void doSkipBannerDetail(int id) {
+        if (id <= 0) {
+            return;
+        }
         Intent intent = new Intent(mContext, BannerDetailActivity.class);
         intent.putExtra("id", id);
         startActivity(intent);
-/*//        String url = BASE_URL + bannerDetail.getImage();
-//        String url =  TourCooUtil.getUrl(bannerDetail.getImage());
-        String url = bannerImageList.get(position);
-        TourCooLogUtil.i(TAG, TAG + ":图片路径:" + url);
-        WebViewActivity.start(mContext, url, false);*/
     }
 
 
@@ -561,6 +559,9 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
             tvNewsContent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (newsBean.getId() <= 0) {
+                        return;
+                    }
                     Intent intent = new Intent(getContext(), HomeNewsDetailActivity.class);
                     intent.putExtra("id", newsBean.getId());
                     startActivity(intent);
