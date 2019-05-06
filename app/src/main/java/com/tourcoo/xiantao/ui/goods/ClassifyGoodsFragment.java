@@ -2,11 +2,14 @@ package com.tourcoo.xiantao.ui.goods;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -112,6 +115,8 @@ public class ClassifyGoodsFragment extends BaseTitleFragment {
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
+        TextView textView = titleBar.getTextView(Gravity.CENTER | Gravity.TOP);
+        textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
         titleBar.setTitleMainText("分类");
      /*   titleBar
                 .setDividerVisible(false)

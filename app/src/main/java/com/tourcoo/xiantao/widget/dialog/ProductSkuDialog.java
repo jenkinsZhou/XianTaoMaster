@@ -69,6 +69,7 @@ public class ProductSkuDialog extends Dialog {
 
     //标题
     private TextView tvTitle;
+    private TextView tvGoodsName;
     //减少商品
     private TextView btnSkuQuantityMinus;
     //增加商品
@@ -100,6 +101,7 @@ public class ProductSkuDialog extends Dialog {
         setCanceledOnTouchOutside(true);
         setCancelable(true);
 
+        tvGoodsName = findViewById(R.id.tvGoodsName);
         tvTitle = findViewById(R.id.tvTitle);
         btnSkuQuantityMinus = findViewById(R.id.btn_sku_quantity_minus);
         etSkuQuantityInput = findViewById(R.id.et_sku_quantity_input);
@@ -192,13 +194,11 @@ public class ProductSkuDialog extends Dialog {
              */
             @Override
             public void onUnselected(SkuAttribute unselectedAttribute) {
-                if (unselectedAttribute == null) {
-                    ToastUtil.show("未获取到商品对应属性");
-                    return;
-                }
                 selectedSku = null;
                 currentSkuQuantity = -1;
+                tvSkuSellingPrice.setText("");
                 GlideManager.loadImg(product.getDetail().getImage(), ivSkuLogo);
+
                 tvSkuQuantity.setVisibility(View.GONE);
                 tvSkuQuantity.setText(String.format(stockQuantityFormat, 0));
 
@@ -211,6 +211,7 @@ public class ProductSkuDialog extends Dialog {
                 } else {
                     updateQuantityOperator(0);
                 }
+
             }
 
             /**
@@ -220,12 +221,9 @@ public class ProductSkuDialog extends Dialog {
              */
             @Override
             public void onSelect(SkuAttribute selectAttribute) {
-                if (selectAttribute == null) {
-                    ToastUtil.show("未获取到商品对应属性");
-                    return;
-                }
                 String firstUnselectedAttributeName = scrollSkuList.getFirstUnelectedAttributeName();
                 tvSkuInfo.setText("选择：" + firstUnselectedAttributeName);
+                tvSkuSellingPrice.setText("");
             }
 
             /**
@@ -235,10 +233,6 @@ public class ProductSkuDialog extends Dialog {
              */
             @Override
             public void onSkuSelected(SpecList specList) {
-                if (specList == null || specList.getForm() == null) {
-                    ToastUtil.show("未获取到商品对应属性");
-                    return;
-                }
                 selectedSku = specList;
                 currentSkuQuantity = specList.getForm().getStock_num();
                 StringBuilder builder = new StringBuilder();
@@ -276,7 +270,7 @@ public class ProductSkuDialog extends Dialog {
                 tvSkuQuantity.setVisibility(View.VISIBLE);
                 tvSkuQuantity.setText(String.format(stockQuantityFormat, specList.getForm().getStock_num()));
 
-
+                tvSkuSellingPrice.setText(String.format(priceFormat,specList.getForm().getGoods_price()));
                 tvSkuInfo.setText("已选：" + builder.toString());
 
                 btnSubmit.setEnabled(true);
@@ -355,6 +349,8 @@ public class ProductSkuDialog extends Dialog {
 
         priceFormat = context.getString(R.string.comm_price_format);
         stockQuantityFormat = context.getString(R.string.product_detail_sku_stock);
+
+        tvGoodsName.setText(product.getDetail().getGoods_name());
 
         switch (type) {
             case SHOPPING_CART:
@@ -465,7 +461,9 @@ public class ProductSkuDialog extends Dialog {
 //                } else {
         GlideManager.loadImg(product.getDetail().getImage(), ivSkuLogo);
         TuanRule tuanRule = new Gson().fromJson(product.getDetail().getTuan_rule().toString(), TuanRule.class);
-        tvSkuSellingPrice.setText(tuanRule.getName());
+        if (type == PING_TUAN) {
+            tvSkuSellingPrice.setText(tuanRule.getName());
+        }
         btnSubmit.setEnabled(true);
         tvSkuInfo.setText("选择：" + skuList.get(0).getGroup_name());
 //                }

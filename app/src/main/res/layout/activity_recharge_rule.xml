@@ -6,31 +6,11 @@
 
     <include layout="@layout/layout_title_bar" />
 
-    <LinearLayout
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/dp_12"
-        android:layout_marginTop="@dimen/dp_15"
-        android:layout_marginRight="@dimen/dp_12"
-        android:background="@drawable/bg_radius_12_white"
-        android:orientation="vertical"
-        android:padding="@dimen/dp_12">
+        <WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="规则介绍:"
-            android:visibility="invisible"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_17" />
+        </WebView>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_15"
-            android:text=""
-            android:textColor="@color/grayCommon"
-            android:textSize="@dimen/sp_13" />
-    </LinearLayout>
 </LinearLayout>

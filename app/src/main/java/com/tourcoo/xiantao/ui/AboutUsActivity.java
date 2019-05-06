@@ -13,6 +13,7 @@ import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.frame.util.SharedPreferencesUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
+import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.SystemSettingEntity;
@@ -52,6 +53,8 @@ public class AboutUsActivity extends BaseTourCooTitleActivity implements View.On
 
     @Override
     public void loadData() {
+        showPhone(phone);
+        showAppVersion();
         requestSystemConfig();
         super.loadData();
     }
@@ -120,8 +123,6 @@ public class AboutUsActivity extends BaseTourCooTitleActivity implements View.On
                                 SystemSettingEntity settingEntity = entity.data;
                                 if (settingEntity != null) {
                                     phone = settingEntity.getKefu();
-                                    String version = "V" + settingEntity.getAndroid_version();
-                                    tvAppVersion.setText(version);
                                     showPhone(phone);
                                 }
                             } else {
@@ -132,5 +133,8 @@ public class AboutUsActivity extends BaseTourCooTitleActivity implements View.On
                 });
     }
 
-
+    private void showAppVersion() {
+        String version = "V" + TourCooUtil.getAppName(mContext);
+        tvAppVersion.setText(version);
+    }
 }

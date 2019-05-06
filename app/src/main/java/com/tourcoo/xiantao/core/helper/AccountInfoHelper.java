@@ -24,8 +24,12 @@ public class AccountInfoHelper {
     private String token = "";
     private AddressEntity defaultAddress;
     private PersonalCenterInfo mPersonalCenterInfo;
-    public static final String PREF_TEL_PHONE_KEY = "PREF_TEL_PHONE_KEY";
 
+    public static final String PREF_TEL_PHONE_KEY = "PREF_TEL_PHONE_KEY";
+    /**
+     * 充值规则
+     */
+    public static final String PREF_TEL_RECHARGE_RULE_KEY = "PREF_TEL_RECHARGE_RULE_KEY";
     /**
      * 注册条例
      */
