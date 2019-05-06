@@ -7,6 +7,7 @@
     android:background="@color/colorTitle"
     app:title_leftTextColor="@color/colorTextBlack"
     app:title_leftTextDrawable="@drawable/ic_arrow_left_black"
+    app:title_leftTextDrawablePadding="@dimen/dp_10"
     app:title_leftTextDrawableHeight="32dp"
     app:title_leftTextDrawableTint="@color/colorTextBlack"
     app:title_leftTextDrawableWidth="32dp"

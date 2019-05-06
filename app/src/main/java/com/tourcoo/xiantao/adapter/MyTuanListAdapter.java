@@ -117,11 +117,16 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
     public void onBindViewHolder(final ViewHolder holder, int position) {
 
         TuanEntity.DataBean item = mDatas.get(position);
-
-        GlideManager.loadImg(item.getGoods().getImage(), holder.ivGoodsImage);
-
-        holder.tvGoodsName.setText(item.getGoods().getGoods_name());
-        holder.tvLable.setText(item.getGoods().getLabel());
+        if (item == null) {
+            return;
+        }
+        TuanEntity.DataBean.GoodsBean goodsBean = item.getGoods();
+        if (goodsBean == null) {
+            return;
+        }
+        GlideManager.loadImg(goodsBean.getImage(), holder.ivGoodsImage);
+        holder.tvGoodsName.setText(goodsBean.getGoods_name());
+        holder.tvLable.setText(goodsBean.getLabel());
         holder.tvTuanRuleName.setText(item.getTuan_rule().getName());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -206,10 +211,12 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
                     }
 
                     holder.countDownTimer = new CountDownTimer(time, 1000) {
+                        @Override
                         public void onTick(long millisUntilFinished) {
                             holder.tvEndTime.setText("剩余" + FormatDuration.format(new Long(millisUntilFinished).intValue()));
                         }
 
+                        @Override
                         public void onFinish() {
                             holder.tvEndTime.setVisibility(View.GONE);
                         }

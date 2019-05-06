@@ -133,7 +133,7 @@ public class XianTaoApplication extends LitePalApplication {
                 .configShowBorders(false).
                 configLevel(LogLevel.TYPE_VERBOSE);
         // 支持输入日志到文件
-        String filePath = Environment.getExternalStorageDirectory() + "/NaViMaster/logs/";
+        String filePath = Environment.getExternalStorageDirectory() + "/XianTaoMaster/logs/";
         TourCooLogUtil.getLogFileConfig().configLogFileEnable(DEBUG_MODE)
                 .configLogFilePath(filePath)
                 .configLogFileLevel(LogLevel.TYPE_VERBOSE)

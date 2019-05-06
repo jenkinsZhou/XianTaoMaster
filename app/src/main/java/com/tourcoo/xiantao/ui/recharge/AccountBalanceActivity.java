@@ -1,5 +1,6 @@
 package com.tourcoo.xiantao.ui.recharge;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,12 +15,17 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alipay.sdk.app.PayTask;
+import com.aries.ui.view.tab.CommonTabLayout;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.RechargeAmountAdapter;
+import com.tourcoo.xiantao.core.frame.UiConfigManager;
+import com.tourcoo.xiantao.core.frame.entity.TabEntity;
+import com.tourcoo.xiantao.core.frame.interfaces.IHomeView;
+import com.tourcoo.xiantao.core.frame.interfaces.SwipeBackControl;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
@@ -44,13 +50,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import cn.bingoogolapple.swipebacklayout.BGASwipeBackHelper;
 
 import static com.tourcoo.xiantao.constant.WxConfig.APP_ID;
 import static com.tourcoo.xiantao.constant.WxConfig.WEI_XIN_PAY_TAG_RECHARGE;
@@ -70,7 +80,7 @@ import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
  * @date 2019年03月28日14:52
  * @Email: 971613168@qq.com
  */
-public class AccountBalanceActivity extends BaseTourCooTitleActivity implements View.OnClickListener {
+public class AccountBalanceActivity extends BaseTourCooTitleActivity implements View.OnClickListener, SwipeBackControl {
     private RecyclerView rechargeRecyclerView;
     private IWXAPI api;
     private int mPayType;
@@ -124,23 +134,6 @@ public class AccountBalanceActivity extends BaseTourCooTitleActivity implements 
                 }
             }
         });
-
-//        etRechargeAmount.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//
-//            }
-//        });
 
     }
 
@@ -232,7 +225,7 @@ public class AccountBalanceActivity extends BaseTourCooTitleActivity implements 
                                     public void run() {
                                         switch (payType) {
                                             case PAY_TYPE_WE_XIN:
-                                                weiChatPay(entity.data.toString(),WEI_XIN_PAY_TAG_RECHARGE);
+                                                weiChatPay(entity.data.toString(), WEI_XIN_PAY_TAG_RECHARGE);
                                                 break;
                                             case PAY_TYPE_ALI:
                                                 aliPay(entity.data.toString());
@@ -248,6 +241,31 @@ public class AccountBalanceActivity extends BaseTourCooTitleActivity implements 
                         }
                     }
                 });
+    }
+
+    @Override
+    public boolean isSwipeBackEnable(Activity activity) {
+        return true;
+    }
+
+    @Override
+    public void setSwipeBack(Activity activity, BGASwipeBackHelper bgaSwipeBackHelper) {
+
+    }
+
+    @Override
+    public void onSwipeBackLayoutSlide(Activity activity, float slideOffset) {
+
+    }
+
+    @Override
+    public void onSwipeBackLayoutCancel(Activity activity) {
+
+    }
+
+    @Override
+    public void onSwipeBackLayoutExecuted(Activity activity) {
+
     }
 
 

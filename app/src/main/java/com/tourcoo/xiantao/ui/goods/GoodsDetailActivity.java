@@ -4,7 +4,12 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.TextUtils;
@@ -50,6 +55,7 @@ import com.tourcoo.xiantao.core.log.widget.utils.DateUtil;
 import com.tourcoo.xiantao.core.module.MainTabActivity;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.util.TourCoolUtil;
+import com.tourcoo.xiantao.core.widget.core.util.SizeUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.core.widget.custom.SharePopupWindow;
@@ -218,7 +224,9 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     public void setTitleBar(TitleBarView titleBar) {
         super.setTitleBar(titleBar);
         titleBar.setTitleMainText("商品详情");
-        titleBar.setRightText("分享");
+        titleBar.setRightTextDrawableWidth(SizeUtil.dp2px(18));
+        titleBar.setRightTextDrawableHeight(SizeUtil.dp2px(19));
+        titleBar.setRightTextDrawable( TourCooUtil.getDrawable(R.mipmap.ic_share));
         titleBar.setOnRightTextClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -936,6 +944,31 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         }
         // 向微信发送请求
         api.sendReq(req);
+    }
 
+
+    private Drawable zoomDrawable(Drawable drawable, int w, int h) {
+        int width = drawable.getIntrinsicWidth();
+        int height = drawable.getIntrinsicHeight();
+        Bitmap oldbmp = drawableToBitmap(drawable);
+        Matrix matrix = new Matrix();
+        float scaleWidth = ((float) w / width);
+        float scaleHeight = ((float) h / height);
+        matrix.postScale(scaleWidth, scaleHeight);
+        Bitmap newbmp = Bitmap.createBitmap(oldbmp, 0, 0, width, height,
+                matrix, true);
+        return new BitmapDrawable(null, newbmp);
+    }
+
+    private Bitmap drawableToBitmap(Drawable drawable) {
+        int width = drawable.getIntrinsicWidth();
+        int height = drawable.getIntrinsicHeight();
+        Bitmap.Config config = drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
+                : Bitmap.Config.RGB_565;
+        Bitmap bitmap = Bitmap.createBitmap(width, height, config);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, width, height);
+        drawable.draw(canvas);
+        return bitmap;
     }
 }

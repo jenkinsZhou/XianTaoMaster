@@ -312,4 +312,6 @@ public abstract class BaseFragment extends RxFragment implements IBaseView {
         }
     }
 
+
+
 }
