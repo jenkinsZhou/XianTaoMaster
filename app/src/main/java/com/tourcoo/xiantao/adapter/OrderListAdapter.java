@@ -80,7 +80,11 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
         });
         helper.getView(R.id.tvOrderNumber);
         if (orderInfo.getGoods() != null) {
-            helper.setText(R.id.tvNum, orderInfo.getGoods().size() + "");
+            int size = 0;
+            for (Goods good : orderInfo.getGoods()) {
+                size += good.getTotal_num();
+            }
+            helper.setText(R.id.tvNum, size + "");
         } else {
             helper.setText(R.id.tvNum, "");
         }

@@ -8,9 +8,15 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
@@ -48,10 +54,15 @@ import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
 import com.tourcoo.xiantao.ui.account.AddressManagerActivity;
 import com.tourcoo.xiantao.ui.goods.GoodsDetailActivity;
+import com.tourcoo.xiantao.widget.bigkoo.pickerview.builder.TimePickerBuilder;
+import com.tourcoo.xiantao.widget.bigkoo.pickerview.listener.OnTimeSelectListener;
+import com.tourcoo.xiantao.widget.bigkoo.pickerview.view.TimePickerView;
 import com.tourcoo.xiantao.widget.dialog.PayDialog;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,9 +102,17 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     public static final int SKIP_TAG_SETTLE = 1002;
     private RelativeLayout contentView;
     /**
+     * 日期选择器
+     */
+    private TimePickerView pvTime;
+    /**
      * 默认的结算方式
      */
     private int mSettleType;
+    /**
+     * 配送时间
+     */
+    private TextView tvDeliveryTime;
     /**
      * 结算方式
      */
@@ -240,6 +259,9 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         mSettleType = getIntent().getIntExtra(EXTRA_SETTLE_TYPE, -1);
         //拼团id
         pinId = getIntent().getIntExtra(EXTRA_PIN_USER_ID, -1);
+        //配送日期
+        tvDeliveryTime = findViewById(R.id.tvDeliveryTime);
+        tvDeliveryTime.setOnClickListener(this);
         //金币抵扣布局
         tvCoinAmount = findViewById(R.id.tvCoinAmount);
         contentView = findViewById(R.id.contentView);
@@ -266,6 +288,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         mSettleEntity = (SettleEntity) getIntent().getSerializableExtra(EXTRA_SETTLE);
         EventBus.getDefault().register(this);
         initCoinSwitch();
+        initTimePicker();
         listenCoinSwitch();
         requestPermission();
     }
@@ -352,11 +375,18 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         switch (v.getId()) {
             case R.id.tvSettleAccounts:
                 //弹出支付宝/微信
+                if (TextUtils.isEmpty(getTextValue(tvDeliveryTime))) {
+                    ToastUtil.show("请选择配送时间");
+                    return;
+                }
                 showPayDialog(payMoney, cash);
                 break;
             case R.id.llAddressInfo:
                 //跳转地址选择
                 doSkipAddressManager();
+                break;
+            case R.id.tvDeliveryTime:
+                pvTime.show();
                 break;
             default:
                 break;
@@ -544,6 +574,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         params.put("goods_id", goods.getGoods_id());
         params.put("goods_num", mSettleEntity.getOrder_total_num());
         params.put("remark", getRemark());
+        params.put("time", getTextValue(tvDeliveryTime));
         params.put("goods_sku_id", goodsSkuBean.getSpec_sku_id());
         if (switchUseCoin.isChecked()) {
             params.put("coin_status", 1);
@@ -592,7 +623,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             return;
         }
         boolean useCoin = switchUseCoin.isChecked();
-        ApiRepository.getInstance().requestCarPay(payType, useCoin, getRemark()).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+        ApiRepository.getInstance().requestCarPay(payType, useCoin, getRemark(), getTextValue(tvDeliveryTime)).compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseLoadingObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {
@@ -875,7 +906,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             ToastUtil.show("未获取到订单信息");
             return;
         }
-        ApiRepository.getInstance().requestPinPay(pinId, payType).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+        ApiRepository.getInstance().requestPinPay(pinId, payType, getRemark(), getTextValue(tvDeliveryTime)).compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseLoadingObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {
@@ -928,4 +959,53 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         }
     }
 
+
+    private String getTextValue(TextView textView) {
+        return textView.getText().toString();
+    }
+
+    private void setTextValue(TextView textView, String value) {
+        textView.setText(value);
+    }
+
+
+    /**
+     * Dialog 模式下，在底部弹出
+     */
+    private void initTimePicker() {
+        pvTime = new TimePickerBuilder(this, (date, v) -> setTextValue(tvDeliveryTime, getTime(date)))
+                .setType(new boolean[]{false, false, false, true, true, false})
+                //默认设置false ，内部实现将DecorView 作为它的父控件。
+                .isDialog(true)
+                .build();
+
+        Dialog mDialog = pvTime.getDialog();
+        if (mDialog != null) {
+
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    Gravity.BOTTOM);
+
+            params.leftMargin = 0;
+            params.rightMargin = 0;
+            pvTime.getDialogContainerLayout().setLayoutParams(params);
+
+            Window dialogWindow = mDialog.getWindow();
+            if (dialogWindow != null) {
+                //修改动画样式
+                dialogWindow.setWindowAnimations(R.style.picker_view_slide_anim);
+                //改成Bottom,底部显示
+                dialogWindow.setGravity(Gravity.BOTTOM);
+                dialogWindow.setDimAmount(0.1f);
+            }
+        }
+    }
+
+
+    private String getTime(Date date) {//可根据需要自行截取数据显示
+        Log.d("getTime()", "choice date millis: " + date.getTime());
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        return format.format(date);
+    }
 }

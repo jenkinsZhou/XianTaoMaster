@@ -83,6 +83,30 @@ public class Goods implements Serializable {
     private int coin;
     private int total_num;
     private int give_coin;
+
+    private double goods_min_price;
+
+    public double getGoods_min_price() {
+        return goods_min_price;
+    }
+
+    public void setGoods_min_price(double goods_min_price) {
+        this.goods_min_price = goods_min_price;
+    }
+
+    public double getGoods_max_price() {
+        return goods_max_price;
+    }
+
+    public void setGoods_max_price(double goods_max_price) {
+        this.goods_max_price = goods_max_price;
+    }
+
+    public void setGive(double give) {
+        this.give = give;
+    }
+
+    private double goods_max_price;
     /**
      * 抵扣金币
      */

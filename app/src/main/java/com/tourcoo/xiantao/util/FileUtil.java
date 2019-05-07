@@ -8,8 +8,13 @@ import android.os.Environment;
 
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.UiConfigManager;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
@@ -22,6 +27,7 @@ import androidx.core.content.FileProvider;
  * @Email: 971613168@qq.com
  */
 public class FileUtil {
+    private static final String TAG = "FileUtil";
 
     /**
      * 获取系统缓存路径
@@ -133,4 +139,36 @@ public class FileUtil {
         intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
         context.startActivity(intent);
     }
+
+
+    /**
+     * 写入文件到本地
+     *
+     * @param str
+     * @param path
+     */
+    public static void writeStringToLocal(String str, String path) {
+        try {
+            File file = new File(path);
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
+            boolean success = file.createNewFile();
+            if (!success) {
+                TourCooLogUtil.e(TAG, TAG + ":" + "文件写入失败：" + path);
+            }
+            if (str != null && !"".equals(str)) {
+                FileOutputStream fos = new FileOutputStream(file);
+                OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+                osw.write(str);
+                osw.flush();
+                osw.close();
+                TourCooLogUtil.i(TAG, TAG + ":" + "写入完毕!");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

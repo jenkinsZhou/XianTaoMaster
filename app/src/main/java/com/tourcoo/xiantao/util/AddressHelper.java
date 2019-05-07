@@ -1,8 +1,12 @@
 package com.tourcoo.xiantao.util;
 
 
+import com.alibaba.fastjson.JSON;
+import com.blankj.utilcode.util.LogUtils;
 import com.google.gson.Gson;
 import com.tourcoo.xiantao.XianTaoApplication;
+import com.tourcoo.xiantao.core.frame.entity.DataEntity;
+import com.tourcoo.xiantao.core.frame.entity.NeedEntity;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.threadpool.ThreadPoolManager;
 import com.tourcoo.xiantao.entity.AddressPickerBean;
@@ -83,7 +87,8 @@ public class AddressHelper {
         ThreadPoolManager.getThreadPoolProxy().execute(new Runnable() {
             @Override
             public void run() {
-                String addressInfo = new GetJsonDataUtil().getJson(XianTaoApplication.getContext(), "province.json");
+//                String addressInfo = new GetJsonDataUtil().getJson(XianTaoApplication.getContext(), "province.json");
+                String addressInfo = new GetJsonDataUtil().getJson(XianTaoApplication.getContext(), "city_new.json");
                 //获取assets目录下的json文件数据
                 //转成实体
                 mAddressPickerBean.addAll(parseData(addressInfo));
@@ -158,4 +163,65 @@ public class AddressHelper {
     public void setWholeAddressInfo(ArrayList<ArrayList<String>> wholeAddressInfo) {
         this.wholeAddressInfo = wholeAddressInfo;
     }
+
+
+    public void loadAddress() {
+        ThreadPoolManager.getThreadPoolProxy().execute(new Runnable() {
+            @Override
+            public void run() {
+                loadJsonData();
+            }
+        });
+    }
+
+
+    private void loadJsonData() {
+        try {
+            String addressInfo = new GetJsonDataUtil().getJson(XianTaoApplication.getContext(), "city_data_new.json");
+            List<DataEntity> dataEntityList = JSON.parseArray(addressInfo, DataEntity.class);
+            if (dataEntityList == null) {
+                TourCooLogUtil.i(TAG, TAG + "数据为空:");
+                return;
+            }
+            List<NeedEntity> entityList = new ArrayList<>();
+            NeedEntity needEntity;
+            NeedEntity.CityBean cityBean;
+            List<NeedEntity.CityBean> cityList;
+            List<String> areaList;
+            for (DataEntity dataEntity : dataEntityList) {
+                if (dataEntity == null) {
+                    continue;
+                }
+                needEntity = new NeedEntity();
+                cityList = new ArrayList<>();
+                for (DataEntity.CityListBean cityListBean : dataEntity.getCityList()) {
+                    cityBean = new NeedEntity.CityBean();
+                    cityBean.setName(cityListBean.getName());
+                    areaList = new ArrayList<>();
+                    for (DataEntity.CityListBean.AreaListBean areaListBean : cityListBean.getAreaList()) {
+                        areaList.add(areaListBean.getName());
+                    }
+                    cityBean.setArea(areaList);
+                    cityList.add(cityBean);
+                }
+                needEntity.setCity(cityList);
+                needEntity.setName(dataEntity.getName());
+                entityList.add(needEntity);
+            }
+            TourCooLogUtil.i(TAG, TAG + "数据长度:" + entityList.size());
+            String info = JSON.toJSONString(entityList);
+            String filePath = FileUtil.getExternalStorageDirectory() + "JenkinsZhou/" + "city.txt";
+            LogUtils.i("解析的地址:" + info);
+            ThreadPoolManager.getThreadPoolProxy().execute(new Runnable() {
+                @Override
+                public void run() {
+                    FileUtil.writeStringToLocal(info, filePath);
+                }
+            });
+        } catch (Exception e) {
+            TourCooLogUtil.e(TAG, TAG + ":" + "解析失败：" + e.toString());
+        }
+    }
+
+
 }

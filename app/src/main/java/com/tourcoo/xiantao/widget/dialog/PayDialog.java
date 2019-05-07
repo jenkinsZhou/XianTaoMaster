@@ -85,7 +85,8 @@ public class PayDialog extends Dialog implements View.OnClickListener {
         ivAliAPayCheckBox = findViewById(R.id.ivAliAPayCheckBox);
         ivWeChatPayCheckBox = findViewById(R.id.ivWeChatPayCheckBox);
         if (showBalancePay) {
-            rlBalancePay.setVisibility(View.VISIBLE);
+            //todo 暂时屏蔽余额支付
+            rlBalancePay.setVisibility(View.GONE);
         } else {
             rlBalancePay.setVisibility(View.GONE);
         }
@@ -189,7 +190,8 @@ public class PayDialog extends Dialog implements View.OnClickListener {
             btnRecharge.setVisibility(View.VISIBLE);
         } else {
             //默认使用余额支付
-            useBalance();
+            //todo 暂时默认支付宝支付
+            usePayAli();
             btnRecharge.setVisibility(View.GONE);
         }
     }

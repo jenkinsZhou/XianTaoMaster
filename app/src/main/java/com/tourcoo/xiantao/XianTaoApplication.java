@@ -49,6 +49,7 @@ public class XianTaoApplication extends LitePalApplication {
         super.onCreate();
         mContext = this;
         initLog();
+        //初始化地址信息
         AddressHelper.getInstance().initAddressData();
         initCrashHandle();
         ToastUtil.init(mContext);

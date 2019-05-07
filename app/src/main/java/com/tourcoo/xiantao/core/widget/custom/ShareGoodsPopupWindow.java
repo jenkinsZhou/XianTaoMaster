@@ -50,7 +50,7 @@ public class ShareGoodsPopupWindow extends PopupWindow {
      * @param context
      */
     private void initView(Context context, boolean isHideWXFriend) {
-        parentView = View.inflate(context, R.layout.layout_share_popup_window, null);
+        parentView = View.inflate(context, R.layout.layout_share_goods_popup_window, null);
         setContentView(parentView);
         btnShareWX = parentView.findViewById(R.id.btnShareWX);
         btnShareWXFriend = parentView.findViewById(R.id.btnShareWXFriend);

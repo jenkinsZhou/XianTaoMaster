@@ -78,7 +78,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/greenCommon">
 
+                    <TextView
+                        android:id="@+id/tvSettleRemark"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:paddingTop="@dimen/dp_5"
+                        android:paddingBottom="@dimen/dp_5"
+                        android:text="暂时只支持无为县无城镇地区"
+                        android:textColor="@color/whiteCommon"
+                        android:textSize="@dimen/sp_14" />
+                </RelativeLayout>
 
                 <LinearLayout
                     android:id="@+id/llAddressInfo"
@@ -310,14 +325,19 @@
                             android:layout_height="@dimen/dp_30"
                             android:layout_weight="1"
                             android:gravity="center_vertical"
-                            android:text="配送日期"
+                            android:text="配送时间"
                             android:textColor="#ff333333"
                             android:textSize="@dimen/sp_13" />
-
+                        <!--配送时间-->
                         <TextView
+                            android:id="@+id/tvDeliveryTime"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="24小时内发货"
+                            android:text="10:30"
+                            android:gravity="right"
+                            android:paddingLeft="@dimen/dp_20"
+                            android:paddingTop="@dimen/dp_5"
+                            android:paddingBottom="@dimen/dp_5"
                             android:textColor="#ff999999"
                             android:textSize="@dimen/sp_13" />
 

@@ -21,6 +21,7 @@ import com.tourcoo.xiantao.XianTaoApplication;
 import com.tourcoo.xiantao.core.common.RequestConfig;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Random;
 
@@ -361,5 +362,15 @@ public class TourCoolUtil {
         return string;
     }
 
+
+
+    /**
+     * double类型如果小数点后为零显示整数否则保留 返回String
+     * @param num
+     * @return
+     */
+    public static String doubleTrans(double num){
+        return String.valueOf(new DecimalFormat("#0.000000").format(num));
+    }
 
 }

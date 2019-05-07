@@ -171,8 +171,9 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private LinearLayout llReturnGood;
     private TextView tvReturnDetail;
     private TextView tvReturnReason;
-
     private TextView tvReturnImage;
+    private TextView tvDeliveryTime;
+    private LinearLayout llDeliveryTime;
 
     @Override
     public int getContentLayout() {
@@ -190,6 +191,8 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     public void initView(Bundle savedInstanceState) {
         api = WXAPIFactory.createWXAPI(mContext, null);
         tvCoin = findViewById(R.id.tvCoin);
+        llDeliveryTime = findViewById(R.id.llDeliveryTime);
+        tvDeliveryTime = findViewById(R.id.tvDeliveryTime);
         tvReturnDetail = findViewById(R.id.tvReturnDetail);
         rvReturnGoods = findViewById(R.id.rvReturnGoods);
         tvReturnReason = findViewById(R.id.tvReturnReason);
@@ -351,6 +354,12 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             return;
         }
         OrderDetailEntity.OrderBean orderInfo = orderDetailEntity.getOrder();
+        if (!TextUtils.isEmpty(orderInfo.getTime())) {
+            llDeliveryTime.setVisibility(View.VISIBLE);
+            tvDeliveryTime.setText(orderInfo.getTime());
+        } else {
+            llDeliveryTime.setVisibility(View.GONE);
+        }
         //待付款状态
         if (orderInfo.getPay_status() == NOT_FINISH) {
             orderInfo.setOrder_status(ORDER_STATUS_WAIT_PAY);
@@ -425,10 +434,16 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         //显示备注
         showRemark(orderBean);
         //商品数量
-        String amount = "共" + orderBean.getGoods().size() + "件商品";
-        tvGoodsTypeCount.setText(amount);
         List<OrderDetailEntity.OrderBean.GoodsBean> goodsList = orderBean.getGoods();
-        mGoodsAdapter.setNewData(goodsList);
+        if(goodsList != null){
+            int size = 0;
+            for (OrderDetailEntity.OrderBean.GoodsBean goodsBean : goodsList) {
+                size+=goodsBean.getTotal_num();
+            }
+            String amount = "共" + size + "件商品";
+            tvGoodsTypeCount.setText(amount);
+            mGoodsAdapter.setNewData(goodsList);
+        }
         loadBottomButtonFunction(orderBean);
         showReturnInfo(orderDetailEntity.getOrder().getReturn_info());
     }

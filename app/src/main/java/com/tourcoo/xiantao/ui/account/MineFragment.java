@@ -1,5 +1,8 @@
 package com.tourcoo.xiantao.ui.account;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -26,10 +29,14 @@ import com.tourcoo.xiantao.core.frame.base.fragment.BaseTitleFragment;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.frame.util.SharedPreferencesUtil;
+import com.tourcoo.xiantao.core.frame.util.SizeUtil;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
+import com.tourcoo.xiantao.core.module.MainTabActivity;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.util.TourCoolUtil;
+import com.tourcoo.xiantao.core.widget.core.action.ActionSheetDialog;
+import com.tourcoo.xiantao.core.widget.core.action.BaseDialog;
 import com.tourcoo.xiantao.core.widget.core.util.StatusBarUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
@@ -72,6 +79,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static android.app.Activity.RESULT_OK;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_PHONE_KEY;
+import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_QQ_KEY;
+import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_WEI_XIN_KEY;
 import static com.tourcoo.xiantao.ui.order.MyOrderListActivity.EXTRA_CURRENT_TAB_INDEX;
 
 /**
@@ -88,6 +97,8 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     private TextView tvUserNickName;
     private CircleImageView civUserAvatar;
     private String phone;
+    private String weiXinNumber;
+    private String qqNumber;
     private SmartRefreshLayout refreshLayout;
     public static final int REQUEST_CODE_EDIT_USER_INFO = 10;
     public static final int REQUEST_CODE_MESSAGE_CENTER = 11;
@@ -104,6 +115,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     private TextView tvRedDotWaitReceive;
     private TextView tvRedDotWaitEvaluate;
     private ImageView ivMsg;
+    private MainTabActivity mMainTabActivity;
 
     @Override
     public int getContentLayout() {
@@ -112,6 +124,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
 
     @Override
     public void initView(Bundle savedInstanceState) {
+        mMainTabActivity = (MainTabActivity) mContext;
         refreshLayout = mContentView.findViewById(R.id.refreshLayout);
         refreshLayout.setOnRefreshListener(this);
         tvMessageCount = mContentView.findViewById(R.id.tvMessageCount);
@@ -168,6 +181,8 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         super.loadData();
         init();
         phone = (String) SharedPreferencesUtil.get(PREF_TEL_PHONE_KEY, "");
+        qqNumber = (String) SharedPreferencesUtil.get(PREF_TEL_QQ_KEY, "");
+        weiXinNumber = (String) SharedPreferencesUtil.get(PREF_TEL_WEI_XIN_KEY, "");
         requestSystemConfig();
         if (AccountInfoHelper.getInstance().isLogin()) {
             checkTokenAndRequestUserInfo();
@@ -179,7 +194,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
 
     private void initMenu() {
         mMenuItemList.clear();
-        mMenuItemList.add(new MenuItem(R.mipmap.ic_account_balance, "账户余额"));
+//        mMenuItemList.add(new MenuItem(R.mipmap.ic_account_balance, "账户余额"));
         mMenuItemList.add(new MenuItem(R.mipmap.ic_spell_group_records, "拼团记录"));
         mMenuItemList.add(new MenuItem(R.mipmap.ic_collection_goods, "收藏商品"));
         mMenuItemList.add(new MenuItem(R.mipmap.ic_shipping_address, "收货地址"));
@@ -198,15 +213,15 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 switch (position) {
-                    case 0:
+                   /* case 0:
                         //账户余额
                         if (!AccountInfoHelper.getInstance().isLogin()) {
                             TourCoolUtil.startActivity(mContext, LoginActivity.class);
                             return;
                         }
                         skipAccount();
-                        break;
-                    case 1:
+                        break;*/
+                    case 0:
                         //拼团记录
                         if (!AccountInfoHelper.getInstance().isLogin()) {
                             TourCoolUtil.startActivity(mContext, LoginActivity.class);
@@ -214,7 +229,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                         }
                         TourCoolUtil.startActivity(mContext, MyTuanListActivity.class);
                         break;
-                    case 2:
+                    case 1:
                         //收藏商品
                         if (!AccountInfoHelper.getInstance().isLogin()) {
                             TourCoolUtil.startActivity(mContext, LoginActivity.class);
@@ -222,7 +237,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                         }
                         TourCoolUtil.startActivity(mContext, CollectionGoodsListActivity.class);
                         break;
-                    case 3:
+                    case 2:
                         //收货地址
                         if (!AccountInfoHelper.getInstance().isLogin()) {
                             TourCoolUtil.startActivity(mContext, LoginActivity.class);
@@ -230,17 +245,17 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                         }
                         TourCoolUtil.startActivity(mContext, AddressManagerActivity.class);
                         break;
-                    case 4:
-                        //客服电话
-                        showPhoneDialog();
+                    case 3:
+                        //客服
+                        showContactUsDialog();
                         break;
-                    case 5:
+                    case 4:
                         //问题反馈
                         TourCoolUtil.startActivity(mContext, FeedbackActivity.class);
                         break;
-                    case 6:
+                    case 5:
                         break;
-                    case 7:
+                    case 6:
                         break;
                     default:
                         break;
@@ -656,7 +671,11 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                                 SystemSettingEntity settingEntity = entity.data;
                                 if (settingEntity != null) {
                                     phone = settingEntity.getKefu();
+                                    qqNumber = settingEntity.getKefu_qq();
+                                    weiXinNumber = settingEntity.getKefu_wx();
                                     SharedPreferencesUtil.put(PREF_TEL_PHONE_KEY, phone);
+                                    SharedPreferencesUtil.put(PREF_TEL_QQ_KEY, qqNumber);
+                                    SharedPreferencesUtil.put(PREF_TEL_WEI_XIN_KEY, weiXinNumber);
                                 }
                             } else {
                                 ToastUtil.showFailed(entity.msg);
@@ -676,6 +695,63 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
+
+
+    private void showSheetDialog(String phone, String qqNumber, String weiXinNumber) {
+        String[] array = new String[]{"客服电话", "客服QQ", "客服微信"};
+        array[0] = phone;
+        array[1] = qqNumber;
+        array[2] = weiXinNumber;
+        new ActionSheetDialog.ListIOSBuilder(mContext)
+                .addItems(array)
+                .setTitle("联系客服")
+//                .setBackgroundColor(TourCooUtil.getColor(R.color.whiteCommon))
+                .setItemsTextColorResource(R.color.colorActionSheetItemText)
+                .setCancel(R.string.cancel)
+                .setCancelMarginTop(SizeUtil.dp2px(8))
+                .setCancelTextColorResource(R.color.colorActionSheetItemText)
+                .setOnItemClickListener(mOnItemClickListener)
+                .create()
+//                .setDimAmount(0.6f)
+                .show();
+    }
+
+
+    private ActionSheetDialog.OnItemClickListener mOnItemClickListener = new ActionSheetDialog.OnItemClickListener() {
+        @Override
+        public void onClick(BaseDialog dialog, View itemView, int position) {
+            switch (position) {
+                case 0:
+                    call(phone);
+                    break;
+                case 1:
+                    mMainTabActivity.copyToClipboard(qqNumber);
+                    ToastUtil.showSuccess("已经复制到粘贴板");
+                    break;
+                case 2:
+                    mMainTabActivity.copyToClipboard(weiXinNumber);
+                    ToastUtil.showSuccess("已经复制到粘贴板");
+                    break;
+                default:
+                    break;
+
+            }
+            dialog.dismiss();
+        }
+    };
+
+
+    private void showContactUsDialog() {
+        if (TextUtils.isEmpty(weiXinNumber) || TextUtils.isEmpty(qqNumber)) {
+            ToastUtil.show("未获取到客服联系方式");
+            return;
+        }
+        String phoneValue = "客服电话:" + phone + " (点击拨打)";
+        String qqValue = "客服QQ:" + qqNumber + " (点击复制)";
+        String weiXinValue = "客服微信:" + weiXinNumber + " (点击复制)";
+        showSheetDialog(phoneValue, qqValue, weiXinValue);
+    }
+
 
 }
 

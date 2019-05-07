@@ -22,6 +22,26 @@ public class SystemSettingEntity {
      */
     private String register;
 
+    public String getKefu_wx() {
+        return kefu_wx;
+    }
+
+    public void setKefu_wx(String kefu_wx) {
+        this.kefu_wx = kefu_wx;
+    }
+
+    public String getKefu_qq() {
+        return kefu_qq;
+    }
+
+    public void setKefu_qq(String kefu_qq) {
+        this.kefu_qq = kefu_qq;
+    }
+
+    private String kefu_wx;
+
+    private String kefu_qq;
+
     public String getRegister() {
         return register;
     }

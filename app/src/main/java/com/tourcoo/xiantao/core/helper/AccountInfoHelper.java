@@ -26,6 +26,8 @@ public class AccountInfoHelper {
     private PersonalCenterInfo mPersonalCenterInfo;
 
     public static final String PREF_TEL_PHONE_KEY = "PREF_TEL_PHONE_KEY";
+    public static final String PREF_TEL_QQ_KEY = "PREF_TEL_QQ_KEY";
+    public static final String PREF_TEL_WEI_XIN_KEY = "PREF_TEL_WEI_XIN_KEY";
     /**
      * 充值规则
      */

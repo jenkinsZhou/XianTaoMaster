@@ -33,7 +33,6 @@ import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.upload.UploadEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.retrofit.repository.UploadProgressBody;
-import com.tourcoo.xiantao.ui.order.ReturnGoodsActivity;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
 import org.apache.commons.lang.StringUtils;

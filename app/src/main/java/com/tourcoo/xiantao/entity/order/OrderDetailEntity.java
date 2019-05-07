@@ -70,6 +70,16 @@ public class OrderDetailEntity {
          */
 
         private int id;
+        private String time;
+
+        public String getTime() {
+            return time;
+        }
+
+        public void setTime(String time) {
+            this.time = time;
+        }
+
         private String order_no;
         private String total_price;
         private double pay_price;

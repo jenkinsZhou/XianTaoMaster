@@ -66,13 +66,13 @@
 
 
         <androidx.core.widget.NestedScrollView
-            android:scrollbars="none"
-            android:overScrollMode="never"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@id/llBottomToolBar"
             android:layout_alignParentTop="true"
-            android:minHeight="@dimen/dp_600">
+            android:minHeight="@dimen/dp_600"
+            android:overScrollMode="never"
+            android:scrollbars="none">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -88,16 +88,48 @@
                 <!--中间部分-->
                 <!--商品名称-->
                 <TextView
-                    android:paddingTop="@dimen/dp_15"
                     android:id="@+id/tvGoodsName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
                     android:gravity="left"
                     android:paddingLeft="@dimen/dp_15"
+                    android:paddingTop="@dimen/dp_15"
                     android:text="商品名称商品名称商品名称商品名称商品名称"
                     android:textColor="#404040"
                     android:textSize="@dimen/sp_15" />
+
+                <!--价格显示相关-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:background="@color/whiteCommon"
+                    android:paddingLeft="@dimen/dp_15">
+
+                    <!--价格范围-->
+                    <TextView
+                        android:id="@+id/tvPriceRange"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/dp_5"
+                        android:textSize="@dimen/sp_14"
+                        android:paddingBottom="@dimen/dp_5"
+                        android:text="￥100" />
+                    <TextView
+                        android:id="@+id/tvPinPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/dp_5"
+                        android:layout_marginLeft="@dimen/dp_10"
+                        android:textColor="@color/greenCommon"
+                        android:textSize="@dimen/sp_12"
+                        android:paddingBottom="@dimen/dp_5"
+                        android:text="拼团价 ￥100" />
+
+                </LinearLayout>
+
+
                 <!--产地相关信息-->
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -117,10 +149,10 @@
                         android:layout_gravity="center_vertical"
                         android:background="@drawable/selector_bg_radius_16_green_hollow"
                         android:gravity="center"
-                        android:paddingLeft="@dimen/dp_9"
-                        android:paddingTop="@dimen/dp_4"
-                        android:paddingRight="9dp"
-                        android:paddingBottom="@dimen/dp_4"
+                        android:paddingLeft="@dimen/dp_10"
+                        android:paddingTop="@dimen/dp_2"
+                        android:paddingRight="@dimen/dp_10"
+                        android:paddingBottom="@dimen/dp_2"
                         android:text="拼团钜惠"
                         android:textColor="@color/greenCommon"
                         android:textSize="10sp"
@@ -150,6 +182,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_5"
                     android:background="@color/whiteCommon"
                     android:orientation="horizontal"
                     android:paddingLeft="@dimen/dp_15"
@@ -197,10 +230,10 @@
                     android:paddingBottom="@dimen/dp_8">
 
                     <TextView
-                        android:layout_marginRight="@dimen/dp_5"
                         android:layout_width="@dimen/dp_6"
                         android:layout_height="@dimen/dp_6"
                         android:layout_gravity="center_vertical"
+                        android:layout_marginRight="@dimen/dp_5"
                         android:background="@drawable/dot_green_6dp" />
 
                     <TextView
@@ -210,19 +243,19 @@
                         android:text=""
                         android:textSize="@dimen/sp_10" />
 
-                   <!-- <TextView
-                        android:layout_width="@dimen/dp_6"
-                        android:layout_height="@dimen/dp_6"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="@dimen/dp_10"
-                        android:background="@drawable/dot_green_6dp" />
+                    <!-- <TextView
+                         android:layout_width="@dimen/dp_6"
+                         android:layout_height="@dimen/dp_6"
+                         android:layout_gravity="center_vertical"
+                         android:layout_marginLeft="@dimen/dp_10"
+                         android:background="@drawable/dot_green_6dp" />
 
-                    <TextView
-                        android:id="@+id/tvRemarkSecond"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="不支持七天无理由退货"
-                        android:textSize="@dimen/sp_10" />-->
+                     <TextView
+                         android:id="@+id/tvRemarkSecond"
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:text="不支持七天无理由退货"
+                         android:textSize="@dimen/sp_10" />-->
                 </LinearLayout>
 
                 <!--金币抵扣-->
@@ -237,10 +270,10 @@
                     android:paddingBottom="@dimen/dp_8">
 
                     <TextView
-                        android:layout_marginRight="@dimen/dp_5"
                         android:layout_width="@dimen/dp_6"
                         android:layout_height="@dimen/dp_6"
                         android:layout_gravity="center_vertical"
+                        android:layout_marginRight="@dimen/dp_5"
                         android:background="@drawable/dot_green_6dp" />
 
                     <TextView
@@ -368,8 +401,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:paddingTop="@dimen/dp_10"
                         android:paddingLeft="@dimen/dp_10"
+                        android:paddingTop="@dimen/dp_10"
                         android:paddingBottom="@dimen/dp_10">
 
                     </LinearLayout>

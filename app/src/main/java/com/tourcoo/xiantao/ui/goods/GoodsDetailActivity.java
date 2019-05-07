@@ -37,6 +37,7 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.google.gson.Gson;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject;
@@ -64,6 +65,7 @@ import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.goods.GoodsEntity;
 import com.tourcoo.xiantao.entity.goods.Spec;
+import com.tourcoo.xiantao.entity.goods.TuanRule;
 import com.tourcoo.xiantao.entity.settle.SettleEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
@@ -113,7 +115,14 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private int count;
     private BGABanner bgaBanner;
     private List<String> imageList = new ArrayList<>();
-    private TextView tvComment;
+    /**
+     * 商品价格区间
+     */
+    private TextView tvPriceRange;
+    /**
+     * 拼团价
+     */
+    private TextView tvPinPrice;
     private GoodsEntity mGoodsEntity;
     /**
      * 用于退出activity,避免countdown，造成资源浪费。
@@ -177,6 +186,8 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private void init() {
         //判断是否是从广告页跳转过来的
         api = WXAPIFactory.createWXAPI(mContext, WxConfig.APP_ID);
+        tvPriceRange = findViewById(R.id.tvPriceRange);
+        tvPinPrice = findViewById(R.id.tvPinPrice);
         sharePopupWindow = new SharePopupWindow(mContext, false);
         skipTag = getIntent().getStringExtra(EXTRA_ADV_TAG);
         countDownMap = new SparseArray<>();
@@ -221,7 +232,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     public void initView(Bundle savedInstanceState) {
         bgaBanner = findViewById(R.id.bgaBanner);
         tvGoodsName = findViewById(R.id.tvGoodsName);
-        tvComment = findViewById(R.id.tvComment);
+//        tvComment = findViewById(R.id.tvComment);
         /**
          * 进入此页面必须携带商品id参数
          */
@@ -391,13 +402,25 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
         //是否显示拼团信息
         setVisible(llAssemble, detail.isTuan() && detail.getTuan_list() != null && detail.getTuan_list().
-
                 size() > 0);
 
         setVisible(tvPin, detail.isTuan());
-
         setVisible(tvTuanTag, detail.isTuan());
-
+        boolean isTuan = detail.isTuan();
+        try {
+            String priceRange = "￥" + TourCooUtil.doubleTrans(detail.getGoods_min_price()) + " 一￥" + TourCooUtil.doubleTrans(detail.getGoods_max_price());
+            tvPriceRange.setText(priceRange);
+            if (isTuan && detail.getTuan_rule() != null) {
+                TuanRule tuanRule = new Gson().fromJson(detail.getTuan_rule().toString(), TuanRule.class);
+                String pinPrice = "拼团价￥" + TourCooUtil.doubleTrans(Double.parseDouble(tuanRule.getPrice()));
+                setVisible(tvPinPrice, true);
+                tvPinPrice.setText(pinPrice);
+            } else {
+                setVisible(tvPinPrice, false);
+            }
+        } catch (Exception e) {
+            TourCooLogUtil.e(TAG, TAG + ":" + "显示异常:" + e.toString());
+        }
         tvLable.setText(detail.getLabel());
         if (!StringUtils.isEmpty(detail.getOrigin())) {
             tvOrigin.setText(new SpanUtils()

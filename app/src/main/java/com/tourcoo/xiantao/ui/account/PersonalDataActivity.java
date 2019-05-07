@@ -216,7 +216,7 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
         } else {
             tvNickName.setText(personalCenterInfo.getNickname());
         }
-        setText(tvBirthday, personalCenterInfo.getBirthday());
+        setTextValue(tvBirthday, personalCenterInfo.getBirthday());
         showGender(personalCenterInfo.getGender());
         if (TextUtils.isEmpty(personalCenterInfo.getMobile())) {
             tvMobile.setText("未填写");
@@ -245,7 +245,7 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
         pvTime = new TimePickerBuilder(this, new OnTimeSelectListener() {
             @Override
             public void onTimeSelect(Date date, View v) {
-                setText(tvBirthday, getTime(date));
+                setTextValue(tvBirthday, getTime(date));
             }
         })
                 .setType(new boolean[]{true, true, true, false, false, false})
@@ -311,7 +311,7 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String text = editText.getText().toString().trim();
-                        setText(tvNickName, text);
+                        setTextValue(tvNickName, text);
                     }
                 })
                 .create()
@@ -502,7 +502,7 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
     }
 
 
-    private void setText(TextView textView, String value) {
+    private void setTextValue(TextView textView, String value) {
         textView.setText(value);
     }
 
