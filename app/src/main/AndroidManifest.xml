@@ -165,7 +165,7 @@
             android:name=".ui.goods.SearchGoodsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.order.ReturnOrderList"
+            android:name=".ui.order.ReturnOrderListActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.FeedbackActivity"
@@ -183,6 +183,7 @@
             android:name=".ui.msg.BannerDetailActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".ui.msg.AdvDetailActivity" />
+        <activity android:name=".ui.order.ReturnDetailActivity" />
     </application>
 
 </manifest>

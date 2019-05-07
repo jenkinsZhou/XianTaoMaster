@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.FrameLayout;
 
+import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.UiConfigManager;
 import com.tourcoo.xiantao.core.frame.interfaces.ActivityDispatchEventControl;
 import com.tourcoo.xiantao.core.frame.interfaces.ActivityKeyEventControl;
@@ -353,4 +354,8 @@ public abstract class BaseActivity extends RxAppCompatActivity implements IBaseV
     }
 
 
+    @Override
+    public void finish() {
+        super.finish();
+    }
 }

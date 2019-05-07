@@ -50,10 +50,9 @@ import com.tourcoo.xiantao.ui.coin.MyCoinListActivity;
 import com.tourcoo.xiantao.ui.goods.CollectionGoodsListActivity;
 import com.tourcoo.xiantao.ui.msg.MsgSystemActivity;
 import com.tourcoo.xiantao.ui.order.MyOrderListActivity;
-import com.tourcoo.xiantao.ui.order.ReturnOrderList;
+import com.tourcoo.xiantao.ui.order.ReturnOrderListActivity;
 import com.tourcoo.xiantao.ui.recharge.AccountBalanceActivity;
 import com.tourcoo.xiantao.ui.tuan.MyTuanListActivity;
-import com.trello.rxlifecycle3.android.ActivityEvent;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -632,7 +631,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
             return;
         }
         Intent returnIntent = new Intent();
-        returnIntent.setClass(mContext, ReturnOrderList.class);
+        returnIntent.setClass(mContext, ReturnOrderListActivity.class);
         startActivityForResult(returnIntent, REQUEST_CODE_EDIT_USER_INFO);
     }
 

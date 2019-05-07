@@ -82,6 +82,15 @@ public class Goods implements Serializable {
     private boolean tuan;
     private int coin;
     private int total_num;
+    private int give_coin;
+    /**
+     * 抵扣金币
+     */
+    private double deduct;
+    /**
+     * 赠送金币
+     */
+    private double give;
     private boolean isSelect;
     private double goods_price;
     private List<String> imgs_url;
@@ -371,6 +380,30 @@ public class Goods implements Serializable {
         this.goods_sku = goods_sku;
     }
 
+    public int getGive_coin() {
+        return give_coin;
+    }
+
+    public void setGive_coin(int give_coin) {
+        this.give_coin = give_coin;
+    }
+
+    public double getDeduct() {
+        return deduct;
+    }
+
+    public void setDeduct(double deduct) {
+        this.deduct = deduct;
+    }
+
+    public double getGive() {
+        return give;
+    }
+
+    public void setGive(int give) {
+        this.give = give;
+    }
+
     public static class CategoryBean implements Serializable {
         /**
          * id : 5
@@ -447,7 +480,7 @@ public class Goods implements Serializable {
         }
     }
 
-    public static class FreightBean implements Serializable{
+    public static class FreightBean implements Serializable {
         /**
          * id : 22
          * name : 手机
@@ -524,7 +557,7 @@ public class Goods implements Serializable {
     }
 
 
-    public static class SpecRelBean implements Serializable{
+    public static class SpecRelBean implements Serializable {
         /**
          * id : 44
          * spec_value : 亮黑色
@@ -589,7 +622,7 @@ public class Goods implements Serializable {
             this.spec = spec;
         }
 
-        public static class PivotBean implements Serializable{
+        public static class PivotBean implements Serializable {
             /**
              * id : 328
              * goods_id : 22
@@ -645,7 +678,7 @@ public class Goods implements Serializable {
             }
         }
 
-        public static class SpecBeanX implements Serializable{
+        public static class SpecBeanX implements Serializable {
             /**
              * id : 20
              * spec_name : 颜色
@@ -1109,7 +1142,7 @@ public class Goods implements Serializable {
             }
         }
 
-        public static class UserBean implements Serializable{
+        public static class UserBean implements Serializable {
             /**
              * nickname : ﾟ默｡
              * avatar : https://wx.qlogo.cn/mmopen/vi_32/lTYDafia0gtOUD73KkMECgR3CqaqpUtRGzOsxCltfpHWIMr02yIDRxe6ED6GzAMQm1MRkdfWAG044agOxVS8Xcw/132

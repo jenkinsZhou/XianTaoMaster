@@ -159,7 +159,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginLeft="@dimen/dp_5"
-                                android:text="鲜淘快报"
+                                android:text="快报"
                                 android:textColor="@color/greenCommon" />
 
                             <!-- 滚动轮播广告条 !-->

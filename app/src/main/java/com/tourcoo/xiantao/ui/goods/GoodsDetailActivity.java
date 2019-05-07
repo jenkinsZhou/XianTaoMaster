@@ -163,6 +163,12 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private ProductSkuDialog dialog;
     private Goods currentGoods;
 
+    private LinearLayout llDeduct;
+    private LinearLayout llGiveAway;
+    private TextView tvGiveAwayCoin;
+
+    private TextView tvDeduct;
+
     @Override
     public int getContentLayout() {
         return R.layout.activity_goods_detail;
@@ -188,6 +194,10 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             }
         });
         rlContentView = findViewById(R.id.rlContentView);
+        llGiveAway = findViewById(R.id.llGiveAway);
+        llDeduct = findViewById(R.id.llDeduct);
+        tvDeduct = findViewById(R.id.tvDeduct);
+        tvGiveAwayCoin = findViewById(R.id.tvGiveAwayCoin);
         llAssemble = findViewById(R.id.llAssemble);
         tvBuyNow = findViewById(R.id.tvBuyNow);
         tvPin = findViewById(R.id.tvPin);
@@ -217,7 +227,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
          */
         mGoodsId = getIntent().getIntExtra(EXTRA_GOODS_ID, -1);
         init();
-        TourCooLogUtil.i(TAG, TAG + ":" + "商品=" + mGoodsId);
+        TourCooLogUtil.i(TAG, TAG + ":" + "商品id=" + mGoodsId);
     }
 
     @Override
@@ -226,7 +236,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         titleBar.setTitleMainText("商品详情");
         titleBar.setRightTextDrawableWidth(SizeUtil.dp2px(18));
         titleBar.setRightTextDrawableHeight(SizeUtil.dp2px(19));
-        titleBar.setRightTextDrawable( TourCooUtil.getDrawable(R.mipmap.ic_share));
+        titleBar.setRightTextDrawable(TourCooUtil.getDrawable(R.mipmap.ic_share));
         titleBar.setOnRightTextClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -361,12 +371,31 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             return;
         }
         currentGoods = detail;
+        if (detail.getGive() <= 0) {
+            llGiveAway.setVisibility(View.GONE);
+        } else {
+            llGiveAway.setVisibility(View.VISIBLE);
+            String value = "购买本商品每满" + detail.getGive() + "元 , 赠送1金币";
+            tvGiveAwayCoin.setText(value);
+        }
+        if (detail.getDeduct() <= 0) {
+            llDeduct.setVisibility(View.GONE);
+        } else {
+            llDeduct.setVisibility(View.VISIBLE);
+            String value = "购买本商品每满" + detail.getDeduct() + "元 , 可使用1金币抵扣1元";
+            tvDeduct.setText(value);
+        }
         setBanner(detail.getImgs_url());
         //显示名称
         tvGoodsName.setText(detail.getGoods_name());
+
         //是否显示拼团信息
-        setVisible(llAssemble, detail.isTuan() && detail.getTuan_list() != null && detail.getTuan_list().size() > 0);
+        setVisible(llAssemble, detail.isTuan() && detail.getTuan_list() != null && detail.getTuan_list().
+
+                size() > 0);
+
         setVisible(tvPin, detail.isTuan());
+
         setVisible(tvTuanTag, detail.isTuan());
 
         tvLable.setText(detail.getLabel());
@@ -377,7 +406,9 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     .create());
         }
 
-        if (detail.isTuan() && detail.getTuan_list() != null && detail.getTuan_list().size() > 0) {
+        if (detail.isTuan() && detail.getTuan_list() != null && detail.getTuan_list().
+
+                size() > 0) {
             tvTuanStatus.setText(detail.getTuan_list().size() + "人正在拼团 可直接参与");
             int size = detail.getTuan_list().size() == 1 ? 1 : 2;
 
@@ -430,7 +461,9 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             }
         }
 
-        if (detail.getComment_list() != null && detail.getComment_list().size() > 0) {
+        if (detail.getComment_list() != null && detail.getComment_list().
+
+                size() > 0) {
             int size = detail.getComment_list().size() == 1 ? 1 : 2;
             for (int i = 0; i < size; i++) {
                 Goods.CommentListBean item = detail.getComment_list().get(i);
@@ -482,13 +515,17 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             btnSeeComment.setEnabled(false);
         }
 
-        if (goodsEntity.getDetail().getCollect() == 0) {
+        if (goodsEntity.getDetail().
+
+                getCollect() == 0) {
             showNoCollect();
         } else {
             showCollect();
         }
 
-        imageFillWidth(webView, goodsEntity.getDetail().getContent());
+        imageFillWidth(webView, goodsEntity.getDetail().
+
+                getContent());
 
         tvPin.setOnClickListener(new View.OnClickListener() {
             @Override

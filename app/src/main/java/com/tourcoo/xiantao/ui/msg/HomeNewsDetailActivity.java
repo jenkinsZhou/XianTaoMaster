@@ -1,6 +1,7 @@
 package com.tourcoo.xiantao.ui.msg;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.webkit.WebView;
 import android.widget.TextView;
 
@@ -40,6 +41,7 @@ import static com.tourcoo.xiantao.ui.msg.MsgSystemActivity.EXTRA_MESSAGE_DETAIL;
 public class HomeNewsDetailActivity extends BaseTourCooTitleActivity {
 
     private WebView webView;
+    private TitleBarView mTitleBarView;
 
     @Override
     public int getContentLayout() {
@@ -49,12 +51,13 @@ public class HomeNewsDetailActivity extends BaseTourCooTitleActivity {
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         super.setTitleBar(titleBar);
-        titleBar.setTitleMainText("鲜淘快报");
+        titleBar.setTitleMainText("快报");
+        mTitleBarView = titleBar;
     }
 
     @Override
     public void initView(Bundle savedInstanceState) {
-        int id = getIntent().getIntExtra("id",0);
+        int id = getIntent().getIntExtra("id", 0);
         webView = findViewById(R.id.webView);
         getNewsDetails(id);
     }
@@ -71,6 +74,9 @@ public class HomeNewsDetailActivity extends BaseTourCooTitleActivity {
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
                                 imageFillWidth(webView, entity.data.getContent());
+                                if (!TextUtils.isEmpty(entity.data.getName())) {
+                                    mTitleBarView.setTitleMainText(entity.data.getName());
+                                }
                             } else {
                                 ToastUtil.showFailed(entity.msg);
                             }

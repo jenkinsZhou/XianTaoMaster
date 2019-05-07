@@ -362,6 +362,4 @@ public class TourCoolUtil {
     }
 
 
-
-
 }
