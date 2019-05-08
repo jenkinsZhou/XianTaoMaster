@@ -616,10 +616,19 @@ public interface ApiService {
 
 
     /**
-     * 广告详情
+     * 广告页详情
+     * @param params
      * @return
      */
     @POST("ad/detail")
     Observable<BaseEntity<AdverDetailEntity>> requestAdvertisementDetail(@QueryMap Map<String, Object> params);
 
+    /**
+     * 更换手机号
+     *
+     * @param params
+     * @return
+     */
+    @POST("user/changemobile")
+    Observable<BaseEntity> requestChangeMobile(@QueryMap Map<String, Object> params);
 }

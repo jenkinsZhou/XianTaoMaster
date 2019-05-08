@@ -270,7 +270,7 @@ public class ProductSkuDialog extends Dialog {
                 tvSkuQuantity.setVisibility(View.VISIBLE);
                 tvSkuQuantity.setText(String.format(stockQuantityFormat, specList.getForm().getStock_num()));
 
-                tvSkuSellingPrice.setText(String.format(priceFormat,specList.getForm().getGoods_price()));
+                tvSkuSellingPrice.setText(String.format(priceFormat, specList.getForm().getGoods_price()));
                 tvSkuInfo.setText("已选：" + builder.toString());
 
                 btnSubmit.setEnabled(true);
@@ -460,12 +460,20 @@ public class ProductSkuDialog extends Dialog {
 //                    tvSkuInfo.setText("已选：" + builder.toString());
 //                } else {
         GlideManager.loadImg(product.getDetail().getImage(), ivSkuLogo);
-        TuanRule tuanRule = new Gson().fromJson(product.getDetail().getTuan_rule().toString(), TuanRule.class);
-        if (type == PING_TUAN) {
-            tvSkuSellingPrice.setText(tuanRule.getName());
+        try {
+            if (type == PING_TUAN) {
+                Object object = product.getDetail().getTuan_rule();
+                if (object != null) {
+                    TuanRule tuanRule = new Gson().fromJson(object.toString(), TuanRule.class);
+                    tvSkuSellingPrice.setText(tuanRule.getName());
+                }
+            }
+            btnSubmit.setEnabled(true);
+            tvSkuInfo.setText("选择：" + skuList.get(0).getGroup_name());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        btnSubmit.setEnabled(true);
-        tvSkuInfo.setText("选择：" + skuList.get(0).getGroup_name());
+
 //                }
 
 

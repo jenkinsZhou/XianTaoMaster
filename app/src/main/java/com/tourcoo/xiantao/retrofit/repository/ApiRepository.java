@@ -997,4 +997,16 @@ public class ApiRepository extends BaseRepository {
     }
 
 
+    /**
+     * 更换手机号
+     * @param mobile
+     * @return
+     */
+    public Observable<BaseEntity> requestChangeMobile(String mobile,String vCode) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("mobile", mobile);
+        params.put("event", "changemobile");
+        params.put("captcha", vCode);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestChangeMobile(params).retryWhen(new RetryWhen()));
+    }
 }

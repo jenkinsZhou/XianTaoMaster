@@ -22,14 +22,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:src="@mipmap/img_no_network" />
+                android:src="@mipmap/img_no_content" />
 
             <TextView
                 android:id="@+id/tvErrorContent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="网络开了点小差" />
+                android:text="服务器开了点小差" />
 
             <TextView
                 android:id="@+id/tvRefresh"

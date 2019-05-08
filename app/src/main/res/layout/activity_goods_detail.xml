@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -82,7 +83,13 @@
                 <cn.bingoogolapple.bgabanner.BGABanner
                     android:id="@+id/bgaBanner"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_240">
+                    android:layout_height="@dimen/dp_240"
+                    app:banner_indicatorGravity="bottom|center_horizontal"
+                    app:banner_placeholderDrawable="@color/transparent"
+                    app:banner_pointAutoPlayAble="true"
+                    app:banner_pointContainerBackground="@android:color/transparent"
+                    app:banner_pointContainerLeftRightPadding="@dimen/dp_2"
+                    app:banner_pointDrawable="@drawable/selector_banner_point">
 
                 </cn.bingoogolapple.bgabanner.BGABanner>
                 <!--中间部分-->
@@ -103,8 +110,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:background="@color/whiteCommon"
+                    android:orientation="horizontal"
                     android:paddingLeft="@dimen/dp_15">
 
                     <!--价格范围-->
@@ -113,19 +120,20 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingTop="@dimen/dp_5"
-                        android:textSize="@dimen/sp_14"
                         android:paddingBottom="@dimen/dp_5"
-                        android:text="￥100" />
+                        android:text="￥100"
+                        android:textSize="@dimen/sp_14" />
+
                     <TextView
                         android:id="@+id/tvPinPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingTop="@dimen/dp_5"
                         android:layout_marginLeft="@dimen/dp_10"
-                        android:textColor="@color/greenCommon"
-                        android:textSize="@dimen/sp_12"
+                        android:paddingTop="@dimen/dp_5"
                         android:paddingBottom="@dimen/dp_5"
-                        android:text="拼团价 ￥100" />
+                        android:text="拼团价 ￥100"
+                        android:textColor="@color/greenCommon"
+                        android:textSize="@dimen/sp_12" />
 
                 </LinearLayout>
 

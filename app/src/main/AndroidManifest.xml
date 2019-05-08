@@ -52,6 +52,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
@@ -94,6 +95,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.order.MyOrderListActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.account.LoginActivity"
@@ -185,8 +187,15 @@
         <activity
             android:name=".ui.msg.BannerDetailActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.msg.AdvDetailActivity" />
-        <activity android:name=".ui.order.ReturnDetailActivity" />
+        <activity
+            android:name=".ui.msg.AdvDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.order.ReturnDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.account.ChangePhoneNumberActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
