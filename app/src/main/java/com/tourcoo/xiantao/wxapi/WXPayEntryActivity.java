@@ -3,6 +3,7 @@ package com.tourcoo.xiantao.wxapi;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
@@ -78,7 +79,8 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
                     EventBus.getDefault().post(new BaseEvent(EVENT_ACTION_PAY_FRESH_FAILED));
                     break;
                 case -2:
-                    ToastUtil.show("您已经取消支付，请重新尝试支付");
+                    Toast.makeText(this, "您已经取消支付，请重新尝试支付", Toast.LENGTH_SHORT).show();
+
                     EventBus.getDefault().post(new BaseEvent(EVENT_ACTION_PAY_FRESH_FAILED));
                     break;
                 default:

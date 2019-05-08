@@ -708,6 +708,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         intent.putExtra(EXTRA_SETTLE, settleEntity);
         intent.setClass(mContext, OrderSettleDetailActivity.class);
         startActivity(intent);
+        finish();
     }
 
 
@@ -724,6 +725,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         intent.setClass(mContext, OrderSettleDetailActivity.class);
         TourCooLogUtil.i(TAG, "value:" + pinId);
         startActivity(intent);
+        finish();
     }
 
     @Override

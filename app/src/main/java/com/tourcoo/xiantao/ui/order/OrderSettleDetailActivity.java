@@ -39,6 +39,7 @@ import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.threadpool.ThreadPoolManager;
 import com.tourcoo.xiantao.core.util.ToastUtil;
+import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.address.AddressEntity;
@@ -53,6 +54,7 @@ import com.tourcoo.xiantao.entity.user.CashEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
 import com.tourcoo.xiantao.ui.account.AddressManagerActivity;
+import com.tourcoo.xiantao.ui.account.LoginActivity;
 import com.tourcoo.xiantao.ui.goods.GoodsDetailActivity;
 import com.tourcoo.xiantao.widget.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.tourcoo.xiantao.widget.bigkoo.pickerview.listener.OnTimeSelectListener;
@@ -87,6 +89,7 @@ import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.EXTRA_ADDRES
 import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.EXTRA_SKIP_TAG_SETTLE;
 import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.REQUEST_CODE_EDIT_ADDRESS;
 import static com.tourcoo.xiantao.ui.goods.GoodsDetailActivity.EXTRA_SETTLE;
+import static com.tourcoo.xiantao.ui.order.MyOrderListActivity.EXTRA_CURRENT_TAB_INDEX;
 import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_ALI;
 import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_BALANCE;
 import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
@@ -597,8 +600,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                                     @Override
                                     public void run() {
                                         //订单生成成功 将状态置为true
-                                        isCreateOrder = true;
-                                         TourCooLogUtil.i(TAG,TAG+":"+ "订单生成成功");
+                                        TourCooLogUtil.i(TAG, TAG + ":" + "订单生成成功");
                                         switch (mPayType) {
                                             case PAY_TYPE_WE_XIN:
                                                 weiChatPay(entity.data.toString(), WEI_XIN_PAY_TAG_NORMAL);
@@ -607,7 +609,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                                                 aliPay(entity.data.toString());
                                                 break;
                                             case PAY_TYPE_BALANCE:
-                                                payFailedAndSkipToOrderListAndFinish();
+                                                payFailedAndSkipToOrderListAndFinish(1);
                                                 break;
                                             default:
                                                 break;
@@ -641,8 +643,6 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                                 ThreadPoolManager.getThreadPoolProxy().execute(new Runnable() {
                                     @Override
                                     public void run() {
-                                        //订单生成成功 将状态置为true
-                                        isCreateOrder = true;
                                         switch (mPayType) {
                                             case PAY_TYPE_WE_XIN:
                                                 weiChatPay(entity.data.toString(), WEI_XIN_PAY_TAG_NORMAL);
@@ -673,6 +673,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         msg.what = SDK_PAY_FLAG;
         msg.obj = result;
         mHandler.sendMessage(msg);
+        //订单生成成功 将状态置为true
+        isCreateOrder = true;
     }
 
 
@@ -694,11 +696,11 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                         if (PAY_STATUS.equalsIgnoreCase(stringStringEntry.getKey())) {
                             boolean success = PAY_STATUS_SUCCESS.equals(stringStringEntry.getValue());
                             if (success) {
-                                softReference.get().paySuccessAndskipOrderList();
+                                ToastUtil.showSuccess("支付成功");
                             } else {
                                 ToastUtil.showFailed("支付失败");
                                 TourCooLogUtil.e(TAG, result);
-                                softReference.get().payFailedAndSkipToOrderListAndFinish();
+                                softReference.get().payFailedAndSkipToOrderListAndFinish(1);
                             }
                             break;
                         }
@@ -730,6 +732,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             api.registerApp(APP_ID);
             api.sendReq(req);
             WxConfig.weiXinPayTag = payAction;
+            isCreateOrder = true;
         } else {
             ToastUtil.showFailed("解析失败");
         }
@@ -817,14 +820,10 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                ToastUtil.showSuccess("支付成功");
                 Intent intent = new Intent();
                 intent.setClass(mContext, MyOrderListActivity.class);
                 startActivity(intent);
-                Activity activity = StackUtil.getInstance().getActivity(GoodsDetailActivity.class);
-                if (activity != null) {
-                    activity.finish();
-                }
+                TourCooLogUtil.i(TAG, TAG + ":" + "已经跳转");
                 finish();
             }
         });
@@ -846,7 +845,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                 break;
             case EVENT_ACTION_PAY_FRESH_FAILED:
                 if (WxConfig.weiXinPayTag == WEI_XIN_PAY_TAG_NORMAL) {
-                    payFailedAndSkipToOrderListAndFinish();
+                    TourCooLogUtil.e(TAG, TAG + ":" + "微信支付失败");
+                    payFailedAndSkipToOrderListAndFinish(1);
                 }
                 break;
             default:
@@ -926,8 +926,6 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                                 ThreadPoolManager.getThreadPoolProxy().execute(new Runnable() {
                                     @Override
                                     public void run() {
-                                        //订单生成成功 将状态置为true
-                                        isCreateOrder = true;
                                         switch (mPayType) {
                                             case PAY_TYPE_WE_XIN:
                                                 weiChatPay(entity.data.toString(), WEI_XIN_PAY_TAG_NORMAL);
@@ -954,10 +952,12 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     /**
      * 支付失败 跳转至订单列表 并finish页面
      */
-    private void payFailedAndSkipToOrderListAndFinish() {
+    private void payFailedAndSkipToOrderListAndFinish(int index) {
         Intent intent = new Intent();
+        intent.putExtra(EXTRA_CURRENT_TAB_INDEX, index);
         intent.setClass(mContext, MyOrderListActivity.class);
         startActivity(intent);
+        TourCooLogUtil.i(TAG, TAG + ":" + "已经跳转");
         finish();
     }
 
@@ -989,6 +989,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         pvTime = new TimePickerBuilder(this, (date, v) -> setTextValue(tvDeliveryTime, getTime(date)))
                 .setType(new boolean[]{false, false, false, true, true, false})
                 //默认设置false ，内部实现将DecorView 作为它的父控件。
+                .setTitleText("请选择配送时间")
                 .isDialog(true)
                 .build();
 
@@ -1028,7 +1029,9 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         super.onResume();
         TourCooLogUtil.i(TAG, TAG + "当前订单状态:" + isCreateOrder);
         if (isCreateOrder) {
-            payFailedAndSkipToOrderListAndFinish();
+            payFailedAndSkipToOrderListAndFinish(1);
         }
     }
+
+
 }

@@ -87,6 +87,7 @@ import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
  * @Email: 971613168@qq.com
  */
 public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo> {
+    private MyOrderListActivity mOrderListActivity;
     private IWXAPI api;
     private OrderListAdapter mAdapter;
     private int orderStatus = ORDER_STATUS_ALL;
@@ -113,6 +114,7 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
             ToastUtil.show("未获取到数据");
             return;
         }
+        mOrderListActivity = (MyOrderListActivity) mContext;
         api = WXAPIFactory.createWXAPI(mContext, null);
         orderStatus = getArguments().getInt(EXTRA_ORDER_STATUS, -1);
         TourCooLogUtil.i(TAG, TAG + "订单状态:" + orderStatus);
@@ -325,7 +327,8 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
                 //订单详情回调
                 case ORDER_STATUS_WAIT_PAY:
                     TourCooLogUtil.i(TAG, TAG + ":" + "待付款回调");
-                    mRefreshLayout.autoRefresh();
+//                    mRefreshLayout.autoRefresh();
+                    refreshPayList();
                     break;
                 case ORDER_STATUS_WAIT_COMMENT:
                     mRefreshLayout.autoRefresh();
@@ -340,7 +343,7 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
                     mRefreshLayout.autoRefresh();
                     break;
                 case ORDER_STATUS_ALL:
-                    mRefreshLayout.autoRefresh();
+                    refreshPayList();
                     break;
                 default:
                     break;
@@ -597,7 +600,8 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
                             boolean success = PAY_STATUS_SUCCESS.equals(stringStringEntry.getValue());
                             if (success) {
                                 ToastUtil.showSuccess("支付完成");
-                                softReference.get().autoRefresh();
+                                //刷新 全部、待支付、和 待发货列表
+                                softReference.get().refreshPayList();
 //                                softReference.get().refreshUIAfterPaySuccess();
                             } else {
                                 ToastUtil.showFailed("支付失败");
@@ -660,8 +664,8 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
                 break;
             case EVENT_ACTION_PAY_FRESH_FAILED:
 //                skipToOrderListAndFinish();
-                if (orderStatus == ORDER_STATUS_ALL || orderStatus == ORDER_STATUS_WAIT_PAY) {
-                    ToastUtil.showFailed("支付失败");
+                if (orderStatus == ORDER_STATUS_WAIT_PAY) {
+//                    ToastUtil.showFailed("支付失败");
                     TourCooLogUtil.i(TAG, TAG + ":" + "支付失败了");
                 }
                 break;
@@ -745,7 +749,7 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
     }
 
 
-    private void autoRefresh() {
+    public void autoRefresh() {
         paymentHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -794,4 +798,22 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
                 break;
         }
     }
+
+    /**
+     * 刷新全部、待付款、待发货 列表
+     */
+    private void refreshPayList() {
+        if (mOrderListActivity.mFragmentAll != null) {
+            mOrderListActivity.mFragmentAll.autoRefresh();
+        }
+        if (mOrderListActivity.mFragmentWaitPay != null) {
+            mOrderListActivity.mFragmentWaitPay.autoRefresh();
+        }
+        if (mOrderListActivity.mFragmentWaitSend != null) {
+            mOrderListActivity.mFragmentWaitSend.autoRefresh();
+        }
+
+    }
+
+
 }

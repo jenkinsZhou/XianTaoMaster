@@ -39,6 +39,9 @@ public class MyOrderListActivity extends BaseTourCooTitleActivity implements Vie
     private List<Fragment> fragmentList = new ArrayList<>();
     public static final String EXTRA_CURRENT_TAB_INDEX = "EXTRA_CURRENT_TAB_INDEX";
     private int currentTabIndex;
+    public OrderListFragment mFragmentAll;
+    public OrderListFragment mFragmentWaitPay;
+    public OrderListFragment mFragmentWaitSend;
 
     @Override
     public int getContentLayout() {
@@ -57,9 +60,12 @@ public class MyOrderListActivity extends BaseTourCooTitleActivity implements Vie
     @Override
     public void loadData() {
         super.loadData();
-        fragmentList.add(OrderListFragment.newInstance(ORDER_STATUS_ALL));
-        fragmentList.add(OrderListFragment.newInstance(ORDER_STATUS_WAIT_PAY));
-        fragmentList.add(OrderListFragment.newInstance(ORDER_STATUS_WAIT_SEND));
+        mFragmentAll = OrderListFragment.newInstance(ORDER_STATUS_ALL);
+        mFragmentWaitPay = OrderListFragment.newInstance(ORDER_STATUS_WAIT_PAY);
+        mFragmentWaitSend = OrderListFragment.newInstance(ORDER_STATUS_WAIT_SEND);
+        fragmentList.add(mFragmentAll);
+        fragmentList.add(mFragmentWaitPay);
+        fragmentList.add(mFragmentWaitSend);
         fragmentList.add(OrderListFragment.newInstance(ORDER_STATUS_WAIT_RECIEVE));
         fragmentList.add(OrderListFragment.newInstance(ORDER_STATUS_WAIT_COMMENT));
         MyPagerAdapter pagerAdapter = new MyPagerAdapter(getSupportFragmentManager(), fragmentList);
@@ -139,7 +145,7 @@ public class MyOrderListActivity extends BaseTourCooTitleActivity implements Vie
 
     @Override
     public void finish() {
-        EventBus.getDefault().postSticky(new RefreshEvent());
+        EventBus.getDefault().post(new RefreshEvent());
         super.finish();
     }
 
