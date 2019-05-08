@@ -3,5 +3,5 @@
     <!-- 填充色 -->
     <solid android:color="#7acbcbcb"/>
     <!-- 圆角 -->
-    <corners android:radius="18dp"/>
+    <corners android:radius="@dimen/dp_18"/>
 </shape>

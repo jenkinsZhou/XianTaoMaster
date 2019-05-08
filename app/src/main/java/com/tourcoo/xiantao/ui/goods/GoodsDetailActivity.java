@@ -59,6 +59,7 @@ import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.core.util.SizeUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
+import com.tourcoo.xiantao.core.widget.custom.ShareGoodsPopupWindow;
 import com.tourcoo.xiantao.core.widget.custom.SharePopupWindow;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.event.RefreshEvent;
@@ -110,7 +111,7 @@ import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SETTLE_TYPE
  */
 public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity implements IMultiStatusView, View.OnClickListener {
     private RelativeLayout rlContentView;
-    private SharePopupWindow sharePopupWindow;
+    private ShareGoodsPopupWindow sharePopupWindow;
     private IWXAPI api;
     private int count;
     private BGABanner bgaBanner;
@@ -188,7 +189,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         api = WXAPIFactory.createWXAPI(mContext, WxConfig.APP_ID);
         tvPriceRange = findViewById(R.id.tvPriceRange);
         tvPinPrice = findViewById(R.id.tvPinPrice);
-        sharePopupWindow = new SharePopupWindow(mContext, false);
+        sharePopupWindow = new ShareGoodsPopupWindow(mContext, false);
         skipTag = getIntent().getStringExtra(EXTRA_ADV_TAG);
         countDownMap = new SparseArray<>();
         cbCollect = findViewById(R.id.cbCollect);
@@ -245,7 +246,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     public void setTitleBar(TitleBarView titleBar) {
         super.setTitleBar(titleBar);
         titleBar.setTitleMainText("商品详情");
-        titleBar.setRightTextDrawableWidth(SizeUtil.dp2px(18));
+        titleBar.setRightTextDrawableWidth(SizeUtil.dp2px(20));
         titleBar.setRightTextDrawableHeight(SizeUtil.dp2px(19));
         titleBar.setRightTextDrawable(TourCooUtil.getDrawable(R.mipmap.ic_share));
         titleBar.setOnRightTextClickListener(new View.OnClickListener() {
@@ -936,14 +937,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     }
 
 
-    @Override
-    public void onBackPressed() {
-        //如果是从广告页跳转的说明主页面没有创建
-        if (EXTRA_ADV_TAG.equals(skipTag)) {
-            TourCooUtil.startActivity(mContext, MainTabActivity.class);
-        }
-        super.onBackPressed();
-    }
+
 
 
     /**
@@ -986,8 +980,8 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         // 用WXWebpageObject对象初始化一个WXMediaMessage对象
         WXMediaMessage msg = new WXMediaMessage(webpageObject);
         // 填写网页标题、描述、位图
-        msg.title = goods.getGoods_name();
-        msg.description = "濡江铺子,您的生活管家";
+        msg.title = "特大喜讯！濡江铺子试运营今日开启！";
+        msg.description = "精挑细选的新鲜水果，欢迎选购，优惠多多，奖励多多，快把绿色健康带回家吧！";
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.icon_share_weixin);
         // 如果没有位图，可以传null，会显示默认的图片
         if (bitmap != null) {

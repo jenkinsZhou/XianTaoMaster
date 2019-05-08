@@ -654,11 +654,16 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
             case EVENT_ACTION_PAY_FRESH_SUCCESS:
                 //支付成功
 //                refreshUIAfterPaySuccess();
-                autoRefresh();
+                if (orderStatus == ORDER_STATUS_ALL || orderStatus == ORDER_STATUS_WAIT_PAY || orderStatus == ORDER_STATUS_WAIT_SEND) {
+                    autoRefresh();
+                }
                 break;
             case EVENT_ACTION_PAY_FRESH_FAILED:
 //                skipToOrderListAndFinish();
-                ToastUtil.showFailed("支付失败");
+                if (orderStatus == ORDER_STATUS_ALL || orderStatus == ORDER_STATUS_WAIT_PAY) {
+                    ToastUtil.showFailed("支付失败");
+                    TourCooLogUtil.i(TAG, TAG + ":" + "支付失败了");
+                }
                 break;
             case EVENT_ACTION_REFRESH_COMMENT:
                 TourCooLogUtil.i(TAG, TAG + ":" + "刷新评价");

@@ -224,7 +224,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                     case 0:
                         //拼团记录
                         if (!AccountInfoHelper.getInstance().isLogin()) {
-                            TourCoolUtil.startActivity(mContext, LoginActivity.class);
+                            skipToLoginActivity();
                             return;
                         }
                         TourCoolUtil.startActivity(mContext, MyTuanListActivity.class);
@@ -232,7 +232,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                     case 1:
                         //收藏商品
                         if (!AccountInfoHelper.getInstance().isLogin()) {
-                            TourCoolUtil.startActivity(mContext, LoginActivity.class);
+                            skipToLoginActivity();
                             return;
                         }
                         TourCoolUtil.startActivity(mContext, CollectionGoodsListActivity.class);
@@ -240,7 +240,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                     case 2:
                         //收货地址
                         if (!AccountInfoHelper.getInstance().isLogin()) {
-                            TourCoolUtil.startActivity(mContext, LoginActivity.class);
+                            skipToLoginActivity();
                             return;
                         }
                         TourCoolUtil.startActivity(mContext, AddressManagerActivity.class);
@@ -750,6 +750,18 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         String qqValue = "客服QQ:" + qqNumber + " (点击复制)";
         String weiXinValue = "客服微信:" + weiXinNumber + " (点击复制)";
         showSheetDialog(phoneValue, qqValue, weiXinValue);
+    }
+
+
+    private void skipToAddressManager(){
+
+    }
+
+
+    private void skipToLoginActivity(){
+        Intent intent = new Intent();
+        intent.setClass(mContext, LoginActivity.class);
+        startActivity(intent);
     }
 
 

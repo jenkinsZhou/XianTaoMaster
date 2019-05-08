@@ -203,6 +203,11 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
 
     private int pinId;
 
+    /**
+     * 是否创建了订单 默认未创建
+     */
+    private boolean isCreateOrder = false;
+
     @Override
     protected IMultiStatusView getMultiStatusView() {
         return new IMultiStatusView() {
@@ -483,6 +488,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         PayDialog payDialog = new PayDialog(mContext, money, blalance, new PayDialog.PayListener() {
             @Override
             public void pay(int payType, Dialog dialog) {
+                isCreateOrder = false;
                 mPayType = payType;
                 switch (mSettleType) {
                     case SETTLE_TYPE_SINGLE:
@@ -590,6 +596,9 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                                 ThreadPoolManager.getThreadPoolProxy().execute(new Runnable() {
                                     @Override
                                     public void run() {
+                                        //订单生成成功 将状态置为true
+                                        isCreateOrder = true;
+                                         TourCooLogUtil.i(TAG,TAG+":"+ "订单生成成功");
                                         switch (mPayType) {
                                             case PAY_TYPE_WE_XIN:
                                                 weiChatPay(entity.data.toString(), WEI_XIN_PAY_TAG_NORMAL);
@@ -598,7 +607,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                                                 aliPay(entity.data.toString());
                                                 break;
                                             case PAY_TYPE_BALANCE:
-                                                skipOrderList();
+                                                payFailedAndSkipToOrderListAndFinish();
                                                 break;
                                             default:
                                                 break;
@@ -632,6 +641,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                                 ThreadPoolManager.getThreadPoolProxy().execute(new Runnable() {
                                     @Override
                                     public void run() {
+                                        //订单生成成功 将状态置为true
+                                        isCreateOrder = true;
                                         switch (mPayType) {
                                             case PAY_TYPE_WE_XIN:
                                                 weiChatPay(entity.data.toString(), WEI_XIN_PAY_TAG_NORMAL);
@@ -640,7 +651,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                                                 aliPay(entity.data.toString());
                                                 break;
                                             case PAY_TYPE_BALANCE:
-                                                skipOrderList();
+                                                paySuccessAndskipOrderList();
                                                 break;
                                             default:
                                                 break;
@@ -683,11 +694,11 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                         if (PAY_STATUS.equalsIgnoreCase(stringStringEntry.getKey())) {
                             boolean success = PAY_STATUS_SUCCESS.equals(stringStringEntry.getValue());
                             if (success) {
-                                softReference.get().skipOrderList();
+                                softReference.get().paySuccessAndskipOrderList();
                             } else {
                                 ToastUtil.showFailed("支付失败");
                                 TourCooLogUtil.e(TAG, result);
-                                softReference.get().skipToOrderListAndFinish();
+                                softReference.get().payFailedAndSkipToOrderListAndFinish();
                             }
                             break;
                         }
@@ -802,7 +813,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     /**
      * 跳转到订单列表
      */
-    private void skipOrderList() {
+    private void paySuccessAndskipOrderList() {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -830,12 +841,12 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             case EVENT_ACTION_PAY_FRESH_SUCCESS:
                 //支付成功 直接跳转到详情
                 if (WxConfig.weiXinPayTag == WEI_XIN_PAY_TAG_NORMAL) {
-                    skipOrderList();
+                    paySuccessAndskipOrderList();
                 }
                 break;
             case EVENT_ACTION_PAY_FRESH_FAILED:
                 if (WxConfig.weiXinPayTag == WEI_XIN_PAY_TAG_NORMAL) {
-                    skipToOrderListAndFinish();
+                    payFailedAndSkipToOrderListAndFinish();
                 }
                 break;
             default:
@@ -915,6 +926,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                                 ThreadPoolManager.getThreadPoolProxy().execute(new Runnable() {
                                     @Override
                                     public void run() {
+                                        //订单生成成功 将状态置为true
+                                        isCreateOrder = true;
                                         switch (mPayType) {
                                             case PAY_TYPE_WE_XIN:
                                                 weiChatPay(entity.data.toString(), WEI_XIN_PAY_TAG_NORMAL);
@@ -923,7 +936,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                                                 aliPay(entity.data.toString());
                                                 break;
                                             case PAY_TYPE_BALANCE:
-                                                skipOrderList();
+                                                paySuccessAndskipOrderList();
                                                 break;
                                             default:
                                                 break;
@@ -941,7 +954,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     /**
      * 支付失败 跳转至订单列表 并finish页面
      */
-    private void skipToOrderListAndFinish() {
+    private void payFailedAndSkipToOrderListAndFinish() {
         Intent intent = new Intent();
         intent.setClass(mContext, MyOrderListActivity.class);
         startActivity(intent);
@@ -1007,5 +1020,15 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         Log.d("getTime()", "choice date millis: " + date.getTime());
         SimpleDateFormat format = new SimpleDateFormat("HH:mm");
         return format.format(date);
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        TourCooLogUtil.i(TAG, TAG + "当前订单状态:" + isCreateOrder);
+        if (isCreateOrder) {
+            payFailedAndSkipToOrderListAndFinish();
+        }
     }
 }

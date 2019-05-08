@@ -45,6 +45,7 @@ import com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import static com.tourcoo.xiantao.constant.TuanConstant.TUAN_STATUS_MINE;
+import static com.tourcoo.xiantao.constant.WxConfig.WEIXIN_PIN_URL;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_PIN_USER_ID;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_SETTLE_TYPE;
@@ -132,19 +133,25 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
             }
 
             @Override
-            public void onBtnClick(int tuan_id,Bitmap bitmap) {
+            public void onBtnClick(int tuan_id, Bitmap bitmap) {
 
                 sharePopupWindow.setISharePopupWindowClickListener(new SharePopupWindow.ISharePopupWindowClickListener() {
                     @Override
                     public void onWxClick() {
                         WXMiniProgramObject miniProgram = new WXMiniProgramObject();
-                        miniProgram.webpageUrl = "https://www.baidu.com";//自定义
-                        miniProgram.userName = WxConfig.MINI_PROGRAM_USERNAME;//小程序端提供参数
-                        miniProgram.path = WxConfig.MINI_PROGRAM_PATH + tuan_id;//小程序端提供参数
-                        miniProgram.miniprogramType = WXMiniProgramObject.MINIPROGRAM_TYPE_TEST;// 正式版:0，测试版:1，体验版:2
+                        //自定义
+                        miniProgram.webpageUrl = WEIXIN_PIN_URL;
+                        //小程序端提供参数
+                        miniProgram.userName = WxConfig.MINI_PROGRAM_USERNAME;
+                        //小程序端提供参数
+                        miniProgram.path = WxConfig.MINI_PROGRAM_PATH + tuan_id;
+//                        miniProgram.miniprogramType = WXMiniProgramObject.MINIPROGRAM_TYPE_TEST;// 正式版:0，测试版:1，体验版:2
+                        miniProgram.miniprogramType = WXMiniProgramObject.MINIPTOGRAM_TYPE_RELEASE;
                         WXMediaMessage mediaMessage = new WXMediaMessage(miniProgram);
-                        mediaMessage.title = "邀请拼团";//自定义
-                        mediaMessage.description = "拼团钜惠";//自定义
+                        //自定义
+                        mediaMessage.title = "拼团钜惠";
+                        //自定义
+                        mediaMessage.description = "拼团钜惠";
                         Bitmap sendBitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, true);
                         bitmap.recycle();
                         mediaMessage.thumbData = ImageUtils.bitmap2Bytes(sendBitmap, Bitmap.CompressFormat.PNG);

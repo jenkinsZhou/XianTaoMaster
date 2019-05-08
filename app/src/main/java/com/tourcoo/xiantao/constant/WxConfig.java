@@ -14,6 +14,12 @@ public class WxConfig {
     public static final String APP_ID = "wx0617b9768e39eaca";
     public static final String APP_SECRET = "ecda10305d1f9e30043b0414877d0f2c";
 
+
+    /**
+     * 拼团链接
+     */
+    public static final String WEIXIN_PIN_URL = "http://www.ahxtao.com/";
+
     /**
      * 微信分享小程序
      */

@@ -18,7 +18,6 @@
         android:layout_alignParentRight="true"
         android:layout_marginTop="40dp"
         android:layout_marginRight="8dp"
-        android:background="@drawable/splash_skip"
         android:orientation="horizontal"
         android:padding="4dp"
         android:visibility="invisible">
@@ -27,10 +26,14 @@
             android:id="@+id/tvSecond"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="5dp"
+            android:paddingLeft="@dimen/dp_15"
+            android:paddingRight="@dimen/dp_15"
+            android:paddingTop="@dimen/dp_3"
+            android:paddingBottom="@dimen/dp_3"
             android:text="3秒"
+            android:background="@drawable/splash_skip"
             android:textColor="@color/colorWhite"
-            android:textSize="16sp" />
+            android:textSize="@dimen/sp_14" />
 
         <TextView
             android:layout_width="wrap_content"

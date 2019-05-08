@@ -305,7 +305,7 @@ public class ApiRepository extends BaseRepository {
     }
 
     /**
-     * 单个购买立即支付接口y
+     * 单个购买立即支付接口
      *
      * @param map
      * @param payType

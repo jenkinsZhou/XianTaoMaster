@@ -1,5 +1,7 @@
 package com.tourcoo.xiantao.permission;
 
+import android.Manifest;
+
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
@@ -33,7 +35,7 @@ public class PermissionConstance {
      */
     public final static String[] PERMS_LOCATE = {ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION,WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE};
 
-    public final static String[] PERMISSION_ALL_NEED = {ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION,WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE};
+    public final static String[] PERMISSION_ALL_NEED = {ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION,WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE};
     /**
      * 相机，图库的请求回调code
      */
