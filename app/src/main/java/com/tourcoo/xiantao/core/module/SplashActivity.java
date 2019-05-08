@@ -9,6 +9,7 @@ import android.os.Message;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tourcoo.xiantao.R;
@@ -75,6 +76,7 @@ public class SplashActivity extends BaseTitleActivity implements View.OnClickLis
     private List<Disposable> mDisposableList = new ArrayList<>();
     private int time = 3;
     private AdvertisEntity mAdvertisEntity;
+    private LinearLayout layoutSkip;
     private boolean finish = false;
     public static final String EXTRA_ADV_TAG = "EXTRA_ADV_TAG";
 
@@ -106,6 +108,7 @@ public class SplashActivity extends BaseTitleActivity implements View.OnClickLis
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
         sp_bg = findViewById(R.id.sp_bg);
+        layoutSkip = findViewById(R.id.layoutSkip);
         sp_bg.setOnClickListener(this);
         tvSecond = findViewById(R.id.tvSecond);
         if (NetworkUtil.isConnected(mContext)) {
@@ -238,7 +241,8 @@ public class SplashActivity extends BaseTitleActivity implements View.OnClickLis
 
     private void showTime(int second) {
         String secondString = second + "秒";
-        if (tvSecond != null) {
+        if (tvSecond != null && layoutSkip != null) {
+            layoutSkip.setVisibility(View.VISIBLE);
             tvSecond.setText(secondString);
         }
     }

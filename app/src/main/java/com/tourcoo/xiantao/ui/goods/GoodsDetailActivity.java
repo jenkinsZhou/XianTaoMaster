@@ -408,7 +408,12 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         setVisible(tvTuanTag, detail.isTuan());
         boolean isTuan = detail.isTuan();
         try {
-            String priceRange = "￥" + TourCooUtil.doubleTrans(detail.getGoods_min_price()) + " 一￥" + TourCooUtil.doubleTrans(detail.getGoods_max_price());
+            String priceRange;
+            if (detail.getGoods_min_price() == detail.getGoods_max_price()) {
+                priceRange = "￥" + TourCooUtil.doubleTrans(detail.getGoods_min_price());
+            } else {
+                priceRange = "￥" + TourCooUtil.doubleTrans(detail.getGoods_min_price()) + " -￥" + TourCooUtil.doubleTrans(detail.getGoods_max_price());
+            }
             tvPriceRange.setText(priceRange);
             if (isTuan && detail.getTuan_rule() != null) {
                 TuanRule tuanRule = new Gson().fromJson(detail.getTuan_rule().toString(), TuanRule.class);

@@ -147,9 +147,6 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
         //获取收货地址
         if (AccountInfoHelper.getInstance().isLogin()) {
             getMyAddressList();
-            //请求购物车数量
-            mMainTabActivity.getTotalNum();
-            requestMessageNoReadCount();
         }
     }
 

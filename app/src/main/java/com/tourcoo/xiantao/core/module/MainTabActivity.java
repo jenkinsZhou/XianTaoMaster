@@ -143,8 +143,8 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
                     mTabChangeEvent.currentPosition = position;
                     EventBus.getDefault().postSticky(mTabChangeEvent);
                     if (AccountInfoHelper.getInstance().isLogin()) {
-                        //获取购物车中商品数量
-                        getTotalNum();
+                        //获取购物车中商品数量并刷新商品信息
+                        getTotalNumAndRefreshShoppingCar();
                         if (position == TAB_INDEX_MINE) {
                             if (mineFragment != null) {
                                 mineFragment.checkTokenAndRequestUserInfo();
@@ -257,7 +257,7 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
     /**
      * 获取当前购物车中商品数量
      */
-    public void getTotalNum() {
+    public void getTotalNumAndRefreshShoppingCar() {
         ApiRepository.getInstance().getTotalNum().compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseObserver<BaseEntity<GoodsCount>>() {
                     @Override
@@ -268,6 +268,7 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
                                     currentGoodsCount = entity.data.getCart_total_num();
                                     showRedDot(currentGoodsCount);
                                     if (currentGoodsCount > 0) {
+                                        //根据情况刷新购物车列表
                                         if (shoppingCarFragment != null) {
                                             shoppingCarFragment.refreshShoppingCarNoDialog();
                                         }

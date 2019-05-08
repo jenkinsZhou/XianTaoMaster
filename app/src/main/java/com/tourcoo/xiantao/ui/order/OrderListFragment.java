@@ -597,7 +597,8 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
                             boolean success = PAY_STATUS_SUCCESS.equals(stringStringEntry.getValue());
                             if (success) {
                                 ToastUtil.showSuccess("支付完成");
-                                softReference.get().mRefreshLayout.autoRefresh();
+                                softReference.get().autoRefresh();
+//                                softReference.get().refreshUIAfterPaySuccess();
                             } else {
                                 ToastUtil.showFailed("支付失败");
                             }
@@ -652,7 +653,8 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
         switch (event.id) {
             case EVENT_ACTION_PAY_FRESH_SUCCESS:
                 //支付成功
-                mRefreshLayout.autoRefresh();
+//                refreshUIAfterPaySuccess();
+                autoRefresh();
                 break;
             case EVENT_ACTION_PAY_FRESH_FAILED:
 //                skipToOrderListAndFinish();
@@ -660,7 +662,7 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
                 break;
             case EVENT_ACTION_REFRESH_COMMENT:
                 TourCooLogUtil.i(TAG, TAG + ":" + "刷新评价");
-                mRefreshLayout.autoRefresh();
+                autoRefresh();
                 break;
             default:
                 break;
@@ -742,7 +744,9 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
         paymentHandler.post(new Runnable() {
             @Override
             public void run() {
-                mRefreshLayout.autoRefresh();
+                if (mRefreshLayout != null) {
+                    mRefreshLayout.autoRefresh();
+                }
             }
         });
     }
@@ -762,5 +766,27 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
         intent.putExtra(EXTRA_ORDER_ID, orderId);
         intent.setClass(mContext, LookEvaluationActivity.class);
         startActivity(intent);
+    }
+
+
+    private void refreshUIAfterPaySuccess() {
+        switch (orderStatus) {
+            case ORDER_STATUS_ALL:
+                //全部页的tab需要刷新
+                autoRefresh();
+                break;
+            case ORDER_STATUS_WAIT_PAY:
+                //待付款列表需要刷新
+                autoRefresh();
+                break;
+            case ORDER_STATUS_WAIT_SEND:
+                //待发货列表需要刷新
+                autoRefresh();
+                break;
+            default:
+                //其余状态下不需要刷新
+                TourCooLogUtil.e(TAG, TAG + ":" + "其余状态下不刷新");
+                break;
+        }
     }
 }

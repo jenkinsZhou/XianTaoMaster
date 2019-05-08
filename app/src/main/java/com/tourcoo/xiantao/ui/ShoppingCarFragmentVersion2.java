@@ -222,8 +222,8 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
             return;
         }
         TourCooLogUtil.i(TAG, "刷新购物车");
-        mMainTabActivity.getTotalNum();
-        refreshShoppingCarNoDialog();
+        mMainTabActivity.getTotalNumAndRefreshShoppingCar();
+//        refreshShoppingCarNoDialog();
     }
 
 
