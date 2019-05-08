@@ -63,7 +63,8 @@ public class ClassifyGoodsFragment extends BaseTitleFragment {
      * 商品的分类ID
      */
     public static final String EXTRA_CATEGORY_ID = "EXTRA_CATEGORY_ID";
-
+    public static final String EXTRA_CATEGORY_NAME = "EXTRA_CATEGORY_NAME";
+    private String classifyName ;
     @Override
     public int getContentLayout() {
         return R.layout.fragment_goods_classify;
@@ -258,8 +259,8 @@ public class ClassifyGoodsFragment extends BaseTitleFragment {
                 }
                 TourCooLogUtil.i(TAG, TAG + ":" + goodsBean.getId());
                 int goodsId = goodsBean.getId();
-//                skipGoodsDetail(goodsId);
-                skipGoodsList(goodsBean.getId());
+                classifyName = goodsBean.getName();
+                skipGoodsList(goodsId);
             }
         });
     }
@@ -268,6 +269,7 @@ public class ClassifyGoodsFragment extends BaseTitleFragment {
     private void skipGoodsList(int categoryId) {
         Intent intent = new Intent();
         intent.putExtra(EXTRA_CATEGORY_ID, categoryId);
+        intent.putExtra(EXTRA_CATEGORY_NAME,classifyName );
         intent.setClass(mContext, GoodsCategoryListActivity.class);
         startActivity(intent);
     }

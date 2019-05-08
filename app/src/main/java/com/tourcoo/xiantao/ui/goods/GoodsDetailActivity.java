@@ -51,6 +51,7 @@ import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
+import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.log.widget.utils.DateUtil;
 import com.tourcoo.xiantao.core.module.MainTabActivity;
@@ -70,6 +71,7 @@ import com.tourcoo.xiantao.entity.goods.TuanRule;
 import com.tourcoo.xiantao.entity.settle.SettleEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
+import com.tourcoo.xiantao.ui.account.LoginActivity;
 import com.tourcoo.xiantao.ui.base.WebViewActivity;
 import com.tourcoo.xiantao.ui.comment.CommentListActivity;
 import com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity;
@@ -342,7 +344,6 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         }
         try {
             String homeInfo = JSONObject.toJSONString(object);
-            LogUtils.e(TAG, homeInfo);
             return JSON.parseObject(homeInfo, GoodsEntity.class);
         } catch (Exception e) {
             TourCooLogUtil.e(TAG, "解析异常:" + e.toString());
@@ -559,6 +560,10 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         tvPin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!AccountInfoHelper.getInstance().isLogin()) {
+                    skipToLoginActivity();
+                    return;
+                }
                 dialog = new ProductSkuDialog(GoodsDetailActivity.this, goodsEntity, new ProductSkuDialog.Callback() {
                     @Override
                     public void onAdded(String specSkuId, int quantity) {
@@ -573,6 +578,10 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         tvBuyNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!AccountInfoHelper.getInstance().isLogin()) {
+                    skipToLoginActivity();
+                    return;
+                }
                 dialog = new ProductSkuDialog(GoodsDetailActivity.this, goodsEntity, new ProductSkuDialog.Callback() {
                     @Override
                     public void onAdded(String specSkuId, int quantity) {
@@ -587,6 +596,10 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         tvAddShoppingCar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!AccountInfoHelper.getInstance().isLogin()) {
+                    skipToLoginActivity();
+                    return;
+                }
                 dialog = new ProductSkuDialog(GoodsDetailActivity.this, goodsEntity, new ProductSkuDialog.Callback() {
                     @Override
                     public void onAdded(String specSkuId, int quantity) {
@@ -937,9 +950,6 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     }
 
 
-
-
-
     /**
      * 显示分享
      *
@@ -1029,5 +1039,13 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         drawable.setBounds(0, 0, width, height);
         drawable.draw(canvas);
         return bitmap;
+    }
+
+
+    private void skipToLoginActivity() {
+        Intent intent = new Intent();
+        intent.setClass(mContext, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

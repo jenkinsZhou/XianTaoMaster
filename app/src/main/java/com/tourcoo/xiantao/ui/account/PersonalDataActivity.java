@@ -21,15 +21,12 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
-import com.tourcoo.xiantao.MainActivity;
 import com.tourcoo.xiantao.R;
-import com.tourcoo.xiantao.core.common.RequestConfig;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.UploadRequestListener;
@@ -43,27 +40,22 @@ import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.upload.UploadEntity;
 import com.tourcoo.xiantao.entity.user.PersonalCenterInfo;
-import com.tourcoo.xiantao.entity.user.UserInfo;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.retrofit.repository.UploadProgressBody;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
 import com.tourcoo.xiantao.widget.bigkoo.pickerview.builder.TimePickerBuilder;
-import com.tourcoo.xiantao.widget.bigkoo.pickerview.listener.OnTimeSelectChangeListener;
 import com.tourcoo.xiantao.widget.bigkoo.pickerview.listener.OnTimeSelectListener;
 import com.tourcoo.xiantao.widget.bigkoo.pickerview.view.TimePickerView;
 import com.tourcoo.xiantao.widget.dialog.EmiAlertDialog;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
-import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.MediaType;
@@ -92,6 +84,8 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
     private TextView tvMobile;
     private TextView tvSaveData;
     private TimePickerView pvTime;
+    public static final int REQUEST_CODE_EDIT_PHONE = 10;
+    public static final String EXTRA_NEW_PHONE_KEY = "EXTRA_NEW_PHONE_KEY";
     /**
      * 用户之前的头像url
      */
@@ -108,6 +102,7 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
     @Override
     public void initView(Bundle savedInstanceState) {
         radioGroupGender = findViewById(R.id.radioGroupGender);
+        findViewById(R.id.rlUserPhoneNumber).setOnClickListener(this);
         crvAvatar = findViewById(R.id.crvAvatar);
         tvNickName = findViewById(R.id.tvNickName);
         tvBirthday = findViewById(R.id.tvBirthday);
@@ -117,7 +112,6 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
         crvAvatar.setOnClickListener(this);
         tvNickName.setOnClickListener(this);
         tvSaveData.setOnClickListener(this);
-        tvMobile.setOnClickListener(this);
         initTimePicker();
     }
 
@@ -145,10 +139,14 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
             case R.id.rlUserBirthDate:
                 pvTime.show();
                 break;
-            case R.id.tvMobile:
-                break;
             case R.id.tvSaveData:
                 doEditUserInfo();
+                break;
+            case R.id.rlUserPhoneNumber:
+                Intent intent = new Intent();
+                //单独购买结算类型
+                intent.setClass(mContext, ChangePhoneNumberActivity.class);
+                startActivityForResult(intent,REQUEST_CODE_EDIT_PHONE);
                 break;
             default:
                 break;
@@ -222,9 +220,9 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
             tvMobile.setText("未填写");
         } else {
             String maskNumber = personalCenterInfo.getMobile();
-            if (TourCooUtil.isMobileNumber(personalCenterInfo.getMobile())) {
+         /*   if (TourCooUtil.isMobileNumber(personalCenterInfo.getMobile())) {
                 maskNumber = personalCenterInfo.getMobile().substring(0, 3) + "****" + maskNumber.substring(7, personalCenterInfo.getMobile().length());
-            }
+            }*/
             tvMobile.setText(maskNumber);
         }
         headerUrl = personalCenterInfo.getAvatar();
@@ -465,6 +463,14 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
                     }
                     uploadImage(imagePathList);
                     break;
+                case REQUEST_CODE_EDIT_PHONE:
+                    if(data != null){
+                        String newPhone = data.getStringExtra(EXTRA_NEW_PHONE_KEY);
+                        if(!TextUtils.isEmpty(newPhone)){
+                            tvMobile.setText(newPhone);
+                        }
+                    }
+                    break;
                 default:
                     break;
             }
@@ -543,10 +549,12 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
         if (gender == 1) {
             radioButton.setChecked(true);
             radioButton1.setChecked(false);
-        }else {
+        } else {
             radioButton.setChecked(false);
             radioButton1.setChecked(true);
         }
     }
+
+
 
 }
