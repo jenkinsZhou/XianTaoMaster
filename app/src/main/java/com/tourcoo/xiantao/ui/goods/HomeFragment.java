@@ -139,6 +139,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
         statusLayoutManager.showLoadingLayout();
         initGoodsItemClick();
         getHomeInfo();
+        getMessageCount();
     }
 
     @Override
@@ -740,5 +741,12 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
                 closeLoadingDialog();
             }
         });
+    }
+
+    private void getMessageCount(){
+        if(!AccountInfoHelper.getInstance().isLogin() || !NetworkUtil.isConnected(mContext)){
+            return;
+        }
+        requestMessageNoReadCount();
     }
 }

@@ -3,6 +3,7 @@ package com.tourcoo.xiantao.ui;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import com.allen.library.SuperTextView;
 import com.tourcoo.xiantao.R;
@@ -16,6 +17,7 @@ import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.module.MainTabActivity;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
+import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.SystemSettingEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
@@ -37,6 +39,8 @@ import static com.tourcoo.xiantao.util.DataCleanManager.EMPTY_CACHE;
  */
 public class SettingActivity extends BaseTourCooTitleActivity implements View.OnClickListener {
     private SuperTextView stvClearCache;
+    private TextView btnGoLogin;
+    private TextView btnExitLogin;
 
     @Override
     public int getContentLayout() {
@@ -46,13 +50,32 @@ public class SettingActivity extends BaseTourCooTitleActivity implements View.On
     @Override
     public void initView(Bundle savedInstanceState) {
         stvClearCache = findViewById(R.id.stvClearCache);
+        btnGoLogin = findViewById(R.id.btnGoLogin);
         stvClearCache.setOnClickListener(this);
-        findViewById(R.id.btnExitLogin).setOnClickListener(this);
+        btnExitLogin = findViewById(R.id.btnExitLogin);
+        btnExitLogin.setOnClickListener(this);
         findViewById(R.id.stvResetPassword).setOnClickListener(this);
         findViewById(R.id.stvAboutUs).setOnClickListener(this);
+        btnGoLogin.setOnClickListener(this);
         showCache();
+        showLogin();
     }
 
+    private void showLogin() {
+        if (AccountInfoHelper.getInstance().isLogin()) {
+            btnGoLogin.setVisibility(View.GONE);
+            btnExitLogin.setVisibility(View.VISIBLE);
+        } else {
+            btnGoLogin.setVisibility(View.VISIBLE);
+            btnExitLogin.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void setTitleBar(TitleBarView titleBar) {
+        super.setTitleBar(titleBar);
+        titleBar.setTitleMainText("系统设置");
+    }
 
     @Override
     public void onClick(View v) {
@@ -70,11 +93,19 @@ public class SettingActivity extends BaseTourCooTitleActivity implements View.On
                 }
                 break;
             case R.id.stvResetPassword:
-                TourCooUtil.startActivity(mContext, EditPasswordActivity.class);
+                if(AccountInfoHelper.getInstance().isLogin()){
+                    TourCooUtil.startActivity(mContext, EditPasswordActivity.class);
+                }else {
+                    TourCooUtil.startActivity(mContext, LoginActivity.class);
+                }
                 break;
             case R.id.stvAboutUs:
                 //关于我们
                 TourCooUtil.startActivity(mContext, AboutUsActivity.class);
+                break;
+            case R.id.btnGoLogin:
+                //去登陆
+                TourCooUtil.startActivity(mContext, LoginActivity.class);
                 break;
             default:
                 break;

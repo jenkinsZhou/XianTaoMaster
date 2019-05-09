@@ -103,11 +103,13 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     public static final int REQUEST_CODE_EDIT_USER_INFO = 10;
     public static final int REQUEST_CODE_MESSAGE_CENTER = 11;
     private TextView tvMessageCount;
+
     /**
      * 账户余额
      */
     private TextView tvBalance;
-    private TextView tvAccumulatePoints;
+
+//    private TextView tvAccumulatePoints;
 
     private TextView tvRedDotWaitReturn;
     private TextView tvRedDotWaitPay;
@@ -116,6 +118,8 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     private TextView tvRedDotWaitEvaluate;
     private ImageView ivMsg;
     private MainTabActivity mMainTabActivity;
+    private TextView tvAccumulatePointsGold;
+    private TextView tvAccumulatePointsYin;
 
     @Override
     public int getContentLayout() {
@@ -128,7 +132,10 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         refreshLayout = mContentView.findViewById(R.id.refreshLayout);
         refreshLayout.setOnRefreshListener(this);
         tvMessageCount = mContentView.findViewById(R.id.tvMessageCount);
-        mContentView.findViewById(R.id.accumulatePoints).setOnClickListener(this);
+        tvAccumulatePointsGold = mContentView.findViewById(R.id.tvAccumulatePointsGold);
+        tvAccumulatePointsGold.setOnClickListener(this);
+        tvAccumulatePointsYin = mContentView.findViewById(R.id.tvAccumulatePointsYin);
+        tvAccumulatePointsYin.setOnClickListener(this);
         mContentView.findViewById(R.id.llReturnGood).setOnClickListener(this);
         mContentView.findViewById(R.id.llWaitSend).setOnClickListener(this);
         mContentView.findViewById(R.id.llWaitReceive).setOnClickListener(this);
@@ -147,8 +154,8 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         civUserAvatar = mContentView.findViewById(R.id.civUserAvatar);
         civUserAvatar.setOnClickListener(this);
         tvBalance = mContentView.findViewById(R.id.tvBalance);
-        tvAccumulatePoints = mContentView.findViewById(R.id.tvAccumulatePoints);
-        tvAccumulatePoints.setOnClickListener(this);
+    /*    tvAccumulatePoints = mContentView.findViewById(R.id.tvAccumulatePoints);
+        tvAccumulatePoints.setOnClickListener(this);*/
         RelativeLayout rlSearch = mContentView.findViewById(R.id.rlTitleBar);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(rlSearch.getLayoutParams());
         //4个参数按顺序分别是左上右下
@@ -306,6 +313,9 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                 break;
             case R.id.tvUserNickName:
                 if (AccountInfoHelper.getInstance().isLogin()) {
+                    Intent intent = new Intent();
+                    intent.setClass(mContext, PersonalDataActivity.class);
+                    startActivityForResult(intent, REQUEST_CODE_EDIT_USER_INFO);
                     return;
                 }
                 TourCooUtil.startActivity(mContext, LoginActivity.class);
@@ -322,8 +332,8 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
             case R.id.ivMsg:
                 skipToMessageCenter();
                 break;
-            case R.id.accumulatePoints:
-            case R.id.tvAccumulatePoints:
+            case R.id.tvAccumulatePointsYin:
+            case R.id.tvAccumulatePointsGold:
                 if (!AccountInfoHelper.getInstance().isLogin()) {
                     TourCooUtil.startActivity(mContext, LoginActivity.class);
                     return;
@@ -389,7 +399,8 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         tvUserNickName.setText("登录/注册");
         GlideManager.loadImg(TourCooUtil.getDrawable(R.mipmap.img_default_avatar), civUserAvatar);
         tvBalance.setText("_");
-        tvAccumulatePoints.setText("_");
+        tvAccumulatePointsGold.setText("_");
+        tvAccumulatePointsYin.setText("_");
         showRedDot(tvRedDotWaitEvaluate, 0);
         showRedDot(tvRedDotWaitReturn, 0);
         showRedDot(tvRedDotWaitPay, 0);
@@ -413,8 +424,10 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         TourCooLogUtil.i(TAG, TAG + "昵称:" + data.getNickname());
         GlideManager.loadImg(url, civUserAvatar);
         tvBalance.setText("¥" + data.getCash());
-        String coin = data.getAu() + "金币" + data.getAg() + "银币";
-        tvAccumulatePoints.setText(coin);
+        String coinGold =  data.getAu()+"";
+        String coinYin =  data.getAg()+"";
+        tvAccumulatePointsGold.setText(coinGold);
+        tvAccumulatePointsYin.setText(coinYin);
         showMineInfo(data);
     }
 
@@ -753,12 +766,12 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     }
 
 
-    private void skipToAddressManager(){
+    private void skipToAddressManager() {
 
     }
 
 
-    private void skipToLoginActivity(){
+    private void skipToLoginActivity() {
         Intent intent = new Intent();
         intent.setClass(mContext, LoginActivity.class);
         startActivity(intent);

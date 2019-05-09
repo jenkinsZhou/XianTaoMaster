@@ -609,7 +609,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                                                 aliPay(entity.data.toString());
                                                 break;
                                             case PAY_TYPE_BALANCE:
-                                                payFailedAndSkipToOrderListAndFinish(1);
+                                                payFailedAndSkipToOrderListAndFinish();
                                                 break;
                                             default:
                                                 break;
@@ -700,7 +700,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                             } else {
                                 ToastUtil.showFailed("支付失败");
                                 TourCooLogUtil.e(TAG, result);
-                                softReference.get().payFailedAndSkipToOrderListAndFinish(1);
+                                softReference.get().payFailedAndSkipToOrderListAndFinish();
                             }
                             break;
                         }
@@ -846,7 +846,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             case EVENT_ACTION_PAY_FRESH_FAILED:
                 if (WxConfig.weiXinPayTag == WEI_XIN_PAY_TAG_NORMAL) {
                     TourCooLogUtil.e(TAG, TAG + ":" + "微信支付失败");
-                    payFailedAndSkipToOrderListAndFinish(1);
+                    payFailedAndSkipToOrderListAndFinish();
                 }
                 break;
             default:
@@ -952,9 +952,10 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     /**
      * 支付失败 跳转至订单列表 并finish页面
      */
-    private void payFailedAndSkipToOrderListAndFinish(int index) {
+    private void payFailedAndSkipToOrderListAndFinish() {
         Intent intent = new Intent();
-        intent.putExtra(EXTRA_CURRENT_TAB_INDEX, index);
+        //跳转至我的订单 全部列表
+        intent.putExtra(EXTRA_CURRENT_TAB_INDEX, 0);
         intent.setClass(mContext, MyOrderListActivity.class);
         startActivity(intent);
         TourCooLogUtil.i(TAG, TAG + ":" + "已经跳转");
@@ -1029,7 +1030,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         super.onResume();
         TourCooLogUtil.i(TAG, TAG + "当前订单状态:" + isCreateOrder);
         if (isCreateOrder) {
-            payFailedAndSkipToOrderListAndFinish(1);
+            payFailedAndSkipToOrderListAndFinish();
         }
     }
 

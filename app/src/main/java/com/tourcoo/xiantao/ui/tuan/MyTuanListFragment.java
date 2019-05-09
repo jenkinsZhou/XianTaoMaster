@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,6 +34,7 @@ import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.MyTuanListAdapter;
 import com.tourcoo.xiantao.constant.WxConfig;
 import com.tourcoo.xiantao.core.frame.base.fragment.BaseFragment;
+import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
@@ -43,6 +45,9 @@ import com.tourcoo.xiantao.entity.tuan.TuanEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity;
 import com.trello.rxlifecycle3.android.FragmentEvent;
+
+import me.bakumon.statuslayoutmanager.library.OnStatusChildClickListener;
+import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
 import static com.tourcoo.xiantao.constant.TuanConstant.TUAN_STATUS_MINE;
 import static com.tourcoo.xiantao.constant.WxConfig.WEIXIN_PIN_URL;
@@ -74,8 +79,10 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
     private MyTuanListAdapter mAdapter;
     private int tuanStatus = TUAN_STATUS_MINE;
     public static final String EXTRA_TUAN_STATUS = "EXTRA_TUAN_STATUS";
+    private RelativeLayout rrRootView;
 
     private boolean isInit = false;
+    private StatusLayoutManager mStatusLayoutManager;
 
     public static MyTuanListFragment newInstance(int tuanStatus) {
         Bundle args = new Bundle();
@@ -109,14 +116,11 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
             return;
         }
         isInit = true;
-
         api = WXAPIFactory.createWXAPI(getContext(), WxConfig.APP_ID);
         sharePopupWindow = new SharePopupWindow(getContext(), true);
-
         tuanStatus = getArguments().getInt(EXTRA_TUAN_STATUS, 1);
-
         footView = LayoutInflater.from(mContext).inflate(R.layout.item_view, null);
-
+        rrRootView = mContentView.findViewById(R.id.rrRootView);
         mAdapter = new MyTuanListAdapter(getContext(), null);
         mRefreshLayout = mContentView.findViewById(R.id.smartLayout_rootFastLib);
         mRecyclerView = mContentView.findViewById(R.id.rv_content);
@@ -178,8 +182,13 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
             }
         });
         loadData(mDefaultPage);
+        setupStatusLayoutManager();
     }
 
+    @Override
+    public void loadData() {
+        super.loadData();
+    }
 
     /**
      * 发起拼团的结算跳转
@@ -222,9 +231,14 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
                                             mAdapter.addMoreItem(tuanEntity.getData());
                                             mRefreshLayout.finishLoadMore();
                                         }
-
+                                        if(mAdapter.getItemCount() == 0){
+                                            mStatusLayoutManager.showEmptyLayout();
+                                        }else {
+                                            mStatusLayoutManager.showSuccessLayout();
+                                        }
                                     } else {
                                         ToastUtil.showFailed(entity.msg);
+                                        mStatusLayoutManager.showErrorLayout();
                                     }
                                 }
                             } else {
@@ -238,6 +252,7 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
                     public void onRequestError(Throwable e) {
                         super.onRequestError(e);
                         mRefreshLayout.finishRefresh(false);
+                        mStatusLayoutManager.showErrorLayout();
                     }
                 });
     }
@@ -254,15 +269,12 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
             refreshLayout.setNoMoreData(true);
             refreshLayout.finishLoadMore();
         }
+
     }
 
     @Override
     public void onRefresh(RefreshLayout refreshLayout) {
-        refreshLayout.setNoMoreData(false);
-        refreshLayout.setEnableLoadMore(true);
-        isLoadMore = false;
-        mDefaultPage = 1;
-        loadData(mDefaultPage);
+        refresh();
     }
 
 
@@ -290,4 +302,80 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
     }
 
 
+
+
+
+
+    private void setupStatusLayoutManager() {
+        mStatusLayoutManager = new StatusLayoutManager.Builder(rrRootView)
+                // 设置默认布局属性
+//                .setDefaultEmptyText("空白了，哈哈哈哈")
+//                .setDefaultEmptyImg(R.mipmap.ic_launcher)
+//                .setDefaultEmptyClickViewText("retry")
+//                .setDefaultEmptyClickViewTextColor(getResources().getColor(R.color.colorAccent))
+//                .setDefaultEmptyClickViewVisible(false)
+//
+//                .setDefaultErrorText(R.string.app_name)
+//                .setDefaultErrorImg(R.mipmap.ic_launcher)
+//                .setDefaultErrorClickViewText("重试一波")
+//                .setDefaultErrorClickViewTextColor(getResources().getColor(R.color.colorPrimaryDark))
+//                .setDefaultErrorClickViewVisible(true)
+//
+//                .setDefaultLayoutsBackgroundColor(Color.WHITE)
+
+                // 自定义布局
+                .setLoadingLayout(getLoadingLayout())
+                .setEmptyLayout(inflate(R.layout.custom_empty_layout))
+                .setEmptyClickViewID(R.id.tvRefresh)
+                .setErrorLayout(inflate(R.layout.custom_error_layout))
+                .setErrorClickViewID(R.id.tvRefresh)
+//
+//                .setLoadingLayout(R.layout.layout_loading)
+//                .setEmptyLayout(R.layout.layout_empty)
+//                .setErrorLayout(R.layout.layout_error)
+//
+//                .setEmptyClickViewID(R.id.tv_empty)
+//                .setErrorClickViewID(R.id.tv_error)
+
+                // 设置重试事件监听器
+                .setOnStatusChildClickListener(new OnStatusChildClickListener() {
+                    @Override
+                    public void onEmptyChildClick(View view) {
+                        mStatusLayoutManager.showLoadingLayout();
+                        refresh();
+                    }
+
+                    @Override
+                    public void onErrorChildClick(View view) {
+                        mStatusLayoutManager.showLoadingLayout();
+                        refresh();
+                    }
+
+                    @Override
+                    public void onCustomerChildClick(View view) {
+                        mStatusLayoutManager.showLoadingLayout();
+                        refresh();
+                     /*   if (view.getId() == R.id.tv_customer) {
+                            Toast.makeText(MainActivity.this, R.string.request_access, Toast.LENGTH_SHORT).show();
+                        } else if (view.getId() == R.id.tv_customer1) {
+                            Toast.makeText(MainActivity.this, R.string.switch_account, Toast.LENGTH_SHORT).show();
+                        }*/
+
+                    }
+                })
+                .build();
+    }
+
+
+    private View inflate(int layoutId) {
+        return LayoutInflater.from(mContext).inflate(layoutId, null);
+    }
+
+    private void refresh(){
+        mRefreshLayout.setNoMoreData(false);
+        mRefreshLayout.setEnableLoadMore(true);
+        isLoadMore = false;
+        mDefaultPage = 1;
+        loadData(mDefaultPage);
+    }
 }
