@@ -253,7 +253,7 @@ public class EvaluationActivity extends BaseTourCooTitleActivity implements View
                                 ToastUtil.showSuccess("评价已提交");
                                 setResult(RESULT_OK);
                                 //刷新评价列表
-                                EventBus.getDefault().postSticky(new RefreshEvent(EVENT_ACTION_REFRESH_COMMENT));
+                                EventBus.getDefault().post(new RefreshEvent(EVENT_ACTION_REFRESH_COMMENT));
                                 finish();
                             } else {
                                 ToastUtil.showFailed(entity.msg);

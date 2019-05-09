@@ -54,6 +54,7 @@ import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.FeedbackActivity;
 import com.tourcoo.xiantao.ui.SettingActivity;
 import com.tourcoo.xiantao.ui.coin.MyCoinListActivity;
+import com.tourcoo.xiantao.ui.coupon.MyDiscountListActivity;
 import com.tourcoo.xiantao.ui.goods.CollectionGoodsListActivity;
 import com.tourcoo.xiantao.ui.msg.MsgSystemActivity;
 import com.tourcoo.xiantao.ui.order.MyOrderListActivity;
@@ -201,12 +202,14 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
 
     private void initMenu() {
         mMenuItemList.clear();
+        mMenuItemList.add(new MenuItem(R.mipmap.ic_coupons, "优惠券"));
 //        mMenuItemList.add(new MenuItem(R.mipmap.ic_account_balance, "账户余额"));
         mMenuItemList.add(new MenuItem(R.mipmap.ic_spell_group_records, "拼团记录"));
         mMenuItemList.add(new MenuItem(R.mipmap.ic_collection_goods, "收藏商品"));
         mMenuItemList.add(new MenuItem(R.mipmap.ic_shipping_address, "收货地址"));
         mMenuItemList.add(new MenuItem(R.mipmap.ic_customer_service_telephone, "客服电话"));
 //        mMenuItemList.add(new MenuItem(R.mipmap.ic_invoice_information, "发票信息"));
+        mMenuItemList.add(new MenuItem(R.mipmap.ic_invitation_code_mine, "邀请码"));
         mMenuItemList.add(new MenuItem(R.mipmap.ic_problem_feedback, "问题反馈"));
     }
 
@@ -228,7 +231,17 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                         }
                         skipAccount();
                         break;*/
+
                     case 0:
+                        //我的优惠券
+                        if (!AccountInfoHelper.getInstance().isLogin()) {
+                            skipToLoginActivity();
+                            return;
+                        }
+                        TourCoolUtil.startActivity(mContext, MyDiscountListActivity.class);
+                        break;
+
+                    case 1:
                         //拼团记录
                         if (!AccountInfoHelper.getInstance().isLogin()) {
                             skipToLoginActivity();
@@ -236,7 +249,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                         }
                         TourCoolUtil.startActivity(mContext, MyTuanListActivity.class);
                         break;
-                    case 1:
+                    case 2:
                         //收藏商品
                         if (!AccountInfoHelper.getInstance().isLogin()) {
                             skipToLoginActivity();
@@ -244,7 +257,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                         }
                         TourCoolUtil.startActivity(mContext, CollectionGoodsListActivity.class);
                         break;
-                    case 2:
+                    case 3:
                         //收货地址
                         if (!AccountInfoHelper.getInstance().isLogin()) {
                             skipToLoginActivity();
@@ -252,17 +265,17 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                         }
                         TourCoolUtil.startActivity(mContext, AddressManagerActivity.class);
                         break;
-                    case 3:
+                    case 4:
                         //客服
                         showContactUsDialog();
                         break;
-                    case 4:
-                        //问题反馈
+                    case 5:
+                        //邀请码
                         TourCoolUtil.startActivity(mContext, FeedbackActivity.class);
                         break;
-                    case 5:
-                        break;
                     case 6:
+                        //问题反馈
+                        TourCoolUtil.startActivity(mContext, FeedbackActivity.class);
                         break;
                     default:
                         break;
@@ -424,8 +437,8 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         TourCooLogUtil.i(TAG, TAG + "昵称:" + data.getNickname());
         GlideManager.loadImg(url, civUserAvatar);
         tvBalance.setText("¥" + data.getCash());
-        String coinGold =  data.getAu()+"";
-        String coinYin =  data.getAg()+"";
+        String coinGold = data.getAu() + "";
+        String coinYin = data.getAg() + "";
         tvAccumulatePointsGold.setText(coinGold);
         tvAccumulatePointsYin.setText(coinYin);
         showMineInfo(data);
@@ -634,7 +647,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     /**
      * @param refreshEvent
      */
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRefreshUIEvent(RefreshEvent refreshEvent) {
         //todo 刷新ui
         if (refreshEvent == null) {

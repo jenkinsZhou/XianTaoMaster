@@ -677,7 +677,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
     /**
      *
      */
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageRefreshEvent(MessageEvent messageEvent) {
         //todo 执行购物车列表刷新
         if (messageEvent == null) {

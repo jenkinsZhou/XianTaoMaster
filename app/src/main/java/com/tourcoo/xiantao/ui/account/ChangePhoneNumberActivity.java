@@ -230,7 +230,7 @@ public class ChangePhoneNumberActivity extends BaseTourCooTitleActivity implemen
                                     AccountInfoHelper.getInstance().changeMobile(getMobile());
                                 }
                                 TourCooUtil.startActivity(mContext, EditSuccessActivity.class);*/
-                                EventBus.getDefault().postSticky(new RefreshEvent());
+                                EventBus.getDefault().post(new RefreshEvent());
                                 ToastUtil.showSuccess("修改成功");
                                 TourCooLogUtil.i(TAG, TAG + ":" + JSON.toJSONString(entity.data));
                                 finish();

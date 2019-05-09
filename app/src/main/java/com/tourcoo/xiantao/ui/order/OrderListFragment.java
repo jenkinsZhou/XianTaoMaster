@@ -648,7 +648,7 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPayEvent(BaseEvent event) {
         if (event == null) {
             TourCooLogUtil.e(TAG, "直接拦截");

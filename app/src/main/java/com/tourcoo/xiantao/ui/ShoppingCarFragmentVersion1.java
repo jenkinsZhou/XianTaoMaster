@@ -366,7 +366,7 @@ public class ShoppingCarFragmentVersion1 extends BaseTitleTourCoolFragment imple
     /**
      * @param tabChangeEvent
      */
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onTabChangeEvent(TabChangeEvent tabChangeEvent) {
         //todo 执行购物车显示逻辑
         //根据条件右上角titleBar标题

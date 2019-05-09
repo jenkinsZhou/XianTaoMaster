@@ -779,7 +779,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
                             ToastUtil.showSuccess(entity.msg);
-                            EventBus.getDefault().postSticky(new RefreshEvent());
+                            EventBus.getDefault().post(new RefreshEvent());
                         }
                     }
                 });

@@ -293,7 +293,7 @@ public class ReturnGoodsActivity extends BaseTourCooTitleActivity implements Vie
                                 setResult(RESULT_OK);
                                 ToastUtil.showSuccess(entity.msg);
                                 //通知个人中心刷新数据
-                                EventBus.getDefault().postSticky(new RefreshEvent());
+                                EventBus.getDefault().post(new RefreshEvent());
                                 finish();
                             } else {
                                 ToastUtil.showFailed(entity.msg);

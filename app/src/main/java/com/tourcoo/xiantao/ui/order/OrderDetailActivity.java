@@ -1046,7 +1046,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPayEvent(BaseEvent event) {
         if (event == null) {
             TourCooLogUtil.e(TAG, "直接拦截");
@@ -1090,7 +1090,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 //                                refreshRequest();
                                 ToastUtil.showSuccess("已取消退单");
                                 setResult(RESULT_OK);
-                                EventBus.getDefault().postSticky(new RefreshEvent());
+                                EventBus.getDefault().post(new RefreshEvent());
                                 finish();
                             } else {
                                 ToastUtil.showFailed(entity.msg);

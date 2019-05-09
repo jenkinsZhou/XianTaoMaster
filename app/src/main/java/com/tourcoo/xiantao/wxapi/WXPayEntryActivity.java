@@ -80,7 +80,6 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
                     break;
                 case -2:
                     Toast.makeText(this, "您已经取消支付，请重新尝试支付", Toast.LENGTH_SHORT).show();
-
                     EventBus.getDefault().post(new BaseEvent(EVENT_ACTION_PAY_FRESH_FAILED));
                     break;
                 default:

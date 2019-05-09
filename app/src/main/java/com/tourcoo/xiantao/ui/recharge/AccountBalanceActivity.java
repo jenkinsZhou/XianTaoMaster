@@ -423,7 +423,7 @@ public class AccountBalanceActivity extends BaseTourCooTitleActivity implements 
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRechargeEvent(BaseEvent event) {
         if (event == null) {
             TourCooLogUtil.e(TAG, "直接拦截");

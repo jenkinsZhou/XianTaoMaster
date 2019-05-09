@@ -215,7 +215,7 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
     /**
      * @param refreshEvent
      */
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onShoppingCarRefreshEvent(RefreshEvent refreshEvent) {
         //todo 执行购物车列表刷新
         if (refreshEvent == null) {
