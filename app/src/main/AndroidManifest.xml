@@ -199,7 +199,12 @@
         <activity
             android:name=".ui.discount.MyDiscountListActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.mine.MyInviteCodeActivity" />
+        <activity
+            android:name=".ui.mine.MyInviteCodeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.discount.DisCountSelectListActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

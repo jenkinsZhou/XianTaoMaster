@@ -55,6 +55,7 @@ public class AddressManagerActivity extends BaseTourCooTitleMultiViewActivity im
     private RecyclerView rvContent;
     public static final int REQUEST_CODE_ADD_ADDRESS = 100;
     public static final int REQUEST_CODE_EDIT_ADDRESS = 101;
+
     /**
      * 从结算页面跳转过来的
      */

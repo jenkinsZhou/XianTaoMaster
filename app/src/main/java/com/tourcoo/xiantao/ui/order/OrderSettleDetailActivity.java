@@ -55,6 +55,7 @@ import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
 import com.tourcoo.xiantao.ui.account.AddressManagerActivity;
 import com.tourcoo.xiantao.ui.account.LoginActivity;
+import com.tourcoo.xiantao.ui.discount.DisCountSelectListActivity;
 import com.tourcoo.xiantao.ui.goods.GoodsDetailActivity;
 import com.tourcoo.xiantao.widget.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.tourcoo.xiantao.widget.bigkoo.pickerview.listener.OnTimeSelectListener;
@@ -103,7 +104,12 @@ import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
  */
 public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity implements View.OnClickListener {
     public static final int SKIP_TAG_SETTLE = 1002;
+    public static final int REQUEST_CODE_SELECT_DISCOUNT = 1003;
     private RelativeLayout contentView;
+    /**
+     * 优惠券页面
+     */
+    private RelativeLayout rlDiscount;
     /**
      * 日期选择器
      */
@@ -273,6 +279,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         //金币抵扣布局
         tvCoinAmount = findViewById(R.id.tvCoinAmount);
         contentView = findViewById(R.id.contentView);
+        rlDiscount = findViewById(R.id.rlDiscount);
+        rlDiscount.setOnClickListener(this);
         api = WXAPIFactory.createWXAPI(mContext, null);
         etRemark = findViewById(R.id.etRemark);
         fillAddress = findViewById(R.id.fillAddress);
@@ -395,6 +403,9 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                 break;
             case R.id.tvDeliveryTime:
                 pvTime.show();
+                break;
+            case R.id.rlDiscount:
+                skipDiscountList();
                 break;
             default:
                 break;
@@ -1034,5 +1045,17 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         }
     }
 
+
+    /**
+     * 跳转至优惠券选择
+     */
+    private void skipDiscountList() {
+        Intent intent = new Intent();
+        //跳转至我的订单 全部列表
+        intent.putExtra(EXTRA_CURRENT_TAB_INDEX, 0);
+        intent.setClass(mContext, DisCountSelectListActivity.class);
+        startActivityForResult(intent, REQUEST_CODE_SELECT_DISCOUNT);
+        TourCooLogUtil.i(TAG, TAG + ":" + "已经跳转");
+    }
 
 }

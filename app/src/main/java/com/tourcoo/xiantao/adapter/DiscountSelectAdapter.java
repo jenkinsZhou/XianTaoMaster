@@ -1,6 +1,5 @@
 package com.tourcoo.xiantao.adapter;
 
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.tourcoo.xiantao.R;
@@ -8,15 +7,14 @@ import com.tourcoo.xiantao.entity.discount.DiscountEntity;
 
 /**
  * @author :JenkinsZhou
- * @description :个人中心优惠券列表适配器
+ * @description :
  * @company :途酷科技
- * @date 2019年05月09日17:02
+ * @date 2019年05月10日15:41
  * @Email: 971613168@qq.com
  */
-public class DiscountAdapter extends BaseQuickAdapter<DiscountEntity,BaseViewHolder> {
-
-    public DiscountAdapter() {
-        super(R.layout.item_discount);
+public class DiscountSelectAdapter extends BaseQuickAdapter<DiscountEntity, BaseViewHolder> {
+    public DiscountSelectAdapter() {
+        super(R.layout.item_discount_select);
     }
 
 
