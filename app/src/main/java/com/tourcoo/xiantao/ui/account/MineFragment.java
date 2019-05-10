@@ -1,8 +1,5 @@
 package com.tourcoo.xiantao.ui.account;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -54,8 +51,9 @@ import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.FeedbackActivity;
 import com.tourcoo.xiantao.ui.SettingActivity;
 import com.tourcoo.xiantao.ui.coin.MyCoinListActivity;
-import com.tourcoo.xiantao.ui.coupon.MyDiscountListActivity;
+import com.tourcoo.xiantao.ui.discount.MyDiscountListActivity;
 import com.tourcoo.xiantao.ui.goods.CollectionGoodsListActivity;
+import com.tourcoo.xiantao.ui.mine.MyInviteCodeActivity;
 import com.tourcoo.xiantao.ui.msg.MsgSystemActivity;
 import com.tourcoo.xiantao.ui.order.MyOrderListActivity;
 import com.tourcoo.xiantao.ui.order.ReturnOrderListActivity;
@@ -132,11 +130,11 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         mMainTabActivity = (MainTabActivity) mContext;
         refreshLayout = mContentView.findViewById(R.id.refreshLayout);
         refreshLayout.setOnRefreshListener(this);
+        mContentView.findViewById(R.id.llGold).setOnClickListener(this);
+        mContentView.findViewById(R.id.llYin).setOnClickListener(this);
         tvMessageCount = mContentView.findViewById(R.id.tvMessageCount);
         tvAccumulatePointsGold = mContentView.findViewById(R.id.tvAccumulatePointsGold);
-        tvAccumulatePointsGold.setOnClickListener(this);
         tvAccumulatePointsYin = mContentView.findViewById(R.id.tvAccumulatePointsYin);
-        tvAccumulatePointsYin.setOnClickListener(this);
         mContentView.findViewById(R.id.llReturnGood).setOnClickListener(this);
         mContentView.findViewById(R.id.llWaitSend).setOnClickListener(this);
         mContentView.findViewById(R.id.llWaitReceive).setOnClickListener(this);
@@ -271,7 +269,11 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                         break;
                     case 5:
                         //邀请码
-                        TourCoolUtil.startActivity(mContext, FeedbackActivity.class);
+                        if (!AccountInfoHelper.getInstance().isLogin()) {
+                            skipToLoginActivity();
+                            return;
+                        }
+                        TourCoolUtil.startActivity(mContext, MyInviteCodeActivity.class);
                         break;
                     case 6:
                         //问题反馈
@@ -309,6 +311,16 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.llYin:
+            case R.id.llGold:
+                if (!AccountInfoHelper.getInstance().isLogin()) {
+                    TourCooUtil.startActivity(mContext, LoginActivity.class);
+                    return;
+                }
+                Intent coinIntent = new Intent();
+                coinIntent.setClass(mContext, MyCoinListActivity.class);
+                startActivityForResult(coinIntent, REQUEST_CODE_EDIT_USER_INFO);
+                break;
             case R.id.llAllOrder:
                 //订单列表
                 if (!AccountInfoHelper.getInstance().isLogin()) {
@@ -345,16 +357,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
             case R.id.ivMsg:
                 skipToMessageCenter();
                 break;
-            case R.id.tvAccumulatePointsYin:
-            case R.id.tvAccumulatePointsGold:
-                if (!AccountInfoHelper.getInstance().isLogin()) {
-                    TourCooUtil.startActivity(mContext, LoginActivity.class);
-                    return;
-                }
-                Intent coinIntent = new Intent();
-                coinIntent.setClass(mContext, MyCoinListActivity.class);
-                startActivityForResult(coinIntent, REQUEST_CODE_EDIT_USER_INFO);
-                break;
+
             case R.id.llReturnGood:
                 //退货列表
                 skipReturnOrderList();

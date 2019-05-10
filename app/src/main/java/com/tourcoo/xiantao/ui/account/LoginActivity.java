@@ -3,6 +3,7 @@ package com.tourcoo.xiantao.ui.account;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.tourcoo.xiantao.R;
@@ -164,8 +165,6 @@ public class LoginActivity extends BaseTourCooTitleActivity implements ViewPager
         }
 
     }
-
-
 
 
 

@@ -59,6 +59,7 @@ public class RegisterActivity extends BaseTourCooTitleActivity implements View.O
     private EditText etVCode;
     private EditText etPassword;
     private EditText etPasswordConfirm;
+    private EditText etInviteCode;
 
     private TextView tvSendVerificationCode;
 
@@ -90,6 +91,7 @@ public class RegisterActivity extends BaseTourCooTitleActivity implements View.O
         findViewById(R.id.tvLogin).setOnClickListener(this);
         tvLicensing = findViewById(R.id.tvLicensing);
         tvLicensing.setOnClickListener(this);
+        etInviteCode = findViewById(R.id.etInviteCode);
         tvSendVerificationCode = findViewById(R.id.tvSendVerificationCode);
         tvSendVerificationCode.setOnClickListener(this);
         cBoxAgree = findViewById(R.id.cBoxAgree);
@@ -113,17 +115,22 @@ public class RegisterActivity extends BaseTourCooTitleActivity implements View.O
         visibleConfirmPassByFlag(confirmPasswordShowFlag);
         View linePassConfirmFocus = findViewById(R.id.linePassConfirmFocus);
         View linePassConfirmUnFocus = findViewById(R.id.linePassConfirmUnFocus);
+        View lineInviteCodeFocus = findViewById(R.id.lineInviteCodeFocus);
+        View lineInviteCodeUnFocus = findViewById(R.id.lineInviteCodeUnFocus);
         listenInputFocus(etPhoneNumber, linePhoneFocus, linePhoneUnFocus);
         listenInputFocus(etVCode, lineVCodeFocus, lineVCodeUnFocus);
         listenInputFocus(etPassword, linePassFocus, linePassUnFocus);
         listenInputFocus(etPassword, linePassFocus, linePassUnFocus);
         listenInputFocus(etPasswordConfirm, linePassConfirmFocus, linePassConfirmUnFocus);
+        listenInputFocus(etInviteCode, lineInviteCodeFocus, lineInviteCodeUnFocus);
         ImageView ivClearPhone = findViewById(R.id.ivClearPhone);
         ImageView ivClearPass = findViewById(R.id.ivClearPass);
         ImageView ivClearConfirmPass = findViewById(R.id.ivClearConfirmPass);
+        ImageView ivClearInviteCode = findViewById(R.id.ivClearInviteCode);
         listenInput(etPhoneNumber, ivClearPhone);
         listenInput(etPassword, ivClearPass);
         listenInput(etPasswordConfirm, ivClearConfirmPass);
+        listenInput(etInviteCode, ivClearInviteCode);
     }
 
     @Override

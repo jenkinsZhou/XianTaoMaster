@@ -197,8 +197,9 @@
             android:name=".ui.account.ChangePhoneNumberActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.coupon.MyDiscountListActivity"
+            android:name=".ui.discount.MyDiscountListActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".ui.mine.MyInviteCodeActivity" />
     </application>
 
 </manifest>

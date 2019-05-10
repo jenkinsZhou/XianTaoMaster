@@ -68,6 +68,12 @@ public class PasswordLoginFragment extends BaseFragment implements View.OnClickL
         ivPass = mContentView.findViewById(R.id.ivPass);
         mContentView.findViewById(R.id.tvForgetPassword).setOnClickListener(this);
         ivPass.setOnClickListener(this);
+        View linePhoneUnFocus = mContentView.findViewById(R.id.linePhoneUnFocus);
+        View linePhoneFocus = mContentView.findViewById(R.id.linePhoneFocus);
+        View linePassUnFocus = mContentView.findViewById(R.id.linePassUnFocus);
+        View linePassFocus = mContentView.findViewById(R.id.linePassFocus);
+        listenInputFocus(etPhoneNumber, linePhoneFocus, linePhoneUnFocus);
+        listenInputFocus(etPassword, linePassFocus, linePassUnFocus);
         listenInput(etPhoneNumber, ivClearPhone);
         listenInput(etPassword, ivClearPass);
 
@@ -252,5 +258,24 @@ public class PasswordLoginFragment extends BaseFragment implements View.OnClickL
             activity.finish();
         }
     }
+
+
+    private void listenInputFocus(EditText editText, View lineFocusView, View lineUnFocusView) {
+        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    //获得焦点
+                    showView(lineFocusView);
+                    hideView(lineUnFocusView);
+                } else {
+                    //失去焦点
+                    showView(lineUnFocusView);
+                    hideView(lineFocusView);
+                }
+            }
+        });
+    }
+
 
 }

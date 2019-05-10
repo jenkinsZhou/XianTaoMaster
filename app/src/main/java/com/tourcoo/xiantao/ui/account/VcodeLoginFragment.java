@@ -72,6 +72,12 @@ public class VcodeLoginFragment extends BaseFragment implements View.OnClickList
         tvSendVerificationCode = mContentView.findViewById(R.id.tvSendVerificationCode);
         tvSendVerificationCode.setOnClickListener(this);
         listenInput(etPhoneNumber, ivClearPhone);
+        View linePhoneUnFocus = mContentView.findViewById(R.id.linePhoneUnFocus);
+        View linePhoneFocus = mContentView.findViewById(R.id.linePhoneFocus);
+        View linePassUnFocus = mContentView.findViewById(R.id.linePassUnFocus);
+        View linePassFocus = mContentView.findViewById(R.id.linePassFocus);
+        listenInputFocus(etPhoneNumber, linePhoneFocus, linePhoneUnFocus);
+        listenInputFocus(etVCode, linePassFocus, linePassUnFocus);
     }
 
 
@@ -339,4 +345,23 @@ public class VcodeLoginFragment extends BaseFragment implements View.OnClickList
             activity.finish();
         }
     }
+
+
+    private void listenInputFocus(EditText editText, View lineFocusView, View lineUnFocusView) {
+        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    //获得焦点
+                    showView(lineFocusView);
+                    hideView(lineUnFocusView);
+                } else {
+                    //失去焦点
+                    showView(lineUnFocusView);
+                    hideView(lineFocusView);
+                }
+            }
+        });
+    }
+
 }

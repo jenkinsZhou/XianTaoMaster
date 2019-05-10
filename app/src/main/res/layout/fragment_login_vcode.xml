@@ -87,5 +87,10 @@
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:background="@color/color_black_alpha_20" />
-
+    <View
+        android:id="@+id/linePassFocus"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/greenCommon"
+        android:visibility="gone" />
 </LinearLayout>

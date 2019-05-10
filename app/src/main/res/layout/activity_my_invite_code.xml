@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_title_bar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_277"
+        android:layout_marginTop="@dimen/dp_25"
+        android:background="@mipmap/img_invite_code_bg"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/dp_16"
+        android:paddingTop="@dimen/dp_16">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/dp_16"
+            android:text="濡江铺子 · 邀请码"
+            android:textColor="@color/whiteCommon"
+            android:textSize="@dimen/sp_17"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:paddingLeft="@dimen/dp_16"
+            android:text="Rujiang Shop Invite Code"
+            android:textColor="@color/whiteCommon" />
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/dp_72">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="────"
+                android:textColor="@color/whiteCommon" />
+
+
+            <View
+                android:layout_width="@dimen/dp_3"
+                android:layout_height="@dimen/dp_3"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_marginRight="@dimen/dp_10"
+                android:background="@drawable/shape_oval_white_3dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="你的专属邀请码"
+                android:textColor="@color/whiteCommon"
+                android:textSize="@dimen/sp_15" />
+
+            <View
+                android:layout_width="@dimen/dp_3"
+                android:layout_height="@dimen/dp_3"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_marginRight="@dimen/dp_10"
+                android:background="@drawable/shape_oval_white_3dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="────"
+                android:textColor="@color/whiteCommon" />
+        </LinearLayout>
+            <TextView
+                android:id="@+id/tvInviteCode"
+                android:textSize="@dimen/sp_30"
+                android:text="18256070563"
+                android:layout_marginTop="@dimen/dp_20"
+                android:textColor="@color/whiteCommon"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+
+    </LinearLayout>
+
+</LinearLayout>
