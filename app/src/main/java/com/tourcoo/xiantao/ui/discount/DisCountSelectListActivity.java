@@ -136,11 +136,13 @@ public class DisCountSelectListActivity extends BaseTourCooTitleActivity {
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 List<DiscountInfo> discountInfoList = mDiscountAdapter.getData();
                 DiscountInfo currentDiscount = discountInfoList.get(position);
-                int selectRuleId = -1;
+                int selectRuleId = currentDiscount.getRule_id();
                 if (currentDiscount.isSelect()) {
+                    currentDiscount.setClickEnable(true);
                     currentDiscount.setSelect(false);
                 } else {
                     selectRuleId = currentDiscount.getRule_id();
+                    currentDiscount.setClickEnable(true);
                     currentDiscount.setSelect(true);
                 }
                 boolean noSelect = !checkSelect(discountInfoList);
