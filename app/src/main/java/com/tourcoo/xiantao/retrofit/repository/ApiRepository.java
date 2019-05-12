@@ -999,14 +999,54 @@ public class ApiRepository extends BaseRepository {
 
     /**
      * 更换手机号
+     *
      * @param mobile
      * @return
      */
-    public Observable<BaseEntity> requestChangeMobile(String mobile,String vCode) {
+    public Observable<BaseEntity> requestChangeMobile(String mobile, String vCode) {
         Map<String, Object> params = new HashMap<>(1);
         params.put("mobile", mobile);
         params.put("event", "changemobile");
         params.put("captcha", vCode);
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestChangeMobile(params).retryWhen(new RetryWhen()));
     }
+
+
+    /**
+     * 我的优惠券
+     *
+     * @param type
+     * @param pageIndex
+     * @return
+     */
+    public Observable<BaseEntity> requestMyDiscount(int type, int pageIndex) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("p", pageIndex);
+        params.put("type", type);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestMyDiscount(params).retryWhen(new RetryWhen()));
+    }
+
+    /**
+     * 获取我的可用优惠券数量
+     *
+     * @return
+     */
+    public Observable<BaseEntity> requestAvailableDiscountNumber(double price) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("price", price);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestAvailableDiscountNumber(params).retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 获取我的可用优惠券列表
+     *
+     * @return
+     */
+    public Observable<BaseEntity> requestAvailableList(double price) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("price", price);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestAvailableList(params).retryWhen(new RetryWhen()));
+    }
+
 }

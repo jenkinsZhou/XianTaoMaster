@@ -617,6 +617,7 @@ public interface ApiService {
 
     /**
      * 广告页详情
+     *
      * @param params
      * @return
      */
@@ -631,4 +632,33 @@ public interface ApiService {
      */
     @POST("user/changemobile")
     Observable<BaseEntity> requestChangeMobile(@QueryMap Map<String, Object> params);
+
+    /**
+     * 我的优惠券
+     *
+     * @param map
+     * @return
+     */
+    @POST("coupon/index")
+    Observable<BaseEntity> requestMyDiscount(@QueryMap Map<String, Object> map);
+
+
+    /**
+     * 我的可使用优惠券数量
+     *
+     * @param map
+     * @return
+     */
+    @POST("coupon/available_num")
+    Observable<BaseEntity> requestAvailableDiscountNumber(@QueryMap Map<String, Object> map);
+
+
+    /**
+     * 我的可用优惠券列表
+     *
+     * @param map
+     * @return
+     */
+    @POST("coupon/available_list")
+    Observable<BaseEntity> requestAvailableList(@QueryMap Map<String, Object> map);
 }

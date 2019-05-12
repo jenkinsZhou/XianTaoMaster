@@ -1,45 +1,13 @@
 package com.tourcoo.xiantao.entity.discount;
 
-
-import java.io.Serializable;
-
 /**
  * @author :JenkinsZhou
- * @description :我的优惠券
+ * @description :
  * @company :途酷科技
- * @date 2019年05月09日16:50
+ * @date 2019年05月12日14:52
  * @Email: 971613168@qq.com
  */
-public class DiscountEntity implements Serializable {
-    private boolean isSelect;
-
-    private int ruleId;
-
-    private boolean clickEnable;
-
-    public boolean isSelect() {
-        return isSelect;
-    }
-
-    public void setSelect(boolean select) {
-        isSelect = select;
-    }
-
-    public boolean isClickEnable() {
-        return clickEnable;
-    }
-
-    public void setClickEnable(boolean clickEnable) {
-        this.clickEnable = clickEnable;
-    }
-
-    public int getRuleId() {
-        return ruleId;
-    }
-
-    public void setRuleId(int ruleId) {
-        this.ruleId = ruleId;
-    }
+public class as {
 
     /**
      * id : 1
