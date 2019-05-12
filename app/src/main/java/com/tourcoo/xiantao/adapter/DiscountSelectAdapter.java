@@ -2,6 +2,7 @@ package com.tourcoo.xiantao.adapter;
 
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -41,12 +42,16 @@ public class DiscountSelectAdapter extends BaseQuickAdapter<DiscountInfo, BaseVi
         helper.addOnClickListener(R.id.rlSelect);
         rlSelect.setClickable(discountInfo.isClickEnable());
         String cost = "满" + discountInfo.getCost() + "元可用";
-        helper.setText(R.id.tvPrice, discountInfo.getWorth());
+        helper.setText(R.id.tvPrice, discountInfo.getWorth()+"");
         helper.setText(R.id.tvDiscount, cost);
-
         String name = "" + discountInfo.getName();
+        TextView tvDIscountName = helper.getView(R.id.tvDiscountName);
+        TextView tvCanAdd = helper.getView(R.id.tvCanAdd);
+        TextView tvDeadLine = helper.getView(R.id.tvDeadLine);
+        TextView tvPrice = helper.getView(R.id.tvPrice);
+        TextView yuan = helper.getView(R.id.yuan);
         helper.setText(R.id.tvDiscountName, name);
-        if (discountInfo.getNum() > 0) {
+        if (discountInfo.getNum() > 1) {
             helper.setText(R.id.tvCanAdd, "[可叠加]");
         } else {
             helper.setText(R.id.tvCanAdd, "[不可叠加]");
@@ -62,12 +67,29 @@ public class DiscountSelectAdapter extends BaseQuickAdapter<DiscountInfo, BaseVi
         int status = parseStatus(discountInfo);
         switch (status) {
             case STATUS_NOT_USE:
+                setTextColor(tvDIscountName, R.color.greenCommon);
+                setTextColor(tvCanAdd, R.color.greenCommon);
+                setTextColor(tvCanAdd, R.color.greenCommon);
+                setTextColor(tvDeadLine, R.color.colorTextGray);
+                setTextColor(tvPrice, R.color.greenCommon);
+                setTextColor(yuan, R.color.greenCommon);
                 rlPrice.setBackground(TourCooUtil.getDrawable(R.mipmap.bg_discount));
                 break;
             case STATUS_HAS_USE:
-                rlPrice.setBackground(TourCooUtil.getDrawable(R.mipmap.bg_discount));
+                setTextColor(tvDeadLine, R.color.gray_CCCCCC);
+                setTextColor(tvDIscountName, R.color.gray_AAAAAA);
+                setTextColor(tvCanAdd, R.color.gray_AAAAAA);
+                setTextColor(tvCanAdd, R.color.gray_AAAAAA);
+                setTextColor(tvPrice, R.color.gray_AAAAAA);
+                setTextColor(yuan, R.color.gray_CCCCCC);
+                rlPrice.setBackground(TourCooUtil.getDrawable(R.mipmap.bg_discount_time_out));
                 break;
             case STATUS_TIME_OUT:
+                setTextColor(tvDeadLine, R.color.gray_CCCCCC);
+                setTextColor(tvDIscountName, R.color.gray_AAAAAA);
+                setTextColor(tvCanAdd, R.color.gray_AAAAAA);
+                setTextColor(tvPrice, R.color.gray_AAAAAA);
+                setTextColor(yuan, R.color.gray_CCCCCC);
                 rlPrice.setBackground(TourCooUtil.getDrawable(R.mipmap.bg_discount_time_out));
                 break;
             default:
@@ -107,5 +129,8 @@ public class DiscountSelectAdapter extends BaseQuickAdapter<DiscountInfo, BaseVi
         } catch (Exception e) {
             return "";
         }
+    }
+    private void setTextColor(TextView textView, int colorId) {
+        textView.setTextColor(TourCooUtil.getColor(colorId));
     }
 }

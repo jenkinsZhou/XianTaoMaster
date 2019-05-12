@@ -34,6 +34,7 @@ import com.tourcoo.xiantao.constant.WxConfig;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
+import com.tourcoo.xiantao.core.frame.util.SharedPreferencesUtil;
 import com.tourcoo.xiantao.core.frame.util.StackUtil;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
@@ -44,6 +45,7 @@ import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.advertisement.AdvertisEntity;
 import com.tourcoo.xiantao.entity.event.BaseEvent;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.goods.GoodsSkuBean;
@@ -83,12 +85,14 @@ import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
 import static com.tourcoo.xiantao.constant.WxConfig.APP_ID;
 import static com.tourcoo.xiantao.constant.WxConfig.WEI_XIN_PAY_TAG_NORMAL;
+import static com.tourcoo.xiantao.core.common.CommonConfig.PREF_IMAGE_ADVERTISEMENT;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_FAILED;
 import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_SUCCESS;
 import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.EXTRA_ADDRESS_INFO;
 import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.EXTRA_SKIP_TAG_SETTLE;
 import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.REQUEST_CODE_EDIT_ADDRESS;
+import static com.tourcoo.xiantao.ui.discount.DisCountSelectListActivity.EXTRA_PRICE;
 import static com.tourcoo.xiantao.ui.goods.GoodsDetailActivity.EXTRA_SETTLE;
 import static com.tourcoo.xiantao.ui.order.MyOrderListActivity.EXTRA_CURRENT_TAB_INDEX;
 import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_ALI;
@@ -106,6 +110,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     public static final int SKIP_TAG_SETTLE = 1002;
     public static final int REQUEST_CODE_SELECT_DISCOUNT = 1003;
     private RelativeLayout contentView;
+    private TextView tvCanUseCount;
     /**
      * 优惠券页面
      */
@@ -279,6 +284,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         //金币抵扣布局
         tvCoinAmount = findViewById(R.id.tvCoinAmount);
         contentView = findViewById(R.id.contentView);
+        tvCanUseCount = findViewById(R.id.tvCanUseCount);
         rlDiscount = findViewById(R.id.rlDiscount);
         rlDiscount.setOnClickListener(this);
         api = WXAPIFactory.createWXAPI(mContext, null);
@@ -382,6 +388,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         tvPayPrice.setText(payMonty);
         //显示金币
         showCoin(settleEntity);
+        //todo 请求优惠券数量 显示优惠券
+        requestAvailableDiscountNumber(mSettleEntity.getOrder_total_price());
         mStatusLayoutManager.showSuccessLayout();
     }
 
@@ -405,7 +413,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                 pvTime.show();
                 break;
             case R.id.rlDiscount:
-                skipDiscountList();
+                skipDiscountList(mSettleEntity);
                 break;
             default:
                 break;
@@ -1049,13 +1057,63 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     /**
      * 跳转至优惠券选择
      */
-    private void skipDiscountList() {
+    private void skipDiscountList(SettleEntity settleEntity) {
         Intent intent = new Intent();
-        //跳转至我的订单 全部列表
-        intent.putExtra(EXTRA_CURRENT_TAB_INDEX, 0);
+        //跳转至我的可用优惠券 全部列表
+        intent.putExtra(EXTRA_PRICE, settleEntity.getOrder_total_price());
         intent.setClass(mContext, DisCountSelectListActivity.class);
         startActivityForResult(intent, REQUEST_CODE_SELECT_DISCOUNT);
         TourCooLogUtil.i(TAG, TAG + ":" + "已经跳转");
     }
 
+
+    /**
+     * 获取可用优惠券数量相关信息
+     */
+    private void requestAvailableDiscountNumber(double price) {
+        ApiRepository.getInstance().requestAvailableDiscountNumber(price).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
+                                showDiscountByCondition(parseNum(entity.data));
+                                mStatusLayoutManager.showSuccessLayout();
+                            } else {
+                                mStatusLayoutManager.showErrorLayout();
+                            }
+                        } else {
+                            mStatusLayoutManager.showErrorLayout();
+                        }
+                    }
+
+                    @Override
+                    public void onRequestError(Throwable e) {
+                        super.onRequestError(e);
+                        TourCooLogUtil.e(TAG, "请求异常:" + e.toString());
+                        mStatusLayoutManager.showErrorLayout();
+                    }
+                });
+    }
+
+
+    private void showDiscountByCondition(int num) {
+        if (num < 1) {
+            setVisible(rlDiscount, false);
+        } else {
+            setVisible(rlDiscount, true);
+            String value = num + "张可用";
+            tvCanUseCount.setText(value);
+        }
+    }
+
+    private int parseNum(Object data) {
+        try {
+            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(data));
+            return jsonObject.getIntValue("num");
+        } catch (Exception e) {
+            TourCooLogUtil.e(TAG, "value:" + e.toString());
+            return -1;
+        }
+    }
 }

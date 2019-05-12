@@ -3,16 +3,30 @@ package com.tourcoo.xiantao.ui.discount;
 import android.os.Bundle;
 import android.view.View;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.DiscountSelectAdapter;
+import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
+import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.discount.DiscountInfo;
+import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooRefreshLoadActivity;
+import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
+import com.trello.rxlifecycle3.android.ActivityEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 
 /**
  * @author :JenkinsZhou
@@ -21,7 +35,11 @@ import java.util.List;
  * @date 2019年05月10日17:41
  * @Email: 971613168@qq.com
  */
-public class DisCountSelectListActivity extends BaseTourCooRefreshLoadActivity<DiscountInfo> {
+public class DisCountSelectListActivity extends BaseTourCooTitleActivity {
+    public static final String EXTRA_PRICE = "EXTRA_PRICE";
+    private double mPirce;
+    private SmartRefreshLayout smartLayout_rootFastLib;
+
 
     private List<DiscountInfo> mDiscountInfoList = new ArrayList<>();
 
@@ -55,26 +73,23 @@ public class DisCountSelectListActivity extends BaseTourCooRefreshLoadActivity<D
 
     @Override
     public void initView(Bundle savedInstanceState) {
-        mDefaultPage = 1;
-        mDefaultPageSize = 10;
+        mPirce = getIntent().getDoubleExtra(EXTRA_PRICE, -1);
+        smartLayout_rootFastLib = findViewById(R.id.smartLayout_rootFastLib);
+        smartLayout_rootFastLib.setEnableRefresh(false);
+        RecyclerView rvContent = findViewById(R.id.rv_content);
+        rvContent.setLayoutManager(new LinearLayoutManager(mContext));
+        mDiscountAdapter = new DiscountSelectAdapter();
+        mDiscountAdapter.bindToRecyclerView(rvContent);
     }
 
-    @Override
-    public DiscountSelectAdapter getAdapter() {
-        mDiscountAdapter = new DiscountSelectAdapter();
-        return mDiscountAdapter;
-    }
 
     @Override
     public void loadData() {
         super.loadData();
-        initClickListener();
-        requestData();
-        mStatusManager.showSuccessLayout();
-    }
 
-    @Override
-    public void loadData(int page) {
+        initClickListener();
+        requestAvailableList(mPirce);
+//        requestData();
     }
 
 
@@ -100,13 +115,13 @@ public class DisCountSelectListActivity extends BaseTourCooRefreshLoadActivity<D
                 discountEntity.setSelect(false);
             }*/
             mDiscountInfoList.add(discountInfo);
-            discountInfo.setRuleId(i);
+            discountInfo.setRule_id(i);
         }
         DiscountInfo discountInfo1 = new DiscountInfo();
-        discountInfo1.setRuleId(1);
+        discountInfo1.setRule_id(1);
         discountInfo1.setClickEnable(true);
         DiscountInfo discountInfo2 = new DiscountInfo();
-        discountInfo2.setRuleId(1);
+        discountInfo2.setRule_id(1);
         discountInfo2.setClickEnable(true);
         discountInfo2.setSelect(true);
         mDiscountInfoList.add(discountInfo1);
@@ -125,7 +140,7 @@ public class DisCountSelectListActivity extends BaseTourCooRefreshLoadActivity<D
                 if (currentDiscount.isSelect()) {
                     currentDiscount.setSelect(false);
                 } else {
-                    selectRuleId = currentDiscount.getRuleId();
+                    selectRuleId = currentDiscount.getRule_id();
                     currentDiscount.setSelect(true);
                 }
                 boolean noSelect = !checkSelect(discountInfoList);
@@ -176,7 +191,7 @@ public class DisCountSelectListActivity extends BaseTourCooRefreshLoadActivity<D
      */
     private void setDiscountClickableByRuleId(List<DiscountInfo> entityList, int ruleId) {
         for (DiscountInfo discountInfo : entityList) {
-            if (discountInfo.getRuleId() == ruleId) {
+            if (discountInfo.getRule_id() == ruleId) {
                 discountInfo.setClickEnable(true);
             } else {
                 discountInfo.setClickEnable(false);
@@ -188,5 +203,51 @@ public class DisCountSelectListActivity extends BaseTourCooRefreshLoadActivity<D
         }
     }
 
+
+    private void requestAvailableList(double price) {
+        ApiRepository.getInstance().requestAvailableList(price).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
+                                List<DiscountInfo> discountInfoList = parsrDiscountList(entity.data);
+                                if (discountInfoList != null) {
+//                                    mStatusLayoutManager.showSuccessLayout();
+                                    TourCooLogUtil.i(TAG, "数据数量:" + discountInfoList.size());
+                                    mDiscountAdapter.setNewData(discountInfoList);
+                                } else {
+//                                    mStatusLayoutManager.showSuccessLayout();
+                                }
+                            } else {
+//                                mStatusLayoutManager.showErrorLayout();
+                            }
+                        } else {
+//                            mStatusLayoutManager.showErrorLayout();
+                        }
+                    }
+
+                    @Override
+                    public void onRequestError(Throwable e) {
+                        super.onRequestError(e);
+                        TourCooLogUtil.e(TAG, "请求异常:" + e.toString());
+//                        mStatusLayoutManager.showErrorLayout();
+                    }
+                });
+    }
+
+
+    private List<DiscountInfo> parsrDiscountList(Object data) {
+        if (data == null) {
+            return null;
+        }
+        try {
+            String info = JSON.toJSONString(data);
+            return JSON.parseArray(info, DiscountInfo.class);
+        } catch (Exception e) {
+            TourCooLogUtil.e(TAG, "解析异常:" + e.toString());
+            return null;
+        }
+    }
 
 }

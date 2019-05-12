@@ -13,9 +13,8 @@ import java.io.Serializable;
 public class DiscountInfo implements Serializable {
     private boolean isSelect;
 
-    private int ruleId;
 
-    private boolean clickEnable;
+    private boolean clickEnable = true;
 
     public boolean isSelect() {
         return isSelect;
@@ -33,13 +32,6 @@ public class DiscountInfo implements Serializable {
         this.clickEnable = clickEnable;
     }
 
-    public int getRuleId() {
-        return ruleId;
-    }
-
-    public void setRuleId(int ruleId) {
-        this.ruleId = ruleId;
-    }
 
     private int id;
     private int user_id;

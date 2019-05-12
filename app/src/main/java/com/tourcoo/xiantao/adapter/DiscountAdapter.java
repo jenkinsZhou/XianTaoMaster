@@ -47,9 +47,10 @@ public class DiscountAdapter extends BaseQuickAdapter<DiscountInfo, BaseViewHold
         TextView tvDIscountName = helper.getView(R.id.tvDiscountName);
         TextView tvCanAdd = helper.getView(R.id.tvCanAdd);
         TextView tvDeadLine = helper.getView(R.id.tvDeadLine);
-
+        TextView tvPrice = helper.getView(R.id.tvPrice);
+        TextView yuan = helper.getView(R.id.yuan);
         helper.setText(R.id.tvDiscountName, name);
-        if (discountInfo.getNum() > 0) {
+        if (discountInfo.getNum() > 1) {
             helper.setText(R.id.tvCanAdd, "[可叠加]");
         } else {
             helper.setText(R.id.tvCanAdd, "[不可叠加]");
@@ -61,19 +62,27 @@ public class DiscountAdapter extends BaseQuickAdapter<DiscountInfo, BaseViewHold
             case STATUS_NOT_USE:
                 setTextColor(tvDIscountName, R.color.greenCommon);
                 setTextColor(tvCanAdd, R.color.greenCommon);
+                setTextColor(tvCanAdd, R.color.greenCommon);
                 setTextColor(tvDeadLine, R.color.colorTextGray);
+                setTextColor(tvPrice, R.color.greenCommon);
+                setTextColor(yuan, R.color.greenCommon);
                 rlPrice.setBackground(TourCooUtil.getDrawable(R.mipmap.bg_discount));
                 break;
             case STATUS_HAS_USE:
                 setTextColor(tvDeadLine, R.color.gray_CCCCCC);
                 setTextColor(tvDIscountName, R.color.gray_AAAAAA);
                 setTextColor(tvCanAdd, R.color.gray_AAAAAA);
-                rlPrice.setBackground(TourCooUtil.getDrawable(R.mipmap.bg_discount));
+                setTextColor(tvCanAdd, R.color.gray_AAAAAA);
+                setTextColor(tvPrice, R.color.gray_AAAAAA);
+                setTextColor(yuan, R.color.gray_CCCCCC);
+                rlPrice.setBackground(TourCooUtil.getDrawable(R.mipmap.bg_discount_time_out));
                 break;
             case STATUS_TIME_OUT:
                 setTextColor(tvDeadLine, R.color.gray_CCCCCC);
                 setTextColor(tvDIscountName, R.color.gray_AAAAAA);
                 setTextColor(tvCanAdd, R.color.gray_AAAAAA);
+                setTextColor(tvPrice, R.color.gray_AAAAAA);
+                setTextColor(yuan, R.color.gray_CCCCCC);
                 rlPrice.setBackground(TourCooUtil.getDrawable(R.mipmap.bg_discount_time_out));
                 break;
             default:
