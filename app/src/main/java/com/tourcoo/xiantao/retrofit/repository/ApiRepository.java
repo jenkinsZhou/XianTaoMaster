@@ -1020,9 +1020,9 @@ public class ApiRepository extends BaseRepository {
      * @return
      */
     public Observable<BaseEntity> requestMyDiscount(int type, int pageIndex) {
-        Map<String, Object> params = new HashMap<>(1);
-        params.put("p", pageIndex);
+        Map<String, Object> params = new HashMap<>(2);
         params.put("type", type);
+        params.put("p", pageIndex);
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestMyDiscount(params).retryWhen(new RetryWhen()));
     }
 

@@ -8,7 +8,7 @@ import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.DiscountSelectAdapter;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
-import com.tourcoo.xiantao.entity.discount.DiscountEntity;
+import com.tourcoo.xiantao.entity.discount.DiscountInfo;
 import com.tourcoo.xiantao.ui.BaseTourCooRefreshLoadActivity;
 
 import java.util.ArrayList;
@@ -21,9 +21,9 @@ import java.util.List;
  * @date 2019年05月10日17:41
  * @Email: 971613168@qq.com
  */
-public class DisCountSelectListActivity extends BaseTourCooRefreshLoadActivity<DiscountEntity> {
+public class DisCountSelectListActivity extends BaseTourCooRefreshLoadActivity<DiscountInfo> {
 
-    private List<DiscountEntity> mDiscountEntityList = new ArrayList<>();
+    private List<DiscountInfo> mDiscountInfoList = new ArrayList<>();
 
     private DiscountSelectAdapter mDiscountAdapter;
 
@@ -36,15 +36,15 @@ public class DisCountSelectListActivity extends BaseTourCooRefreshLoadActivity<D
     public void setTitleBar(TitleBarView titleBar) {
         super.setTitleBar(titleBar);
         titleBar.setTitleMainText("卡券选择");
-        titleBar.setRightText("结果");
+        titleBar.setRightText("确认");
         titleBar.setOnRightTextClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<DiscountEntity> discountEntityList = mDiscountAdapter.getData();
-                int count = discountEntityList.size();
+                List<DiscountInfo> discountInfoList = mDiscountAdapter.getData();
+                int count = discountInfoList.size();
                 int select = 0;
-                for (DiscountEntity discountEntity : discountEntityList) {
-                    if (discountEntity.isSelect()) {
+                for (DiscountInfo discountInfo : discountInfoList) {
+                    if (discountInfo.isSelect()) {
                         select++;
                     }
                 }
@@ -88,10 +88,10 @@ public class DisCountSelectListActivity extends BaseTourCooRefreshLoadActivity<D
 
     private void requestData() {
         int size = 10;
-        DiscountEntity discountEntity;
+        DiscountInfo discountInfo;
         for (int i = 0; i < size; i++) {
-            discountEntity = new DiscountEntity();
-            discountEntity.setClickEnable(true);
+            discountInfo = new DiscountInfo();
+            discountInfo.setClickEnable(true);
         /*    if ((i & 1) == 1) {
                 discountEntity.setSelect(true);
                 discountEntity.setClickEnable(true);
@@ -99,19 +99,19 @@ public class DisCountSelectListActivity extends BaseTourCooRefreshLoadActivity<D
                 discountEntity.setClickEnable(false);
                 discountEntity.setSelect(false);
             }*/
-            mDiscountEntityList.add(discountEntity);
-            discountEntity.setRuleId(i);
+            mDiscountInfoList.add(discountInfo);
+            discountInfo.setRuleId(i);
         }
-        DiscountEntity discountEntity1 = new DiscountEntity();
-        discountEntity1.setRuleId(1);
-        discountEntity1.setClickEnable(true);
-        DiscountEntity discountEntity2 = new DiscountEntity();
-        discountEntity2.setRuleId(1);
-        discountEntity2.setClickEnable(true);
-        discountEntity2.setSelect(true);
-        mDiscountEntityList.add(discountEntity1);
-        mDiscountEntityList.add(discountEntity2);
-        mDiscountAdapter.setNewData(mDiscountEntityList);
+        DiscountInfo discountInfo1 = new DiscountInfo();
+        discountInfo1.setRuleId(1);
+        discountInfo1.setClickEnable(true);
+        DiscountInfo discountInfo2 = new DiscountInfo();
+        discountInfo2.setRuleId(1);
+        discountInfo2.setClickEnable(true);
+        discountInfo2.setSelect(true);
+        mDiscountInfoList.add(discountInfo1);
+        mDiscountInfoList.add(discountInfo2);
+        mDiscountAdapter.setNewData(mDiscountInfoList);
     }
 
 
@@ -119,8 +119,8 @@ public class DisCountSelectListActivity extends BaseTourCooRefreshLoadActivity<D
         mDiscountAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                List<DiscountEntity> discountEntityList = mDiscountAdapter.getData();
-                DiscountEntity currentDiscount = discountEntityList.get(position);
+                List<DiscountInfo> discountInfoList = mDiscountAdapter.getData();
+                DiscountInfo currentDiscount = discountInfoList.get(position);
                 int selectRuleId = -1;
                 if (currentDiscount.isSelect()) {
                     currentDiscount.setSelect(false);
@@ -128,13 +128,13 @@ public class DisCountSelectListActivity extends BaseTourCooRefreshLoadActivity<D
                     selectRuleId = currentDiscount.getRuleId();
                     currentDiscount.setSelect(true);
                 }
-                boolean noSelect = !checkSelect(discountEntityList);
+                boolean noSelect = !checkSelect(discountInfoList);
                 //如果没有任何优惠券被选中 则默认都可以勾选
                 if (noSelect) {
-                    setAllDiscountClickable(discountEntityList);
+                    setAllDiscountClickable(discountInfoList);
                 } else {
                     //说明此时已经有优惠券被选中,则其他优惠券将根据id判断是否可以点击
-                    setDiscountClickableByRuleId(discountEntityList, selectRuleId);
+                    setDiscountClickableByRuleId(discountInfoList, selectRuleId);
                 }
                 mDiscountAdapter.notifyDataSetChanged();
             }
@@ -148,9 +148,9 @@ public class DisCountSelectListActivity extends BaseTourCooRefreshLoadActivity<D
      * @param entityList
      * @return
      */
-    private boolean checkSelect(List<DiscountEntity> entityList) {
-        for (DiscountEntity discountEntity : entityList) {
-            if (discountEntity.isSelect()) {
+    private boolean checkSelect(List<DiscountInfo> entityList) {
+        for (DiscountInfo discountInfo : entityList) {
+            if (discountInfo.isSelect()) {
                 return true;
             }
         }
@@ -162,9 +162,9 @@ public class DisCountSelectListActivity extends BaseTourCooRefreshLoadActivity<D
      *
      * @param entityList
      */
-    private void setAllDiscountClickable(List<DiscountEntity> entityList) {
-        for (DiscountEntity discountEntity : entityList) {
-            discountEntity.setClickEnable(true);
+    private void setAllDiscountClickable(List<DiscountInfo> entityList) {
+        for (DiscountInfo discountInfo : entityList) {
+            discountInfo.setClickEnable(true);
         }
     }
 
@@ -174,16 +174,16 @@ public class DisCountSelectListActivity extends BaseTourCooRefreshLoadActivity<D
      * @param entityList
      * @param ruleId
      */
-    private void setDiscountClickableByRuleId(List<DiscountEntity> entityList, int ruleId) {
-        for (DiscountEntity discountEntity : entityList) {
-            if (discountEntity.getRuleId() == ruleId) {
-                discountEntity.setClickEnable(true);
+    private void setDiscountClickableByRuleId(List<DiscountInfo> entityList, int ruleId) {
+        for (DiscountInfo discountInfo : entityList) {
+            if (discountInfo.getRuleId() == ruleId) {
+                discountInfo.setClickEnable(true);
             } else {
-                discountEntity.setClickEnable(false);
+                discountInfo.setClickEnable(false);
             }
             //只要是选中状态 肯定可以点击
-            if (discountEntity.isSelect()) {
-                discountEntity.setClickEnable(true);
+            if (discountInfo.isSelect()) {
+                discountInfo.setClickEnable(true);
             }
         }
     }

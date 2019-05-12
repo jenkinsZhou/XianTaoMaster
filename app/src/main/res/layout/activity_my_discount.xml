@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <!--全部订单-->
+    <!--我的优惠券-->
     <include layout="@layout/layout_title_bar" />
 
     <com.google.android.material.tabs.TabLayout
