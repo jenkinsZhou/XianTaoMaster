@@ -289,7 +289,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                getGoodsDetail(mGoodsId);
             }
         };
     }

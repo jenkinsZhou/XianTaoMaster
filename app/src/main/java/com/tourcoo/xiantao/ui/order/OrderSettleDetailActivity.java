@@ -456,12 +456,11 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         //配送费
         tvExpressPrice.setText("￥" + settleEntity.getExpress_price());
         tvTotalPrice.setText("￥" + settleEntity.getOrder_total_price());
-        if(TextUtils.isEmpty(settleEntity.getRemark())){
+        if (TextUtils.isEmpty(settleEntity.getRemark())) {
             etRemark.setText("无备注");
-        }else {
+        } else {
             etRemark.setText(settleEntity.getRemark());
         }
-
         etRemark.setCursorVisible(false);
         etRemark.setFocusable(false);
         etRemark.setFocusableInTouchMode(false);

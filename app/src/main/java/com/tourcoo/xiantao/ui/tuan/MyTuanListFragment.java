@@ -182,7 +182,7 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
     @Override
     public void loadData() {
         super.loadData();
-        mStatusLayoutManager.showLoadingLayout();
+//        mStatusLayoutManager.showLoadingLayout();
     }
 
     /**
@@ -218,6 +218,7 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
                                 if (entity.data != null) {
                                     TuanEntity tuanEntity = parseTuanEntity(entity.data);
                                     if (tuanEntity != null) {
+                                        mStatusLayoutManager.showSuccessLayout();
                                         totalPage = tuanEntity.getLast_page();
                                         if (!isLoadMore) {
                                             mAdapter.setNewData(tuanEntity.getData());

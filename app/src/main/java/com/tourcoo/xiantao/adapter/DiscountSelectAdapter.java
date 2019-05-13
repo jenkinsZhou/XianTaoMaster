@@ -68,7 +68,6 @@ public class DiscountSelectAdapter extends BaseQuickAdapter<DiscountInfo, BaseVi
             case STATUS_NOT_USE:
                 setTextColor(tvDIscountName, R.color.greenCommon);
                 setTextColor(tvCanAdd, R.color.greenCommon);
-                setTextColor(tvCanAdd, R.color.greenCommon);
                 setTextColor(tvDeadLine, R.color.colorTextGray);
                 setTextColor(tvPrice, R.color.greenCommon);
                 setTextColor(yuan, R.color.greenCommon);
@@ -77,7 +76,6 @@ public class DiscountSelectAdapter extends BaseQuickAdapter<DiscountInfo, BaseVi
             case STATUS_HAS_USE:
                 setTextColor(tvDeadLine, R.color.gray_CCCCCC);
                 setTextColor(tvDIscountName, R.color.gray_AAAAAA);
-                setTextColor(tvCanAdd, R.color.gray_AAAAAA);
                 setTextColor(tvCanAdd, R.color.gray_AAAAAA);
                 setTextColor(tvPrice, R.color.gray_AAAAAA);
                 setTextColor(yuan, R.color.gray_CCCCCC);
@@ -94,9 +92,24 @@ public class DiscountSelectAdapter extends BaseQuickAdapter<DiscountInfo, BaseVi
             default:
                 break;
         }
-
+        if(discountInfo.isClickEnable()){
+            setTextColor(tvDIscountName, R.color.greenCommon);
+            setTextColor(tvCanAdd, R.color.greenCommon);
+            setTextColor(tvDeadLine, R.color.colorTextGray);
+            setTextColor(tvPrice, R.color.greenCommon);
+            setTextColor(yuan, R.color.greenCommon);
+            rlPrice.setBackground(TourCooUtil.getDrawable(R.mipmap.bg_discount));
+        }else {
+            setTextColor(tvDeadLine, R.color.gray_CCCCCC);
+            setTextColor(tvDIscountName, R.color.gray_AAAAAA);
+            setTextColor(tvCanAdd, R.color.gray_AAAAAA);
+            setTextColor(tvPrice, R.color.gray_AAAAAA);
+            setTextColor(yuan, R.color.gray_CCCCCC);
+            rlPrice.setBackground(TourCooUtil.getDrawable(R.mipmap.bg_discount));
+        }
 
     }
+
 
 
     private int parseStatus(DiscountInfo discountInfo) {
@@ -132,4 +145,8 @@ public class DiscountSelectAdapter extends BaseQuickAdapter<DiscountInfo, BaseVi
     private void setTextColor(TextView textView, int colorId) {
         textView.setTextColor(TourCooUtil.getColor(colorId));
     }
+
+
+
+
 }

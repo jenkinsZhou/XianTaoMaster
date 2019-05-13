@@ -30,7 +30,7 @@ public class PersonalCenterInfo extends LitePalSupport {
     /**
      * 银币
      */
-    private int ag;
+    private double ag;
     /**
      * 金币
      */
@@ -47,11 +47,11 @@ public class PersonalCenterInfo extends LitePalSupport {
     private int noreceipt;
     private int returnnum;
 
-    public int getAg() {
+    public double getAg() {
         return ag;
     }
 
-    public void setAg(int ag) {
+    public void setAg(double ag) {
         this.ag = ag;
     }
 

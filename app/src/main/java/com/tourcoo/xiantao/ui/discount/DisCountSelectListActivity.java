@@ -346,7 +346,9 @@ public class DisCountSelectListActivity extends BaseTourCooTitleMultiViewActivit
         if (currentDiscount.getCost() <= 0) {
             return -1;
         }
-        int calculateNum = (int) mPirce / currentDiscount.getCost();
+         TourCooLogUtil.i(TAG,TAG+"当前的订单总价:"+mPirce );
+        TourCooLogUtil.i(TAG,TAG+"当前的优惠券面值:"+currentDiscount.getCost() );
+        int calculateNum = (int) (mPirce / currentDiscount.getCost());
         TourCooLogUtil.i(TAG, TAG + "计算的数量:" + calculateNum);
         if (num > calculateNum) {
             return calculateNum;
