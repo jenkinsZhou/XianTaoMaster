@@ -929,7 +929,7 @@ public class Goods implements Serializable {
             private String deduct_stock_type_text;
             private String goods_status_text;
             private String is_delete_text;
-            private boolean tuan_rule;
+            private String tuan_rule;
             private boolean tuan;
             private int coin;
             private List<?> tuan_list;
@@ -999,11 +999,11 @@ public class Goods implements Serializable {
                 this.is_delete_text = is_delete_text;
             }
 
-            public boolean isTuan_rule() {
+            public String isTuan_rule() {
                 return tuan_rule;
             }
 
-            public void setTuan_rule(boolean tuan_rule) {
+            public void setTuan_rule(String tuan_rule) {
                 this.tuan_rule = tuan_rule;
             }
 

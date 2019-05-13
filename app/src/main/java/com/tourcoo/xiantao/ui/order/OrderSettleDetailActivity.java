@@ -346,7 +346,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         goodsOrderRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mSettleEntity = (SettleEntity) getIntent().getSerializableExtra(EXTRA_SETTLE);
         EventBus.getDefault().register(this);
-        initCoinSwitch();
+        loadCoinSwitchAndPrice();
         initTimePicker();
         listenCoinSwitch();
         requestPermission();
@@ -465,6 +465,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         etRemark.setFocusable(false);
         etRemark.setFocusableInTouchMode(false);
         tvDeliveryTime.setText(settleEntity.getTime());
+        loadCoinSwitchAndPrice();
         double shouldPrice;
         boolean userCoin = settleEntity.getCoin() > 0;
         if (userCoin) {
@@ -565,7 +566,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     }
 
 
-    private void initCoinSwitch() {
+    private void loadCoinSwitchAndPrice() {
         switchUseCoin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -1314,8 +1315,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
 
 
     private void showSelectDiscoutAndPayPrice(SettleEntity settleEntity) {
-        recordPrice = settleEntity.getOrder_total_price();
         if (settleEntity.getCoupon_worth() > 0) {
+            rlDiscount.setVisibility(View.VISIBLE);
             ivDiscount.setVisibility(View.GONE);
             tvCanUseCount.setVisibility(View.GONE);
             tvSelectDiscount.setVisibility(View.VISIBLE);
@@ -1336,12 +1337,12 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             minusMoney = 0;
             ivDiscount.setVisibility(View.VISIBLE);
             tvCanUseCount.setVisibility(View.VISIBLE);
-            llDiscountMinus.setVisibility(View.GONE);
+            rlDiscount.setVisibility(View.GONE);
             tvSelectDiscount.setTextColor(TourCooUtil.getColor(R.color.black));
             tvSelectDiscount.setVisibility(View.GONE);
             payMoney = recordPrice;
-            TourCooLogUtil.i(TAG, TAG + "显示的金额:" + payMoney);
-            String value = "￥" + formateMoney(payMoney);
+            TourCooLogUtil.i(TAG, TAG + "显示的金额:" + recordPrice);
+            String value = "￥" + formateMoney(recordPrice);
             tvPayPrice.setText(value);
         }
     }
@@ -1359,4 +1360,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     private String formateMoney(double money) {
         return FormatUtil.formatDoubleSize(money, 2);
     }
+
+
+
+
 }
