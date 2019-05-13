@@ -105,13 +105,16 @@ public class ApiRepository extends BaseRepository {
      * @param
      * @return
      */
-    public Observable<BaseEntity> register(String mobile, String password, String captcha) {
+    public Observable<BaseEntity> register(String mobile, String password, String captcha, String inviteCode) {
         Map<String, Object> params = new HashMap<>(4);
         params.put("mobile", mobile);
         params.put("username", mobile);
         params.put("password", password);
         params.put("event", "register");
         params.put("captcha", captcha);
+        if (!TextUtils.isEmpty(inviteCode)) {
+            params.put("invite", inviteCode);
+        }
         TourCooLogUtil.i(TAG, "验证码:" + captcha);
         return TourCoolTransformer.switchSchedulersIo(getApiService().register(params).retryWhen(new RetryWhen()));
     }
@@ -895,6 +898,7 @@ public class ApiRepository extends BaseRepository {
     public Observable<BaseEntity> requestPinSettle(int pinId) {
         Map<String, Object> params = new HashMap<>(1);
         params.put("tuanuser_id", pinId);
+        TourCooLogUtil.i(TAG, TAG + ":" + "团userId=" + pinId);
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestPinSettle(params).retryWhen(new RetryWhen()));
     }
 
@@ -1058,6 +1062,7 @@ public class ApiRepository extends BaseRepository {
 
     /**
      * 我的邀请码
+     *
      * @return
      */
     public Observable<BaseEntity<String>> requestInvitecode() {

@@ -56,7 +56,7 @@ public class DiscountNotUseListFragment extends BaseRefreshFragment<DiscountInfo
     @Override
     public void loadData() {
         super.loadData();
-        mStatusManager.showSuccessLayout();
+        mStatusManager.showLoadingLayout();
     }
 
     @Override

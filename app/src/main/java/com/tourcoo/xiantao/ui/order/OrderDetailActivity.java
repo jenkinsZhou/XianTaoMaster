@@ -174,6 +174,8 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private TextView tvReturnImage;
     private TextView tvDeliveryTime;
     private LinearLayout llDeliveryTime;
+    private LinearLayout llUseDiscount;
+    private TextView tvDiscountMoney;
 
     @Override
     public int getContentLayout() {
@@ -191,6 +193,8 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     public void initView(Bundle savedInstanceState) {
         api = WXAPIFactory.createWXAPI(mContext, null);
         tvCoin = findViewById(R.id.tvCoin);
+        tvDiscountMoney = findViewById(R.id.tvDiscountMoney);
+        llUseDiscount = findViewById(R.id.llUseDiscount);
         llDeliveryTime = findViewById(R.id.llDeliveryTime);
         tvDeliveryTime = findViewById(R.id.tvDeliveryTime);
         tvReturnDetail = findViewById(R.id.tvReturnDetail);
@@ -424,6 +428,20 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         OrderDetailEntity.OrderBean orderBean = orderDetailEntity.getOrder();
         showAddressInfo(orderBean.getAddress());
         showCoin(orderDetailEntity);
+        double worth;
+        try {
+            worth = Double.parseDouble(orderBean.getCoupon_worth());
+        } catch (NumberFormatException e) {
+            worth = 0;
+            TourCooLogUtil.e(TAG, TAG + ":" + "转换异常：" + e.toString());
+        }
+        if (worth <= 0) {
+            llUseDiscount.setVisibility(View.GONE);
+        } else {
+            llUseDiscount.setVisibility(View.VISIBLE);
+            String value = "-￥" + TourCooUtil.minusDouble(worth, 0);
+            tvDiscountMoney.setText(value);
+        }
         //显示运费
         tvExpressPrice.setText("￥ " + orderBean.getExpress_price());
         //商品合计
@@ -435,10 +453,10 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         showRemark(orderBean);
         //商品数量
         List<OrderDetailEntity.OrderBean.GoodsBean> goodsList = orderBean.getGoods();
-        if(goodsList != null){
+        if (goodsList != null) {
             int size = 0;
             for (OrderDetailEntity.OrderBean.GoodsBean goodsBean : goodsList) {
-                size+=goodsBean.getTotal_num();
+                size += goodsBean.getTotal_num();
             }
             String amount = "共" + size + "件商品";
             tvGoodsTypeCount.setText(amount);

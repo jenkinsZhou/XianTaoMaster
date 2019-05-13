@@ -399,6 +399,8 @@ public class ProductSkuDialog extends Dialog {
                     updateQuantityOperator(1);
                 }
                 break;
+            default:
+                break;
         }
 
     }

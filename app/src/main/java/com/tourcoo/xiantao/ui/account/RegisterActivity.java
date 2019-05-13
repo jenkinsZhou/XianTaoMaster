@@ -349,6 +349,9 @@ public class RegisterActivity extends BaseTourCooTitleActivity implements View.O
         return etVCode.getText().toString();
     }
 
+    private String getInviteCode() {
+        return etInviteCode.getText().toString();
+    }
 
     /**
      * 验证码发送接口并倒计时
@@ -427,7 +430,7 @@ public class RegisterActivity extends BaseTourCooTitleActivity implements View.O
      * 注册请求
      */
     private void register() {
-        ApiRepository.getInstance().register(getPhoneNumber(), getPassword(), getVCode()).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+        ApiRepository.getInstance().register(getPhoneNumber(), getPassword(), getVCode(), getInviteCode()).compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseLoadingObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {

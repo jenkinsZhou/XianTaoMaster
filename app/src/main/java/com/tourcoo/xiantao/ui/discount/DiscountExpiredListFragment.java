@@ -54,7 +54,7 @@ public class DiscountExpiredListFragment extends BaseRefreshFragment<DiscountInf
     @Override
     public void loadData() {
         super.loadData();
-        mStatusManager.showSuccessLayout();
+        mStatusManager.showLoadingLayout();
     }
 
     @Override

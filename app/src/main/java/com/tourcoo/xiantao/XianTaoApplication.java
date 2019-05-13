@@ -48,10 +48,10 @@ public class XianTaoApplication extends LitePalApplication {
     public void onCreate() {
         super.onCreate();
         mContext = this;
+        initCrashHandle();
         initLog();
         //初始化地址信息
         AddressHelper.getInstance().initAddressData();
-        initCrashHandle();
         ToastUtil.init(mContext);
         //最简单UI配置模式-必须进行初始化
         UiConfigManager.init(this);

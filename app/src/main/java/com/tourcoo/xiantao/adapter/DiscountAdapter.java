@@ -75,7 +75,7 @@ public class DiscountAdapter extends BaseQuickAdapter<DiscountInfo, BaseViewHold
                 setTextColor(tvCanAdd, R.color.gray_AAAAAA);
                 setTextColor(tvPrice, R.color.gray_AAAAAA);
                 setTextColor(yuan, R.color.gray_CCCCCC);
-                rlPrice.setBackground(TourCooUtil.getDrawable(R.mipmap.bg_discount_time_out));
+                rlPrice.setBackground(TourCooUtil.getDrawable(R.mipmap.bg_discount));
                 break;
             case STATUS_TIME_OUT:
                 setTextColor(tvDeadLine, R.color.gray_CCCCCC);

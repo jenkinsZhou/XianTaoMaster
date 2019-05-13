@@ -31,6 +31,35 @@ public class SettleEntity implements Serializable {
      * has_error : false
      * error_msg : null
      */
+    private int id;
+
+    private double coupon_worth;
+
+    private String time;
+
+    public double getCoupon_worth() {
+        return coupon_worth;
+    }
+
+    public void setCoupon_worth(double coupon_worth) {
+        this.coupon_worth = coupon_worth;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     private String order_total_num;
     private double order_total_price;

@@ -22,6 +22,7 @@ import com.tourcoo.xiantao.XianTaoApplication;
 import com.tourcoo.xiantao.core.common.RequestConfig;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Random;
@@ -44,6 +45,7 @@ public class TourCooUtil {
     private static final String STRING_EMPTY = "";
     private static final String URL_TAG = "http";
     private static final String URL_TAG_HTTPS = "https";
+    private static final int LENGTH_PHONE = 11;
 
     /**
      * 获取应用名称
@@ -359,7 +361,8 @@ public class TourCooUtil {
         if (TextUtils.isEmpty(mobileNums)) {
             return false;
         } else {
-            return mobileNums.matches(telRegex);
+            return mobileNums.length() == LENGTH_PHONE;
+//            return mobileNums.matches(telRegex);
         }
     }
 
@@ -411,13 +414,42 @@ public class TourCooUtil {
     }
 
 
-
     /**
      * double类型如果小数点后为零显示整数否则保留 返回String
+     *
      * @param num
      * @return
      */
-    public static String doubleTrans(double num){
+    public static String doubleTrans(double num) {
         return String.valueOf(new DecimalFormat("#0.00").format(num));
     }
+
+
+    /**
+     * 加法运算
+     *
+     * @param m1
+     * @param m2
+     * @return
+     */
+    public static double addDouble(double m1, double m2) {
+        BigDecimal p1 = new BigDecimal(Double.toString(m1));
+        BigDecimal p2 = new BigDecimal(Double.toString(m2));
+        return p1.add(p2).doubleValue();
+    }
+
+    /**
+     * 减法运算
+     *
+     * @param m1
+     * @param m2
+     * @return
+     */
+    public static double minusDouble(double m1, double m2) {
+        BigDecimal p1 = new BigDecimal(Double.toString(m1));
+        BigDecimal p2 = new BigDecimal(Double.toString(m2));
+        return p1.subtract(p2).doubleValue();
+    }
+
+
 }

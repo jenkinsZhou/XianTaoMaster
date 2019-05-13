@@ -71,9 +71,17 @@ public class OrderDetailEntity {
 
         private int id;
         private String time;
-
+        private String coupon_worth;
         public String getTime() {
             return time;
+        }
+
+        public String getCoupon_worth() {
+            return coupon_worth;
+        }
+
+        public void setCoupon_worth(String coupon_worth) {
+            this.coupon_worth = coupon_worth;
         }
 
         public void setTime(String time) {
@@ -1221,7 +1229,6 @@ public class OrderDetailEntity {
                     public void setTuan_rule(TuanRuleBeanX tuan_rule) {
                         this.tuan_rule = tuan_rule;
                     }
-
 
 
                     public static class TuanRuleBeanX {
