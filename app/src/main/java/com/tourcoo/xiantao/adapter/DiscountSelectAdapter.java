@@ -57,7 +57,7 @@ public class DiscountSelectAdapter extends BaseQuickAdapter<DiscountInfo, BaseVi
             helper.setText(R.id.tvCanAdd, "[不可叠加]");
         }
         helper.setText(R.id.tvDiscount, cost);
-        helper.setText(R.id.tvDeadLine, "有效期-" + parseDate(discountInfo.getDeadline()));
+        helper.setText(R.id.tvDeadLine, "有效期至" + parseDate(discountInfo.getDeadline()));
         ImageView imageView = helper.getView(R.id.ivSelect);
         if (discountInfo.isSelect()) {
             imageView.setImageResource(R.mipmap.ic_checked);

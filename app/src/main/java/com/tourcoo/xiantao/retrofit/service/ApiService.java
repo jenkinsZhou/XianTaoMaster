@@ -661,4 +661,12 @@ public interface ApiService {
      */
     @POST("coupon/available_list")
     Observable<BaseEntity> requestAvailableList(@QueryMap Map<String, Object> map);
+
+
+    /**
+     * 我的邀请码
+     * @return
+     */
+    @POST("user/invitecode")
+    Observable<BaseEntity<String>> requestInvitecode();
 }

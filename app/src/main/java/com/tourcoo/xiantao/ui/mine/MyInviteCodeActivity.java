@@ -9,10 +9,18 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.tourcoo.xiantao.R;
+import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
+import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
+import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.advertisement.AdverDetailEntity;
+import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
+import com.trello.rxlifecycle3.android.ActivityEvent;
+
+import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 
 /**
  * @author :JenkinsZhou
@@ -23,6 +31,7 @@ import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
  */
 public class MyInviteCodeActivity extends BaseTourCooTitleActivity {
     private TextView tvInviteCode;
+
     @Override
     public int getContentLayout() {
         return R.layout.activity_my_invite_code;
@@ -31,17 +40,17 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity {
     @Override
     public void initView(Bundle savedInstanceState) {
         tvInviteCode = findViewById(R.id.tvInviteCode);
-        if(AccountInfoHelper.getInstance().getUserInfo() != null){
+        if (AccountInfoHelper.getInstance().getUserInfo() != null) {
             tvInviteCode.setText(AccountInfoHelper.getInstance().getUserInfo().getMobile());
         }
         tvInviteCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String phone = AccountInfoHelper.getInstance().getUserInfo().getMobile();
-                if(TextUtils.isEmpty(phone)){
+                String code = tvInviteCode.getText().toString();
+                if (TextUtils.isEmpty(code)) {
                     return;
                 }
-                copyToClipboard(phone);
+                copyToClipboard(code);
                 ToastUtil.showSuccess("已复制到粘贴板");
             }
         });
@@ -53,8 +62,11 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity {
         titleBar.setTitleMainText("邀请码");
     }
 
-
-
+    @Override
+    public void loadData() {
+        super.loadData();
+        requestInvitecode();
+    }
 
     /**
      * 复制内容到剪切板
@@ -74,5 +86,28 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity {
         } catch (Exception e) {
             return false;
         }
+    }
+
+
+    private void requestInvitecode() {
+        ApiRepository.getInstance().requestInvitecode().compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseLoadingObserver<BaseEntity<String>>() {
+                    @Override
+                    public void onRequestNext(BaseEntity<String> entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
+                                tvInviteCode.setText(entity.data);
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onRequestError(Throwable e) {
+                        super.onRequestError(e);
+                        tvInviteCode.setText("");
+                    }
+                });
     }
 }

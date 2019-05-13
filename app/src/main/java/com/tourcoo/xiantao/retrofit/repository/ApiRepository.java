@@ -824,7 +824,7 @@ public class ApiRepository extends BaseRepository {
      *
      * @return
      */
-    public Observable<BaseEntity> requestCarPay(int payType, boolean useCoin, String remark, String time) {
+    public Observable<BaseEntity> requestCarPay(int payType, boolean useCoin, String remark, String time, String discountIds) {
         Map<String, Object> params = new HashMap<>(1);
         String payTypeString;
         switch (payType) {
@@ -852,6 +852,9 @@ public class ApiRepository extends BaseRepository {
             params.put("remark", remark);
         } else {
             params.put("remark", "");
+        }
+        if (!TextUtils.isEmpty(discountIds)) {
+            params.put("coupon_id", discountIds);
         }
         TourCooLogUtil.i(TAG, TAG + "提交的参数:" + params);
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestCarPay(params).retryWhen(new RetryWhen()));
@@ -902,7 +905,7 @@ public class ApiRepository extends BaseRepository {
      * @param pinId :参团的id
      * @return
      */
-    public Observable<BaseEntity> requestPinPay(int pinId, int payType, String remark, String time) {
+    public Observable<BaseEntity> requestPinPay(int pinId, int payType, String remark, String time, String discountIds) {
         Map<String, Object> params = new HashMap<>(1);
         params.put("tuanuser_id", pinId);
         String payTypeString;
@@ -921,6 +924,9 @@ public class ApiRepository extends BaseRepository {
                 break;
         }
         params.put("pay_type", payTypeString);
+        if (!TextUtils.isEmpty(discountIds)) {
+            params.put("coupon_id", discountIds);
+        }
         if (!TextUtils.isEmpty(remark)) {
             params.put("remark", remark);
         } else {
@@ -1047,6 +1053,15 @@ public class ApiRepository extends BaseRepository {
         Map<String, Object> params = new HashMap<>(1);
         params.put("price", price);
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestAvailableList(params).retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * 我的邀请码
+     * @return
+     */
+    public Observable<BaseEntity<String>> requestInvitecode() {
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestInvitecode().retryWhen(new RetryWhen()));
     }
 
 }
