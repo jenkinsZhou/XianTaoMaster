@@ -697,7 +697,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             return;
         }
         boolean useCoin = switchUseCoin.isChecked();
-        ApiRepository.getInstance().requestCarPay(payType, useCoin, getRemark(), getTextValue(tvDeliveryTime),discountIds).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+        ApiRepository.getInstance().requestCarPay(payType, useCoin, getRemark(), getTextValue(tvDeliveryTime), discountIds).compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseLoadingObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {
@@ -879,7 +879,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                     showSelectDiscoutAndPayPrice(discountInfoList);
                     List<String> ids = new ArrayList<>();
                     for (DiscountInfo discountInfo : discountInfoList) {
-                        ids.add(discountInfo.getId()+"");
+                        ids.add(discountInfo.getId() + "");
                     }
                     discountIds = StringUtils.join(ids, ",");
                 }
@@ -994,7 +994,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             ToastUtil.show("未获取到订单信息");
             return;
         }
-        ApiRepository.getInstance().requestPinPay(pinId, payType, getRemark(), getTextValue(tvDeliveryTime),discountIds).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+        ApiRepository.getInstance().requestPinPay(pinId, payType, getRemark(), getTextValue(tvDeliveryTime), discountIds).compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseLoadingObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {
@@ -1158,10 +1158,10 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     private void showDiscountByCondition(int num) {
         if (num < 1) {
             setVisible(rlDiscount, false);
-            setVisible(llDiscountMinus,false);
+            setVisible(llDiscountMinus, false);
         } else {
             setVisible(rlDiscount, true);
-            setVisible(llDiscountMinus,true);
+            setVisible(llDiscountMinus, true);
             String value = num + "张可用";
             tvCanUseCount.setText(value);
         }
@@ -1181,7 +1181,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     private String getSelectDiscout(List<DiscountInfo> discountInfoList) {
         String discoutInfo = "";
         for (DiscountInfo discountInfo : discountInfoList) {
-            discoutInfo += "￥" + discountInfo.getWorth() + " ";
+            discoutInfo = "￥" + discountInfo.getWorth() + " x" + discountInfoList.size();
         }
         return discoutInfo;
     }
@@ -1194,13 +1194,13 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             tvSelectDiscount.setVisibility(View.VISIBLE);
             tvSelectDiscount.setTextColor(TourCooUtil.getColor(R.color.whiteCommon));
             tvSelectDiscount.setText(getSelectDiscout(discountInfoList));
-            recordPrice =payMoney;
+            recordPrice = payMoney;
             double minus = comuterDiscountPrice(discountInfoList);
             minusMoney = minus;
             llDiscountMinus.setVisibility(View.VISIBLE);
             tvDiscountMinus.setText("-￥" + minus);
             payMoney = recordPrice - minus;
-            TourCooLogUtil.i(TAG,TAG+"显示的金额:"+ (recordPrice - minus));
+            TourCooLogUtil.i(TAG, TAG + "显示的金额:" + (recordPrice - minus));
             tvPayPrice.setText("￥" + (recordPrice - minus));
         } else {
             minusMoney = 0;
@@ -1210,7 +1210,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             tvSelectDiscount.setTextColor(TourCooUtil.getColor(R.color.black));
             tvSelectDiscount.setVisibility(View.GONE);
             payMoney = recordPrice;
-             TourCooLogUtil.i(TAG,TAG+"显示的金额:"+ recordPrice);
+            TourCooLogUtil.i(TAG, TAG + "显示的金额:" + recordPrice);
             tvPayPrice.setText("￥" + (recordPrice));
         }
     }

@@ -466,7 +466,7 @@
                                     android:layout_marginLeft="@dimen/dp_5"
                                     android:layout_gravity="center_vertical"
                                     android:layout_height="wrap_content"
-                                    android:text="2个可用" />
+                                    android:text="" />
                                 <TextView
                                     android:id="@+id/tvSelectDiscount"
                                     android:layout_gravity="center_vertical"
