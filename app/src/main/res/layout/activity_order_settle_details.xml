@@ -559,7 +559,7 @@
                             android:layout_height="@dimen/dp_30"
                             android:layout_weight="1"
                             android:gravity="center_vertical"
-                            android:text="应付金额："
+                            android:text="订单金额："
                             android:textColor="#ff333333"
                             android:textSize="@dimen/sp_13" />
 

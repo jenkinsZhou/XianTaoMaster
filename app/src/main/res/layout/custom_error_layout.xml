@@ -41,7 +41,7 @@
                 android:layout_marginTop="@dimen/dp_20"
                 android:paddingLeft="@dimen/dp_20"
                 android:paddingRight="@dimen/dp_20"
-                android:text="刷新网络" />
+                android:text="刷新数据" />
         </LinearLayout>
 
     </RelativeLayout>
