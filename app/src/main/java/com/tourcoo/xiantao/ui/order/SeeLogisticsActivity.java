@@ -138,6 +138,12 @@ public class SeeLogisticsActivity extends BaseTourCooTitleMultiViewActivity {
                             mStatusLayoutManager.showEmptyLayout();
                         }
                     }
+
+                    @Override
+                    public void onRequestError(Throwable e) {
+                        super.onRequestError(e);
+                        mStatusLayoutManager.showErrorLayout();
+                    }
                 });
     }
 

@@ -96,6 +96,12 @@ public class DiscountNotUseListFragment extends BaseRefreshFragment<DiscountInfo
                             }
                         }
                     }
+
+                    @Override
+                    public void onRequestError(Throwable e) {
+                        super.onRequestError(e);
+                        mStatusManager.showErrorLayout();
+                    }
                 });
     }
 
