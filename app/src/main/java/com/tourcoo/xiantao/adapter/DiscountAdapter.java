@@ -28,7 +28,7 @@ public class DiscountAdapter extends BaseQuickAdapter<DiscountInfo, BaseViewHold
     private static final int STATUS_NOT_USE = 1;
     private static final int STATUS_HAS_USE = 2;
     private static final int STATUS_TIME_OUT = 3;
-    private final static String PATTERN = "yyyy.MM.dd";
+    private final static String PATTERN = "yyyy.MM.dd HH:mm:ss";
 
     public DiscountAdapter() {
         super(R.layout.item_discount);

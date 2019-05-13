@@ -3,6 +3,7 @@ package com.tourcoo.xiantao.ui.discount;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -10,6 +11,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.DiscountSelectAdapter;
+import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
@@ -19,6 +21,7 @@ import com.tourcoo.xiantao.entity.discount.DiscountInfo;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooRefreshLoadActivity;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
+import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
 import java.io.Serializable;
@@ -27,6 +30,8 @@ import java.util.List;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 
@@ -37,13 +42,12 @@ import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS
  * @date 2019年05月10日17:41
  * @Email: 971613168@qq.com
  */
-public class DisCountSelectListActivity extends BaseTourCooTitleActivity {
+public class DisCountSelectListActivity extends BaseTourCooTitleMultiViewActivity {
     public static final String EXTRA_PRICE = "EXTRA_PRICE";
 
     public static final String EXTRA_DISCOUNT_LIST = "EXTRA_DISCOUNT_LIST";
     private double mPirce;
     private SmartRefreshLayout smartLayout_rootFastLib;
-
 
 
     private List<DiscountInfo> mDiscountInfoList = new ArrayList<>();
@@ -54,6 +58,7 @@ public class DisCountSelectListActivity extends BaseTourCooTitleActivity {
      * 可使用的优惠券数量
      */
     private int canUseCount = 0;
+    private RelativeLayout rrRootView;
 
     @Override
     public int getContentLayout() {
@@ -84,6 +89,7 @@ public class DisCountSelectListActivity extends BaseTourCooTitleActivity {
         mPirce = getIntent().getDoubleExtra(EXTRA_PRICE, -1);
         smartLayout_rootFastLib = findViewById(R.id.smartLayout_rootFastLib);
         smartLayout_rootFastLib.setEnableRefresh(false);
+        rrRootView = findViewById(R.id.rrRootView);
         RecyclerView rvContent = findViewById(R.id.rv_content);
         rvContent.setLayoutManager(new LinearLayoutManager(mContext));
         mDiscountAdapter = new DiscountSelectAdapter();
@@ -94,10 +100,51 @@ public class DisCountSelectListActivity extends BaseTourCooTitleActivity {
     @Override
     public void loadData() {
         super.loadData();
-
         initClickListener();
+        mStatusLayoutManager.showLoadingLayout();
         requestAvailableList(mPirce);
 //        requestData();
+    }
+
+    @Override
+    protected IMultiStatusView getMultiStatusView() {
+        return new IMultiStatusView() {
+            @Override
+            public View getMultiStatusContentView() {
+                return rrRootView;
+            }
+
+            @Override
+            public void setMultiStatusView(StatusLayoutManager.Builder statusView) {
+            }
+
+            @Override
+            public View.OnClickListener getEmptyClickListener() {
+                return new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mStatusLayoutManager.showLoadingLayout();
+                        requestAvailableList(mPirce);
+                    }
+                };
+            }
+
+            @Override
+            public View.OnClickListener getErrorClickListener() {
+                return new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mStatusLayoutManager.showLoadingLayout();
+                        requestAvailableList(mPirce);
+                    }
+                };
+            }
+
+            @Override
+            public View.OnClickListener getCustomerClickListener() {
+                return null;
+            }
+        };
     }
 
 
@@ -247,17 +294,17 @@ public class DisCountSelectListActivity extends BaseTourCooTitleActivity {
                             if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
                                 List<DiscountInfo> discountInfoList = parsrDiscountList(entity.data);
                                 if (discountInfoList != null) {
-//                                    mStatusLayoutManager.showSuccessLayout();
+                                    mStatusLayoutManager.showSuccessLayout();
                                     TourCooLogUtil.i(TAG, "数据数量:" + discountInfoList.size());
                                     mDiscountAdapter.setNewData(discountInfoList);
                                 } else {
-//                                    mStatusLayoutManager.showSuccessLayout();
+                                    mStatusLayoutManager.showErrorLayout();
                                 }
                             } else {
-//                                mStatusLayoutManager.showErrorLayout();
+                                mStatusLayoutManager.showErrorLayout();
                             }
                         } else {
-//                            mStatusLayoutManager.showErrorLayout();
+                            mStatusLayoutManager.showErrorLayout();
                         }
                     }
 
@@ -265,7 +312,7 @@ public class DisCountSelectListActivity extends BaseTourCooTitleActivity {
                     public void onRequestError(Throwable e) {
                         super.onRequestError(e);
                         TourCooLogUtil.e(TAG, "请求异常:" + e.toString());
-//                        mStatusLayoutManager.showErrorLayout();
+                        mStatusLayoutManager.showErrorLayout();
                     }
                 });
     }
