@@ -87,7 +87,7 @@ public class TuanListAdapter extends RecyclerView.Adapter<TuanListAdapter.ViewHo
             }
         });
 
-        GlideManager.loadImg(data.getAvatar(), holder.ivGoodsIcon, R.mipmap.ic_orange);
+        GlideManager.loadImg(data.getAvatar(), holder.ivGoodsIcon, R.mipmap.img_default_avatar);
 
         long time = data.getDeadline() * 1000L;
         time = time - System.currentTimeMillis();

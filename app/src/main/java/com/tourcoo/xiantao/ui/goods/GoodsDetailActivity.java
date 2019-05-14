@@ -533,7 +533,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 ratingStarView.setEnabled(false);
                 ratingStarView.setRating(item.getStar());
                 String imageUrl = TourCooUtil.getUrl(item.getAvatar());
-                GlideManager.loadImg(imageUrl, circleImageView, TourCooUtil.getDrawable(R.mipmap.img_default_avatar));
+                GlideManager.loadImg(imageUrl, circleImageView, TourCooUtil.getDrawable(R.mipmap.img_zwt));
 
                 llCommentContainer.addView(view);
             }

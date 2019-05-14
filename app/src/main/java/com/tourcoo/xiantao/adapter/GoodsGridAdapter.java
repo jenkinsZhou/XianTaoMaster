@@ -29,7 +29,7 @@ public class GoodsGridAdapter extends BaseQuickAdapter<HomeGoodsBean, BaseViewHo
 
     @Override
     protected void convert(BaseViewHolder helper, HomeGoodsBean item) {
-        helper.setImageResource(R.id.rvGoodsImage, R.mipmap.ic_orange);
+        helper.setImageResource(R.id.rvGoodsImage, R.mipmap.img_zwt);
         helper.setText(R.id.tvGuessLikeGoodsName, TourCoolUtil.getStringNotNull(item.getGoods_name()));
 //        helper.setText(R.id.tvGuessLikeGoodsSpec, "/" + item.goodsSpec);
         RoundedImageView roundedImageView = helper.getView(R.id.rvGoodsImage);

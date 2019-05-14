@@ -22,7 +22,7 @@ public class CategoryGoodsAdapter extends BaseQuickAdapter<GoodsCategoryBean.Goo
     @Override
     protected void convert(BaseViewHolder helper, GoodsCategoryBean.GoodsSimpleInfo simpleInfo) {
         RoundedImageView ivGoodsIcon = helper.getView(R.id.ivGoodsIcon);
-        GlideManager.loadImg(simpleInfo.getImage(), ivGoodsIcon, R.mipmap.ic_orange);
+        GlideManager.loadImg(simpleInfo.getImage(), ivGoodsIcon, R.mipmap.img_zwt);
         helper.setText(R.id.tvGoodsName, simpleInfo.getGoods_name());
         helper.setText(R.id.tvGoodsPrice, "￥" + simpleInfo.getGoods_min_price());
     }

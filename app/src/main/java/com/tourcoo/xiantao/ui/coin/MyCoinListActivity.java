@@ -19,6 +19,7 @@ import com.tourcoo.xiantao.core.frame.UiConfigManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
+import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.core.widget.divider.TourCoolRecycleViewDivider;
@@ -47,7 +48,7 @@ public class MyCoinListActivity extends BaseTourCooRefreshLoadActivity<CoinDetai
     private CoinHistoryAdapter adapter;
     private TextView tvCurrentGold;
     private TextView tvAu;
-    private int currentAuAmount;
+    private double currentAuAmount;
     private CoinHistory mCoinHistory;
 
     @Override

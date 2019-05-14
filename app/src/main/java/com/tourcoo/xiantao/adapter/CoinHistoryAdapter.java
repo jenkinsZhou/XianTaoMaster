@@ -4,6 +4,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.log.widget.utils.DateUtil;
+import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.entity.coin.CoinDetail;
 
 /**
@@ -24,9 +25,9 @@ public class CoinHistoryAdapter extends BaseQuickAdapter<CoinDetail, BaseViewHol
     protected void convert(BaseViewHolder helper, CoinDetail item) {
         String typeValue;
         if (item.getAttr() == 1) {
-            typeValue = "金币" + item.getSymbol() + item.getAmount();
+            typeValue = "金币" + item.getSymbol() + TourCooUtil.doubleTransString(item.getAmount());
         } else {
-            typeValue = "银币" + item.getSymbol() + item.getAmount();
+            typeValue = "银币" + item.getSymbol() +TourCooUtil.doubleTransString(item.getAmount());
         }
         helper.setText(R.id.spentType, item.getType_text());
         helper.setText(R.id.tvCoinRecord, typeValue);

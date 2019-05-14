@@ -28,7 +28,7 @@ public class CoinHistory {
     private int last_page;
     private int coin;
     private int au;
-    private int ag;
+    private double ag;
     private List<CoinDetail> data;
 
     public int getTotal() {
@@ -79,7 +79,7 @@ public class CoinHistory {
         this.au = au;
     }
 
-    public int getAg() {
+    public double getAg() {
         return ag;
     }
 

@@ -188,7 +188,7 @@ public class ShoppingCarFragmentVersion1 extends BaseTitleTourCoolFragment imple
         mShoppingCartAdapter = new BaseShoppingCartAdapter1(mGoodsList) {
             @Override
             protected void convert(BaseViewHolder helper, GoodsDetailEntity item) {
-                helper.setImageResource(R.id.ivGoodsIcon, R.mipmap.ic_orange);
+                helper.setImageResource(R.id.ivGoodsIcon, R.mipmap.img_zwt);
                 /*helper.setText(R.id.tvGoodsName, TourCoolUtil.getStringNotNull(item.goodsName));
                 helper.setText(R.id.tvGoodsLabel, TourCoolUtil.getStringNotNull(item.goodsLabels));
                 helper.setText(R.id.tvGoodsPrice, "￥" + item.goodsCurrentPrice);

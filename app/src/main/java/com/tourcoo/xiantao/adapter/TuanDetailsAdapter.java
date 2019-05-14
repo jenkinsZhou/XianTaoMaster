@@ -60,7 +60,7 @@ public class TuanDetailsAdapter extends RecyclerView.Adapter<TuanDetailsAdapter.
         holder.tvSurplus.setText(data.getWeigh() + "kg");
         holder.tvCreateTime.setText(data.getCreatetime_text());
 
-        GlideManager.loadImg(data.getUserinfo().getAvatar(), holder.ivGoodsIcon, R.mipmap.ic_orange);
+        GlideManager.loadImg(data.getUserinfo().getAvatar(), holder.ivGoodsIcon, R.mipmap.img_default_avatar);
 
     }
 

@@ -5,7 +5,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -102,12 +101,13 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity {
 
     private void requestInvitecode() {
         ApiRepository.getInstance().requestInvitecode().compose(bindUntilEvent(ActivityEvent.DESTROY)).
-                subscribe(new BaseLoadingObserver<BaseEntity<String>>() {
+                subscribe(new BaseObserver<BaseEntity<String>>() {
                     @Override
                     public void onRequestNext(BaseEntity<String> entity) {
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
                                 tvInviteCode.setText(entity.data);
+                                mStatusLayoutManager.showSuccessLayout();
                             } else {
                                 mStatusLayoutManager.showErrorLayout();
                                 tvErrorContent.setText(TourCooUtil.getNotNullValue(entity.msg));

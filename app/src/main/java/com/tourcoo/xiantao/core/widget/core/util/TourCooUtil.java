@@ -452,4 +452,10 @@ public class TourCooUtil {
     }
 
 
+    public static String doubleTransString (double d){
+        if(Math.round(d)-d==0){
+            return String.valueOf((long)d);
+        }
+        return String.valueOf(d);
+    }
 }
