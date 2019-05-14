@@ -137,6 +137,7 @@ public abstract class BaseTourCooTitleMultiViewActivity extends BaseTourCooTitle
     }
 
 
+    @Override
     protected View inflateLayout(int layoutId) {
         return LayoutInflater.from(mContext).inflate(layoutId, null);
     }
@@ -164,6 +165,7 @@ public abstract class BaseTourCooTitleMultiViewActivity extends BaseTourCooTitle
     }
 
 
+    @Override
     protected View getLoadingLayout() {
         View loadingLayout;
         loadingLayout = inflateLayout(R.layout.custom_loading_layout);

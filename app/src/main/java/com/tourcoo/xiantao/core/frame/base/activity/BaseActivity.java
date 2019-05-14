@@ -5,8 +5,10 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
@@ -26,11 +28,13 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.core.widget.dialog.alert.TourCooAlertDialog;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
+import com.tourcoo.xiantao.widget.custom.BounceLoadingView;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 import com.trello.rxlifecycle3.components.support.RxAppCompatActivity;
 
 import org.simple.eventbus.EventBus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.fragment.app.Fragment;
@@ -53,6 +57,7 @@ public abstract class BaseActivity extends RxAppCompatActivity implements IBaseV
     protected long mDelayBack = 2000;
     protected final String TAG = getClass().getSimpleName();
     private QuitAppControl mQuitAppControl;
+    private List<BounceLoadingView> mBounceLoadingViewList = new ArrayList<>();
 
     @Override
     public boolean isEventBusEnable() {
@@ -92,6 +97,7 @@ public abstract class BaseActivity extends RxAppCompatActivity implements IBaseV
 
     @Override
     protected void onDestroy() {
+        destroyLoadingView();
         if (isEventBusEnable()) {
             EventBus.getDefault().unregister(this);
         }
@@ -353,9 +359,61 @@ public abstract class BaseActivity extends RxAppCompatActivity implements IBaseV
         }
     }
 
+    private BounceLoadingView getLoadingView(View rootView) {
+        if (rootView == null) {
+            return null;
+        }
+        BounceLoadingView bounceLoadingView;
+        bounceLoadingView = rootView.findViewById(R.id.bounceLoadingView);
+        if (bounceLoadingView == null) {
+            return null;
+        }
+        bounceLoadingView.addBitmap(R.mipmap.v4);
+        bounceLoadingView.addBitmap(R.mipmap.v5);
+        bounceLoadingView.addBitmap(R.mipmap.v6);
+        bounceLoadingView.addBitmap(R.mipmap.v7);
+        bounceLoadingView.addBitmap(R.mipmap.v8);
+        bounceLoadingView.addBitmap(R.mipmap.v9);
+        bounceLoadingView.setShadowColor(Color.LTGRAY);
+        bounceLoadingView.setDuration(700);
+        mBounceLoadingViewList.add(bounceLoadingView);
+        return bounceLoadingView;
+    }
 
     @Override
     public void finish() {
         super.finish();
+    }
+
+
+    private void destroyLoadingView() {
+        BounceLoadingView bounceLoadingView;
+        for (int i = mBounceLoadingViewList.size() - 1; i >= 0; i--) {
+            bounceLoadingView = mBounceLoadingViewList.get(i);
+            if (bounceLoadingView != null) {
+                bounceLoadingView.stop();
+                mBounceLoadingViewList.remove(bounceLoadingView);
+                bounceLoadingView = null;
+            }
+        }
+        System.gc();
+    }
+
+
+    protected View inflateLayout(int layoutId) {
+        return LayoutInflater.from(mContext).inflate(layoutId, null);
+    }
+
+    protected View getLoadingLayout() {
+        View loadingLayout;
+        loadingLayout = inflateLayout(R.layout.custom_loading_layout);
+        if (loadingLayout == null) {
+            return null;
+        }
+        BounceLoadingView bounceLoadingView = getLoadingView(loadingLayout);
+        if (bounceLoadingView != null) {
+            bounceLoadingView.start();
+        }
+        return loadingLayout;
     }
 }

@@ -114,6 +114,10 @@ import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
  * @Email: 971613168@qq.com
  */
 public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity implements View.OnClickListener {
+    /**
+     * 判断是否拼团的结算
+     */
+    private boolean isPin;
     private static final double MIN_PAY_MONEY = 0.01;
     public static final int SKIP_TAG_SETTLE = 1002;
     public static final int REQUEST_CODE_SELECT_DISCOUNT = 1003;
@@ -311,6 +315,11 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         mSettleType = getIntent().getIntExtra(EXTRA_SETTLE_TYPE, -1);
         //拼团id
         pinId = getIntent().getIntExtra(EXTRA_PIN_USER_ID, -1);
+        if (pinId >= 0) {
+            isPin = true;
+        } else {
+            isPin = false;
+        }
         //配送日期
         tvDeliveryTime = findViewById(R.id.tvDeliveryTime);
         tvDeliveryTime.setOnClickListener(this);
@@ -369,7 +378,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
 
 
     private void initAdapter() {
-        mGoodsAdapter = new OrderGoodsSettleAdapter();
+        TourCooLogUtil.i(TAG, TAG + "是否是拼团订单:" + isPin);
+        mGoodsAdapter = new OrderGoodsSettleAdapter(isPin);
         mGoodsAdapter.bindToRecyclerView(goodsOrderRecyclerView);
     }
 
@@ -1360,8 +1370,6 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     private String formateMoney(double money) {
         return FormatUtil.formatDoubleSize(money, 2);
     }
-
-
 
 
 }

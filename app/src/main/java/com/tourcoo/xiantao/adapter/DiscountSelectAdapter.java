@@ -40,7 +40,7 @@ public class DiscountSelectAdapter extends BaseQuickAdapter<DiscountInfo, BaseVi
         RelativeLayout rlPrice = helper.getView(R.id.rlPrice);
         helper.addOnClickListener(R.id.rlSelect);
         rlSelect.setClickable(discountInfo.isClickEnable());
-        String cost = "满" + discountInfo.getCost() + "元可用";
+        String cost = "每满" + discountInfo.getCost() + "元可用";
         helper.setText(R.id.tvPrice, discountInfo.getWorth()+"");
         helper.setText(R.id.tvDiscount, cost);
         String name = "" + discountInfo.getName();
