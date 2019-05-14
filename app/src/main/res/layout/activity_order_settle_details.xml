@@ -589,6 +589,7 @@
                             <TextView
                                 android:id="@+id/tvSelectDiscount"
                                 android:layout_width="wrap_content"
+                                android:textSize="@dimen/sp_10"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical" />
                         </LinearLayout>
