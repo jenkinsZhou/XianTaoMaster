@@ -51,9 +51,11 @@
                 style="@style/TextView12spGray666"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/sp_12"
+                android:gravity="left"
                 android:text="特点标签" />
 
-            <TextView
+          <!--  <TextView
                 style="@style/TextView12spGray666"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -63,7 +65,7 @@
                 style="@style/TextView12spGray666"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="特点标签" />
+                android:text="特点标签" />-->
         </LinearLayout>
         <!--规格-->
         <LinearLayout

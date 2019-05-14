@@ -7,6 +7,7 @@
     <include layout="@layout/layout_title_bar" />
 
     <LinearLayout
+        android:id="@+id/llContentView"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_277"
         android:layout_marginTop="@dimen/dp_25"
