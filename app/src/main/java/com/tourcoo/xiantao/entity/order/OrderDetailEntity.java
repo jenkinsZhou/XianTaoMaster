@@ -463,6 +463,15 @@ public class OrderDetailEntity {
             private String sku_image;
             private SpecBean spec;
             private GoodsBeanX goods;
+            private Object tuan_rule;
+
+            public Object getTuan_rule() {
+                return tuan_rule;
+            }
+
+            public void setTuan_rule(Object tuan_rule) {
+                this.tuan_rule = tuan_rule;
+            }
 
             public int getId() {
                 return id;

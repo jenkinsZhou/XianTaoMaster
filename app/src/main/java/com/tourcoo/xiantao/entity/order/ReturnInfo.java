@@ -45,11 +45,11 @@ public class ReturnInfo implements Serializable {
     private int updatetime;
     private Object reply;
     private int admin_id;
-    private int price;
+    private double price;
     private String reason;
     private String type;
     private String status;
-    private int coin;
+    private double coin;
     private String status_text;
 
     public int getId() {
@@ -148,11 +148,11 @@ public class ReturnInfo implements Serializable {
         this.admin_id = admin_id;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -180,7 +180,7 @@ public class ReturnInfo implements Serializable {
         this.status = status;
     }
 
-    public int getCoin() {
+    public double getCoin() {
         return coin;
     }
 

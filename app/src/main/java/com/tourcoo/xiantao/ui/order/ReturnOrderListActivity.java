@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_BACK;
+import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_BACK_FINISH;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_BACK_ING;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_BACK_REFUSE;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_FINISH;
@@ -50,11 +51,16 @@ public class ReturnOrderListActivity extends BaseTourCooRefreshLoadActivity<Orde
     private OrderListAdapter mAdapter;
     private int orderStatus = ORDER_STATUS_BACK;
     public static final String EXTRA_ORDER_STATUS = "EXTRA_ORDER_STATUS";
-    public static final int REQUEST_CODE_RETURN_DETAIL = 1005;
+    public static final int REQUEST_CODE_RETURN_LIST = 1005;
     /**
      * 跳转订单详情
      */
     public static final int REQUEST_CODE_ORDER_DETAIL = 1006;
+
+    /**
+     * 退单详情
+     */
+    public static final int REQUEST_CODE_RETURN_DETAIL = 1007;
 
     @Override
     public int getContentLayout() {
@@ -196,6 +202,18 @@ public class ReturnOrderListActivity extends BaseTourCooRefreshLoadActivity<Orde
     }
 
 
+    /**
+     * 跳转到退单详情
+     *
+     * @param orderId
+     */
+    private void skipReturnDetail(int orderId) {
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_ORDER_ID, orderId);
+        intent.setClass(mContext, ReturnDetailActivity.class);
+        //跳转至退单详情
+        startActivityForResult(intent, REQUEST_CODE_RETURN_DETAIL);
+    }
     private void loadButton3Function(OrderEntity.OrderInfo orderInfo) {
         TourCooLogUtil.i(TAG, TAG + "订单状态:" + orderInfo.getOrder_status());
         switch (orderInfo.getOrder_status()) {
@@ -235,8 +253,9 @@ public class ReturnOrderListActivity extends BaseTourCooRefreshLoadActivity<Orde
             case ORDER_STATUS_FINISH:
             case ORDER_STATUS_BACK_ING:
             case ORDER_STATUS_BACK_REFUSE:
+            case ORDER_STATUS_BACK_FINISH:
                 //查看退货详情
-                skipOrderDetail(orderInfo.getId());
+                skipReturnDetail(orderInfo.getId());
                 break;
             default:
                 break;
@@ -256,7 +275,7 @@ public class ReturnOrderListActivity extends BaseTourCooRefreshLoadActivity<Orde
         intent.putExtra(EXTRA_ORDER_ID, orderInfo.getId());
         intent.setClass(mContext, ReturnGoodsActivity.class);
         //跳转至退货页面
-        startActivityForResult(intent, REQUEST_CODE_RETURN_DETAIL);
+        startActivityForResult(intent, REQUEST_CODE_RETURN_LIST);
     }
 
     /**
@@ -282,12 +301,16 @@ public class ReturnOrderListActivity extends BaseTourCooRefreshLoadActivity<Orde
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
-                case REQUEST_CODE_RETURN_DETAIL:
+                case REQUEST_CODE_RETURN_LIST:
                     //退货成功 刷新列表
                     mRefreshLayout.autoRefresh();
                     break;
                 case REQUEST_CODE_ORDER_DETAIL:
                     //退货成功 刷新列表
+                    mRefreshLayout.autoRefresh();
+                    break;
+                case REQUEST_CODE_RETURN_DETAIL:
+                    //取消退货成功 刷新列表
                     mRefreshLayout.autoRefresh();
                     break;
                 default:

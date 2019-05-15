@@ -1,7 +1,6 @@
 package com.tourcoo.xiantao.ui.order;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;

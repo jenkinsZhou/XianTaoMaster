@@ -236,14 +236,14 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                         helper.setGone(R.id.tvPin, false);
                     }
                     //已经退货
-                    tvOrderStatus.setText("已退货");
+                    tvOrderStatus.setText("已退单");
                     tvOrderStatus.setTextColor(TourCooUtil.getColor(R.color.redTextCommon));
-                    setTextRed(tvOrderStatus, "已退货");
+                    setTextRed(tvOrderStatus, "已退单");
                     orderInfo.setOrder_status(ORDER_STATUS_BACK_FINISH);
                     hindView(btnOne);
                     hindView(btnTwo);
                     hindView(btnThree);
-                    hindView(btnFour);
+                    setTextGray(btnFour, "查看详情");
                     break;
                 case 40:
                     //1表示拼团订单
@@ -253,12 +253,12 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                         helper.setGone(R.id.tvPin, false);
                     }
                     //退货被拒绝
-                    setTextRed(tvOrderStatus, "退货被拒绝");
+                    setTextRed(tvOrderStatus, "已拒绝");
                     orderInfo.setOrder_status(ORDER_STATUS_BACK_REFUSE);
                     hindView(btnOne);
                     hindView(btnTwo);
                     hindView(btnThree);
-                    hindView(btnFour);
+                    setTextGray(btnFour, "查看详情");
                     break;
                 default:
                     break;

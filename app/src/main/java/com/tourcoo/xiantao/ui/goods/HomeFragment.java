@@ -517,7 +517,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
             public void run() {
                 getHomeInfo();
             }
-        }, 500);
+        }, 10);
     }
 
 

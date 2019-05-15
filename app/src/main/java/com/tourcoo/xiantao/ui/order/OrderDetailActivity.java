@@ -30,7 +30,6 @@ import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.GridImageAdapter;
 import com.tourcoo.xiantao.adapter.OrderGoodsDetailAdapter;
 import com.tourcoo.xiantao.constant.WxConfig;
-import com.tourcoo.xiantao.core.common.RequestConfig;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
@@ -246,7 +245,6 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     @Override
     public void loadData() {
         super.loadData();
-        initAdapter();
         requestOrderDetail();
     }
 
@@ -424,6 +422,14 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
      * @param orderDetailEntity
      */
     private void showOrderDetail(OrderDetailEntity orderDetailEntity) {
+        if (orderDetailEntity == null || orderDetailEntity.getOrder() == null) {
+            return;
+        }
+        if (orderDetailEntity.getOrder().getTuan() == 1) {
+            loadAdapter(true);
+        } else {
+            loadAdapter(false);
+        }
         mStatusLayoutManager.showSuccessLayout();
         OrderDetailEntity.OrderBean orderBean = orderDetailEntity.getOrder();
         showAddressInfo(orderBean.getAddress());
@@ -507,8 +513,8 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     }
 
 
-    private void initAdapter() {
-        mGoodsAdapter = new OrderGoodsDetailAdapter();
+    private void loadAdapter(boolean flag) {
+        mGoodsAdapter = new OrderGoodsDetailAdapter(flag);
         mGoodsAdapter.bindToRecyclerView(goodsOrderRecyclerView);
     }
 
@@ -546,7 +552,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     //拼团订单不允许取消退单
                     hideView(tvCancelOrder);
                 } else {
-                    showView(tvCancelOrder);
+                    hideView(tvCancelOrder);
                 }
                 break;
             case ORDER_STATUS_WAIT_SEND:
@@ -608,7 +614,8 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 hideView(tvConfirmReceive);
                 hideView(tvLookExpress);
                 hideView(tvLookComment);
-                showView(tvCancelReturn);
+                //隐藏 取消订单按钮
+                hideView(tvCancelReturn);
                 break;
             case ORDER_STATUS_BACK_FINISH:
                 hideView(tvCommentNow);
@@ -1139,7 +1146,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             TourCooLogUtil.e(TAG, TAG + ":" + "退货信息为空");
             return;
         }
-        setViewVisible(llReturnGood, true);
+        setViewVisible(llReturnGood, false);
         tvReturnDetail.setText(returnInfo.getDetail());
         String reason = returnInfo.getReason();
         TourCooLogUtil.i(TAG, TAG + ":" + "reason=" + reason);

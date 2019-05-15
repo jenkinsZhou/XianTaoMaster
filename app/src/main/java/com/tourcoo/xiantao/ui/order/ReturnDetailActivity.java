@@ -127,12 +127,9 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
     private TextView tvNickName;
     private TextView tvMobile;
     private TextView tvAddress;
-    private TextView tvPayPrice;
     private TextView tvOrderNumber;
     private TextView tvCreateTime;
-    private TextView tvCoin;
 
-    private TextView tvExpressPrice;
     /**
      * 退货的商品图片列表
      */
@@ -144,20 +141,20 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
 
     private LinearLayout llRootView;
 
-    private TextView tvTotalPrice;
 
     private TextView tvRemark;
 
     private TextView tvGoodsTypeCount;
 
-    private LinearLayout llRemark;
     private TextView tvPayNow;
     private TextView tvCommentNow;
     private TextView tvLookExpress;
     private TextView tvReturn;
     private TextView tvCancelOrder;
     private TextView tvConfirmReceive;
-    //查看评价
+    /**
+     * 查看评价
+     */
     private TextView tvLookComment;
 
     private boolean isPin;
@@ -171,24 +168,50 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
     private TextView tvReturnReason;
 
     private TextView tvReturnImage;
+    /**
+     * 退货状态
+     */
+    private TextView tvReturnStatus;
+
+
+    private TextView tvReturnCoin;
+
+    private TextView tvReturnPrice;
+
+    /**
+     * 订单处理
+     */
+    private TextView tvReturnResult;
+
+    private LinearLayout llRealReturnMoney;
+    private LinearLayout llRealReturnCoin;
+    private TextView tvRealReturnMoney;
+    private TextView tvRealReturnCoin;
 
     @Override
     public int getContentLayout() {
-        return R.layout.activity_order_details;
+        return R.layout.activity_return_detail;
     }
 
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         super.setTitleBar(titleBar);
-        titleBar.setTitleMainText("订单详情");
+        titleBar.setTitleMainText("退单详情");
     }
 
     @Override
     public void initView(Bundle savedInstanceState) {
         api = WXAPIFactory.createWXAPI(mContext, null);
-        tvCoin = findViewById(R.id.tvCoin);
+        tvRealReturnMoney = findViewById(R.id.tvRealReturnMoney);
+        tvRealReturnCoin = findViewById(R.id.tvRealReturnCoin);
+        llRealReturnMoney = findViewById(R.id.llRealReturnMoney);
+        llRealReturnCoin = findViewById(R.id.llRealReturnCoin);
+        tvReturnResult = findViewById(R.id.tvReturnResult);
+        tvReturnStatus = findViewById(R.id.tvReturnStatus);
+        tvReturnPrice = findViewById(R.id.tvReturnPrice);
         tvReturnDetail = findViewById(R.id.tvReturnDetail);
+        tvReturnCoin = findViewById(R.id.tvReturnCoin);
         rvReturnGoods = findViewById(R.id.rvReturnGoods);
         tvReturnReason = findViewById(R.id.tvReturnReason);
         llReturnGood = findViewById(R.id.llReturnGood);
@@ -197,7 +220,6 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
         tvConfirmReceive = findViewById(R.id.tvConfirmReceive);
         tvLookComment = findViewById(R.id.tvLookComment);
         tvCancelOrder = findViewById(R.id.tvCancelOrder);
-        llRemark = findViewById(R.id.llRemark);
         tvCancelReturn.setOnClickListener(this);
         tvPayNow = findViewById(R.id.tvPayNow);
         tvLookExpress = findViewById(R.id.tvLookExpress);
@@ -215,13 +237,10 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
         goodsOrderRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         tvGoodsTypeCount = findViewById(R.id.tvGoodsTypeCount);
         tvRemark = findViewById(R.id.tvRemark);
-        tvTotalPrice = findViewById(R.id.tvTotalPrice);
-        tvExpressPrice = findViewById(R.id.tvExpressPrice);
         llRootView = findViewById(R.id.llRootView);
         llAddressInfo = findViewById(R.id.llAddressInfo);
         tvNickName = findViewById(R.id.tvNickName);
         tvAddress = findViewById(R.id.tvAddress);
-        tvPayPrice = findViewById(R.id.tvPayPrice);
         tvMobile = findViewById(R.id.tvMobile);
         tvOrderNumber = findViewById(R.id.tvOrderNumber);
         tvCreateTime = findViewById(R.id.tvCreateTime);
@@ -237,7 +256,6 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
     @Override
     public void loadData() {
         super.loadData();
-        initAdapter();
         requestOrderDetail();
     }
 
@@ -276,7 +294,7 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
                                         parseOrderStatus(orderEntity);
                                         mOrderEntity = orderEntity;
                                         TourCooLogUtil.i(TAG, TAG + "orderEntity状态:" + orderEntity.getOrder().getOrder_status());
-                                        showOrderDetail(orderEntity);
+                                        showReturnDetail(orderEntity);
                                     } else {
                                         ToastUtil.showFailed(entity.msg);
                                         mStatusLayoutManager.showErrorLayout();
@@ -386,15 +404,30 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
             switch (orderInfo.getReturn_status()) {
                 //todo 退货中 20
                 case FINISH:
+                    tvReturnStatus.setTextColor(TourCooUtil.getColor(R.color.greenCommon));
+                    tvReturnStatus.setText("退单中");
                     orderInfo.setOrder_status(ORDER_STATUS_BACK_ING);
+                    //退单中 需要隐藏退款相关信息
+                    setViewVisible(llRealReturnMoney, false);
+                    setViewVisible(llRealReturnCoin, false);
                     break;
                 case 30:
                     //已经退货
+                    tvReturnStatus.setTextColor(TourCooUtil.getColor(R.color.redTextCommon));
+                    tvReturnStatus.setText("已退单");
                     orderInfo.setOrder_status(ORDER_STATUS_BACK_FINISH);
+                    //退单完成 需要显示退款相关信息
+                    setViewVisible(llRealReturnMoney, true);
+                    setViewVisible(llRealReturnCoin, true);
                     break;
                 case 40:
                     //退货被拒绝
+                    tvReturnStatus.setTextColor(TourCooUtil.getColor(R.color.redTextCommon));
+                    tvReturnStatus.setText("已拒绝");
                     orderInfo.setOrder_status(ORDER_STATUS_BACK_REFUSE);
+                    //退单拒绝 需要隐藏退款相关信息
+                    setViewVisible(llRealReturnMoney, false);
+                    setViewVisible(llRealReturnCoin, false);
                     break;
                 default:
                     break;
@@ -404,29 +437,27 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
 
 
     /**
-     * 显示订单详情
+     * 显示退单详情
      *
      * @param orderDetailEntity
      */
-    private void showOrderDetail(OrderDetailEntity orderDetailEntity) {
+    private void showReturnDetail(OrderDetailEntity orderDetailEntity) {
         mStatusLayoutManager.showSuccessLayout();
+        if (orderDetailEntity.getOrder().getTuan() == 1) {
+            loadAdapter(true);
+        } else {
+            loadAdapter(false);
+        }
+
         OrderDetailEntity.OrderBean orderBean = orderDetailEntity.getOrder();
         showAddressInfo(orderBean.getAddress());
-        showCoin(orderDetailEntity);
-        //显示运费
-        tvExpressPrice.setText("￥ " + orderBean.getExpress_price());
         //商品合计
-        tvTotalPrice.setText("￥ " + orderBean.getTotal_price());
-        tvPayPrice.setText("￥ " + orderBean.getPay_price());
         tvOrderNumber.setText(orderBean.getOrder_no());
         tvCreateTime.setText(DateUtil.parseDate(orderBean.getCreatetime()));
         //显示备注
         showRemark(orderBean);
-        //商品数量
-        String amount = "共" + orderBean.getGoods().size() + "件商品";
-        tvGoodsTypeCount.setText(amount);
-        List<OrderDetailEntity.OrderBean.GoodsBean> goodsList = orderBean.getGoods();
-        mGoodsAdapter.setNewData(goodsList);
+        //注意 这里显示的商品数量仅为退单的商品数量 因此需要排除没有退的商品
+        showReturnGoodsList(orderBean);
         loadBottomButtonFunction(orderBean);
         showReturnInfo(orderDetailEntity.getOrder().getReturn_info());
     }
@@ -456,24 +487,8 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
     }
 
 
-    /**
-     * 显示抵扣金币
-     *
-     * @param orderDetailEntity
-     */
-    private void showCoin(OrderDetailEntity orderDetailEntity) {
-        double coin = orderDetailEntity.getOrder().getCoin();
-        if (orderDetailEntity.getOrder().getCoin_status() == NOT_USE_COIN) {
-            tvCoin.setText("-￥" + 0.00);
-        } else {
-            //使用了金币抵扣
-            tvCoin.setText("-￥" + coin);
-        }
-    }
-
-
-    private void initAdapter() {
-        mGoodsAdapter = new OrderGoodsDetailAdapter();
+    private void loadAdapter(boolean isPin) {
+        mGoodsAdapter = new OrderGoodsDetailAdapter(isPin);
         mGoodsAdapter.bindToRecyclerView(goodsOrderRecyclerView);
     }
 
@@ -481,9 +496,8 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
     private void showRemark(OrderDetailEntity.OrderBean orderBean) {
         String remark = TourCooUtil.getNotNullValue(orderBean.getRemark());
         if (TextUtils.isEmpty(remark)) {
-            llRemark.setVisibility(View.GONE);
+            tvRemark.setText("无备注信息");
         } else {
-            llRemark.setVisibility(View.VISIBLE);
             tvRemark.setText(TourCooUtil.getNotNullValue(orderBean.getRemark()));
         }
     }
@@ -725,7 +739,7 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
                                                 parseOrderStatus(orderEntity);
                                                 mOrderEntity = orderEntity;
                                                 TourCooLogUtil.i(TAG, TAG + "orderEntity状态:" + orderEntity.getOrder().getOrder_status());
-                                                showOrderDetail(orderEntity);
+                                                showReturnDetail(orderEntity);
                                             } else {
                                                 ToastUtil.showFailed(entity.msg);
                                             }
@@ -1104,11 +1118,29 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
             TourCooLogUtil.e(TAG, TAG + ":" + "退货信息为空");
             return;
         }
+        //退还的金币
+        String returnCoin = TourCooUtil.doubleTransString(returnInfo.getCoin());
+        tvReturnCoin.setText(returnCoin);
         setViewVisible(llReturnGood, true);
-        tvReturnDetail.setText(returnInfo.getDetail());
+        //退货详情
+        if (TextUtils.isEmpty(returnInfo.getDetail())) {
+            tvReturnDetail.setText("未填写");
+        } else {
+            tvReturnDetail.setText(TourCooUtil.getNotNullValue(returnInfo.getDetail()));
+        }
+
         String reason = returnInfo.getReason();
         TourCooLogUtil.i(TAG, TAG + ":" + "reason=" + reason);
+        //退货原因
         tvReturnReason.setText(returnInfo.getReason());
+        //订单处理
+        tvReturnResult.setText(TourCooUtil.getNotNullValue(returnInfo.getStatus_text()));
+        //实际返回金额
+        TourCooLogUtil.i(TAG, TAG + "实际退款金额:" + returnInfo.getPrice());
+        String realReturrnMoney = "￥" + TourCooUtil.doubleTransString(returnInfo.getPrice());
+        tvRealReturnMoney.setText(realReturrnMoney);
+        //实际返回金币
+        tvRealReturnCoin.setText(TourCooUtil.doubleTransString(returnInfo.getCoin()));
         if (TextUtils.isEmpty(returnInfo.getImages())) {
             setViewVisible(tvReturnImage, false);
         } else {
@@ -1189,5 +1221,55 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
         intent.putExtra(EXTRA_ORDER_ID, orderId);
         intent.setClass(mContext, LookEvaluationActivity.class);
         startActivity(intent);
+    }
+
+    /**
+     * 显示退单的商品列表
+     */
+    private void showReturnGoodsList(OrderDetailEntity.OrderBean orderBean) {
+        if (orderBean == null || orderBean.getReturn_info() == null) {
+            return;
+        }
+        ReturnInfo returnInfo = orderBean.getReturn_info();
+        String[] returnGoodsArray = returnInfo.getGoods_id().split(",");
+        //真正退单的商品id集合
+        List<Integer> returnGoodsIds = new ArrayList<>();
+        try {
+            for (String id : returnGoodsArray) {
+                if (TextUtils.isEmpty(id)) {
+                    continue;
+                }
+                TourCooLogUtil.i(TAG, TAG + "转换的商品id:" + id);
+                returnGoodsIds.add(Integer.parseInt(id));
+            }
+        } catch (NumberFormatException e) {
+            TourCooLogUtil.e(TAG, TAG + "转换异常" + e.toString());
+        }
+        List<OrderDetailEntity.OrderBean.GoodsBean> allGoodsList = orderBean.getGoods();
+        TourCooLogUtil.i(TAG, TAG + "allGoodsList长度:" + allGoodsList.size());
+        List<OrderDetailEntity.OrderBean.GoodsBean> returnGoodsList = new ArrayList<>();
+        for (OrderDetailEntity.OrderBean.GoodsBean goodsBean : allGoodsList) {
+            for (Integer returnGoodsId : returnGoodsIds) {
+                TourCooLogUtil.i(TAG, TAG + "商品id:" + goodsBean.getGoods_id());
+                if (goodsBean.getId() == returnGoodsId) {
+                    //如果商品id相同则说明该商品是真正退货的商品
+                    returnGoodsList.add(goodsBean);
+                }
+            }
+        }
+        int num = 0;
+        String realReturnMoney = "￥";
+        double returnMoney = 0;
+        for (OrderDetailEntity.OrderBean.GoodsBean goodsBean : returnGoodsList) {
+            num += goodsBean.getTotal_num();
+            returnMoney += goodsBean.getGoods_price() * goodsBean.getTotal_num();
+        }
+        returnMoney = Double.parseDouble(TourCooUtil.doubleTrans(returnMoney));
+        realReturnMoney += TourCooUtil.doubleTransString(returnMoney);
+        String amount = "共" + num + "件商品";
+        tvGoodsTypeCount.setText(amount);
+        mGoodsAdapter.setNewData(returnGoodsList);
+        //应退款金额
+        tvReturnPrice.setText(realReturnMoney);
     }
 }
