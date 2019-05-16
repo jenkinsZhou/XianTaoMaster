@@ -227,6 +227,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                     hindView(btnTwo);
                     setTextGray(btnThree, "取消退单");
                     setTextGray(btnFour, "查看详情");
+                    helper.setText(R.id.tvPrice, "￥" + orderInfo.getReturn_price());
                     break;
                 case 30:
                     //1表示拼团订单
@@ -243,6 +244,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                     hindView(btnOne);
                     hindView(btnTwo);
                     hindView(btnThree);
+                    helper.setText(R.id.tvPrice, "￥" + orderInfo.getReturn_price());
                     setTextGray(btnFour, "查看详情");
                     break;
                 case 40:
@@ -258,6 +260,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                     hindView(btnOne);
                     hindView(btnTwo);
                     hindView(btnThree);
+                    helper.setText(R.id.tvPrice, "￥" + orderInfo.getReturn_price());
                     setTextGray(btnFour, "查看详情");
                     break;
                 default:

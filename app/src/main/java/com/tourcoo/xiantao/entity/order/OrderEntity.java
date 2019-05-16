@@ -109,6 +109,16 @@ public class OrderEntity {
          */
 
         private int id;
+        private double return_price;
+
+        public double getReturn_price() {
+            return return_price;
+        }
+
+        public void setReturn_price(double return_price) {
+            this.return_price = return_price;
+        }
+
         private String order_no;
         private String total_price;
         private String pay_price;

@@ -187,6 +187,7 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
     private LinearLayout llRealReturnCoin;
     private TextView tvRealReturnMoney;
     private TextView tvRealReturnCoin;
+    private TextView tvReply;
 
     @Override
     public int getContentLayout() {
@@ -203,6 +204,7 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
     @Override
     public void initView(Bundle savedInstanceState) {
         api = WXAPIFactory.createWXAPI(mContext, null);
+        tvReply = findViewById(R.id.tvReply);
         tvRealReturnMoney = findViewById(R.id.tvRealReturnMoney);
         tvRealReturnCoin = findViewById(R.id.tvRealReturnCoin);
         llRealReturnMoney = findViewById(R.id.llRealReturnMoney);
@@ -1141,6 +1143,12 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
         tvRealReturnMoney.setText(realReturrnMoney);
         //实际返回金币
         tvRealReturnCoin.setText(TourCooUtil.doubleTransString(returnInfo.getCoin()));
+        if (returnInfo.getReply() == null || TextUtils.isEmpty(returnInfo.getReply().toString())) {
+            tvReply.setText("无回复");
+        } else {
+            tvReply.setText(returnInfo.getReply().toString());
+        }
+
         if (TextUtils.isEmpty(returnInfo.getImages())) {
             setViewVisible(tvReturnImage, false);
         } else {
@@ -1271,5 +1279,6 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
         mGoodsAdapter.setNewData(returnGoodsList);
         //应退款金额
         tvReturnPrice.setText(realReturnMoney);
+
     }
 }
