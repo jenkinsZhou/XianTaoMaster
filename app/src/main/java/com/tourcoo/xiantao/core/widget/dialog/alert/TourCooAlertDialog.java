@@ -131,7 +131,8 @@ public class TourCooAlertDialog extends Dialog {
                 ((TextView) layout.findViewById(R.id.message)).setGravity(gravity);
             }
             dialog.setContentView(layout);
-            dialog.setCancelable(true);
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
             return dialog;
         }
 

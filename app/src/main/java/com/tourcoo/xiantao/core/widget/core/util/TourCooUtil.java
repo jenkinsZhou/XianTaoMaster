@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 
 import com.tourcoo.xiantao.XianTaoApplication;
 import com.tourcoo.xiantao.core.common.RequestConfig;
+import com.tourcoo.xiantao.core.frame.util.FormatUtil;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 
 import java.math.BigDecimal;
@@ -421,7 +422,7 @@ public class TourCooUtil {
      * @return
      */
     public static String doubleTrans(double num) {
-        return String.valueOf(new DecimalFormat("#0.00").format(num));
+        return FormatUtil.formatDoubleSize(num, 2);
     }
 
 
@@ -452,10 +453,11 @@ public class TourCooUtil {
     }
 
 
-    public static String doubleTransString (double d){
-        if(Math.round(d)-d==0){
-            return String.valueOf((long)d);
+    public static String doubleTransString(double d) {
+        if (Math.round(d) - d == 0) {
+            return String.valueOf((long) d);
         }
-        return String.valueOf(d);
+        //四舍五入 并保留两位小数
+        return FormatUtil.formatDoubleSize(d, 2);
     }
 }

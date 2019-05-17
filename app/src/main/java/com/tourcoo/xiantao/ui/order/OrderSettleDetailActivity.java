@@ -72,7 +72,6 @@ import com.trello.rxlifecycle3.android.ActivityEvent;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import java.lang.ref.WeakReference;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -443,12 +442,12 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         if (userCoin) {
             //有积分
             shouldPrice = settleEntity.getOrder_pay_price() + settleEntity.getCoin();
-            String value = "￥" + TourCooUtil.doubleTransString(shouldPrice);
+            String value = "￥" + TourCooUtil.doubleTrans(shouldPrice);
             tvShouldPayPrice.setText(value);
             recordPrice = shouldPrice;
         } else {
             //没有积分
-            tvShouldPayPrice.setText("￥" + settleEntity.getOrder_pay_price());
+            tvShouldPayPrice.setText("￥" + TourCooUtil.doubleTrans(settleEntity.getOrder_pay_price()));
             recordPrice = settleEntity.getOrder_pay_price();
         }
 
@@ -507,7 +506,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         if (userCoin) {
             //有积分
             shouldPrice = settleEntity.getOrder_pay_price() + settleEntity.getCoin();
-            tvShouldPayPrice.setText("￥" + shouldPrice);
+            String value = "￥" + TourCooUtil.doubleTrans(shouldPrice);
+            tvShouldPayPrice.setText(value);
             recordPrice = shouldPrice;
         } else {
             //没有积分
@@ -538,14 +538,14 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                     ToastUtil.showFailed("未获取到结算信息");
                     return;
                 }
-                if(mSettleEntity.getExist_address() == null){
+                if (mSettleEntity.getExist_address() == null) {
                     ToastUtil.showFailed("请先设置配送地址");
                     return;
                 }
-                if (mSettleEntity.isHas_error() && mSettleEntity.getError_msg() != null) {
+             /*   if (mSettleEntity.isHas_error() && mSettleEntity.getError_msg() != null) {
                     ToastUtil.showFailed(mSettleEntity.getError_msg().toString());
                     return;
-                }
+                }*/
                 //弹出支付宝/微信
                 if (TextUtils.isEmpty(getTextValue(tvDeliveryTime))) {
                     ToastUtil.show("请选择配送时间");
@@ -624,7 +624,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                     double price = mSettleEntity.getOrder_total_price() + mSettleEntity.getExpress_price();
                     TourCooLogUtil.i(TAG, TAG + "运费金额:" + mSettleEntity.getExpress_price());
                     TourCooLogUtil.i(TAG, TAG + "运费金额:" + mSettleEntity.getOrder_total_price());
-                    String shouldPrice = "￥" + price;
+                    String shouldPrice = "￥" + TourCooUtil.doubleTrans(price);
                     tvShouldPayPrice.setText(shouldPrice);
                     payMoney = TourCooUtil.minusDouble(mSettleEntity.getOrder_pay_price(), minusMoney);
                     recordPrice = mSettleEntity.getOrder_pay_price();
@@ -638,7 +638,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                     double price = mSettleEntity.getOrder_total_price() + mSettleEntity.getExpress_price();
                     TourCooLogUtil.i(TAG, TAG + "运费金额:" + mSettleEntity.getExpress_price());
                     TourCooLogUtil.i(TAG, TAG + "运费金额:" + mSettleEntity.getOrder_total_price());
-                    String shouldPrice = "￥" + price;
+                    String shouldPrice = "￥" + TourCooUtil.doubleTrans(price);
                     tvShouldPayPrice.setText(shouldPrice);
                 }
             }
@@ -1004,6 +1004,9 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                 if (resultCode == RESULT_OK && data != null) {
                     AddressEntity entity = (AddressEntity) data.getSerializableExtra(EXTRA_ADDRESS_INFO);
                     showAddressInfo(entity);
+                    if (mSettleEntity != null) {
+                        mSettleEntity.setExist_address(entity);
+                    }
                     if (isPin) {
                         //拼团订单重新结算
                         TourCooLogUtil.i(TAG, TAG + "拼团订单的结算:");
@@ -1506,12 +1509,13 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //todo
-                if(mSettleEntity != null){
+                dialog.dismiss();
+                if (mSettleEntity != null) {
                     //将配送地址置为null
                     mSettleEntity.setExist_address(null);
                 }
                 showAddressInfo(null);
-                dialog.dismiss();
+
             }
         });
     }
