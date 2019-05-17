@@ -13,13 +13,19 @@ public class RequestConfig {
     public static final int CODE_REQUEST_SUCCESS_NOT_REGISTER = -100;
 
     /**
-     * 濡江铺子
+     * 濡江铺子正式服务器
      */
+   /* public static final String BASE_URL = "https://app.ahxtao.com/";
 
-    public static final String BASE_URL = "http://ahxtao.hfcoco.top/";
+    public static final String BASE_URL_NO_LINE = "https://app.ahxtao.com";*/
 
+    /**
+     * 濡江铺子测试服务器
+     */
+    public static final String BASE_URL = "https://test.ahxtao.com/";
 
-    public static final String BASE_URL_NO_LINE = "http://ahxtao.hfcoco.top";
+    public static final String BASE_URL_NO_LINE = "https://test.ahxtao.com";
+
 
     /**
      * 濡江铺子

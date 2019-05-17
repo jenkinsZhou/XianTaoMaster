@@ -99,6 +99,8 @@ import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.core.module.SplashActivity.EXTRA_ADV_TAG;
 import static com.tourcoo.xiantao.ui.goods.HomeFragment.EXTRA_GOODS_ID;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_GOODS_COUNT;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_GOODS_SKU_ID;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_PIN_USER_ID;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_SETTLE_TYPE;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SETTLE_TYPE_PIN;
@@ -585,7 +587,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 dialog = new ProductSkuDialog(GoodsDetailActivity.this, goodsEntity, new ProductSkuDialog.Callback() {
                     @Override
                     public void onAdded(String specSkuId, int quantity) {
-                        addGoods(goodsEntity.getDetail().getGoods_id(), quantity, specSkuId);
+                        buyNow(goodsEntity.getDetail().getGoods_id(), quantity, specSkuId);
                     }
                 }, ProductSkuDialog.BUY_NOW);
 
@@ -696,7 +698,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
      *
      * @param settleEntity
      */
-    private void skipOrderSettleDetail(SettleEntity settleEntity) {
+    private void skipOrderSettleDetail(SettleEntity settleEntity, int goodsId, int goodsCount, String skuId) {
         boolean skipEnable = settleEntity != null && settleEntity.getGoods_list() != null;
         if (!skipEnable) {
             ToastUtil.showFailed("未获取到商品信息");
@@ -706,6 +708,9 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         //单独购买结算类型
         intent.putExtra(EXTRA_SETTLE_TYPE, SETTLE_TYPE_SINGLE);
         intent.putExtra(EXTRA_SETTLE, settleEntity);
+        intent.putExtra(EXTRA_GOODS_ID, goodsId);
+        intent.putExtra(EXTRA_GOODS_COUNT, goodsCount);
+        intent.putExtra(EXTRA_GOODS_SKU_ID, skuId);
         intent.setClass(mContext, OrderSettleDetailActivity.class);
         startActivity(intent);
         finish();
@@ -790,7 +795,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     /**
      * 请求添加商品接口
      */
-    private void addGoods(int goodsId, int count, String skuId) {
+    private void buyNow(int goodsId, int count, String skuId) {
         ApiRepository.getInstance().settleGoods(goodsId, count, skuId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseLoadingObserver<BaseEntity>() {
                     @Override
@@ -801,7 +806,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                                     //跳转到结算
                                     SettleEntity settleEntity = parseSettleInfo(entity.data);
                                     if (settleEntity != null) {
-                                        skipOrderSettleDetail(settleEntity);
+                                        skipOrderSettleDetail(settleEntity, goodsId, count, skuId);
                                     } else {
                                         ToastUtil.showFailed("失败");
                                     }

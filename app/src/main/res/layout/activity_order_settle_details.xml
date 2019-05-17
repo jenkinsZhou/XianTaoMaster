@@ -128,7 +128,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
                                 android:layout_centerVertical="true"
-                                android:text="填写收货地址"
+                                android:text="设置收货地址"
                                 android:visibility="gone" />
 
                             <LinearLayout

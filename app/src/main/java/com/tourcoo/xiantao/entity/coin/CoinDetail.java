@@ -31,7 +31,7 @@ public class CoinDetail {
     private double amount;
     private int createtime;
     private int updatetime;
-    private int coin;
+    private double coin;
     private int order_id;
     private String symbol;
     private String type_text;
@@ -94,11 +94,11 @@ public class CoinDetail {
         this.updatetime = updatetime;
     }
 
-    public int getCoin() {
+    public double getCoin() {
         return coin;
     }
 
-    public void setCoin(int coin) {
+    public void setCoin(double coin) {
         this.coin = coin;
     }
 

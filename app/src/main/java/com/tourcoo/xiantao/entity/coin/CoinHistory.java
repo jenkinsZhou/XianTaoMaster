@@ -26,7 +26,7 @@ public class CoinHistory {
     private int per_page;
     private int current_page;
     private int last_page;
-    private int coin;
+    private double coin;
     private int au;
     private double ag;
     private List<CoinDetail> data;
@@ -63,11 +63,11 @@ public class CoinHistory {
         this.last_page = last_page;
     }
 
-    public int getCoin() {
+    public double getCoin() {
         return coin;
     }
 
-    public void setCoin(int coin) {
+    public void setCoin(double coin) {
         this.coin = coin;
     }
 

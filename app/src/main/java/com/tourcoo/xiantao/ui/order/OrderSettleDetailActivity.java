@@ -2,6 +2,7 @@ package com.tourcoo.xiantao.ui.order;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -50,6 +51,7 @@ import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.advertisement.AdvertisEntity;
 import com.tourcoo.xiantao.entity.discount.DiscountInfo;
 import com.tourcoo.xiantao.entity.event.BaseEvent;
+import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.goods.GoodsSkuBean;
 import com.tourcoo.xiantao.entity.goods.Spec;
@@ -67,6 +69,7 @@ import com.tourcoo.xiantao.widget.bigkoo.pickerview.listener.OnTimeSelectListene
 import com.tourcoo.xiantao.widget.bigkoo.pickerview.view.TimePickerView;
 import com.tourcoo.xiantao.widget.dialog.PayDialog;
 import com.trello.rxlifecycle3.android.ActivityEvent;
+import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
@@ -100,6 +103,7 @@ import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.REQUEST_CODE
 import static com.tourcoo.xiantao.ui.discount.DisCountSelectListActivity.EXTRA_DISCOUNT_LIST;
 import static com.tourcoo.xiantao.ui.discount.DisCountSelectListActivity.EXTRA_PRICE;
 import static com.tourcoo.xiantao.ui.goods.GoodsDetailActivity.EXTRA_SETTLE;
+import static com.tourcoo.xiantao.ui.goods.HomeFragment.EXTRA_GOODS_ID;
 import static com.tourcoo.xiantao.ui.order.MyOrderListActivity.EXTRA_CURRENT_TAB_INDEX;
 import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_ALI;
 import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_BALANCE;
@@ -113,6 +117,16 @@ import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
  * @Email: 971613168@qq.com
  */
 public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity implements View.OnClickListener {
+    /**
+     * 是否是购物车结算
+     */
+    private boolean isShoppingCarSettle;
+    public static final String EXTRA_GOODS_COUNT = "EXTRA_GOODS_COUNT";
+    public static final String EXTRA_GOODS_SKU_ID = "EXTRA_GOODS_SKU_ID";
+    public static final String EXTRA_SHOPPING_CAR_SETTLE = "EXTRA_SHOPPING_CAR_SETTLE";
+    public int goodsId;
+    public int goodsCount;
+    public String skuId;
     /**
      * 判断是否拼团的结算
      */
@@ -312,6 +326,13 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     @Override
     public void initView(Bundle savedInstanceState) {
         mSettleType = getIntent().getIntExtra(EXTRA_SETTLE_TYPE, -1);
+        goodsCount = getIntent().getIntExtra(EXTRA_GOODS_COUNT, -1);
+        goodsId = getIntent().getIntExtra(EXTRA_GOODS_ID, -1);
+        skuId = getIntent().getStringExtra(EXTRA_GOODS_SKU_ID);
+        isShoppingCarSettle = getIntent().getBooleanExtra(EXTRA_SHOPPING_CAR_SETTLE, false);
+        TourCooLogUtil.i(TAG, TAG + ":" + "skuId = " + skuId);
+        TourCooLogUtil.i(TAG, TAG + ":" + "goodsCount = " + goodsCount);
+        TourCooLogUtil.i(TAG, TAG + ":" + "goodsId = " + goodsId);
         //拼团id
         pinId = getIntent().getIntExtra(EXTRA_PIN_USER_ID, -1);
         if (pinId >= 0) {
@@ -422,7 +443,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         if (userCoin) {
             //有积分
             shouldPrice = settleEntity.getOrder_pay_price() + settleEntity.getCoin();
-            tvShouldPayPrice.setText("￥" + shouldPrice);
+            String value = "￥" + TourCooUtil.doubleTransString(shouldPrice);
+            tvShouldPayPrice.setText(value);
             recordPrice = shouldPrice;
         } else {
             //没有积分
@@ -442,6 +464,11 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         //todo 请求优惠券数量 显示优惠券
         requestAvailableDiscountNumber(mSettleEntity.getOrder_total_price());
         mStatusLayoutManager.showSuccessLayout();
+        if (settleEntity.isHas_error() && settleEntity.getError_msg() != null) {
+            if (!TextUtils.isEmpty(settleEntity.getError_msg().toString())) {
+                showErrorDialog(settleEntity.getError_msg().toString());
+            }
+        }
     }
 
     /**
@@ -507,6 +534,18 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tvSettleAccounts:
+                if (mSettleEntity == null) {
+                    ToastUtil.showFailed("未获取到结算信息");
+                    return;
+                }
+                if(mSettleEntity.getExist_address() == null){
+                    ToastUtil.showFailed("请先设置配送地址");
+                    return;
+                }
+                if (mSettleEntity.isHas_error() && mSettleEntity.getError_msg() != null) {
+                    ToastUtil.showFailed(mSettleEntity.getError_msg().toString());
+                    return;
+                }
                 //弹出支付宝/微信
                 if (TextUtils.isEmpty(getTextValue(tvDeliveryTime))) {
                     ToastUtil.show("请选择配送时间");
@@ -965,6 +1004,23 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                 if (resultCode == RESULT_OK && data != null) {
                     AddressEntity entity = (AddressEntity) data.getSerializableExtra(EXTRA_ADDRESS_INFO);
                     showAddressInfo(entity);
+                    if (isPin) {
+                        //拼团订单重新结算
+                        TourCooLogUtil.i(TAG, TAG + "拼团订单的结算:");
+                        doRequestByCondition();
+                    } else {
+                        //非拼团订单需要判断是否是购物车结算/立即购买结算
+                        if (isShoppingCarSettle) {
+                            //购物车结算
+                            getMyShoppingCarList();
+                            //此时购物车的结算信息也要刷新
+                            EventBus.getDefault().post(new RefreshEvent());
+                            TourCooLogUtil.i(TAG, TAG + "购物车结算:");
+                        } else {
+                            TourCooLogUtil.i(TAG, TAG + "立即购买结算:");
+                            buyNow(goodsId, goodsCount, skuId);
+                        }
+                    }
                 }
                 break;
             case REQUEST_CODE_SELECT_DISCOUNT:
@@ -1232,6 +1288,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
      * 获取可用优惠券数量相关信息
      */
     private void requestAvailableDiscountNumber(double price) {
+        mStatusLayoutManager.showLoadingLayout();
         ApiRepository.getInstance().requestAvailableDiscountNumber(price).compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseObserver<BaseEntity>() {
                     @Override
@@ -1370,5 +1427,93 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         return FormatUtil.formatDoubleSize(money, 2);
     }
 
+
+    /**
+     * 请求添加商品接口(结算)
+     */
+    private void buyNow(int goodsId, int count, String skuId) {
+        if (mStatusLayoutManager != null) {
+            mStatusLayoutManager.showLoadingLayout();
+        }
+        ApiRepository.getInstance().settleGoods(goodsId, count, skuId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseLoadingObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                if (entity.data != null) {
+                                    //跳转到结算
+                                    SettleEntity settleEntity = parseSettleInfo(entity.data);
+                                    if (settleEntity != null) {
+                                        showSettleInfo(settleEntity);
+                                    } else {
+                                        ToastUtil.showFailed("失败");
+                                        mStatusLayoutManager.showErrorLayout();
+                                    }
+                                }
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                                mStatusLayoutManager.showErrorLayout();
+                            }
+                        }
+                    }
+                });
+    }
+
+
+    /**
+     * 购物车结算
+     */
+    private void getMyShoppingCarList() {
+        mStatusLayoutManager.showLoadingLayout();
+        ApiRepository.getInstance().getMyShoppingCarList().compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseLoadingObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                if (entity.data != null) {
+                                    mSettleEntity = parseSettleInfo(entity.data);
+                                    if (mSettleEntity != null) {
+                                        showSettleInfo(mSettleEntity);
+                                    } else {
+                                        mStatusLayoutManager.showErrorLayout();
+                                    }
+                                }
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                                mStatusLayoutManager.showErrorLayout();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onRequestError(Throwable e) {
+                        super.onRequestError(e);
+                        mStatusLayoutManager.showErrorLayout();
+                    }
+                });
+    }
+
+
+    /**
+     * 显示错误对话框
+     *
+     * @param msg
+     */
+    protected void showErrorDialog(String msg) {
+        showAlertDialog("温馨提示", msg, "我知道了", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //todo
+                if(mSettleEntity != null){
+                    //将配送地址置为null
+                    mSettleEntity.setExist_address(null);
+                }
+                showAddressInfo(null);
+                dialog.dismiss();
+            }
+        });
+    }
 
 }

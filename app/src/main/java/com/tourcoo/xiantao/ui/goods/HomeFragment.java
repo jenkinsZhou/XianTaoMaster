@@ -307,7 +307,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
      * 执行刷新逻辑
      */
     private void doRefresh() {
-        mRefreshLayout.setEnableLoadMore(true);
+        mRefreshLayout.setEnableLoadMore(false);
         mRefreshLayout.setNoMoreData(false);
         mGoodsGridAdapter.removeFooterView(footView);
         getHomeInfoDelay();

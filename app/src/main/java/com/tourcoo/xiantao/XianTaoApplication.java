@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
 
+import com.previewlibrary.ZoomMediaLoader;
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.tourcoo.xiantao.core.crash.CrashManager;
@@ -18,10 +19,12 @@ import com.tourcoo.xiantao.core.frame.util.SizeUtil;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.log.widget.LogFileEngineFactory;
 import com.tourcoo.xiantao.core.log.widget.config.LogLevel;
+import com.tourcoo.xiantao.core.threadpool.ThreadPoolManager;
 import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.squareup.leakcanary.LeakCanary;
 import com.tourcoo.xiantao.util.AddressHelper;
+import com.tourcoo.xiantao.util.GlideImageLoader;
 
 import org.litepal.LitePalApplication;
 
@@ -30,7 +33,6 @@ import androidx.multidex.MultiDex;
 import static com.tourcoo.xiantao.core.common.CommonConfig.BUGLY_APPID;
 import static com.tourcoo.xiantao.core.common.CommonConfig.DEBUG_MODE;
 import static com.tourcoo.xiantao.core.common.CommonConstant.TAG_PRE_SUFFIX;
-import static com.tourcoo.xiantao.core.common.RequestConfig.BASE_URL;
 import static com.tourcoo.xiantao.core.common.RequestConfig.BASE_URL_API;
 
 /**
@@ -50,8 +52,8 @@ public class XianTaoApplication extends LitePalApplication {
         mContext = this;
         initCrashHandle();
         initLog();
-        //初始化地址信息
-        AddressHelper.getInstance().initAddressData();
+        //异步初始化
+        asyncLoad();
         ToastUtil.init(mContext);
         //最简单UI配置模式-必须进行初始化
         UiConfigManager.init(this);
@@ -178,5 +180,19 @@ public class XianTaoApplication extends LitePalApplication {
     public static int getImageHeight() {
         imageHeight = (int) (SizeUtil.getScreenWidth() * 0.55);
         return imageHeight;
+    }
+
+    /**
+     * 异步加载
+     */
+    private void asyncLoad(){
+        ThreadPoolManager.getThreadPoolProxy().execute(new Runnable() {
+            @Override
+            public void run() {
+                //初始化地址信息
+                AddressHelper.getInstance().initAddressData();
+                ZoomMediaLoader.getInstance().init(new GlideImageLoader());
+            }
+        });
     }
 }

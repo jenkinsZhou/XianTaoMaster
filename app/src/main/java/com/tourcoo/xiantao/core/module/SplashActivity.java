@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.BarUtils;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.base.activity.BaseTitleActivity;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
@@ -107,6 +108,7 @@ public class SplashActivity extends BaseTitleActivity implements View.OnClickLis
             //隐藏状态栏
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
+        BarUtils.setStatusBarVisibility(SplashActivity.this, false);
         sp_bg = findViewById(R.id.sp_bg);
         layoutSkip = findViewById(R.id.layoutSkip);
         sp_bg.setOnClickListener(this);

@@ -3,6 +3,7 @@ package com.tourcoo.xiantao.ui.order;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -23,6 +24,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alipay.sdk.app.PayTask;
 import com.blankj.utilcode.util.LogUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.previewlibrary.GPreviewBuilder;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -43,6 +45,7 @@ import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.ImageEntity;
 import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.event.BaseEvent;
 import com.tourcoo.xiantao.entity.event.RefreshEvent;
@@ -1160,10 +1163,18 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
             for (String image : images) {
                 mImageList.add(TourCooUtil.getUrl(image));
             }
+            List<ImageEntity> imageEntityList = parseImageEntityList(gridImageAdapter.getData());
             gridImageAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                     onThumbnailClick(view, gridImageAdapter.getData().get(position));
+                  /*  computeBoundsBackward(rvReturnGoods, imageEntityList);
+                    GPreviewBuilder.from(ReturnDetailActivity.this)
+                            .setData(imageEntityList)
+                            .setCurrentIndex(position)
+                            .setSingleFling(true)
+                            .setType(GPreviewBuilder.IndicatorType.Number)
+                            .start();*/
                 }
             });
         }
@@ -1279,6 +1290,40 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
         mGoodsAdapter.setNewData(returnGoodsList);
         //应退款金额
         tvReturnPrice.setText(realReturnMoney);
+    }
 
+    private List<ImageEntity> parseImageEntityList(List<String> imageUrlList) {
+        List<ImageEntity> imageEntityList = new ArrayList<>();
+        if (imageUrlList == null || imageUrlList.isEmpty()) {
+            return imageEntityList;
+        }
+        ImageEntity imageEntity;
+        for (String url : imageUrlList) {
+            imageEntity = new ImageEntity();
+            imageEntity.setImageUrl(url);
+            imageEntityList.add(imageEntity);
+        }
+        return imageEntityList;
+    }
+
+    /**
+     * 查找信息
+     * 从第一个完整可见item逆序遍历，如果初始位置为0，则不执行方法内循环
+     */
+    private void computeBoundsBackward(RecyclerView imageRecyclerView, List<ImageEntity> imageEntityList) {
+        if (imageRecyclerView == null || !(imageRecyclerView.getLayoutManager() instanceof GridLayoutManager)) {
+            return;
+        }
+        GridLayoutManager gridLayoutManager = (GridLayoutManager) imageRecyclerView.getLayoutManager();
+        int firstCompletelyVisiblePos = gridLayoutManager.findFirstVisibleItemPosition();
+        for (int i = firstCompletelyVisiblePos; i < imageEntityList.size(); i++) {
+            View itemView = gridLayoutManager.findViewByPosition(i);
+            Rect bounds = new Rect();
+            if (itemView != null) {
+                ImageView thumbView = itemView.findViewById(R.id.additionalRoundedImageView);
+                thumbView.getGlobalVisibleRect(bounds);
+            }
+            imageEntityList.get(i).setBounds(bounds);
+        }
     }
 }

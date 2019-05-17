@@ -65,6 +65,7 @@ import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.ui.goods.GoodsDetailActivity.EXTRA_SETTLE;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_SETTLE_TYPE;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_SHOPPING_CAR_SETTLE;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SETTLE_TYPE_CAR;
 
 /**
@@ -583,6 +584,7 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
         Intent intent = new Intent();
         intent.putExtra(EXTRA_SETTLE, settleEntity);
         intent.putExtra(EXTRA_SETTLE_TYPE, SETTLE_TYPE_CAR);
+        intent.putExtra(EXTRA_SHOPPING_CAR_SETTLE, true);
         intent.setClass(mContext, OrderSettleDetailActivity.class);
         startActivity(intent);
     }
