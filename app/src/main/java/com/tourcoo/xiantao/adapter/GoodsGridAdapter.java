@@ -7,12 +7,11 @@ import com.makeramen.roundedimageview.RoundedImageView;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.util.TourCoolUtil;
-import com.tourcoo.xiantao.entity.goods.HomeGoodsBean;
+import com.tourcoo.xiantao.entity.home.HomeGoodsBean;
 import com.tourcoo.xiantao.entity.goods.Spec;
 
 import java.util.List;
 
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
@@ -37,9 +36,10 @@ public class GoodsGridAdapter extends BaseQuickAdapter<HomeGoodsBean, BaseViewHo
         Spec spec;
         if (specList != null && !specList.isEmpty()) {
             spec = specList.get(0);
-            helper.setText(R.id.tvGuessLikeSinglePrice, "￥" + spec.getGoods_price());
+
+            helper.setText(R.id.tvGuessLikeSinglePrice, "¥ " + spec.getGoods_price());
         } else {
-            helper.setText(R.id.tvGuessLikeSinglePrice, "￥" + item.getGoods_min_price());
+            helper.setText(R.id.tvGuessLikeSinglePrice, "¥ " + item.getGoods_min_price());
         }
 
         if (item.isTuan()) {

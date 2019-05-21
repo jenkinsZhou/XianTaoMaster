@@ -1,4 +1,4 @@
-package com.tourcoo.xiantao.ui.goods;
+package com.tourcoo.xiantao.ui.home;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -17,7 +17,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
-import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -46,20 +45,18 @@ import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.banner.BannerBean;
 import com.tourcoo.xiantao.entity.event.MessageEvent;
-import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.entity.goods.GoodsDetailEntity;
 import com.tourcoo.xiantao.entity.HomeInfoBean;
-import com.tourcoo.xiantao.entity.banner.BannerDetail;
-import com.tourcoo.xiantao.entity.goods.HomeGoodsBean;
+import com.tourcoo.xiantao.entity.home.HomeGoodsBean;
 import com.tourcoo.xiantao.entity.message.MessageBean;
 import com.tourcoo.xiantao.entity.news.NewsBean;
 import com.tourcoo.xiantao.helper.ShoppingCar;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
-import com.tourcoo.xiantao.ui.base.WebViewActivity;
+import com.tourcoo.xiantao.ui.goods.GoodsDetailActivity;
+import com.tourcoo.xiantao.ui.goods.SearchGoodsActivity;
 import com.tourcoo.xiantao.ui.msg.BannerDetailActivity;
 import com.tourcoo.xiantao.ui.msg.HomeNewsDetailActivity;
 import com.tourcoo.xiantao.ui.msg.MsgSystemActivity;
-import com.tourcoo.xiantao.util.LocateHelper;
 import com.tourcoo.xiantao.util.LocateHelper;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 
@@ -79,7 +76,6 @@ import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
 import static android.app.Activity.RESULT_OK;
 import static com.tourcoo.xiantao.adapter.AddressInfoAdapter.ADDRESS_DEFAULT;
-import static com.tourcoo.xiantao.core.common.RequestConfig.BASE_URL;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.ui.account.MineFragment.REQUEST_CODE_MESSAGE_CENTER;
 
@@ -125,7 +121,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
 
     @Override
     public int getContentLayout() {
-        return R.layout.fragment_home;
+        return R.layout.home_fragment_version2;
     }
 
     @Override
@@ -361,7 +357,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
 
 
     private void getHomeInfo() {
-        ApiRepository.getInstance().getHomeBanner().compose(bindUntilEvent(FragmentEvent.DESTROY)).
+        ApiRepository.getInstance().requestHomeInfo().compose(bindUntilEvent(FragmentEvent.DESTROY)).
                 subscribe(new BaseObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {
@@ -722,7 +718,12 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
         if (mapLocation != null) {
             if (mapLocation.getErrorCode() == 0) {
                 TourCooLogUtil.d(TAG, "回调结果:" + mapLocation.getCity());
-                tvCity.setText(mapLocation.getCity());
+                String city = mapLocation.getCity();
+                String rigion = "市";
+                if (city.endsWith(rigion)) {
+                    city = city.substring(0, city.length() - 1);
+                }
+                tvCity.setText(city);
             }
         }
     }
@@ -743,8 +744,8 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
         });
     }
 
-    private void getMessageCount(){
-        if(!AccountInfoHelper.getInstance().isLogin() || !NetworkUtil.isConnected(mContext)){
+    private void getMessageCount() {
+        if (!AccountInfoHelper.getInstance().isLogin() || !NetworkUtil.isConnected(mContext)) {
             return;
         }
         requestMessageNoReadCount();

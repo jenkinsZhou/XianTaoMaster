@@ -29,7 +29,7 @@ import com.tourcoo.xiantao.core.widget.button.IOnAddDelListener;
 import com.tourcoo.xiantao.core.widget.core.util.SizeUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.goods.GoodsDetailEntity;
-import com.tourcoo.xiantao.entity.goods.HomeGoodsBean;
+import com.tourcoo.xiantao.entity.home.HomeGoodsBean;
 import com.tourcoo.xiantao.entity.event.TabChangeEvent;
 import com.tourcoo.xiantao.helper.ShoppingCar;
 
@@ -191,7 +191,7 @@ public class ShoppingCarFragmentVersion1 extends BaseTitleTourCoolFragment imple
                 helper.setImageResource(R.id.ivGoodsIcon, R.mipmap.img_zwt);
                 /*helper.setText(R.id.tvGoodsName, TourCoolUtil.getStringNotNull(item.goodsName));
                 helper.setText(R.id.tvGoodsLabel, TourCoolUtil.getStringNotNull(item.goodsLabels));
-                helper.setText(R.id.tvGoodsPrice, "￥" + item.goodsCurrentPrice);
+                helper.setText(R.id.tvGoodsPrice, "¥" + item.goodsCurrentPrice);
                 helper.setChecked(R.id.cBoxGoods, item.select);
                 helper.setText(R.id.tvGoodsSpec, TourCoolUtil.getStringNotNull(item.goodsSpec));
                 helper.addOnClickListener(R.id.tvCBox);
@@ -584,7 +584,7 @@ public class ShoppingCarFragmentVersion1 extends BaseTitleTourCoolFragment imple
      * @param totalMoney
      */
     private void showTotal(double totalMoney) {
-        String money = "￥" + totalMoney;
+        String money = "¥" + totalMoney;
         tvTotalMoneyAmount.setText(money);
         if (totalMoney >= limit) {
             hideView(rlCollectBills);

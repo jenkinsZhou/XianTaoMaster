@@ -42,7 +42,7 @@ public class InvoiceInformationAdapter extends BaseQuickAdapter<InvoiceInfomatio
                 helper.setText(R.id.tvInvoiceType, TourCoolUtil.getStringNotNull("未知"));
                 break;
         }
-        helper.setText(R.id.tvInvoiceMoney, "￥" + item.invoiceMoney);
+        helper.setText(R.id.tvInvoiceMoney, "¥" + item.invoiceMoney);
         switch (item.invoiceStatus) {
             case STATUS_INVOICE_WAIT:
                 helper.setText(R.id.tvInvoiceStatus, "待开具");

@@ -30,20 +30,21 @@
             android:paddingRight="@dimen/dp_15"
             android:paddingTop="@dimen/dp_3"
             android:paddingBottom="@dimen/dp_3"
-            android:text="3秒"
+            android:text="3 跳过"
             android:background="@drawable/splash_skip"
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/sp_14" />
 
-        <TextView
+      <!--  <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:text="跳过"
+            android:gravity="center"
             android:textColor="@color/colorWhite"
             android:textSize="16sp"
-            android:visibility="gone" />
+            android:visibility="gone" />-->
     </LinearLayout>
 </RelativeLayout>

@@ -1,30 +1,24 @@
 package com.tourcoo.xiantao.ui.goods;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.tourcoo.xiantao.R;
-import com.tourcoo.xiantao.XianTaoApplication;
 import com.tourcoo.xiantao.adapter.ClassifyGoodsGridAdapter;
 import com.tourcoo.xiantao.adapter.ClassifyNameAdapter;
 import com.tourcoo.xiantao.core.frame.base.fragment.BaseTitleFragment;
-import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
-import com.tourcoo.xiantao.core.helper.TitleBarViewHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
-import com.tourcoo.xiantao.core.widget.core.util.StatusBarUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.classify.ClassifyGoodsBean;
@@ -32,7 +26,6 @@ import com.tourcoo.xiantao.entity.classify.GoodClassifyEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -43,7 +36,6 @@ import me.bakumon.statuslayoutmanager.library.OnStatusChildClickListener;
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
-import static com.tourcoo.xiantao.ui.goods.HomeFragment.EXTRA_GOODS_ID;
 
 /**
  * @author :JenkinsZhou

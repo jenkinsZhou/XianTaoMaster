@@ -35,7 +35,7 @@ public class BannerDetailActivity extends BaseTourCooTitleActivity {
 
     @Override
     public int getContentLayout() {
-        return R.layout.activity_news_details;
+        return R.layout.activity_web_details;
     }
 
     @Override

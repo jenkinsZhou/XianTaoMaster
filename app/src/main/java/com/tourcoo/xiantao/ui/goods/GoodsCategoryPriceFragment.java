@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.LogUtils;
@@ -25,7 +27,7 @@ import java.util.ArrayList;
 
 import static com.tourcoo.xiantao.constant.GoodsConstant.TYPE_GOODS_PRICE;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
-import static com.tourcoo.xiantao.ui.goods.HomeFragment.EXTRA_GOODS_ID;
+import static com.tourcoo.xiantao.ui.home.HomeFragment.EXTRA_GOODS_ID;
 
 /**
  * @author :JenkinsZhou
@@ -90,7 +92,7 @@ public class GoodsCategoryPriceFragment extends BaseRefreshFragment<GoodsCategor
      */
     public void getCategoryGoodsList(String type, int pageIndex) {
         TourCooLogUtil.i(TAG, TAG + ":" + "mActivity.categoryId = " + mActivity.categoryId);
-        ApiRepository.getInstance().getCategoryGoodsList(mActivity.categoryId, type, pageIndex, mActivity.keyword).compose(bindUntilEvent(FragmentEvent.DESTROY)).
+        ApiRepository.getInstance().getCategoryGoodsList(mActivity.param,mActivity.categoryId, type, pageIndex, mActivity.keyword).compose(bindUntilEvent(FragmentEvent.DESTROY)).
                 subscribe(new BaseObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {

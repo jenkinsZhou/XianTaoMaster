@@ -178,8 +178,8 @@ public class ApiRepository extends BaseRepository {
      *
      * @return
      */
-    public Observable<BaseEntity> getHomeBanner() {
-        return TourCoolTransformer.switchSchedulersIo(getApiService().homeBanner().retryWhen(new RetryWhen()));
+    public Observable<BaseEntity> requestHomeInfo() {
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestHomeInfo().retryWhen(new RetryWhen()));
     }
 
     /**
@@ -422,15 +422,19 @@ public class ApiRepository extends BaseRepository {
      * @param categoryId
      * @return
      */
-    public Observable<BaseEntity> getCategoryGoodsList(int categoryId, String categoryType, int pageIndex, String keyWord) {
+    public Observable<BaseEntity> getCategoryGoodsList(String param, int categoryId, String categoryType, int pageIndex, String keyWord) {
         Map<String, Object> params = new HashMap<>(1);
         params.put("types", categoryType);
         params.put("p", pageIndex);
-        if (!TextUtils.isEmpty(keyWord)) {
-            params.put("id", -1);
-            params.put("name", keyWord);
+        if (param != null) {
+            params.put("param", param);
         } else {
-            params.put("id", categoryId);
+            if (!TextUtils.isEmpty(keyWord)) {
+                params.put("id", -1);
+                params.put("name", keyWord);
+            } else {
+                params.put("id", categoryId);
+            }
         }
         TourCooLogUtil.i(TAG, TAG + ":" + params);
         return TourCoolTransformer.switchSchedulersIo(getApiService().getCategoryGoodsList(params).retryWhen(new RetryWhen()));
@@ -875,6 +879,13 @@ public class ApiRepository extends BaseRepository {
         params.put("id", id);
         return TourCoolTransformer.switchSchedulersIo(getApiService().getNewsDetails(params).retryWhen(new RetryWhen()));
     }
+
+    public Observable<BaseEntity> requestHomeWebDetails(String param) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("param", param);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestHomeWebDetails(params).retryWhen(new RetryWhen()));
+    }
+
 
     /**
      * banner详情

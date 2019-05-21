@@ -33,7 +33,7 @@ public class CollectionGoodsAdapter extends BaseQuickAdapter<Goods, BaseViewHold
         RoundedImageView ivGoodsIcon = helper.getView(R.id.ivGoodsIcon);
         GlideManager.loadImg(TourCooUtil.getUrl(item.getImage()), ivGoodsIcon);
         helper.setText(R.id.tvGoodsName, TourCoolUtil.getStringNotNull(item.getGoods_name()));
-//        helper.setText(R.id.tvGoodsPrice, "￥" + item.getGoods_price());
+//        helper.setText(R.id.tvGoodsPrice, "¥" + item.getGoods_price());
         helper.setVisible(R.id.tvGoodsPrice,false);
     }
 }

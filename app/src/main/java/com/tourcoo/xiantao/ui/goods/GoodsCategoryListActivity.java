@@ -17,11 +17,9 @@ import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.tourcoo.xiantao.constant.GoodsConstant.TYPE_GOODS_NORMAL;
-import static com.tourcoo.xiantao.constant.GoodsConstant.TYPE_GOODS_PRICE;
-import static com.tourcoo.xiantao.constant.GoodsConstant.TYPE_GOODS_SALES;
 import static com.tourcoo.xiantao.ui.goods.ClassifyGoodsFragment.EXTRA_CATEGORY_ID;
 import static com.tourcoo.xiantao.ui.goods.ClassifyGoodsFragment.EXTRA_CATEGORY_NAME;
+import static com.tourcoo.xiantao.ui.home.HomeFragmentVersion2.EXTRA_PARAM;
 
 /**
  * @author :JenkinsZhou
@@ -40,6 +38,7 @@ public class GoodsCategoryListActivity extends BaseTourCooTitleActivity implemen
     public static final String EXTRA_KEY_WORD = "EXTRA_KEY_WORD";
     public String keyword;
     private String categoryName;
+    public String param;
     /**
      * 商品分类的id
      */
@@ -52,12 +51,14 @@ public class GoodsCategoryListActivity extends BaseTourCooTitleActivity implemen
 
     @Override
     public void initView(Bundle savedInstanceState) {
+        param =getIntent().getStringExtra(EXTRA_PARAM);
         categoryId = getIntent().getIntExtra(EXTRA_CATEGORY_ID, -1);
         categoryName = getIntent().getStringExtra(EXTRA_CATEGORY_NAME);
         keyword = getIntent().getStringExtra(EXTRA_KEY_WORD);
         String titleName = getIntent().getStringExtra(EXTRA_TITLE_NAME);
         showTitle(titleName);
         TourCooLogUtil.i(TAG, TAG + "商品id:" + categoryId);
+        TourCooLogUtil.i(TAG, TAG + "商品参数:" + param);
         goodsViewPager = findViewById(R.id.goodsViewPager);
         goodsViewPager.setOffscreenPageLimit(3);
         initTabTitle();

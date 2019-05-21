@@ -1,4 +1,6 @@
-package com.tourcoo.xiantao.entity.goods;
+package com.tourcoo.xiantao.entity.home;
+
+import com.tourcoo.xiantao.entity.goods.Spec;
 
 import java.util.List;
 

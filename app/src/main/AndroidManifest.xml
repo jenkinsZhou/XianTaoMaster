@@ -111,10 +111,6 @@
             android:name=".ui.account.EditAddressActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.goods.GoodsDetailActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.order.OrderSettleDetailActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -205,6 +201,8 @@
         <activity
             android:name=".ui.discount.DisCountSelectListActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".ui.home.WebContentInfoActivity" />
+        <activity android:name=".ui.goods.GoodsDetailActivity" />
     </application>
 
 </manifest>

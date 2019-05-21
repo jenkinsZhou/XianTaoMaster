@@ -6,7 +6,10 @@
 
     <include layout="@layout/layout_title_bar" />
 
-
+<LinearLayout
+    android:id="@+id/llContentView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <WebView
         android:id="@+id/webView"
         android:layout_width="match_parent"
@@ -16,5 +19,7 @@
         android:scrollbars="none">
 
     </WebView>
+
+</LinearLayout>
 
 </LinearLayout>

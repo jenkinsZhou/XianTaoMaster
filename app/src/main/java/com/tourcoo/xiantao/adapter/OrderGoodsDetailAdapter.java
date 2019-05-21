@@ -35,7 +35,7 @@ public class OrderGoodsDetailAdapter extends BaseQuickAdapter<OrderDetailEntity.
     @Override
     protected void convert(BaseViewHolder helper, @NonNull OrderDetailEntity.OrderBean.GoodsBean goods) {
         helper.setText(R.id.tvGoodsName, goods.getGoods_name());
-        helper.setText(R.id.tvGoodsPrice, "￥ " + goods.getGoods_price());
+        helper.setText(R.id.tvGoodsPrice, "¥ " + goods.getGoods_price());
          TourCooLogUtil.i(TAG,TAG+"是否是拼团订单:"+isPin );
         //当前商品的数量
         helper.setText(R.id.goodsCount, "x" + goods.getTotal_num());
@@ -52,7 +52,7 @@ public class OrderGoodsDetailAdapter extends BaseQuickAdapter<OrderDetailEntity.
                 TuanRule tuanRule = gson.fromJson(goods.getTuan_rule().toString(), TuanRule.class);
                 if (tuanRule != null) {
                     helper.setVisible(R.id.llGoodsLabel, true);
-                    helper.setText(R.id.tvGoodsPrice, "￥ " + tuanRule.getPrice());
+                    helper.setText(R.id.tvGoodsPrice, "¥ " + tuanRule.getPrice());
                     helper.setText(R.id.tvGoodsLabel, tuanRule.getName());
                 }
             }

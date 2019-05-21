@@ -12,7 +12,6 @@ import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.advertisement.AdverDetailEntity;
-import com.tourcoo.xiantao.entity.banner.BannerDetail;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
 import com.trello.rxlifecycle3.android.ActivityEvent;
@@ -38,7 +37,7 @@ public class AdvDetailActivity extends BaseTourCooTitleActivity {
 
     @Override
     public int getContentLayout() {
-        return R.layout.activity_news_details;
+        return R.layout.activity_web_details;
     }
 
     @Override

@@ -29,16 +29,12 @@ import com.tourcoo.xiantao.core.widget.core.util.StatusBarUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
-import com.tourcoo.xiantao.entity.SystemSettingEntity;
-import com.tourcoo.xiantao.entity.advertisement.AdverDetailEntity;
 import com.tourcoo.xiantao.entity.advertisement.AdvertisEntity;
 import com.tourcoo.xiantao.entity.user.UserInfo;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.account.LoginActivity;
 import com.tourcoo.xiantao.ui.goods.GoodsDetailActivity;
 import com.tourcoo.xiantao.ui.msg.AdvDetailActivity;
-import com.tourcoo.xiantao.ui.order.OrderDetailActivity;
-import com.tourcoo.xiantao.ui.recharge.AccountBalanceActivity;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
 import androidx.core.content.ContextCompat;
@@ -46,20 +42,13 @@ import androidx.core.content.ContextCompat;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
 import static com.tourcoo.xiantao.core.common.CommonConfig.PREF_IMAGE_ADVERTISEMENT;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
-import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_PHONE_KEY;
-import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_REGISTER_KEY;
-import static com.tourcoo.xiantao.ui.goods.HomeFragment.EXTRA_GOODS_ID;
-import static com.tourcoo.xiantao.ui.order.OrderDetailActivity.EXTRA_ORDER_ID;
-import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.PAY_STATUS;
-import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.PAY_STATUS_SUCCESS;
-import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SDK_PAY_FLAG;
+import static com.tourcoo.xiantao.ui.home.HomeFragment.EXTRA_GOODS_ID;
 
 /**
  * @author :zhoujian
@@ -111,6 +100,7 @@ public class SplashActivity extends BaseTitleActivity implements View.OnClickLis
         BarUtils.setStatusBarVisibility(SplashActivity.this, false);
         sp_bg = findViewById(R.id.sp_bg);
         layoutSkip = findViewById(R.id.layoutSkip);
+        layoutSkip.setOnClickListener(this);
         sp_bg.setOnClickListener(this);
         tvSecond = findViewById(R.id.tvSecond);
         if (NetworkUtil.isConnected(mContext)) {
@@ -212,6 +202,10 @@ public class SplashActivity extends BaseTitleActivity implements View.OnClickLis
                 AccountInfoHelper.getInstance().getUserInfo();
                 doSkipByCondition(mAdvertisEntity);
                 break;
+            case R.id.layoutSkip:
+                TourCoolUtil.startActivity(mContext, MainTabActivity.class);
+                finish();
+                break;
             default:
                 break;
         }
@@ -242,7 +236,7 @@ public class SplashActivity extends BaseTitleActivity implements View.OnClickLis
 
 
     private void showTime(int second) {
-        String secondString = second + "秒";
+        String secondString = second +" 跳过";
         if (tvSecond != null && layoutSkip != null) {
             layoutSkip.setVisibility(View.VISIBLE);
             tvSecond.setText(secondString);

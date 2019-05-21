@@ -1142,7 +1142,7 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
         tvReturnResult.setText(TourCooUtil.getNotNullValue(returnInfo.getStatus_text()));
         //实际返回金额
         TourCooLogUtil.i(TAG, TAG + "实际退款金额:" + returnInfo.getPrice());
-        String realReturrnMoney = "￥" + TourCooUtil.doubleTransString(returnInfo.getPrice());
+        String realReturrnMoney = "¥" + TourCooUtil.doubleTransString(returnInfo.getPrice());
         tvRealReturnMoney.setText(realReturrnMoney);
         //实际返回金币
         tvRealReturnCoin.setText(TourCooUtil.doubleTransString(returnInfo.getCoin()));
@@ -1277,7 +1277,7 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
             }
         }
         int num = 0;
-        String realReturnMoney = "￥";
+        String realReturnMoney = "¥";
         double returnMoney = 0;
         for (OrderDetailEntity.OrderBean.GoodsBean goodsBean : returnGoodsList) {
             num += goodsBean.getTotal_num();

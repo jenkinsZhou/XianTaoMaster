@@ -180,12 +180,14 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
                 RoundedImageView ivGoodsIcon = helper.getView(R.id.ivGoodsIcon);
                 GlideManager.loadImg(goods.getImage(), ivGoodsIcon);
                 GoodsSkuBean goodsSkuBean = goods.getGoods_sku();
+
                 if (goodsSkuBean != null && goodsSkuBean.getGoods_attr() != null) {
                     helper.setText(R.id.tvGoodsLabel, TourCoolUtil.getStringNotNull(goodsSkuBean.getGoods_attr()));
                 }
                 helper.setText(R.id.tvGoodsName, TourCoolUtil.getStringNotNull(goods.getGoods_name()));
 //                helper.setText(R.id.tvGoodsLabel, TourCoolUtil.getStringNotNull(item.goodsLabels));
-                helper.setText(R.id.tvGoodsPrice, "￥" + goods.getGoods_price());
+
+                helper.setText(R.id.tvGoodsPrice, "¥ " + goods.getGoods_price());
 //                helper.setText(R.id.tvGoodsSpec, TourCoolUtil.getStringNotNull(item.goodsSpec));
                 initAddDelButtonListener(helper, goods);
                 intSwipeDeleteListener(helper, goods);
@@ -469,12 +471,12 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
      * 显示底部合计金额
      */
     private void showBottomMoney(SettleEntity settleEntity) {
-        String payPrice = "￥0.00";
+        String payPrice = "¥0.00";
         if (settleEntity == null) {
             tvTotalMoneyAmount.setText(payPrice);
             return;
         }
-        payPrice = "￥" + settleEntity.getOrder_total_price();
+        payPrice = "¥" + settleEntity.getOrder_total_price();
         tvTotalMoneyAmount.setText(payPrice);
     }
 

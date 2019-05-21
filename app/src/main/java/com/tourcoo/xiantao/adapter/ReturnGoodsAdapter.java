@@ -32,7 +32,7 @@ public class ReturnGoodsAdapter extends BaseQuickAdapter<Goods, BaseViewHolder> 
     @Override
     protected void convert(BaseViewHolder helper, @NonNull Goods goods) {
         helper.setText(R.id.tvGoodsName, goods.getGoods_name());
-        helper.setText(R.id.tvGoodsPrice, "￥ " + goods.getGoods_price());
+        helper.setText(R.id.tvGoodsPrice, "¥ " + goods.getGoods_price());
         helper.setText(R.id.goodsCount,"x"+goods.getTotal_num());
         RoundedImageView civGoodsIcon = helper.getView(R.id.civGoodsIcon);
         GlideManager.loadImg(goods.getImage(), civGoodsIcon);

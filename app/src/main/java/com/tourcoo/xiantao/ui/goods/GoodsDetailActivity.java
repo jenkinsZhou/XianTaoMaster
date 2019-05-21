@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.TextUtils;
 import android.util.SparseArray;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebView;
@@ -24,27 +25,22 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.blankj.utilcode.util.ImageUtils;
 import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.SpanUtils;
 import com.blankj.utilcode.util.StringUtils;
-import com.blankj.utilcode.util.TimeUtils;
-import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
-import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject;
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tourcoo.xiantao.R;
+import com.tourcoo.xiantao.adapter.GoodsLableAdapter;
 import com.tourcoo.xiantao.adapter.GridImageAdapter;
 import com.tourcoo.xiantao.constant.WxConfig;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
@@ -54,9 +50,7 @@ import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.log.widget.utils.DateUtil;
-import com.tourcoo.xiantao.core.module.MainTabActivity;
 import com.tourcoo.xiantao.core.util.ToastUtil;
-import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.core.util.SizeUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
@@ -66,7 +60,6 @@ import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.goods.GoodsEntity;
-import com.tourcoo.xiantao.entity.goods.Spec;
 import com.tourcoo.xiantao.entity.goods.TuanRule;
 import com.tourcoo.xiantao.entity.settle.SettleEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
@@ -76,6 +69,7 @@ import com.tourcoo.xiantao.ui.base.WebViewActivity;
 import com.tourcoo.xiantao.ui.comment.CommentListActivity;
 import com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity;
 import com.tourcoo.xiantao.util.FormatDuration;
+import com.tourcoo.xiantao.widget.custom.LabelLayout;
 import com.tourcoo.xiantao.widget.dialog.PinTuanDialog;
 import com.tourcoo.xiantao.widget.dialog.ProductSkuDialog;
 import com.tourcoo.xiantao.widget.ratingstar.RatingStarView;
@@ -87,9 +81,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import cn.bingoogolapple.bgabanner.BGABanner;
@@ -98,7 +90,7 @@ import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.core.module.SplashActivity.EXTRA_ADV_TAG;
-import static com.tourcoo.xiantao.ui.goods.HomeFragment.EXTRA_GOODS_ID;
+import static com.tourcoo.xiantao.ui.home.HomeFragment.EXTRA_GOODS_ID;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_GOODS_COUNT;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_GOODS_SKU_ID;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_PIN_USER_ID;
@@ -116,6 +108,7 @@ import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SETTLE_TYPE
 public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity implements IMultiStatusView, View.OnClickListener {
     private RelativeLayout rlContentView;
     private ShareGoodsPopupWindow sharePopupWindow;
+    private RelativeLayout rlORigin;
     private IWXAPI api;
     private int count;
     private BGABanner bgaBanner;
@@ -124,6 +117,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
      * 商品价格区间
      */
     private TextView tvPriceRange;
+    private TextView tvLinePrice;
     /**
      * 拼团价
      */
@@ -182,16 +176,24 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private TextView tvGiveAwayCoin;
 
     private TextView tvDeduct;
+    private LabelLayout labelLayout;
+
+    private LinearLayout llDeductRule;
+    private TextView tvExplainDiscount;
 
     @Override
     public int getContentLayout() {
-        return R.layout.activity_goods_detail;
+        return R.layout.activity_goods_detail_version2;
     }
 
     private void init() {
         //判断是否是从广告页跳转过来的
         api = WXAPIFactory.createWXAPI(mContext, WxConfig.APP_ID);
+        rlORigin = findViewById(R.id.rlORigin);
+        llDeductRule = findViewById(R.id.llDeductRule);
+        tvExplainDiscount = findViewById(R.id.tvExplainDiscount);
         tvPriceRange = findViewById(R.id.tvPriceRange);
+        tvLinePrice = findViewById(R.id.tvLinePrice);
         tvPinPrice = findViewById(R.id.tvPinPrice);
         sharePopupWindow = new ShareGoodsPopupWindow(mContext, false);
         skipTag = getIntent().getStringExtra(EXTRA_ADV_TAG);
@@ -211,6 +213,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         });
         rlContentView = findViewById(R.id.rlContentView);
         llGiveAway = findViewById(R.id.llGiveAway);
+        labelLayout = findViewById(R.id.labelLayout);
         llDeduct = findViewById(R.id.llDeduct);
         tvDeduct = findViewById(R.id.tvDeduct);
         tvGiveAwayCoin = findViewById(R.id.tvGiveAwayCoin);
@@ -393,35 +396,47 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             String value = "购买本商品每满" + detail.getGive() + "元 , 赠送1金币";
             tvGiveAwayCoin.setText(value);
         }
+        if (TextUtils.isEmpty(detail.getPromote())) {
+            setVisible(llDeductRule, false);
+        } else {
+            setVisible(llDeductRule, true);
+            tvExplainDiscount.setText(detail.getPromote());
+        }
         if (detail.getDeduct() <= 0) {
             llDeduct.setVisibility(View.GONE);
         } else {
             llDeduct.setVisibility(View.VISIBLE);
-            String value = "购买本商品每满" + detail.getDeduct() + "元 , 可使用1金币抵扣1元";
+            String value = "金币每满" + TourCooUtil.doubleTransString(detail.getDeduct()) + " 用" + TourCooUtil.doubleTransString(detail.getDeduct_coin());
             tvDeduct.setText(value);
         }
         setBanner(detail.getImgs_url());
         //显示名称
         tvGoodsName.setText(detail.getGoods_name());
-
         //是否显示拼团信息
         setVisible(llAssemble, detail.isTuan() && detail.getTuan_list() != null && detail.getTuan_list().
                 size() > 0);
-
         setVisible(tvPin, detail.isTuan());
         setVisible(tvTuanTag, detail.isTuan());
         boolean isTuan = detail.isTuan();
         try {
             String priceRange;
             if (detail.getGoods_min_price() == detail.getGoods_max_price()) {
-                priceRange = "￥" + TourCooUtil.doubleTrans(detail.getGoods_min_price());
+                priceRange = TourCooUtil.doubleTrans(detail.getGoods_min_price());
             } else {
-                priceRange = "￥" + TourCooUtil.doubleTrans(detail.getGoods_min_price()) + " -￥" + TourCooUtil.doubleTrans(detail.getGoods_max_price());
+                priceRange = TourCooUtil.doubleTrans(detail.getGoods_min_price()) + " - " + TourCooUtil.doubleTrans(detail.getGoods_max_price());
+            }
+            if (detail.getGoods_min_line_price() > 0) {
+                //中划线
+                tvLinePrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                String linePrice = "¥" + detail.getGoods_min_line_price();
+                tvLinePrice.setText(linePrice);
+            } else {
+                setVisible(tvLinePrice, false);
             }
             tvPriceRange.setText(priceRange);
             if (isTuan && detail.getTuan_rule() != null) {
                 TuanRule tuanRule = new Gson().fromJson(detail.getTuan_rule().toString(), TuanRule.class);
-                String pinPrice = "拼团价￥" + TourCooUtil.doubleTrans(Double.parseDouble(tuanRule.getPrice()));
+                String pinPrice = "拼团价¥" + TourCooUtil.doubleTrans(Double.parseDouble(tuanRule.getPrice()));
                 setVisible(tvPinPrice, true);
                 tvPinPrice.setText(pinPrice);
             } else {
@@ -430,12 +445,18 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         } catch (Exception e) {
             TourCooLogUtil.e(TAG, TAG + ":" + "显示异常:" + e.toString());
         }
+        setVisible(tvLable, false);
         tvLable.setText(detail.getLabel());
         if (!StringUtils.isEmpty(detail.getOrigin())) {
-            tvOrigin.setText(new SpanUtils()
+         /*   tvOrigin.setText(new SpanUtils()
                     .append("产地: ").setForegroundColor(Color.parseColor("#9B9B9B"))
                     .append(detail.getOrigin()).setForegroundColor(TourCoolUtil.getColor(R.color.colorTextBlack))
-                    .create());
+                    .create());*/
+            String originInfo = "产地:" + detail.getOrigin();
+            tvOrigin.setText(originInfo);
+        } else {
+            tvOrigin.setText("未知");
+            setVisible(rlORigin, false);
         }
 
         if (detail.isTuan() && detail.getTuan_list() != null && detail.getTuan_list().
@@ -486,9 +507,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                         pinTuanDialog.show();
                     }
                 });
-
                 countDownMap.put(view.hashCode(), timer);
-
                 llTuanContainer.addView(view);
             }
         }
@@ -536,7 +555,6 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 ratingStarView.setRating(item.getStar());
                 String imageUrl = TourCooUtil.getUrl(item.getAvatar());
                 GlideManager.loadImg(imageUrl, circleImageView, TourCooUtil.getDrawable(R.mipmap.img_zwt));
-
                 llCommentContainer.addView(view);
             }
 
@@ -547,9 +565,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             btnSeeComment.setEnabled(false);
         }
 
-        if (goodsEntity.getDetail().
-
-                getCollect() == 0) {
+        if (goodsEntity.getDetail().getCollect() == 0) {
             showNoCollect();
         } else {
             showCollect();
@@ -613,6 +629,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 dialog.show();
             }
         });
+        showGoodsLabel(loadGoodsLabel(goodsEntity));
         mStatusLayoutManager.showSuccessLayout();
     }
 
@@ -1054,5 +1071,37 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         intent.setClass(mContext, LoginActivity.class);
         startActivity(intent);
         finish();
+    }
+
+
+    /**
+     * 加载商品标签
+     */
+    private void showGoodsLabel(List<String> labelList) {
+        if (labelList == null || labelList.isEmpty()) {
+            setVisible(labelLayout, false);
+            return;
+        }
+        setVisible(labelLayout, true);
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        for (int i = 0; i < labelList.size(); i++) {
+            TextView textView = (TextView) layoutInflater.inflate(R.layout.item_goods_label, labelLayout, false);
+            final String label = labelList.get(i);
+            textView.setText(label);
+            labelLayout.addView(textView);
+        }
+    }
+
+
+    private List<String> loadGoodsLabel(GoodsEntity goodsEntity) {
+        List<String> stringList = new ArrayList<>();
+        if (goodsEntity == null || goodsEntity.getDetail() == null || goodsEntity.getDetail().getLabel() == null) {
+            return stringList;
+        }
+        String[] labelArray = goodsEntity.getDetail().getLabel().split(",");
+        for (String s : labelArray) {
+            stringList.add(s);
+        }
+        return stringList;
     }
 }

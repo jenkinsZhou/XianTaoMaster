@@ -136,7 +136,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/dp_5"
                         android:layout_toRightOf="@id/allPrice"
-                        android:text="￥0.00"
+                        android:text="¥0.00"
                         android:textColor="@color/redTextCommon"
                         android:textSize="@dimen/sp_15" />
 
@@ -162,7 +162,7 @@
                         android:visibility="gone"
                         android:layout_toRightOf="@id/discount"
                         android:gravity="center"
-                        android:text="￥0.00"
+                        android:text="¥0.00"
                         android:textColor="@color/redTextCommon"
                         android:textSize="@dimen/sp_12" />
                 </RelativeLayout>

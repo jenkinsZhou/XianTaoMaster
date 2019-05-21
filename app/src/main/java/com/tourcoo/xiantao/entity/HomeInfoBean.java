@@ -1,7 +1,7 @@
 package com.tourcoo.xiantao.entity;
 
 import com.tourcoo.xiantao.entity.banner.BannerBean;
-import com.tourcoo.xiantao.entity.goods.HomeGoodsBean;
+import com.tourcoo.xiantao.entity.home.HomeGoodsBean;
 import com.tourcoo.xiantao.entity.news.NewsBean;
 
 import java.util.List;

@@ -11,24 +11,19 @@ import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.CollectionGoodsAdapter;
 import com.tourcoo.xiantao.core.frame.UiConfigManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
-import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.goods.GoodsCollectEntity;
-import com.tourcoo.xiantao.entity.goods.GoodsDetailEntity;
-import com.tourcoo.xiantao.entity.message.MessageBean;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooRefreshLoadActivity;
 import com.trello.rxlifecycle3.android.ActivityEvent;
-import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
-import static com.tourcoo.xiantao.ui.goods.HomeFragment.EXTRA_GOODS_ID;
+import static com.tourcoo.xiantao.ui.home.HomeFragment.EXTRA_GOODS_ID;
 
 /**
  * @author :JenkinsZhou

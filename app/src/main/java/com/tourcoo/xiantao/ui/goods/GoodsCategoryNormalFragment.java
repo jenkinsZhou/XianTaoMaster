@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 import static com.tourcoo.xiantao.constant.GoodsConstant.TYPE_GOODS_NORMAL;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
-import static com.tourcoo.xiantao.ui.goods.HomeFragment.EXTRA_GOODS_ID;
+import static com.tourcoo.xiantao.ui.home.HomeFragment.EXTRA_GOODS_ID;
 
 /**
  * @author :JenkinsZhou
@@ -93,7 +93,7 @@ public class GoodsCategoryNormalFragment extends BaseRefreshFragment<GoodsCatego
      */
     public void getCategoryGoodsList(String type, int pageIndex) {
         TourCooLogUtil.i(TAG, TAG + ":" + "mActivity.categoryId = " + mActivity.categoryId);
-        ApiRepository.getInstance().getCategoryGoodsList(mActivity.categoryId, type, pageIndex, mActivity.keyword).compose(bindUntilEvent(FragmentEvent.DESTROY)).
+        ApiRepository.getInstance().getCategoryGoodsList(mActivity.param,mActivity.categoryId, type, pageIndex, mActivity.keyword).compose(bindUntilEvent(FragmentEvent.DESTROY)).
                 subscribe(new BaseObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {
@@ -107,8 +107,15 @@ public class GoodsCategoryNormalFragment extends BaseRefreshFragment<GoodsCatego
                                 }
                             } else {
                                 ToastUtil.showFailed(entity.msg);
+                                mStatusManager.showErrorLayout();
                             }
                         }
+                    }
+
+                    @Override
+                    public void onRequestError(Throwable e) {
+                        super.onRequestError(e);
+                        mStatusManager.showErrorLayout();
                     }
                 });
     }

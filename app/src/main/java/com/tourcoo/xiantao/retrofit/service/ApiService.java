@@ -109,12 +109,12 @@ public interface ApiService {
     Observable<BaseEntity> restPassword(@QueryMap Map<String, Object> map);
 
     /**
-     * 首页的banner
+     * 首页信息
      *
      * @return
      */
-    @POST("index/index")
-    Observable<BaseEntity> homeBanner();
+    @POST("index/index_new")
+    Observable<BaseEntity> requestHomeInfo();
 
     /**
      * 检测token是否失效
@@ -541,6 +541,14 @@ public interface ApiService {
     Observable<BaseEntity<NewsBean>> getNewsDetails(@QueryMap Map<String, Object> params);
 
 
+    /**
+     * 首页图文详情
+     *
+     * @param params
+     * @return
+     */
+    @POST("index/detail")
+    Observable<BaseEntity> requestHomeWebDetails(@QueryMap Map<String, Object> params);
     /**
      * banner详情
      *

@@ -107,10 +107,52 @@ public class Goods implements Serializable {
     }
 
     private double goods_max_price;
+
+    private double goods_min_line_price;
+
+    public double getGoods_min_line_price() {
+        return goods_min_line_price;
+    }
+
+    public void setGoods_min_line_price(double goods_min_line_price) {
+        this.goods_min_line_price = goods_min_line_price;
+    }
+
     /**
      * 抵扣金币
      */
     private double deduct;
+
+    private double deduct_coin;
+
+    private String deduct_rule;
+
+    public String getDeduct_rule() {
+        return deduct_rule;
+    }
+
+    public void setDeduct_rule(String deduct_rule) {
+        this.deduct_rule = deduct_rule;
+    }
+
+    public double getDeduct_coin() {
+        return deduct_coin;
+    }
+
+    public void setDeduct_coin(double deduct_coin) {
+        this.deduct_coin = deduct_coin;
+    }
+
+    private String promote;
+
+    public String getPromote() {
+        return promote;
+    }
+
+    public void setPromote(String promote) {
+        this.promote = promote;
+    }
+
     /**
      * 赠送金币
      */

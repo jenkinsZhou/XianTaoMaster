@@ -1,10 +1,15 @@
-package com.tourcoo.xiantao.ui.msg;
+package com.tourcoo.xiantao.ui.home;
 
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.webkit.WebView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.tourcoo.xiantao.R;
+import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
@@ -12,6 +17,7 @@ import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.news.NewsBean;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
+import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
 import org.jsoup.Jsoup;
@@ -20,18 +26,21 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.ui.home.HomeFragmentVersion2.EXTRA_PARAM;
 
 /**
  * @author :JenkinsZhou
- * @description :消息详情
+ * @description :
  * @company :途酷科技
- * @date 2019年04月29日19:33
+ * @date 2019年05月21日18:19
  * @Email: 971613168@qq.com
  */
-public class HomeNewsDetailActivity extends BaseTourCooTitleActivity {
-
+public class WebContentInfoActivity extends BaseTourCooTitleMultiViewActivity {
     private WebView webView;
     private TitleBarView mTitleBarView;
+    public static final String ERTRA_TITLE = "ERTRA_TITLE";
+    public static final String ERTRA_ID = "id";
+    private LinearLayout llContentView;
 
     @Override
     public int getContentLayout() {
@@ -41,32 +50,33 @@ public class HomeNewsDetailActivity extends BaseTourCooTitleActivity {
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         super.setTitleBar(titleBar);
-        titleBar.setTitleMainText("快报");
         mTitleBarView = titleBar;
     }
 
     @Override
     public void initView(Bundle savedInstanceState) {
-        int id = getIntent().getIntExtra("id", 0);
+        String titleName = getIntent().getStringExtra(ERTRA_TITLE);
+        String param = getIntent().getStringExtra(EXTRA_PARAM);
+        if (titleName != null) {
+            mTitleBarView.setTitleMainText(titleName);
+        }
         webView = findViewById(R.id.webView);
-        getNewsDetails(id);
+        requestHomeWebDetails(param);
     }
 
 
     /**
      * 查询news详情
      */
-    private void getNewsDetails(int id) {
-        ApiRepository.getInstance().getNewsDetails(id).compose(bindUntilEvent(ActivityEvent.DESTROY)).
-                subscribe(new BaseObserver<BaseEntity<NewsBean>>() {
+    private void requestHomeWebDetails(String param) {
+        ApiRepository.getInstance().requestHomeWebDetails(param).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity>() {
                     @Override
-                    public void onRequestNext(BaseEntity<NewsBean> entity) {
+                    public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
-                                imageFillWidth(webView, entity.data.getContent());
-                                if (!TextUtils.isEmpty(entity.data.getName())) {
-                                    mTitleBarView.setTitleMainText(entity.data.getName());
-                                }
+                                String content = parseContent(entity.data);
+                                imageFillWidth(webView, content);
                             } else {
                                 ToastUtil.showFailed(entity.msg);
                             }
@@ -109,4 +119,23 @@ public class HomeNewsDetailActivity extends BaseTourCooTitleActivity {
         webView.loadData(data, "text/html; charset=UTF-8", null);
     }
 
+    private String parseContent(Object object) {
+        String value = "";
+        if (object == null) {
+            return value;
+        }
+        try {
+            String data = JSON.toJSONString(object.toString());
+            JSONObject jsonObject = JSON.parseObject(data);
+            return jsonObject.getString("content");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return value;
+    }
+
+    @Override
+    protected IMultiStatusView getMultiStatusView() {
+        return null;
+    }
 }

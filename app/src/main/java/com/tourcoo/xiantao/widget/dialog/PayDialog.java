@@ -91,7 +91,7 @@ public class PayDialog extends Dialog implements View.OnClickListener {
             rlBalancePay.setVisibility(View.GONE);
         }
         tvMoney = findViewById(R.id.tvMoney);
-        tvMoney.setText("￥" + money);
+        tvMoney.setText("¥" + money);
         tvBalanceAmount.setText(balanceMoney + "");
         Window dialogWindow = getWindow();
         if (dialogWindow != null) {

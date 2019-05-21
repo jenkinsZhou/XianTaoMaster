@@ -1,30 +1,17 @@
 package com.tourcoo.xiantao.ui.comment;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.tourcoo.xiantao.R;
-import com.tourcoo.xiantao.adapter.CoinHistoryAdapter;
 import com.tourcoo.xiantao.adapter.CommentAdapter;
 import com.tourcoo.xiantao.core.frame.UiConfigManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
-import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
-import com.tourcoo.xiantao.core.widget.divider.TourCoolRecycleViewDivider;
 import com.tourcoo.xiantao.entity.BaseEntity;
-import com.tourcoo.xiantao.entity.coin.CoinDetail;
-import com.tourcoo.xiantao.entity.coin.CoinHistory;
 import com.tourcoo.xiantao.entity.comment.CommentDetail;
 import com.tourcoo.xiantao.entity.comment.CommentEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
@@ -34,7 +21,7 @@ import com.trello.rxlifecycle3.android.ActivityEvent;
 import java.util.ArrayList;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
-import static com.tourcoo.xiantao.ui.goods.HomeFragment.EXTRA_GOODS_ID;
+import static com.tourcoo.xiantao.ui.home.HomeFragment.EXTRA_GOODS_ID;
 
 /**
  * @author :JenkinsZhou
