@@ -393,7 +393,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             llGiveAway.setVisibility(View.GONE);
         } else {
             llGiveAway.setVisibility(View.VISIBLE);
-            String value = "购买本商品每满" + detail.getGive() + "元 , 赠送1金币";
+            String value = "购买本商品每满" +  TourCooUtil.doubleTransString(detail.getGive()) + "元 , 赠送1金币";
             tvGiveAwayCoin.setText(value);
         }
         if (TextUtils.isEmpty(detail.getPromote())) {
