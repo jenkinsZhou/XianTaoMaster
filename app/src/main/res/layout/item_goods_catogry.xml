@@ -63,6 +63,7 @@
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:textSize="@dimen/sp_11"
+                android:visibility="invisible"
                 android:maxEms="15"
                 android:text="特点标签" />
 

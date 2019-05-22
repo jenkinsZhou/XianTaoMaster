@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -35,6 +36,7 @@ import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
+import com.previewlibrary.GPreviewBuilder;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
@@ -59,6 +61,7 @@ import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.core.widget.custom.ShareGoodsPopupWindow;
 import com.tourcoo.xiantao.core.widget.custom.SharePopupWindow;
 import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.ImageEntity;
 import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.goods.GoodsEntity;
@@ -71,6 +74,7 @@ import com.tourcoo.xiantao.ui.account.LoginActivity;
 import com.tourcoo.xiantao.ui.base.WebViewActivity;
 import com.tourcoo.xiantao.ui.comment.CommentListActivity;
 import com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity;
+import com.tourcoo.xiantao.ui.order.ReturnDetailActivity;
 import com.tourcoo.xiantao.util.FormatDuration;
 import com.tourcoo.xiantao.widget.custom.LabelLayout;
 import com.tourcoo.xiantao.widget.dialog.PinTuanDialog;
@@ -560,10 +564,18 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     commentImageRecyclerView.setLayoutManager(new GridLayoutManager(mContext, 4));
                     GridImageAdapter gridImageAdapter = new GridImageAdapter(imageUrlList);
                     gridImageAdapter.bindToRecyclerView(commentImageRecyclerView);
+                    List<ImageEntity> imageEntityList =   parseImageEntityList(gridImageAdapter.getData());
                     gridImageAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
                         @Override
                         public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                            onThumbnailClick(imageUrlList.get(position));
+//                            onThumbnailClick(imageUrlList.get(position));
+                            computeBoundsBackward(commentImageRecyclerView, imageEntityList);
+                            GPreviewBuilder.from(GoodsDetailActivity.this)
+                                    .setData(imageEntityList)
+                                    .setCurrentIndex(position)
+                                    .setSingleFling(true)
+                                    .setType(GPreviewBuilder.IndicatorType.Number)
+                                    .start();
                         }
                     });
                 }
@@ -1120,6 +1132,42 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             stringList.add(s);
         }
         return stringList;
+    }
+
+
+    /**
+     * 查找信息
+     * 从第一个完整可见item逆序遍历，如果初始位置为0，则不执行方法内循环
+     */
+    private void computeBoundsBackward(RecyclerView imageRecyclerView, List<ImageEntity> imageEntityList) {
+        if (imageRecyclerView == null || !(imageRecyclerView.getLayoutManager() instanceof GridLayoutManager)) {
+            return;
+        }
+        GridLayoutManager gridLayoutManager = (GridLayoutManager) imageRecyclerView.getLayoutManager();
+        int firstCompletelyVisiblePos = gridLayoutManager.findFirstVisibleItemPosition();
+        for (int i = firstCompletelyVisiblePos; i < imageEntityList.size(); i++) {
+            View itemView = gridLayoutManager.findViewByPosition(i);
+            Rect bounds = new Rect();
+            if (itemView != null) {
+                ImageView thumbView = itemView.findViewById(R.id.additionalRoundedImageView);
+                thumbView.getGlobalVisibleRect(bounds);
+            }
+            imageEntityList.get(i).setBounds(bounds);
+        }
+    }
+
+    private List<ImageEntity> parseImageEntityList(List<String> imageUrlList) {
+        List<ImageEntity> imageEntityList = new ArrayList<>();
+        if (imageUrlList == null || imageUrlList.isEmpty()) {
+            return imageEntityList;
+        }
+        ImageEntity imageEntity;
+        for (String url : imageUrlList) {
+            imageEntity = new ImageEntity();
+            imageEntity.setImageUrl(url);
+            imageEntityList.add(imageEntity);
+        }
+        return imageEntityList;
     }
 
 

@@ -89,7 +89,7 @@ public class ClassifyGoodsFragment extends BaseTitleFragment {
         classifyRecyclerView = mContentView.findViewById(R.id.classifyRecyclerView);
         classifyRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         goodsRecyclerView = mContentView.findViewById(R.id.goodsRecyclerView);
-        goodsRecyclerView.setLayoutManager(new GridLayoutManager(mContext, 3));
+        goodsRecyclerView.setLayoutManager(new GridLayoutManager(mContext, 2));
         mClassifyNameAdapter = new ClassifyNameAdapter();
         mGoodsGridAdapter = new ClassifyGoodsGridAdapter();
         mClassifyNameAdapter.bindToRecyclerView(classifyRecyclerView);

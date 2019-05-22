@@ -378,6 +378,6 @@ public class SplashActivity extends BaseTitleActivity implements View.OnClickLis
                 TourCoolUtil.startActivity(mContext, MainTabActivity.class);
                 finish();
             }
-        },500);
+        },10);
     }
 }

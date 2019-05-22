@@ -92,7 +92,7 @@ import static com.tourcoo.xiantao.ui.home.WebContentInfoActivity.ERTRA_TITLE;
  * @date 2019年03月06日上午 10:12
  * @Email: 971613168@qq.com
  */
-public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnClickListener, OnRefreshListener, OnLoadMoreListener {
+public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnClickListener, OnRefreshListener {
     public static final String EXTRA_PARAM = "EXTRA_PARAM";
     private AMapLocation mapLocation;
     private SmartRefreshLayout mRefreshLayout;
@@ -214,7 +214,6 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
         mRefreshLayout = mContentView.findViewById(R.id.refreshLayoutHome);
         mRefreshLayout.setEnableLoadMore(false);
         mRefreshLayout.setOnRefreshListener(this);
-        mRefreshLayout.setOnLoadMoreListener(this);
         mRefreshLayout.setRefreshHeader(new ClassicsHeader(mContext).setSpinnerStyle(SpinnerStyle.Translate));
         setupStatusLayoutManager();
     }
@@ -351,39 +350,11 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
         getHomeInfoDelay();
     }
 
-    @Override
-    public void onLoadMore(RefreshLayout refreshLayout) {
-        TourCooLogUtil.w(TAG, "执行加载更多Requested");
-//        doLoadMore();
-    }
 
-    /**
-     * 执行加载更多逻辑
-     */
-   /* private void doLoadMore() {
-        mGoodsGridAdapter.notifyDataSetChanged();
-        mRefreshLayout.finishLoadMore();
-        if (mGoodsGridAdapter.getData().size() > 30) {
-            mRefreshLayout.setEnableLoadMore(false);
-            mRefreshLayout.setNoMoreData(true);
-            mGoodsGridAdapter.addFooterView(footView);
-        } else {
-            mGoodsGridAdapter.loadMoreComplete();
-        }
-        TourCooLogUtil.i(TAG, "当前商品数量:" + mGoodsGridAdapter.getData().size());
-    }*/
 
-    /**
-     * 添加商品并显示
-     */
-    private void doAddGoods(GoodsDetailEntity goodsDetailEntity) {
-        if (goodsDetailEntity == null) {
-            TourCooLogUtil.e(TAG, "商品为null");
-            return;
-        }
-        ShoppingCar.getInstance().addGoods(goodsDetailEntity);
-        showGoodsCount(ShoppingCar.getInstance().getGoodsCount());
-    }
+
+
+
 
     /**
      * 显示购物车商品数量
@@ -752,6 +723,7 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
         if (messageEvent == null) {
             return;
         }
+         TourCooLogUtil.i(TAG,TAG+":执行购物车刷新");
         showMsg(messageEvent.getMsgCount());
     }
 

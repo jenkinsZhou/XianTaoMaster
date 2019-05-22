@@ -7,12 +7,12 @@
 
     <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/additionalRoundedImageView"
-        android:layout_width="@dimen/dp_80"
-        android:layout_height="@dimen/dp_80"
+        android:layout_width="@dimen/dp_110"
+        android:layout_height="@dimen/dp_61"
         android:paddingTop="@dimen/dp_4"
         android:paddingRight="@dimen/dp_4"
         android:paddingBottom="@dimen/dp_4"
-        android:scaleType="centerCrop"
+        android:scaleType="centerInside"
         android:src="@mipmap/img_alipay"
         app:riv_corner_radius="@dimen/dp_4" />
 </LinearLayout>

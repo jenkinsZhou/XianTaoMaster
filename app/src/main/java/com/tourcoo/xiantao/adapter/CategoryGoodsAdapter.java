@@ -27,6 +27,8 @@ public class CategoryGoodsAdapter extends BaseQuickAdapter<GoodsCategoryBean.Goo
         GlideManager.loadImg(simpleInfo.getImage(), ivGoodsIcon, R.mipmap.img_zwt);
         helper.setText(R.id.tvGoodsName, simpleInfo.getGoods_name());
         if (!TextUtils.isEmpty(simpleInfo.getLabel())) {
+            helper.setVisible(R.id.llGoodsLabel, true);
+            helper.setVisible(R.id.tvGoodsLabel, true);
             helper.setText(R.id.tvGoodsLabel, simpleInfo.getLabel());
         } else {
             helper.setVisible(R.id.llGoodsLabel, false);

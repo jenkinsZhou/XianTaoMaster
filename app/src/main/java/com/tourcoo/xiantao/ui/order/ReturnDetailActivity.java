@@ -1163,18 +1163,18 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
             for (String image : images) {
                 mImageList.add(TourCooUtil.getUrl(image));
             }
-            List<ImageEntity> imageEntityList = parseImageEntityList(gridImageAdapter.getData());
             gridImageAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                    onThumbnailClick(view, gridImageAdapter.getData().get(position));
-                  /*  computeBoundsBackward(rvReturnGoods, imageEntityList);
+//                    onThumbnailClick(view, gridImageAdapter.getData().get(position));
+                    List<ImageEntity> imageEntityList = parseImageEntityList(gridImageAdapter.getData());
+                    computeBoundsBackward(rvReturnGoods, imageEntityList);
                     GPreviewBuilder.from(ReturnDetailActivity.this)
                             .setData(imageEntityList)
                             .setCurrentIndex(position)
                             .setSingleFling(true)
                             .setType(GPreviewBuilder.IndicatorType.Number)
-                            .start();*/
+                            .start();
                 }
             });
         }
