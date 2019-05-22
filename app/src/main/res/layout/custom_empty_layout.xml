@@ -40,6 +40,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/dp_20"
                 android:paddingLeft="@dimen/dp_20"
+                android:visibility="gone"
                 android:paddingTop="@dimen/dp_5"
                 android:paddingBottom="@dimen/dp_5"
                 android:paddingRight="@dimen/dp_20"
