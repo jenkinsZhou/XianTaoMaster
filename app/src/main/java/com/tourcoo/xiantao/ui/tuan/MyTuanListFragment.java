@@ -150,8 +150,10 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
                         mediaMessage.title = "拼团钜惠";
                         //自定义
                         mediaMessage.description = "拼团钜惠";
-                        Bitmap sendBitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, true);
+                        Bitmap bitmapStatic = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_wei_xin_app);
+                        Bitmap sendBitmap = Bitmap.createScaledBitmap(bitmapStatic, 200, 200, true);
                         bitmap.recycle();
+                        bitmapStatic.recycle();
                         mediaMessage.thumbData = ImageUtils.bitmap2Bytes(sendBitmap, Bitmap.CompressFormat.PNG);
                         SendMessageToWX.Req req = new SendMessageToWX.Req();
                         req.transaction = "";

@@ -27,7 +27,8 @@
     <color name="test3">#888888</color>
     <color name="test4">#777777</color>
     <color name="test5">#666666</color>
-
+    <color name="colorGray9A9A">#9A9A9A</color>
+    <color name="colorBalck333">#333333</color>
     <color name="colorGrayCommon">#F6F6F6</color>
 
     <color name="pickerview_timebtn_nor">#057dff</color>
@@ -60,6 +61,9 @@
     <color name="redTextCommon">#F95B47</color>
     <!-- 个人中心颜色相关-->
     <color name="red_common">#FF3636</color>
+
+    <color name="red_F95B47"> #F95B47</color>
+
     <!--分割线-->
     <color name="line_color_common">#dddddd</color>
     <color name="line_color_gray_little">#EAEAEA</color>

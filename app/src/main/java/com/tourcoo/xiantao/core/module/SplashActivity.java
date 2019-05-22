@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.BarUtils;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.base.activity.BaseTitleActivity;
@@ -23,7 +25,6 @@ import com.tourcoo.xiantao.core.frame.util.SharedPreferencesUtil;
 import com.tourcoo.xiantao.core.frame.util.StackUtil;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
-import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.core.util.StatusBarUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
@@ -173,24 +174,39 @@ public class SplashActivity extends BaseTitleActivity implements View.OnClickLis
      */
     private void requestAdvertisement() {
         ApiRepository.getInstance().requestAdvertisement().compose(bindUntilEvent(ActivityEvent.DESTROY)).
-                subscribe(new BaseObserver<BaseEntity<AdvertisEntity>>() {
+                subscribe(new BaseObserver<BaseEntity>() {
                     @Override
-                    public void onRequestNext(BaseEntity<AdvertisEntity> entity) {
+                    public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS) {
-                                AdvertisEntity advertisEntity = entity.data;
+                                AdvertisEntity advertisEntity = parseAdvertis(entity.data);
                                 if (advertisEntity != null) {
-                                    //todo
-                                    TourCooLogUtil.i("广告实体", advertisEntity);
                                     mAdvertisEntity = advertisEntity;
+                                    if (advertisEntity.getImage() == null) {
+                                        layoutSkip.setVisibility(View.INVISIBLE);
+                                        skipToMainTab();
+                                    } else {
+                                        layoutSkip.setVisibility(View.VISIBLE);
+                                    }
                                     String url = TourCooUtil.getUrl(advertisEntity.getImage());
                                     TourCooLogUtil.i(TAG, TAG + "图片url:" + url);
                                     SharedPreferencesUtil.put(PREF_IMAGE_ADVERTISEMENT, url);
+                                } else {
+                                    layoutSkip.setVisibility(View.INVISIBLE);
+                                    skipToMainTab();
                                 }
                             } else {
-                                ToastUtil.showFailed(entity.msg);
+                                layoutSkip.setVisibility(View.INVISIBLE);
+                                skipToMainTab();
                             }
                         }
+                    }
+
+                    @Override
+                    public void onRequestError(Throwable e) {
+                        super.onRequestError(e);
+                        layoutSkip.setVisibility(View.INVISIBLE);
+                        skipToMainTab();
                     }
                 });
     }
@@ -236,9 +252,8 @@ public class SplashActivity extends BaseTitleActivity implements View.OnClickLis
 
 
     private void showTime(int second) {
-        String secondString = second +" 跳过";
+        String secondString = second + " 跳过";
         if (tvSecond != null && layoutSkip != null) {
-            layoutSkip.setVisibility(View.VISIBLE);
             tvSecond.setText(secondString);
         }
     }
@@ -343,4 +358,26 @@ public class SplashActivity extends BaseTitleActivity implements View.OnClickLis
         }
     }
 
+    private AdvertisEntity parseAdvertis(Object object) {
+        if (object == null) {
+            return null;
+        }
+        try {
+            String userInfo = JSONObject.toJSONString(object);
+            return JSON.parseObject(userInfo, AdvertisEntity.class);
+        } catch (Exception e) {
+            TourCooLogUtil.e(TAG, "value:" + e.toString());
+            return null;
+        }
+    }
+
+    private void skipToMainTab(){
+        mTimeHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                TourCoolUtil.startActivity(mContext, MainTabActivity.class);
+                finish();
+            }
+        },500);
+    }
 }

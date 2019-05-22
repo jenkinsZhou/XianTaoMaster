@@ -8,6 +8,7 @@ import com.tourcoo.xiantao.core.frame.base.activity.BaseTitleActivity;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.widget.core.progress.EmiProgressDialog;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
+import com.tourcoo.xiantao.permission.PermissionManager;
 
 
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
@@ -31,5 +32,13 @@ public abstract class BaseTourCooTitleActivity extends BaseTitleActivity {
         textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
     }
 
+    /**
+     * 判断是否有相关权限
+     *
+     * @return
+     */
+    protected boolean checkPermission() {
+        return PermissionManager.checkAllNeedPermission(this);
+    }
 
 }

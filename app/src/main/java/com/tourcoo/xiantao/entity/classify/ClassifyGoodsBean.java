@@ -42,6 +42,16 @@ public class ClassifyGoodsBean {
     private int updatetime;
     private String spacer;
     private String ImageFrist;
+    private String label;
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
     private List<ClassifyGoodsBean> childlist;
 
     public int getId() {

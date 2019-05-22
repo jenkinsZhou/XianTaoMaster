@@ -512,6 +512,15 @@ public class GoodsCategoryBean implements Serializable {
          * id : 22
          * image : https://her-family.oss-cn-qingdao.aliyuncs.com/addons_store_uploads/20181105/b044b7bcd4930202fcd96d6b50453894.jpg
          */
+        private String label;
+
+        public String getLabel() {
+            return label;
+        }
+
+        public void setLabel(String label) {
+            this.label = label;
+        }
 
         private String goods_max_price;
         private String goods_min_price;

@@ -620,7 +620,7 @@ public interface ApiService {
      * @return
      */
     @POST("ad/index")
-    Observable<BaseEntity<AdvertisEntity>> requestAdvertisement();
+    Observable<BaseEntity> requestAdvertisement();
 
 
     /**

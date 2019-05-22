@@ -8,6 +8,7 @@
     android:background="@drawable/selector_bg_radius_16_green_hollow"
     android:gravity="center"
     android:paddingLeft="@dimen/dp_10"
+    android:layout_marginTop="@dimen/dp_5"
     android:paddingTop="@dimen/dp_3"
     android:paddingRight="@dimen/dp_10"
     android:paddingBottom="@dimen/dp_3"

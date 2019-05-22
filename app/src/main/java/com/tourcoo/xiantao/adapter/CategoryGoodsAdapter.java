@@ -1,5 +1,7 @@
 package com.tourcoo.xiantao.adapter;
 
+import android.text.TextUtils;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.makeramen.roundedimageview.RoundedImageView;
@@ -24,6 +26,11 @@ public class CategoryGoodsAdapter extends BaseQuickAdapter<GoodsCategoryBean.Goo
         RoundedImageView ivGoodsIcon = helper.getView(R.id.ivGoodsIcon);
         GlideManager.loadImg(simpleInfo.getImage(), ivGoodsIcon, R.mipmap.img_zwt);
         helper.setText(R.id.tvGoodsName, simpleInfo.getGoods_name());
+        if (!TextUtils.isEmpty(simpleInfo.getLabel())) {
+            helper.setText(R.id.tvGoodsLabel, simpleInfo.getLabel());
+        } else {
+            helper.setVisible(R.id.llGoodsLabel, false);
+        }
         helper.setText(R.id.tvGoodsPrice, "¥" + simpleInfo.getGoods_min_price());
     }
 }

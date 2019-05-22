@@ -89,13 +89,14 @@ public class PinTuanDialog extends Dialog {
 
         long time = deadline - System.currentTimeMillis();
         countDownTimer = new CountDownTimer(time, 1000) {
+            @Override
             public void onTick(long millisUntilFinished) {
                 tvInfo.setText(new SpanUtils()
                         .append("商品仅剩").setForegroundColor(TourCoolUtil.getColor(R.color.colorTextBlack))
                         .append(surplus + "kg " + FormatDuration.format(new Long(millisUntilFinished).intValue()) + "后结束")
                         .setForegroundColor(TourCoolUtil.getColor(R.color.redTextCommon)).create());
             }
-
+            @Override
             public void onFinish() {
 
             }

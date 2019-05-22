@@ -55,6 +55,7 @@ import com.tourcoo.xiantao.entity.home.RecommendBean;
 import com.tourcoo.xiantao.entity.message.MessageBean;
 import com.tourcoo.xiantao.entity.news.NewsBean;
 import com.tourcoo.xiantao.helper.ShoppingCar;
+import com.tourcoo.xiantao.permission.PermissionManager;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.goods.GoodsCategoryListActivity;
 import com.tourcoo.xiantao.ui.goods.GoodsDetailActivity;
@@ -63,6 +64,7 @@ import com.tourcoo.xiantao.ui.msg.BannerDetailActivity;
 import com.tourcoo.xiantao.ui.msg.HomeNewsDetailActivity;
 import com.tourcoo.xiantao.ui.msg.MsgSystemActivity;
 import com.tourcoo.xiantao.util.LocateHelper;
+import com.tourcoo.xiantao.widget.sku.utils.ScreenUtils;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -241,6 +243,8 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
             if (banner == null) {
                 return;
             }
+            int width = ScreenUtils.getScreenWidth(XianTaoApplication.getInstance());
+            TourCooLogUtil.i(TAG, TAG + "屏幕尺寸:" + width);
             banner.setAdapter(new BGABanner.Adapter() {
                 @Override
                 public void fillBannerItem(BGABanner banner, View itemView, Object model, int position) {
@@ -255,6 +259,9 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
                     }
                     BannerBean bannerBean = mBannerBeanList.get(position);
                     if (bannerBean != null) {
+                        if (bannerBean.getId() <= 0) {
+                            return;
+                        }
                         doSkipBannerDetail(bannerBean.getId());
                     }
                 }
@@ -347,13 +354,13 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
     @Override
     public void onLoadMore(RefreshLayout refreshLayout) {
         TourCooLogUtil.w(TAG, "执行加载更多Requested");
-        doLoadMore();
+//        doLoadMore();
     }
 
     /**
      * 执行加载更多逻辑
      */
-    private void doLoadMore() {
+   /* private void doLoadMore() {
         mGoodsGridAdapter.notifyDataSetChanged();
         mRefreshLayout.finishLoadMore();
         if (mGoodsGridAdapter.getData().size() > 30) {
@@ -364,7 +371,7 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
             mGoodsGridAdapter.loadMoreComplete();
         }
         TourCooLogUtil.i(TAG, "当前商品数量:" + mGoodsGridAdapter.getData().size());
-    }
+    }*/
 
     /**
      * 添加商品并显示
@@ -400,6 +407,9 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
                             mRefreshLayout.finishRefresh(false);
                             ToastUtil.showFailed("服务器异常");
                             statusLayoutManager.showErrorLayout();
+                            if (!hasPermission()) {
+                                PermissionManager.requestAllNeedPermission(mContext);
+                            }
                             return;
                         }
                         if (entity.code == CODE_REQUEST_SUCCESS) {
@@ -410,6 +420,9 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
                         } else {
                             mRefreshLayout.finishRefresh(false);
                             ToastUtil.showFailed(entity.msg);
+                            if (!hasPermission()) {
+                                PermissionManager.requestAllNeedPermission(mContext);
+                            }
                         }
                     }
 
@@ -418,6 +431,9 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
                         super.onRequestError(e);
                         statusLayoutManager.showErrorLayout();
                         mRefreshLayout.finishRefresh(false);
+                        if (!hasPermission()) {
+                            PermissionManager.requestAllNeedPermission(mContext);
+                        }
                     }
                 });
     }
@@ -772,6 +788,7 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
 
 
     private void showLocate(AMapLocation mapLocation) {
+        closeLoadingDialog();
         if (mapLocation != null) {
             if (mapLocation.getErrorCode() == 0) {
                 TourCooLogUtil.d(TAG, "回调结果:" + mapLocation.getCity());
@@ -787,18 +804,23 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
 
 
     private void refreshLocate() {
-        showLoadingDialog();
-        LocateHelper.getInstance().startLocation(new AMapLocationListener() {
-            @Override
-            public void onLocationChanged(AMapLocation aMapLocation) {
-                mapLocation = aMapLocation;
-                if (mapLocation != null) {
-                    showLocate(aMapLocation);
+        if (!hasPermission()) {
+            PermissionManager.requestAllNeedPermission(mContext);
+        } else {
+            showLoadingDialog();
+            LocateHelper.getInstance().startLocation(new AMapLocationListener() {
+                @Override
+                public void onLocationChanged(AMapLocation aMapLocation) {
+                    mapLocation = aMapLocation;
+                    if (mapLocation != null) {
+                        showLocate(aMapLocation);
+                    }
+                    LocateHelper.getInstance().stopLocation();
+                    closeLoadingDialog();
                 }
-                LocateHelper.getInstance().stopLocation();
-                closeLoadingDialog();
-            }
-        });
+            });
+        }
+
     }
 
     private void getMessageCount() {
@@ -817,6 +839,7 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
         String typeContent = "content";
         String typeGoods = "goods";
         String noContent = "0";
+        TourCooLogUtil.i(TAG, TAG + ":recommendBean：" + recommendBean.getParam());
         if (noContent.equals(recommendBean.getParam())) {
             return;
         }
@@ -832,5 +855,14 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
             intent.putExtra(EXTRA_PARAM, recommendBean.getParam());
             startActivity(intent);
         }
+    }
+
+    /**
+     * 判断是否有相关权限
+     *
+     * @return
+     */
+    private boolean hasPermission() {
+        return PermissionManager.checkAllNeedPermission(mContext);
     }
 }

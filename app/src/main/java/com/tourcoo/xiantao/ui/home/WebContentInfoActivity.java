@@ -11,10 +11,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.home.WebContentInfo;
 import com.tourcoo.xiantao.entity.news.NewsBean;
+import com.tourcoo.xiantao.entity.order.OrderDetailEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
@@ -75,8 +78,8 @@ public class WebContentInfoActivity extends BaseTourCooTitleMultiViewActivity {
                     public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS && entity.data != null) {
-                                String content = parseContent(entity.data);
-                                imageFillWidth(webView, content);
+                                WebContentInfo content = parseContent(entity.data);
+                                imageFillWidth(webView, content.getContent());
                             } else {
                                 ToastUtil.showFailed(entity.msg);
                             }
@@ -119,19 +122,24 @@ public class WebContentInfoActivity extends BaseTourCooTitleMultiViewActivity {
         webView.loadData(data, "text/html; charset=UTF-8", null);
     }
 
-    private String parseContent(Object object) {
+    private WebContentInfo parseContent(Object object) {
         String value = "";
+        WebContentInfo contentInfo = new WebContentInfo();
         if (object == null) {
-            return value;
+            contentInfo.setContent(value);
+            return contentInfo;
         }
         try {
-            String data = JSON.toJSONString(object.toString());
-            JSONObject jsonObject = JSON.parseObject(data);
-            return jsonObject.getString("content");
+            WebContentInfo parseContentInfo = JSON.parseObject(JSON.toJSONString(object), WebContentInfo.class);
+            if (parseContentInfo == null || parseContentInfo.getContent() == null) {
+                return contentInfo;
+            }
+            return parseContentInfo;
         } catch (Exception e) {
-            e.printStackTrace();
+            contentInfo.setContent(value);
+            TourCooLogUtil.e(TAG, "解析异常:" + e.toString());
+            return contentInfo;
         }
-        return value;
     }
 
     @Override

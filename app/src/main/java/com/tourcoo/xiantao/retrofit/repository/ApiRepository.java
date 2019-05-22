@@ -1001,7 +1001,7 @@ public class ApiRepository extends BaseRepository {
      *
      * @return
      */
-    public Observable<BaseEntity<AdvertisEntity>> requestAdvertisement() {
+    public Observable<BaseEntity> requestAdvertisement() {
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestAdvertisement().retryWhen(new RetryWhen()));
     }
 

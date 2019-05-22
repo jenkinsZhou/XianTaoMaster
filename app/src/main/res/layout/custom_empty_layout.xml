@@ -43,7 +43,7 @@
                 android:paddingTop="@dimen/dp_5"
                 android:paddingBottom="@dimen/dp_5"
                 android:paddingRight="@dimen/dp_20"
-                android:text="刷新" />
+                android:text="刷新数据" />
         </LinearLayout>
 
     </RelativeLayout>

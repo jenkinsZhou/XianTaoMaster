@@ -26,6 +26,9 @@ public class PermissionManager {
         return EasyPermissions.hasPermissions(context, perms);
     }
 
+
+
+
     /**
      * 请求权限
      *
@@ -70,6 +73,7 @@ public class PermissionManager {
     public static boolean checkAllNeedPermission(Activity context) {
         return PermissionManager.checkPermission(context, PermissionConstance.PERMISSION_ALL_NEED);
     }
+
 
 
     /**

@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.TextUtils;
 import android.util.SparseArray;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -40,6 +41,7 @@ import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tourcoo.xiantao.R;
+import com.tourcoo.xiantao.XianTaoApplication;
 import com.tourcoo.xiantao.adapter.GoodsLableAdapter;
 import com.tourcoo.xiantao.adapter.GridImageAdapter;
 import com.tourcoo.xiantao.constant.WxConfig;
@@ -62,6 +64,7 @@ import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.goods.GoodsEntity;
 import com.tourcoo.xiantao.entity.goods.TuanRule;
 import com.tourcoo.xiantao.entity.settle.SettleEntity;
+import com.tourcoo.xiantao.permission.PermissionManager;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
 import com.tourcoo.xiantao.ui.account.LoginActivity;
@@ -106,6 +109,8 @@ import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SETTLE_TYPE
  * @Email: 971613168@qq.com
  */
 public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity implements IMultiStatusView, View.OnClickListener {
+
+    private TitleBarView mTitleBarView;
     private RelativeLayout rlContentView;
     private ShareGoodsPopupWindow sharePopupWindow;
     private RelativeLayout rlORigin;
@@ -246,16 +251,21 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
          */
         mGoodsId = getIntent().getIntExtra(EXTRA_GOODS_ID, -1);
         init();
+        if(!checkPermission()){
+            PermissionManager.requestAllNeedPermission(this);
+        }
         TourCooLogUtil.i(TAG, TAG + ":" + "商品id=" + mGoodsId);
     }
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         super.setTitleBar(titleBar);
+        mTitleBarView = titleBar;
         titleBar.setTitleMainText("商品详情");
         titleBar.setRightTextDrawableWidth(SizeUtil.dp2px(20));
         titleBar.setRightTextDrawableHeight(SizeUtil.dp2px(19));
         titleBar.setRightTextDrawable(TourCooUtil.getDrawable(R.mipmap.ic_share));
+        titleBar.getTextView(Gravity.RIGHT).setVisibility(View.INVISIBLE);
         titleBar.setOnRightTextClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -358,6 +368,9 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
 
     private void setBanner(List<String> images) {
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) bgaBanner.getLayoutParams();
+        params.height = XianTaoApplication.getImageHeight();
+        TourCooLogUtil.i(TAG, "banner:高度" + params.height + ";width:" + com.tourcoo.xiantao.core.frame.util.SizeUtil.getScreenWidth());
         bgaBanner.setAdapter(new BGABanner.Adapter() {
             @Override
             public void fillBannerItem(BGABanner banner, View itemView, Object model, int position) {
@@ -388,12 +401,13 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             mStatusLayoutManager.showErrorLayout();
             return;
         }
+        mTitleBarView.getTextView(Gravity.RIGHT).setVisibility(View.VISIBLE);
         currentGoods = detail;
         if (detail.getGive() <= 0) {
             llGiveAway.setVisibility(View.GONE);
         } else {
             llGiveAway.setVisibility(View.VISIBLE);
-            String value = "购买本商品每满" +  TourCooUtil.doubleTransString(detail.getGive()) + "元 , 赠送1金币";
+            String value = "购买本商品每满" + TourCooUtil.doubleTransString(detail.getGive()) + "元 , 赠送1金币";
             tvGiveAwayCoin.setText(value);
         }
         if (TextUtils.isEmpty(detail.getPromote())) {
@@ -406,7 +420,10 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             llDeduct.setVisibility(View.GONE);
         } else {
             llDeduct.setVisibility(View.VISIBLE);
-            String value = "金币每满" + TourCooUtil.doubleTransString(detail.getDeduct()) + " 用" + TourCooUtil.doubleTransString(detail.getDeduct_coin());
+            String value = "金币每满" + TourCooUtil.doubleTransString(detail.getDeduct()) + "用" + TourCooUtil.doubleTransString(detail.getDeduct_coin());
+            if (!TextUtils.isEmpty(detail.getDeduct_rule())) {
+                value += "(" + detail.getDeduct_rule() + ")";
+            }
             tvDeduct.setText(value);
         }
         setBanner(detail.getImgs_url());
@@ -421,14 +438,14 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         try {
             String priceRange;
             if (detail.getGoods_min_price() == detail.getGoods_max_price()) {
-                priceRange = TourCooUtil.doubleTrans(detail.getGoods_min_price());
+                priceRange = TourCooUtil.doubleTransString(detail.getGoods_min_price());
             } else {
-                priceRange = TourCooUtil.doubleTrans(detail.getGoods_min_price()) + " - " + TourCooUtil.doubleTrans(detail.getGoods_max_price());
+                priceRange = TourCooUtil.doubleTransString(detail.getGoods_min_price()) + "-" + TourCooUtil.doubleTransString(detail.getGoods_max_price());
             }
             if (detail.getGoods_min_line_price() > 0) {
                 //中划线
                 tvLinePrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-                String linePrice = "¥" + detail.getGoods_min_line_price();
+                String linePrice = "¥" + TourCooUtil.doubleTransString(detail.getGoods_min_line_price());
                 tvLinePrice.setText(linePrice);
             } else {
                 setVisible(tvLinePrice, false);
@@ -561,8 +578,8 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         } else {
             llCommentContainer.setVisibility(View.GONE);
             btnSeeTotalComment.setText("暂无评论");
-            btnSeeTotalComment.setEnabled(false);
-            btnSeeComment.setEnabled(false);
+            btnSeeTotalComment.setEnabled(true);
+            btnSeeComment.setEnabled(true);
         }
 
         if (goodsEntity.getDetail().getCollect() == 0) {
@@ -1104,4 +1121,6 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         }
         return stringList;
     }
+
+
 }

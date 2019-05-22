@@ -1,16 +1,20 @@
 package com.tourcoo.xiantao.adapter;
 
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 
 
+import com.blankj.utilcode.util.SpanUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
+import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.entity.home.HomeGoodsNewBean;
+import com.tourcoo.xiantao.util.FormatDuration;
 
 
 /**
@@ -60,14 +64,23 @@ public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsNewBean.Good
         boolean isShowDecut = item.getDeduct() > 0;
         TourCooLogUtil.i(TAG, TAG + "是否可抵扣:" + isShowDecut);
         if (isShowDecut) {
-            helper.setText(R.id.tvDeduct, TourCooUtil.doubleTransString(item.getDeduct()));
-            helper.setText(R.id.tvDeductCoin, TourCooUtil.doubleTransString(item.getDeduct_coin()));
             if (TextUtils.isEmpty(item.getDeduct_rule())) {
                 helper.setGone(R.id.llDeductInfo, false);
+                SpannableStringBuilder stringBuilder = new SpanUtils()
+                        .append("金币每满").setForegroundColor(TourCoolUtil.getColor(R.color.colorBalck333))
+                        .append(TourCooUtil.doubleTransString(item.getDeduct()))
+                        .setForegroundColor(TourCoolUtil.getColor(R.color.red_F95B47)).append("用").setForegroundColor(TourCooUtil.getColor((R.color.colorBalck333))).append(TourCooUtil.doubleTransString(item.getDeduct_coin())).setForegroundColor(TourCooUtil.getColor(R.color.red_F95B47)).create();
+                helper.setText(R.id.tvDecuctInfo, stringBuilder);
             } else {
                 helper.setGone(R.id.llDeductInfo, true);
-                helper.setText(R.id.deductRule, item.getDeduct_rule());
+                String rule = " (" + item.getDeduct_rule() + ")";
+                SpannableStringBuilder stringBuilder = new SpanUtils()
+                        .append("金币每满").setForegroundColor(TourCoolUtil.getColor(R.color.colorBalck333))
+                        .append(TourCooUtil.doubleTransString(item.getDeduct()))
+                        .setForegroundColor(TourCoolUtil.getColor(R.color.red_F95B47)).append("用").setForegroundColor(TourCoolUtil.getColor(R.color.colorBalck333)).append(TourCooUtil.doubleTransString(item.getDeduct_coin())).setForegroundColor(TourCooUtil.getColor(R.color.red_F95B47)).append(rule).setForegroundColor(TourCooUtil.getColor(R.color.colorGray9A9A)).create();
+                helper.setText(R.id.tvDecuctInfo, stringBuilder);
             }
+
         } else {
             helper.setGone(R.id.llDeductInfo, false);
         }

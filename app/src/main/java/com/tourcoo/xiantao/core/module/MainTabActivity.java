@@ -171,11 +171,6 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
     protected void onResume() {
         super.onResume();
         //如果没有权限 则请求一次权限
-        if (!hasPermission() && !isFirstLoad) {
-            showPermissionDialog("您未授予相关权限,软件即将退出");
-        }
-        isFirstLoad = false;
-        TourCooLogUtil.i(TAG, TAG + ":" + "onResume");
     }
 
     /**
