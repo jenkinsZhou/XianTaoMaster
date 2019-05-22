@@ -459,7 +459,7 @@ public class PersonalDataActivity extends BaseTourCooTitleActivity implements Vi
                     String url;
                     if (!imagePathList.isEmpty()) {
                         url = imagePathList.get(0);
-                        GlideManager.loadImg(url, crvAvatar);
+                        GlideManager.loadImg(url, crvAvatar, TourCooUtil.getDrawable(R.mipmap.img_default_avatar));
                     }
                     uploadImage(imagePathList);
                     break;

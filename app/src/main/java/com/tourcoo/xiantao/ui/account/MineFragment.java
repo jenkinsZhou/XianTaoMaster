@@ -90,6 +90,7 @@ import static com.tourcoo.xiantao.ui.order.MyOrderListActivity.EXTRA_CURRENT_TAB
  * @Email: 971613168@qq.com
  */
 public class MineFragment extends BaseTitleFragment implements View.OnClickListener, OnRefreshListener {
+    public static final String NO_LOGIN = "登录后";
     private MenuAdapter mMenuAdapter;
     private List<MenuItem> mMenuItemList = new ArrayList<>();
     private RecyclerView rvMineMenu;
@@ -413,7 +414,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
      */
     private void showUnLoginUI() {
         tvUserNickName.setText("登录/注册");
-        GlideManager.loadImg(TourCooUtil.getDrawable(R.mipmap.img_default_avatar), civUserAvatar);
+        GlideManager.loadDefaultAvatar(TourCooUtil.getDrawable(R.mipmap.img_default_avatar), civUserAvatar);
         tvBalance.setText("_");
         tvAccumulatePointsGold.setText("_");
         tvAccumulatePointsYin.setText("_");
@@ -438,7 +439,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         String url = TourCooUtil.getUrl(data.getAvatar());
         TourCooLogUtil.i(TAG, TAG + "头像:" + url);
         TourCooLogUtil.i(TAG, TAG + "昵称:" + data.getNickname());
-        GlideManager.loadImg(url, civUserAvatar);
+        GlideManager.loadImg(url, civUserAvatar, TourCooUtil.getDrawable(R.mipmap.img_default_avatar));
         tvBalance.setText("¥" + data.getCash());
         String coinGold = data.getAu() + "";
         String coinYin = data.getAg() + "";
@@ -481,6 +482,9 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                                 }
                             } else {
                                 ToastUtil.showFailed(entity.msg);
+                                if(entity.msg.contains(NO_LOGIN)){
+                                    AccountInfoHelper.getInstance().deleteUserAccount();
+                                }
                                 refreshLayout.finishRefresh(false);
                             }
                         }

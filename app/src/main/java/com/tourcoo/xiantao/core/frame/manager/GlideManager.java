@@ -141,6 +141,10 @@ public class GlideManager {
         loadImg(obj, iv, R.mipmap.img_zwt);
     }
 
+    public static void loadDefaultAvatar(Object obj, ImageView iv) {
+        loadImg(obj, iv, R.mipmap.img_default_avatar);
+    }
+
     /**
      * 加载圆形图片
      *

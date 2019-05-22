@@ -21,6 +21,15 @@ public class SystemSettingEntity {
      * kefu : 000-0000000
      */
     private String register;
+    private String address;
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
     public String getKefu_wx() {
         return kefu_wx;

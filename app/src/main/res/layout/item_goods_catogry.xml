@@ -13,19 +13,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <CheckBox
+        <!--<CheckBox
             android:id="@+id/cBoxGoods"
             style="@style/CustomCheckBoxGoodsTheme"
             android:layout_width="@dimen/dp_18"
             android:layout_height="@dimen/dp_18"
             android:layout_centerVertical="true"
-            android:visibility="gone" />
+            android:visibility="gone" />-->
 
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/ivGoodsIcon"
             android:layout_width="@dimen/dp_110"
-            android:layout_height="@dimen/dp_61"
-            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_height="@dimen/dp_65"
             app:riv_corner_radius="@dimen/dp_5"
             android:scaleType="centerInside"
             android:background="#F5F5F5"
@@ -60,23 +59,23 @@
                 style="@style/TextView12spGray666"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:ellipsize="end"
                 android:textSize="@dimen/sp_11"
                 android:visibility="invisible"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:maxEms="15"
                 android:text="特点标签" />
 
 
         </LinearLayout>
-
         <!--规格-->
         <LinearLayout
             android:id="@+id/llGoodsSpec"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_5"
             android:layout_alignLeft="@id/tvGoodsName"
-            android:layout_alignBottom="@id/ivGoodsIcon"
+            android:layout_below="@id/llGoodsLabel"
             android:layout_toRightOf="@id/ivGoodsIcon"
             android:orientation="horizontal">
 
@@ -98,6 +97,7 @@
                 android:visibility="invisible"
                 android:textSize="@dimen/sp_10" />
         </LinearLayout>
+
 
         <!--<com.makeramen.roundedimageview.RoundedImageView
             android:layout_width="@dimen/dp_24"

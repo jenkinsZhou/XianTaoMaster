@@ -152,9 +152,9 @@
                             <ImageView
                                 android:id="@+id/imageTop"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
+                                android:layout_height="@dimen/dp_102"
                                 android:clickable="false"
-                                android:scaleType="fitXY"
+                                android:scaleType="centerInside"
                                 android:src="@mipmap/img_zwt" />
 
                         </LinearLayout>
@@ -258,7 +258,7 @@
                         <com.makeramen.roundedimageview.RoundedImageView
                             android:id="@+id/imageBottom"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="@dimen/dp_90"
                             android:layout_marginTop="@dimen/dp_10"
                             android:scaleType="centerInside"
                             android:layout_marginLeft="@dimen/dp_10"

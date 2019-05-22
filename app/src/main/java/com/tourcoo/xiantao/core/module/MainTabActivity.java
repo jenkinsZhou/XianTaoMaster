@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.widget.TextView;
 
 import com.allenliu.versionchecklib.v2.AllenVersionChecker;
@@ -54,6 +55,7 @@ import androidx.annotation.NonNull;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_ADDRESS_KEY;
 import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_PHONE_KEY;
 import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_REGISTER_KEY;
 
@@ -306,9 +308,13 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
                                 if (settingEntity != null) {
                                     String register = settingEntity.getRegister();
                                     String phone = settingEntity.getKefu();
+                                    if(TextUtils.isEmpty(settingEntity.getAddress())){
+                                        settingEntity.setAddress("");
+                                    }
                                     //保存注册条例
                                     SharedPreferencesUtil.put(PREF_TEL_REGISTER_KEY, register);
                                     SharedPreferencesUtil.put(PREF_TEL_PHONE_KEY, phone);
+                                    SharedPreferencesUtil.put(PREF_ADDRESS_KEY, settingEntity.getAddress());
                                     boolean needUpdate = needUpdate(settingEntity.getAndroid_version());
                                     boolean isForce = isForce(settingEntity.getAndroid_update());
                                     if (needUpdate) {

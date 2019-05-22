@@ -1,5 +1,7 @@
 package com.tourcoo.xiantao.adapter;
 
+import android.text.TextUtils;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.makeramen.roundedimageview.RoundedImageView;
@@ -33,6 +35,13 @@ public class CollectionGoodsAdapter extends BaseQuickAdapter<Goods, BaseViewHold
         RoundedImageView ivGoodsIcon = helper.getView(R.id.ivGoodsIcon);
         GlideManager.loadImg(TourCooUtil.getUrl(item.getImage()), ivGoodsIcon);
         helper.setText(R.id.tvGoodsName, TourCoolUtil.getStringNotNull(item.getGoods_name()));
+        if(TextUtils.isEmpty(item.getLabel())){
+            helper.setVisible(R.id.llGoodsLabel,false);
+        }else {
+            helper.setVisible(R.id.llGoodsLabel,true);
+            helper.setVisible(R.id.tvGoodsLabel,true);
+            helper.setText(R.id.tvGoodsLabel,item.getLabel());
+        }
 //        helper.setText(R.id.tvGoodsPrice, "¥" + item.getGoods_price());
         helper.setVisible(R.id.tvGoodsPrice,false);
     }

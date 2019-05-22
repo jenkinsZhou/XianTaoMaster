@@ -3,6 +3,7 @@ package com.tourcoo.xiantao.core.helper;
 
 import android.text.TextUtils;
 
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.user.PersonalCenterInfo;
 import com.tourcoo.xiantao.entity.user.UserInfo;
@@ -28,6 +29,8 @@ public class AccountInfoHelper {
     public static final String PREF_TEL_PHONE_KEY = "PREF_TEL_PHONE_KEY";
     public static final String PREF_TEL_QQ_KEY = "PREF_TEL_QQ_KEY";
     public static final String PREF_TEL_WEI_XIN_KEY = "PREF_TEL_WEI_XIN_KEY";
+
+    public static final String PREF_ADDRESS_KEY = "PREF_ADDRESS_KEY";
     /**
      * 充值规则
      */
@@ -102,7 +105,11 @@ public class AccountInfoHelper {
      * 删除用户数据
      */
     public void deleteUserAccount() {
-        LitePal.deleteAll(UserInfo.class);
+        try {
+            LitePal.deleteAll(UserInfo.class);
+        } catch (Exception e) {
+            TourCooLogUtil.e(TAG,TAG+"删除异常:"+e.toString() );
+        }
         userInfo = null;
         token = "";
     }

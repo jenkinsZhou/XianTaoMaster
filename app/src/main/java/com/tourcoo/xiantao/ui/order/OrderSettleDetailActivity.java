@@ -36,6 +36,7 @@ import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.frame.util.FormatUtil;
+import com.tourcoo.xiantao.core.frame.util.SharedPreferencesUtil;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.threadpool.ThreadPoolManager;
@@ -84,6 +85,8 @@ import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 import static com.tourcoo.xiantao.constant.WxConfig.APP_ID;
 import static com.tourcoo.xiantao.constant.WxConfig.WEI_XIN_PAY_TAG_NORMAL;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_ADDRESS_KEY;
+import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_WEI_XIN_KEY;
 import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_FAILED;
 import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_SUCCESS;
 import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.EXTRA_ADDRESS_INFO;
@@ -106,6 +109,8 @@ import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
  * @Email: 971613168@qq.com
  */
 public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity implements View.OnClickListener {
+    private RelativeLayout rlSettleRemark;
+    private TextView tvSettleRemark;
     /**
      * 是否是购物车结算
      */
@@ -116,6 +121,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     public int goodsId;
     public int goodsCount;
     public String skuId;
+
+    private String addressInfo;
     /**
      * 判断是否拼团的结算
      */
@@ -314,14 +321,23 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     @SuppressWarnings("unchecked")
     @Override
     public void initView(Bundle savedInstanceState) {
+        rlSettleRemark = findViewById(R.id.rlSettleRemark);
+        tvSettleRemark = findViewById(R.id.tvSettleRemark);
         mSettleType = getIntent().getIntExtra(EXTRA_SETTLE_TYPE, -1);
         goodsCount = getIntent().getIntExtra(EXTRA_GOODS_COUNT, -1);
         goodsId = getIntent().getIntExtra(EXTRA_GOODS_ID, -1);
         skuId = getIntent().getStringExtra(EXTRA_GOODS_SKU_ID);
+        addressInfo = (String) SharedPreferencesUtil.get(PREF_ADDRESS_KEY, "");
         isShoppingCarSettle = getIntent().getBooleanExtra(EXTRA_SHOPPING_CAR_SETTLE, false);
         TourCooLogUtil.i(TAG, TAG + ":" + "skuId = " + skuId);
         TourCooLogUtil.i(TAG, TAG + ":" + "goodsCount = " + goodsCount);
         TourCooLogUtil.i(TAG, TAG + ":" + "goodsId = " + goodsId);
+        if (TextUtils.isEmpty(addressInfo)) {
+            setVisible(rlSettleRemark, false);
+        } else {
+            setVisible(rlSettleRemark, true);
+            tvSettleRemark.setText(addressInfo);
+        }
         //拼团id
         pinId = getIntent().getIntExtra(EXTRA_PIN_USER_ID, -1);
         if (pinId >= 0) {

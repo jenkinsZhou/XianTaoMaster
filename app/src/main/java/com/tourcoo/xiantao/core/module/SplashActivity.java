@@ -372,12 +372,12 @@ public class SplashActivity extends BaseTitleActivity implements View.OnClickLis
     }
 
     private void skipToMainTab(){
-        mTimeHandler.postDelayed(new Runnable() {
+        mTimeHandler.post(new Runnable() {
             @Override
             public void run() {
                 TourCoolUtil.startActivity(mContext, MainTabActivity.class);
                 finish();
             }
-        },10);
+        });
     }
 }
