@@ -32,6 +32,7 @@ import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.event.BaseEvent;
+import com.tourcoo.xiantao.entity.event.OrderRefreshEvent;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.order.OrderEntity;
 import com.tourcoo.xiantao.entity.pay.WeiXinPay;
@@ -153,7 +154,7 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
     }
 
     /**
-     * 获取个人中心信息
+     * 获取订单信息
      */
     private void requestOrderInfo(int page) {
         ApiRepository.getInstance().requestOrderInfo(orderStatus, page).compose(bindUntilEvent(FragmentEvent.DESTROY)).
@@ -420,9 +421,12 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
         TourCooLogUtil.i(TAG, TAG + "当前操作的位置:" + position);
         mAdapter.remove(position);
         mAdapter.refreshNotifyItemChanged(position);
-        if (mAdapter.getData().isEmpty()) {
+        EventBus.getDefault().post(new OrderRefreshEvent());
+        //todo
+//        mRefreshLayout.autoRefresh();
+       /* if (mAdapter.getData().isEmpty()) {
             mRefreshLayout.autoRefresh();
-        }
+        }*/
 
     }
 
@@ -678,6 +682,19 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
         }
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onOrderRefreshEvent(OrderRefreshEvent event) {
+        if (event == null) {
+            TourCooLogUtil.e(TAG, "直接拦截");
+            return;
+        }
+        if (orderStatus == ORDER_STATUS_ALL) {
+            refreshOrderInfo();
+            TourCooLogUtil.i(TAG, TAG + ":" + "直接刷新:"+orderStatus);
+        }
+    }
+
     @Override
     public void onDestroy() {
         if (api != null) {
@@ -812,8 +829,10 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
         if (mOrderListActivity.mFragmentWaitSend != null) {
             mOrderListActivity.mFragmentWaitSend.autoRefresh();
         }
-
     }
 
+    private void refreshOrderInfo() {
+        requestOrderInfo(1);
+    }
 
 }

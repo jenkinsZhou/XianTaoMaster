@@ -438,6 +438,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         mGoodsAdapter.setNewData(goodsList);
         //显示配送地址
         showAddressInfo(settleEntity.getExist_address());
+        listenCoinSwitch();
+        loadCoinSwitchAndPrice();
         //商品数量
         String amount = "共" + settleEntity.getOrder_total_num() + "件商品";
         tvGoodsTypeCount.setText(amount);
@@ -491,6 +493,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         mGoodsAdapter.setNewData(goodsList);
         //显示配送地址
         showAddressInfo(settleEntity.getExist_address());
+        loadCoinSwitchAndPrice();
         //商品数量
         String amount = "共" + settleEntity.getOrder_total_num() + "件商品";
         tvGoodsTypeCount.setText(amount);
@@ -506,7 +509,6 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         etRemark.setFocusable(false);
         etRemark.setFocusableInTouchMode(false);
         tvDeliveryTime.setText(settleEntity.getTime());
-        loadCoinSwitchAndPrice();
         double shouldPrice;
         boolean userCoin = settleEntity.getCoin() > 0;
         if (userCoin) {
@@ -520,7 +522,6 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             tvShouldPayPrice.setText("¥" + settleEntity.getOrder_pay_price());
             recordPrice = settleEntity.getOrder_pay_price();
         }
-
         payMoney = settleEntity.getOrder_pay_price() - minusMoney;
         if (payMoney <= MIN_PAY_MONEY) {
             payMoney = MIN_PAY_MONEY;
@@ -622,15 +623,19 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
 
 
     private void loadCoinSwitchAndPrice() {
-        switchUseCoin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        if(mSettleEntity == null){
+              TourCooLogUtil.e(TAG,TAG+"订单结算实体为空" );
+            return;
+        }
+        /*switchUseCoin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     //使用抵扣
                     mSettleEntity.setCoin_status(USE_COIN);
                     double price = mSettleEntity.getOrder_total_price() + mSettleEntity.getExpress_price();
-                    TourCooLogUtil.i(TAG, TAG + "运费金额:" + mSettleEntity.getExpress_price());
-                    TourCooLogUtil.i(TAG, TAG + "运费金额:" + mSettleEntity.getOrder_total_price());
+                    TourCooLogUtil.d(TAG, TAG + "运费金额:" + mSettleEntity.getExpress_price());
+                    TourCooLogUtil.d(TAG, TAG + "运费金额:" + mSettleEntity.getOrder_total_price());
                     String shouldPrice = "¥" + TourCooUtil.doubleTrans(price);
                     tvShouldPayPrice.setText(shouldPrice);
                     payMoney = TourCooUtil.minusDouble(mSettleEntity.getOrder_pay_price(), minusMoney);
@@ -649,7 +654,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                     tvShouldPayPrice.setText(shouldPrice);
                 }
             }
-        });
+        });*/
     }
 
     private void listenCoinSwitch() {
@@ -1149,9 +1154,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         try {
             String homeInfo = JSONObject.toJSONString(data);
             Gson gson = new Gson();
-            gson.fromJson(homeInfo,SettleEntity.class);
             TourCooLogUtil.i(TAG, "准备解析:" + homeInfo);
-            return JSON.parseObject(homeInfo, SettleEntity.class);
+            return gson.fromJson(homeInfo, SettleEntity.class);
         } catch (Exception e) {
             TourCooLogUtil.e(TAG, "解析异常:" + e.toString());
             return null;

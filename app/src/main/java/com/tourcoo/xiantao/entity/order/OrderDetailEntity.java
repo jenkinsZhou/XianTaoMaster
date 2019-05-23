@@ -453,7 +453,7 @@ public class OrderDetailEntity {
             private String goods_no;
             private double goods_price;
             private String line_price;
-            private int goods_weight;
+            private String goods_weight;
             private int total_num;
             private String total_price;
             private int order_id;
@@ -577,11 +577,11 @@ public class OrderDetailEntity {
                 this.line_price = line_price;
             }
 
-            public int getGoods_weight() {
+            public String getGoods_weight() {
                 return goods_weight;
             }
 
-            public void setGoods_weight(int goods_weight) {
+            public void setGoods_weight(String goods_weight) {
                 this.goods_weight = goods_weight;
             }
 

@@ -2,6 +2,8 @@ package com.tourcoo.xiantao.adapter;
 
 import android.text.TextUtils;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
@@ -26,6 +28,7 @@ import androidx.annotation.NonNull;
  */
 public class OrderGoodsSettleAdapter extends BaseQuickAdapter<Goods, BaseViewHolder> {
     private boolean isPin;
+
     public OrderGoodsSettleAdapter(boolean isPin) {
         super(R.layout.item_order_grid_good);
         this.isPin = isPin;
@@ -37,28 +40,35 @@ public class OrderGoodsSettleAdapter extends BaseQuickAdapter<Goods, BaseViewHol
         helper.setText(R.id.tvGoodsName, goods.getGoods_name());
         GoodsSkuBean goodsSkuBean = goods.getGoods_sku();
         if (goodsSkuBean != null) {
-                helper.setText(R.id.tvGoodsPrice, "¥ " + goods.getGoods_sku().getGoods_price());
-                if (!TextUtils.isEmpty(goodsSkuBean.getGoods_attr())) {
-                    helper.setVisible(R.id.llGoodsLabel, true);
-                    helper.setGone(R.id.tvGoodsLabel, true);
-                    helper.setText(R.id.tvGoodsLabel, goods.getGoods_sku().getGoods_attr());
-                } else {
-                    helper.setGone(R.id.tvGoodsLabel, false);
-                    helper.setVisible(R.id.llGoodsLabel, false);
-                }
+            helper.setText(R.id.tvGoodsPrice, "¥ " + goods.getGoods_sku().getGoods_price());
+            if (!TextUtils.isEmpty(goodsSkuBean.getGoods_attr())) {
+                helper.setVisible(R.id.llGoodsLabel, true);
+                helper.setGone(R.id.tvGoodsLabel, true);
+                helper.setText(R.id.tvGoodsLabel, goods.getGoods_sku().getGoods_attr());
+            } else {
+                helper.setGone(R.id.tvGoodsLabel, false);
+                helper.setVisible(R.id.llGoodsLabel, false);
+            }
         } else {
             helper.setText(R.id.tvGoodsPrice, "¥ " + goods.getGoods_price());
         }
-         TourCooLogUtil.i(TAG,TAG+"是否是拼团:"+goods.isTuan() );
-        if (isPin&&goods.isTuan() && goods.getTuan_rule() != null) {
+        TourCooLogUtil.i(TAG, TAG + "是否是拼团:" + goods.isTuan());
+        if (isPin && goods.isTuan() && goods.getTuan_rule() != null) {
             //说明此时是拼团结算
-            TuanRule tuanRule = new Gson().fromJson(goods.getTuan_rule().toString(), TuanRule.class);
-            if (tuanRule != null) {
-                helper.setVisible(R.id.llGoodsLabel, true);
-                helper.setGone(R.id.tvGoodsLabel, true);
-                helper.setText(R.id.tvGoodsLabel, tuanRule.getName());
-                helper.setText(R.id.tvGoodsPrice, "¥ " + tuanRule.getPrice());
+            TuanRule tuanRule;
+            String value = JSON.toJSONString(goods.getTuan_rule());
+            try {
+                tuanRule = JSON.parseObject(value,TuanRule.class);
+                if (tuanRule != null) {
+                    helper.setVisible(R.id.llGoodsLabel, true);
+                    helper.setGone(R.id.tvGoodsLabel, true);
+                    helper.setText(R.id.tvGoodsLabel, tuanRule.getName());
+                    helper.setText(R.id.tvGoodsPrice, "¥ " + tuanRule.getPrice());
+                }
+            } catch (Exception e) {
+                TourCooLogUtil.e(TAG, TAG + "解析异常:" + e.toString());
             }
+
         }
         //当前商品的数量
         helper.setText(R.id.goodsCount, "x" + goods.getTotal_num());

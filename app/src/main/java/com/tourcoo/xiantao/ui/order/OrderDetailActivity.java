@@ -557,7 +557,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     //拼团订单不允许取消退单
                     hideView(tvCancelOrder);
                 } else {
-                    hideView(tvCancelOrder);
+                    showView(tvCancelOrder);
                 }
                 break;
             case ORDER_STATUS_WAIT_SEND:
