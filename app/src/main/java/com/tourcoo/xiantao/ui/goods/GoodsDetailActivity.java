@@ -255,7 +255,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
          */
         mGoodsId = getIntent().getIntExtra(EXTRA_GOODS_ID, -1);
         init();
-        if(!checkPermission()){
+        if (!checkPermission()) {
             PermissionManager.requestAllNeedPermission(this);
         }
         TourCooLogUtil.i(TAG, TAG + ":" + "商品id=" + mGoodsId);
@@ -344,6 +344,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                             } else {
                                 ToastUtil.showFailed(entity.msg);
                                 mStatusLayoutManager.showErrorLayout();
+                                showErrorLayoutMsg(entity.msg);
                             }
                         }
                     }
@@ -564,7 +565,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     commentImageRecyclerView.setLayoutManager(new GridLayoutManager(mContext, 4));
                     GridImageAdapter gridImageAdapter = new GridImageAdapter(imageUrlList);
                     gridImageAdapter.bindToRecyclerView(commentImageRecyclerView);
-                    List<ImageEntity> imageEntityList =   parseImageEntityList(gridImageAdapter.getData());
+                    List<ImageEntity> imageEntityList = parseImageEntityList(gridImageAdapter.getData());
                     gridImageAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
                         @Override
                         public void onItemClick(BaseQuickAdapter adapter, View view, int position) {

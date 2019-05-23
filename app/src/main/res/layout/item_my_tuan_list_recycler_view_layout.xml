@@ -45,6 +45,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxEms="14"
+                        android:maxLines="1"
                         android:gravity="center_vertical"
                         android:textColor="#ff404040"
                         android:textSize="@dimen/sp_15" />
@@ -67,6 +70,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxEms="14"
+                        android:maxLines="1"
                         android:gravity="center_vertical"
                         android:textColor="#fff95b47"
                         android:textSize="@dimen/sp_13" />

@@ -549,6 +549,7 @@ public interface ApiService {
      */
     @POST("index/detail")
     Observable<BaseEntity> requestHomeWebDetails(@QueryMap Map<String, Object> params);
+
     /**
      * banner详情
      *
@@ -673,8 +674,26 @@ public interface ApiService {
 
     /**
      * 我的邀请码
+     *
      * @return
      */
     @POST("user/invitecode")
     Observable<BaseEntity<String>> requestInvitecode();
+
+
+    /**
+     * 首页商品列表
+     *
+     * @param map
+     * @return
+     */
+    @POST("index/index_goods")
+    Observable<BaseEntity> requestHomeGoodsList(@QueryMap Map<String, Object> map);
+
+    /**
+     * 清空所有消息
+     * @return
+     */
+    @POST("msg/deleteall")
+    Observable<BaseEntity> requestDeleteAllMsg();
 }

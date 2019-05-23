@@ -1,5 +1,6 @@
 package com.tourcoo.xiantao.ui.msg;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -18,7 +19,9 @@ import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
+import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
+import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.message.MessageEntity;
 import com.tourcoo.xiantao.entity.event.BaseEvent;
@@ -87,7 +90,17 @@ public class MsgSystemActivity extends BaseRefreshLoadActivity<MessageEntity> {
     public void setTitleBar(TitleBarView titleBar) {
         TextView textView = titleBar.getTextView(Gravity.CENTER | Gravity.TOP);
         textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-        titleBar.setTitleMainText("消息中心");
+        titleBar.setTitleMainText("消息中心").setRightTextColor(TourCooUtil.getColor(R.color.greenCommon));
+        titleBar.setRightText("全部清空").setOnRightTextClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (systemMsgAdapter.getData().isEmpty()) {
+                    ToastUtil.showFailed("暂无消息数据");
+                    return;
+                }
+                showConfirmDeleteDialog();
+            }
+        });
     }
 
     /**
@@ -173,5 +186,46 @@ public class MsgSystemActivity extends BaseRefreshLoadActivity<MessageEntity> {
         }
     }
 
+
+    private void requestDeleteAllMsg() {
+        ApiRepository.getInstance().requestDeleteAllMsg().compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseLoadingObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                getMsgList(true, 1);
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+                });
+
+    }
+
+
+    /**
+     * 确认删除消息对话框
+     */
+    private void showConfirmDeleteDialog() {
+        //删除地址
+        ConfirmDialog.Builder builder = new ConfirmDialog.Builder(mContext);
+        builder.setTitle("确认清空").setFirstMessage("是否清空全部消息?")
+                .setFirstMsgSize(15).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        })
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        requestDeleteAllMsg();
+                        dialog.dismiss();
+                    }
+                });
+        showConfirmDialog(builder);
+    }
 
 }

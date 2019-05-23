@@ -1,9 +1,12 @@
 package com.tourcoo.xiantao.ui;
 
 import android.graphics.Typeface;
+import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.TextView;
 
+import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.base.activity.BaseTitleActivity;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.widget.core.progress.EmiProgressDialog;
@@ -41,4 +44,16 @@ public abstract class BaseTourCooTitleActivity extends BaseTitleActivity {
         return PermissionManager.checkAllNeedPermission(this);
     }
 
+
+    protected void showErrorLayoutMsg(String errorInfo) {
+        if (mStatusLayoutManager == null || mStatusLayoutManager.getErrorLayout() == null) {
+            return;
+        }
+        View errorView = mStatusLayoutManager.getErrorLayout();
+        TextView tvErrorContent = errorView.findViewById(R.id.tvErrorContent);
+        if (tvErrorContent == null || TextUtils.isEmpty(errorInfo)) {
+            return;
+        }
+        tvErrorContent.setText(errorInfo);
+    }
 }

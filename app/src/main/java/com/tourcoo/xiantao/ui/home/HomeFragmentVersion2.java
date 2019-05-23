@@ -33,6 +33,7 @@ import com.tourcoo.xiantao.XianTaoApplication;
 import com.tourcoo.xiantao.adapter.HomeGoodsGridAdapter;
 import com.tourcoo.xiantao.core.frame.base.fragment.BaseTitleFragment;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
+import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.frame.util.NetworkUtil;
 import com.tourcoo.xiantao.core.frame.util.SizeUtil;
@@ -47,9 +48,11 @@ import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.address.AddressEntity;
+import com.tourcoo.xiantao.entity.advertisement.AdvertisEntity;
 import com.tourcoo.xiantao.entity.banner.BannerBean;
 import com.tourcoo.xiantao.entity.event.MessageEvent;
 import com.tourcoo.xiantao.entity.goods.GoodsDetailEntity;
+import com.tourcoo.xiantao.entity.home.HomeGoodsEntity;
 import com.tourcoo.xiantao.entity.home.HomeGoodsNewBean;
 import com.tourcoo.xiantao.entity.home.RecommendBean;
 import com.tourcoo.xiantao.entity.message.MessageBean;
@@ -65,6 +68,7 @@ import com.tourcoo.xiantao.ui.msg.HomeNewsDetailActivity;
 import com.tourcoo.xiantao.ui.msg.MsgSystemActivity;
 import com.tourcoo.xiantao.util.LocateHelper;
 import com.tourcoo.xiantao.widget.sku.utils.ScreenUtils;
+import com.trello.rxlifecycle3.android.ActivityEvent;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -92,7 +96,10 @@ import static com.tourcoo.xiantao.ui.home.WebContentInfoActivity.ERTRA_TITLE;
  * @date 2019年03月06日上午 10:12
  * @Email: 971613168@qq.com
  */
-public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnClickListener, OnRefreshListener {
+public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnClickListener, OnRefreshListener, OnLoadMoreListener {
+
+    private boolean refreshTag = true;
+    private int currentPage = 1;
     public static final String EXTRA_PARAM = "EXTRA_PARAM";
     private AMapLocation mapLocation;
     private SmartRefreshLayout mRefreshLayout;
@@ -146,13 +153,15 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
         locate();
         statusLayoutManager.showLoadingLayout();
         initGoodsItemClick();
-        getHomeInfo();
-        getMessageCount();
     }
 
     @Override
     public void loadData() {
         super.loadData();
+        getHomeInfo();
+        currentPage = 1;
+        requestHomeGoodsList(currentPage);
+        getMessageCount();
         //获取收货地址
         if (AccountInfoHelper.getInstance().isLogin()) {
             getMyAddressList();
@@ -212,8 +221,9 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
         footView = LayoutInflater.from(mContext).inflate(R.layout.item_view, null);
         rvHome.setLayoutManager(new GridLayoutManager(mContext, 2));
         mRefreshLayout = mContentView.findViewById(R.id.refreshLayoutHome);
-        mRefreshLayout.setEnableLoadMore(false);
+        mRefreshLayout.setEnableLoadMore(true);
         mRefreshLayout.setOnRefreshListener(this);
+        mRefreshLayout.setOnLoadMoreListener(this);
         mRefreshLayout.setRefreshHeader(new ClassicsHeader(mContext).setSpinnerStyle(SpinnerStyle.Translate));
         setupStatusLayoutManager();
     }
@@ -337,23 +347,21 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
 
     @Override
     public void onRefresh(RefreshLayout refreshLayout) {
+        currentPage = 1;
+        refreshTag = true;
         doRefresh();
+        requestHomeGoodsList(currentPage);
     }
 
     /**
      * 执行刷新逻辑
      */
     private void doRefresh() {
-        mRefreshLayout.setEnableLoadMore(false);
+        mRefreshLayout.setEnableLoadMore(true);
         mRefreshLayout.setNoMoreData(false);
         mGoodsGridAdapter.removeFooterView(footView);
         getHomeInfoDelay();
     }
-
-
-
-
-
 
 
     /**
@@ -443,12 +451,12 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
             TourCooLogUtil.i(TAG, "bannerImageList:" + url);
             bannerImageList.add(url);
         }
-        List<HomeGoodsNewBean.GoodsBean> homeGoodsBeanList = homeInfoBean.getGoods();
+     /*   List<HomeGoodsNewBean.GoodsBean> homeGoodsBeanList = homeInfoBean.getGoods();
         if (homeGoodsBeanList != null && !homeGoodsBeanList.isEmpty()) {
             mGoodsGridAdapter.setNewData(homeGoodsBeanList);
             mGoodsBeanList.addAll(homeInfoBean.getGoods());
-        }
-        mGoodsGridAdapter.notifyDataSetChanged();
+        }*/
+//        mGoodsGridAdapter.notifyDataSetChanged();
         banner.setData(bannerImageList, null);
         loadHomeViewFlipperData(homeInfoBean.getNews());
         HomeGoodsNewBean.IndexBean indexBean = homeInfoBean.getIndex();
@@ -624,7 +632,7 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
         mGoodsGridAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                HomeGoodsNewBean.GoodsBean homeGoodsBean = mGoodsGridAdapter.getItem(position);
+                HomeGoodsEntity.GoodsBean homeGoodsBean = mGoodsGridAdapter.getItem(position);
                 if (homeGoodsBean == null) {
                     return;
                 }
@@ -723,7 +731,7 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
         if (messageEvent == null) {
             return;
         }
-         TourCooLogUtil.i(TAG,TAG+":执行购物车刷新");
+        TourCooLogUtil.i(TAG, TAG + ":执行购物车刷新");
         showMsg(messageEvent.getMsgCount());
     }
 
@@ -836,5 +844,96 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
      */
     private boolean hasPermission() {
         return PermissionManager.checkAllNeedPermission(mContext);
+    }
+
+    @Override
+    public void onLoadMore(RefreshLayout refreshLayout) {
+        refreshTag = false;
+        currentPage++;
+        doLoadMore(currentPage);
+    }
+
+
+    /**
+     * 执行加载更多逻辑
+     */
+    private void doLoadMore(int page) {
+      /*  mGoodsGridAdapter.notifyDataSetChanged();
+        mRefreshLayout.finishLoadMore();
+        if (mGoodsGridAdapter.getData().size() > 30) {
+            mRefreshLayout.setEnableLoadMore(false);
+            mRefreshLayout.setNoMoreData(true);
+            mGoodsGridAdapter.addFooterView(footView);
+        } else {
+            mGoodsGridAdapter.loadMoreComplete();
+        }*/
+        requestHomeGoodsList(page);
+    }
+
+    /**
+     * 获取首页商品信息
+     *
+     * @param page
+     */
+    private void requestHomeGoodsList(int page) {
+        ApiRepository.getInstance().requestHomeGoodsList(page).compose(bindUntilEvent(FragmentEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity == null) {
+                            return;
+                        }
+                        if (entity.code == CODE_REQUEST_SUCCESS) {
+                            HomeGoodsEntity homeGoodsEntity = parseHomeGoodsList(entity.data);
+                            if (homeGoodsEntity == null || homeGoodsEntity.getData() == null) {
+                                statusLayoutManager.showErrorLayout();
+                                mRefreshLayout.finishLoadMore(false);
+                            } else {
+                                //添加到集合中
+                                TourCooLogUtil.i(TAG, "当前页码:" + currentPage + "数据长度:" + homeGoodsEntity.getData().size());
+                                if (refreshTag) {
+                                    //下拉刷新
+                                    mRefreshLayout.finishRefresh(true);
+                                    mGoodsGridAdapter.setNewData(homeGoodsEntity.getData());
+                                } else {
+                                    //加载更多
+                                    mRefreshLayout.finishLoadMore(true);
+                                    mGoodsGridAdapter.getData().addAll(homeGoodsEntity.getData());
+                                    if (homeGoodsEntity.getData().isEmpty() || homeGoodsEntity.getData().size() <homeGoodsEntity.getPer_page()  ) {
+                                        //没有更多了
+                                        try {
+                                            mGoodsGridAdapter.addFooterView(footView);
+                                        } catch (Exception e) {
+                                            TourCooLogUtil.e(TAG, TAG + ":" + e.toString());
+                                        }
+                                        mRefreshLayout.setEnableLoadMore(false);
+                                        mRefreshLayout.setNoMoreData(true);
+                                    } else {
+                                        mRefreshLayout.setEnableLoadMore(true);
+//                                        mRefreshLayout.removeView(footView);
+                                    }
+                                }
+                                mGoodsGridAdapter.notifyDataSetChanged();
+                            }
+                        } else {
+                            ToastUtil.show(entity.msg);
+                            mRefreshLayout.finishLoadMore(false);
+                        }
+                    }
+                });
+    }
+
+
+    private HomeGoodsEntity parseHomeGoodsList(Object object) {
+        if (object == null) {
+            return null;
+        }
+        try {
+            String userInfo = JSONObject.toJSONString(object);
+            return JSON.parseObject(userInfo, HomeGoodsEntity.class);
+        } catch (Exception e) {
+            TourCooLogUtil.e(TAG, "value:" + e.toString());
+            return null;
+        }
     }
 }

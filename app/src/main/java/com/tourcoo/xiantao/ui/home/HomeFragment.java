@@ -190,8 +190,8 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
         footView = LayoutInflater.from(mContext).inflate(R.layout.item_view, null);
         rvHome.setLayoutManager(new GridLayoutManager(mContext, 2));
         mRefreshLayout = mContentView.findViewById(R.id.refreshLayoutHome);
-        mRefreshLayout.setEnableLoadMore(false);
         mRefreshLayout.setOnRefreshListener(this);
+        mRefreshLayout.setEnableLoadMore(false);
         mRefreshLayout.setOnLoadMoreListener(this);
         mRefreshLayout.setRefreshHeader(new ClassicsHeader(mContext).setSpinnerStyle(SpinnerStyle.Translate));
         setupStatusLayoutManager();

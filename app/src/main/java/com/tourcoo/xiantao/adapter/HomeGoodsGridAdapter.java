@@ -13,6 +13,7 @@ import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
+import com.tourcoo.xiantao.entity.home.HomeGoodsEntity;
 import com.tourcoo.xiantao.entity.home.HomeGoodsNewBean;
 import com.tourcoo.xiantao.util.FormatDuration;
 
@@ -24,13 +25,13 @@ import com.tourcoo.xiantao.util.FormatDuration;
  * @date 2019年05月21日15:22
  * @Email: 971613168@qq.com
  */
-public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsNewBean.GoodsBean, BaseViewHolder> {
+public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsEntity.GoodsBean, BaseViewHolder> {
     public HomeGoodsGridAdapter() {
         super(R.layout.item_home_goods);
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, HomeGoodsNewBean.GoodsBean item) {
+    protected void convert(BaseViewHolder helper, HomeGoodsEntity.GoodsBean item) {
         if (item == null) {
             return;
         }

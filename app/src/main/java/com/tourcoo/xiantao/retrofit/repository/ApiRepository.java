@@ -1080,4 +1080,17 @@ public class ApiRepository extends BaseRepository {
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestInvitecode().retryWhen(new RetryWhen()));
     }
 
+
+    public Observable<BaseEntity> requestHomeGoodsList(int pageIndex) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("p", pageIndex);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestHomeGoodsList(params).retryWhen(new RetryWhen()));
+    }
+
+
+
+    public Observable<BaseEntity> requestDeleteAllMsg() {
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestDeleteAllMsg().retryWhen(new RetryWhen()));
+    }
+
 }
