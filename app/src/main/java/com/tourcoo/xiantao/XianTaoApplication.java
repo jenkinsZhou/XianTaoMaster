@@ -103,7 +103,7 @@ public class XianTaoApplication extends LitePalApplication {
 //                .setLogEnable(BuildConfig.DEBUG, TAG, HttpLoggingInterceptor.Level.BODY)
                 //设置统一超时--也可单独调用read/write/connect超时(可以设置时间单位TimeUnit)
                 //默认20 s
-                .setTimeout(10);
+                .setTimeout(20);
 
         if (DEBUG_MODE) {
             if (LeakCanary.isInAnalyzerProcess(mContext)) {

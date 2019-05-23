@@ -143,7 +143,7 @@ public class HttpRequestControlImpl implements HttpRequestControl {
                     }
                 } else {
                     if (reason == R.string.exception_time_out) {
-                        ToastUtil.show("请求超时");
+//                        ToastUtil.show("请求超时");
                     } else {
                         ToastUtil.show("未检测到网络");
                     }
