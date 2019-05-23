@@ -2,6 +2,7 @@ package com.tourcoo.xiantao.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -63,6 +64,7 @@ import me.bakumon.statuslayoutmanager.library.OnStatusChildClickListener;
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.ui.account.MineFragment.NO_LOGIN;
 import static com.tourcoo.xiantao.ui.goods.GoodsDetailActivity.EXTRA_SETTLE;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_SETTLE_TYPE;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_SHOPPING_CAR_SETTLE;
@@ -132,7 +134,7 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
         initStatusLayout();
         initAdapter();
         if (AccountInfoHelper.getInstance().isLogin()) {
-            refreshShoppingCarNoDialog();
+            refreshShoppingCarNoDialog(true);
         } else {
             showEmptyLayout();
             hideView(llBottomLayout);
@@ -225,7 +227,7 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
             return;
         }
         TourCooLogUtil.i(TAG, "刷新购物车");
-        mMainTabActivity.getTotalNumAndRefreshShoppingCar();
+        mMainTabActivity.getTotalNumAndRefreshShoppingCar(true);
 //        refreshShoppingCarNoDialog();
     }
 
@@ -353,6 +355,7 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
                                 }
                             } else {
                                 ToastUtil.showFailed(entity.msg);
+                                setNoLogin(entity.msg);
                             }
                         }
                     }
@@ -519,7 +522,10 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
     /**
      * 不显示loading对话框
      */
-    public void refreshShoppingCarNoDialog() {
+    public void refreshShoppingCarNoDialog(boolean isRequst) {
+        if (!isRequst) {
+            return;
+        }
         if (AccountInfoHelper.getInstance().isLogin()) {
             ApiRepository.getInstance().getMyShoppingCarList().compose(bindUntilEvent(FragmentEvent.DESTROY)).
                     subscribe(new BaseObserver<BaseEntity>() {
@@ -551,7 +557,7 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
 
     @Override
     public void onRefresh(RefreshLayout refreshLayout) {
-        refreshShoppingCarNoDialog();
+        refreshShoppingCarNoDialog(true);
     }
 
 
@@ -591,5 +597,12 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
         startActivity(intent);
     }
 
-
+    private void setNoLogin(String value) {
+        if (TextUtils.isEmpty(value)) {
+            return;
+        }
+        if (value.contains(NO_LOGIN)) {
+            AccountInfoHelper.getInstance().deleteUserAccount();
+        }
+    }
 }

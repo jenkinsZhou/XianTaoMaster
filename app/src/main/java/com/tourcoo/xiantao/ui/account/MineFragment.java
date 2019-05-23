@@ -90,7 +90,7 @@ import static com.tourcoo.xiantao.ui.order.MyOrderListActivity.EXTRA_CURRENT_TAB
  * @Email: 971613168@qq.com
  */
 public class MineFragment extends BaseTitleFragment implements View.OnClickListener, OnRefreshListener {
-    public static final String NO_LOGIN = "登录后";
+    public static final String NO_LOGIN = "请登录";
     private MenuAdapter mMenuAdapter;
     private List<MenuItem> mMenuItemList = new ArrayList<>();
     private RecyclerView rvMineMenu;
@@ -482,7 +482,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                                 }
                             } else {
                                 ToastUtil.showFailed(entity.msg);
-                                if(entity.msg.contains(NO_LOGIN)){
+                                if (entity.msg.contains(NO_LOGIN)) {
                                     AccountInfoHelper.getInstance().deleteUserAccount();
                                 }
                                 refreshLayout.finishRefresh(false);
@@ -569,6 +569,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                             } else {
                                 refreshLayout.finishRefresh(false);
                                 ToastUtil.showFailed(entity.msg);
+                                setNoLogin(entity.msg);
                             }
                         }
                     }
@@ -798,6 +799,14 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     }
 
 
+    private void setNoLogin(String value) {
+        if (TextUtils.isEmpty(value)) {
+            return;
+        }
+        if (value.contains(NO_LOGIN)) {
+            AccountInfoHelper.getInstance().deleteUserAccount();
+        }
+    }
 }
 
 

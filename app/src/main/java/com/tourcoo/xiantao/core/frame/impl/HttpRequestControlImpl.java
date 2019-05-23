@@ -138,9 +138,7 @@ public class HttpRequestControlImpl implements HttpRequestControl {
             } else {
                 if (NetworkUtil.isConnected(XianTaoApplication.getContext())) {
                     //有网络的情况
-                    if (reason == R.string.exception_time_out) {
-                        ToastUtil.show("请求超时");
-                    }
+                //todo
                 } else {
                     if (reason == R.string.exception_time_out) {
 //                        ToastUtil.show("请求超时");

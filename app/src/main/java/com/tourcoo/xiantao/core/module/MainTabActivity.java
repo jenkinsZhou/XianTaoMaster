@@ -70,6 +70,8 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
     private TabChangeEvent mTabChangeEvent;
     public CommonTabLayout mTabLayout;
     public static final int TAB_INDEX_MINE = 3;
+
+    public static final int TAB_INDEX_SHOPPING_CAR = 2;
     private boolean isFirstLoad = true;
     private MineFragment mineFragment;
     private ShoppingCarFragmentVersion2 shoppingCarFragment;
@@ -146,11 +148,15 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
                     EventBus.getDefault().postSticky(mTabChangeEvent);
                     if (AccountInfoHelper.getInstance().isLogin()) {
                         //获取购物车中商品数量并刷新商品信息
-                        getTotalNumAndRefreshShoppingCar();
                         if (position == TAB_INDEX_MINE) {
+                            getTotalNumAndRefreshShoppingCar(false);
                             if (mineFragment != null) {
                                 mineFragment.checkTokenAndRequestUserInfo();
                             }
+                        } else if (position == TAB_INDEX_SHOPPING_CAR) {
+                            getTotalNumAndRefreshShoppingCar(true);
+                        } else {
+                            getTotalNumAndRefreshShoppingCar(false);
                         }
                     }
 
@@ -254,7 +260,7 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
     /**
      * 获取当前购物车中商品数量
      */
-    public void getTotalNumAndRefreshShoppingCar() {
+    public void getTotalNumAndRefreshShoppingCar(boolean isRequestGoodsList) {
         ApiRepository.getInstance().getTotalNum().compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseObserver<BaseEntity<GoodsCount>>() {
                     @Override
@@ -266,8 +272,8 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
                                     showRedDot(currentGoodsCount);
                                     if (currentGoodsCount > 0) {
                                         //根据情况刷新购物车列表
-                                        if (shoppingCarFragment != null) {
-                                            shoppingCarFragment.refreshShoppingCarNoDialog();
+                                        if (shoppingCarFragment != null && isRequestGoodsList) {
+                                            shoppingCarFragment.refreshShoppingCarNoDialog(isRequestGoodsList);
                                         }
                                     } else {
                                         if (shoppingCarFragment != null) {
@@ -308,7 +314,7 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
                                 if (settingEntity != null) {
                                     String register = settingEntity.getRegister();
                                     String phone = settingEntity.getKefu();
-                                    if(TextUtils.isEmpty(settingEntity.getAddress())){
+                                    if (TextUtils.isEmpty(settingEntity.getAddress())) {
                                         settingEntity.setAddress("");
                                     }
                                     //保存注册条例
@@ -331,8 +337,8 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
 
 
     private boolean needUpdate(String versionInfo) {
-         TourCooLogUtil.i(TAG,TAG+"后台的版本号:"+versionInfo );
-        TourCooLogUtil.i(TAG,TAG+"本地的版本号:"+TourCooUtil.getVersionName(mContext) );
+        TourCooLogUtil.i(TAG, TAG + "后台的版本号:" + versionInfo);
+        TourCooLogUtil.i(TAG, TAG + "本地的版本号:" + TourCooUtil.getVersionName(mContext));
         return !TourCooUtil.getVersionName(mContext).equalsIgnoreCase(versionInfo);
     }
 
