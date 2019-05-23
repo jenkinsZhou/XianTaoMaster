@@ -56,4 +56,30 @@ public abstract class BaseTourCooTitleActivity extends BaseTitleActivity {
         }
         tvErrorContent.setText(errorInfo);
     }
+
+    protected void showErrorLayout() {
+        if (mStatusLayoutManager != null) {
+            mStatusLayoutManager.showErrorLayout();
+        }
+    }
+
+    protected void showEmtyLayout() {
+        if (mStatusLayoutManager != null&&mStatusLayoutManager.getEmptyLayout() != null) {
+            mStatusLayoutManager.showEmptyLayout();
+        }
+    }
+
+    protected void showErrorLayout(String msg) {
+        if (mStatusLayoutManager != null && mStatusLayoutManager.getErrorLayout() != null) {
+            mStatusLayoutManager.showErrorLayout();
+            if (TextUtils.isEmpty(msg)) {
+                return;
+            }
+            TextView tvErrorInfo = mStatusLayoutManager.getErrorLayout().findViewById(R.id.tvErrorContent);
+            if (tvErrorInfo != null) {
+                tvErrorInfo.setText(msg);
+            }
+        }
+    }
+
 }

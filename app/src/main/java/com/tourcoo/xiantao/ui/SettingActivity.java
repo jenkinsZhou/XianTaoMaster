@@ -3,6 +3,7 @@ package com.tourcoo.xiantao.ui;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.allen.library.SuperTextView;
@@ -49,6 +50,7 @@ public class SettingActivity extends BaseTourCooTitleActivity implements View.On
 
     @Override
     public void initView(Bundle savedInstanceState) {
+        findViewById(R.id.ivReturn).setOnClickListener(this);
         stvClearCache = findViewById(R.id.stvClearCache);
         btnGoLogin = findViewById(R.id.btnGoLogin);
         stvClearCache.setOnClickListener(this);
@@ -74,7 +76,7 @@ public class SettingActivity extends BaseTourCooTitleActivity implements View.On
     @Override
     public void setTitleBar(TitleBarView titleBar) {
         super.setTitleBar(titleBar);
-        titleBar.setTitleMainText("系统设置");
+        titleBar.setHeight(0);
     }
 
     @Override
@@ -93,9 +95,9 @@ public class SettingActivity extends BaseTourCooTitleActivity implements View.On
                 }
                 break;
             case R.id.stvResetPassword:
-                if(AccountInfoHelper.getInstance().isLogin()){
+                if (AccountInfoHelper.getInstance().isLogin()) {
                     TourCooUtil.startActivity(mContext, EditPasswordActivity.class);
-                }else {
+                } else {
                     TourCooUtil.startActivity(mContext, LoginActivity.class);
                 }
                 break;
@@ -106,6 +108,9 @@ public class SettingActivity extends BaseTourCooTitleActivity implements View.On
             case R.id.btnGoLogin:
                 //去登陆
                 TourCooUtil.startActivity(mContext, LoginActivity.class);
+                break;
+            case R.id.ivReturn:
+                finish();
                 break;
             default:
                 break;

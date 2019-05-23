@@ -496,7 +496,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 TextView tvEndTime = view.findViewById(R.id.tvEndTime);
                 TextView btnJoinTuan = view.findViewById(R.id.btnJoinTuan);
 
-                GlideManager.loadCircleImg(tuanListBean.getAvatar(), ivAvatar);
+                GlideManager.loadCircleImg(tuanListBean.getAvatar(), ivAvatar, TourCooUtil.getDrawable(R.mipmap.img_default_avatar));
                 tvNickName.setText(tuanListBean.getNickname());
                 tvSurplus.setText(tuanListBean.getSurplus() + "kg");
 
@@ -760,7 +760,6 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         intent.putExtra(EXTRA_GOODS_SKU_ID, skuId);
         intent.setClass(mContext, OrderSettleDetailActivity.class);
         startActivity(intent);
-        finish();
     }
 
 
@@ -777,7 +776,6 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         intent.setClass(mContext, OrderSettleDetailActivity.class);
         TourCooLogUtil.i(TAG, "value:" + pinId);
         startActivity(intent);
-        finish();
     }
 
     @Override

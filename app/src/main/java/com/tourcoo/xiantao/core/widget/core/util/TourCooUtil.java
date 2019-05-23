@@ -439,6 +439,12 @@ public class TourCooUtil {
         return p1.add(p2).doubleValue();
     }
 
+    public static double multiply(double m1, double m2) {
+        BigDecimal p1 = new BigDecimal(Double.toString(m1));
+        BigDecimal p2 = new BigDecimal(Double.toString(m2));
+        return p1.multiply(p2).doubleValue();
+    }
+
     /**
      * 减法运算
      *

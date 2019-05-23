@@ -37,7 +37,7 @@
 
     <string name="loading">正在加载</string>
     <string name="load_more_load_failed" tools:ignore="ExtraTranslation">加载失败,请点我重试</string>
-    <string name="load_more_load_end">没有更多数据</string>
+    <string name="load_more_load_end">没有更多了</string>
 
 
     <string name="multi_loading">加载中...</string>

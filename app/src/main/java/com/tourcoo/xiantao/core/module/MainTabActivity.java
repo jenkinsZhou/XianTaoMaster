@@ -86,10 +86,10 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
         if (NetworkUtil.isConnected(mContext) && AccountInfoHelper.getInstance().isLogin()) {
             checkToken();
         }
-        if (!hasPermission()) {
+       /* if (!hasPermission()) {
             //请求一次权限
             PermissionManager.requestAllNeedPermission(this);
-        }
+        }*/
     }
 
     @Override

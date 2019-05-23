@@ -9,6 +9,58 @@
     <include layout="@layout/layout_title_bar" />
 
     <RelativeLayout
+        android:id="@+id/rlTitleBar"
+        android:layout_width="match_parent"
+        android:background="@color/colorWhite"
+        android:layout_height="@dimen/dp_40"
+        >
+
+        <ImageView
+            android:id="@+id/ivReturn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:padding="@dimen/dp_5"
+            android:src="@mipmap/ic_return" />
+
+      <!--  <TextView
+            android:id="@+id/tvMessageCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@id/ivMsg"
+            android:layout_marginTop="@dimen/dp_8"
+            android:background="@drawable/bg_circle_red_small"
+            android:gravity="center"
+            android:textColor="@color/whiteCommon"
+            android:textSize="@dimen/sp_6"
+            android:visibility="gone" />-->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="系统设置"
+            android:textColor="#FF333333"
+            android:textSize="@dimen/sp_18"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/ivSetting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/dp_5"
+            android:padding="@dimen/dp_5"
+            android:visibility="gone"
+            android:src="@mipmap/ic_set_up" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

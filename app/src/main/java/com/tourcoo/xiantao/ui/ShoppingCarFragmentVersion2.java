@@ -34,6 +34,7 @@ import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.module.MainTabActivity;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.util.TourCoolUtil;
+import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.event.RefreshEvent;
@@ -42,6 +43,7 @@ import com.tourcoo.xiantao.entity.goods.GoodsDetailEntity;
 import com.tourcoo.xiantao.entity.goods.GoodsSkuBean;
 import com.tourcoo.xiantao.entity.settle.SettleEntity;
 import com.tourcoo.xiantao.entity.event.TabChangeEvent;
+import com.tourcoo.xiantao.entity.shoppingcar.ShoppingCarEntity;
 import com.tourcoo.xiantao.helper.GoodsCount;
 import com.tourcoo.xiantao.helper.ShoppingCar;
 import com.tourcoo.xiantao.listener.OnAddDelCallback;
@@ -65,7 +67,6 @@ import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.ui.account.MineFragment.NO_LOGIN;
-import static com.tourcoo.xiantao.ui.goods.GoodsDetailActivity.EXTRA_SETTLE;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_SETTLE_TYPE;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_SHOPPING_CAR_SETTLE;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SETTLE_TYPE_CAR;
@@ -102,7 +103,7 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
 
     private RelativeLayout rlRootView;
 
-    private SettleEntity mSettleEntity;
+//    private SettleEntity mSettleEntity;
 
     private TextView tvSettleAccounts;
 
@@ -178,14 +179,14 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
     private void initAdapter() {
         mShoppingCartAdapter = new BaseShoppingCartAdapter2() {
             @Override
-            protected void convert(BaseViewHolder helper, Goods goods) {
+            protected void convert(BaseViewHolder helper, ShoppingCarEntity.GoodsBean goods) {
+                if (goods == null) {
+                    return;
+                }
                 RoundedImageView ivGoodsIcon = helper.getView(R.id.ivGoodsIcon);
                 GlideManager.loadImg(goods.getImage(), ivGoodsIcon);
-                GoodsSkuBean goodsSkuBean = goods.getGoods_sku();
-
-                if (goodsSkuBean != null && goodsSkuBean.getGoods_attr() != null) {
-                    helper.setText(R.id.tvGoodsLabel, TourCoolUtil.getStringNotNull(goodsSkuBean.getGoods_attr()));
-                }
+//                GoodsSkuBean goodsSkuBean = goods.getGoods_sku();
+                helper.setText(R.id.tvGoodsLabel, TourCoolUtil.getStringNotNull(goods.getSpec_value()));
                 helper.setText(R.id.tvGoodsName, TourCoolUtil.getStringNotNull(goods.getGoods_name()));
 //                helper.setText(R.id.tvGoodsLabel, TourCoolUtil.getStringNotNull(item.goodsLabels));
 
@@ -202,7 +203,7 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tvSettleAccounts:
-                skipOrderSettleDetail(mSettleEntity);
+                skipOrderSettleDetail();
                 break;
             default:
                 break;
@@ -249,7 +250,7 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
     /**
      * 在适配器中监听每个item的加减按钮
      */
-    private void initAddDelButtonListener(BaseViewHolder helper, Goods goods) {
+    private void initAddDelButtonListener(BaseViewHolder helper, ShoppingCarEntity.GoodsBean goods) {
         /**
          * 减控件
          */
@@ -264,7 +265,7 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
                     ToastUtil.show("当前商品不能再减了哦");
                     return;
                 }
-                reduceGoods(goods.getGoods_id(), goods.getGoods_sku_id());
+                reduceGoods(goods.getGoods_id(), goods.getSpec_sku_id());
             }
         });
         /**
@@ -274,15 +275,11 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
         tvGoodsPlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GoodsSkuBean goodsSkuBean = goods.getGoods_sku();
-                if (goodsSkuBean == null) {
-                    return;
-                }
-                if (goodsSkuBean.getStock_num() < goods.getTotal_num()) {
+                if (goods.getStock_num() < goods.getTotal_num()) {
                     ToastUtil.showFailed("超出了该商品库存");
                     return;
                 }
-                addGoods(goods.getGoods_id(), 1, goods.getGoods_sku_id());
+                addGoods(goods.getGoods_id(), 1, goods.getSpec_sku_id());
             }
         });
         //显示每个商品的数量
@@ -293,7 +290,7 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
     /**
      * 初始化侧滑删除点击事件
      */
-    private void intSwipeDeleteListener(BaseViewHolder helper, Goods goods) {
+    private void intSwipeDeleteListener(BaseViewHolder helper, ShoppingCarEntity.GoodsBean goods) {
         Button btnDelete = helper.getView(R.id.btnDelete);
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -307,7 +304,7 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
                 showBottomMoney();
                 showBottomToolBarByCondition();
                 showEmptyViewByCondition();*/
-                deleteGoods(goods.getGoods_id(), goods.getGoods_sku_id());
+                deleteGoods(goods.getGoods_id(), goods.getSpec_sku_id());
             }
         });
     }
@@ -350,8 +347,12 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS) {
                                 if (entity.data != null) {
-                                    mSettleEntity = parseGoodsList(entity.data);
-                                    showGoodsList(mSettleEntity);
+                                    ShoppingCarEntity shoppingCarEntity = parseGoodsList(entity.data);
+                                    if (shoppingCarEntity == null || shoppingCarEntity.getGoods_list() == null) {
+                                        showErrorLayout();
+                                        return;
+                                    }
+                                    showGoodsList(shoppingCarEntity.getGoods_list());
                                 }
                             } else {
                                 ToastUtil.showFailed(entity.msg);
@@ -369,14 +370,14 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
     }
 
 
-    private SettleEntity parseGoodsList(Object object) {
+    private ShoppingCarEntity parseGoodsList(Object object) {
         if (object == null) {
             return null;
         }
         try {
             String info = JSONObject.toJSONString(object);
             LogUtils.e(TAG, info);
-            return JSON.parseObject(info, SettleEntity.class);
+            return JSON.parseObject(info, ShoppingCarEntity.class);
         } catch (Exception e) {
             TourCooLogUtil.e(TAG, "解析异常:" + e.toString());
             return null;
@@ -387,19 +388,18 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
     /**
      * 显示购物车列表
      */
-    private void showGoodsList(SettleEntity settleEntity) {
-        if (settleEntity == null || settleEntity.getGoods_list() == null) {
+    private void showGoodsList(List<ShoppingCarEntity.GoodsBean> goodsList) {
+        if (goodsList == null) {
             showErrorLayout();
             return;
         }
-        List<Goods> goodsList = settleEntity.getGoods_list();
         if (!goodsList.isEmpty()) {
             mStatusLayoutManager.showSuccessLayout();
             mShoppingCartAdapter.setNewData(goodsList);
             mShoppingCartAdapter.notifyDataSetChanged();
-            showBottomMoney(settleEntity);
+            showBottomMoney(goodsList);
             int count = 0;
-            for (Goods goods : goodsList) {
+            for (ShoppingCarEntity.GoodsBean goods : goodsList) {
                 count += goods.getTotal_num();
             }
             mMainTabActivity.showRedDot(count);
@@ -473,14 +473,18 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
     /**
      * 显示底部合计金额
      */
-    private void showBottomMoney(SettleEntity settleEntity) {
-        String payPrice = "¥0.00";
-        if (settleEntity == null) {
-            tvTotalMoneyAmount.setText(payPrice);
+    private void showBottomMoney(List<ShoppingCarEntity.GoodsBean> goodsList) {
+        String payMoney = "¥0";
+        if (goodsList == null) {
+            tvTotalMoneyAmount.setText(payMoney);
             return;
         }
-        payPrice = "¥" + settleEntity.getOrder_total_price();
-        tvTotalMoneyAmount.setText(payPrice);
+        double totalMoney = 0;
+        for (ShoppingCarEntity.GoodsBean goodsBean : goodsList) {
+            totalMoney = TourCooUtil.addDouble(totalMoney, goodsBean.getTotal_price());
+        }
+        payMoney = "¥" + TourCooUtil.doubleTransString(totalMoney);
+        tvTotalMoneyAmount.setText(payMoney);
     }
 
 
@@ -534,8 +538,12 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
                             if (entity != null) {
                                 if (entity.code == CODE_REQUEST_SUCCESS) {
                                     if (entity.data != null) {
-                                        mSettleEntity = parseGoodsList(entity.data);
-                                        showGoodsList(mSettleEntity);
+                                        ShoppingCarEntity shoppingCarEntity = parseGoodsList(entity.data);
+                                        if (shoppingCarEntity == null || shoppingCarEntity.getGoods_list() == null) {
+                                            showErrorLayout();
+                                            return;
+                                        }
+                                        showGoodsList(shoppingCarEntity.getGoods_list());
                                         refreshLayout.finishRefresh(true);
                                     }
                                 } else {
@@ -579,18 +587,11 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
 
 
     /**
-     * 结算后跳转到结算页面显示
+     * 跳转到结算页面
      *
-     * @param settleEntity
      */
-    private void skipOrderSettleDetail(SettleEntity settleEntity) {
-        boolean skipEnable = settleEntity != null && settleEntity.getGoods_list() != null;
-        if (!skipEnable) {
-            ToastUtil.showFailed("未获取到商品信息");
-            return;
-        }
+    private void skipOrderSettleDetail() {
         Intent intent = new Intent();
-        intent.putExtra(EXTRA_SETTLE, settleEntity);
         intent.putExtra(EXTRA_SETTLE_TYPE, SETTLE_TYPE_CAR);
         intent.putExtra(EXTRA_SHOPPING_CAR_SETTLE, true);
         intent.setClass(mContext, OrderSettleDetailActivity.class);
@@ -605,4 +606,6 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
             AccountInfoHelper.getInstance().deleteUserAccount();
         }
     }
+
+
 }

@@ -161,7 +161,9 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private TextView tvReturn;
     private TextView tvCancelOrder;
     private TextView tvConfirmReceive;
-    //查看评价
+    /**
+     * 查看评价
+     */
     private TextView tvLookComment;
 
     private boolean isPin;

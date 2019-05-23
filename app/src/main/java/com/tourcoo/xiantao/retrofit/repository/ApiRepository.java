@@ -377,7 +377,16 @@ public class ApiRepository extends BaseRepository {
     }
 
     /**
-     * 获取我的购物车中商品列表
+     * 结算我的购物车中商品列表
+     *
+     * @return
+     */
+    public Observable<BaseEntity> settleMyShoppingCarList() {
+        return TourCoolTransformer.switchSchedulersIo(getApiService().settleMyShoppingCarList().retryWhen(new RetryWhen()));
+    }
+
+    /**
+     * 结算我的购物车中商品列表
      *
      * @return
      */
@@ -1088,9 +1097,16 @@ public class ApiRepository extends BaseRepository {
     }
 
 
-
     public Observable<BaseEntity> requestDeleteAllMsg() {
         return TourCoolTransformer.switchSchedulersIo(getApiService().requestDeleteAllMsg().retryWhen(new RetryWhen()));
+    }
+
+
+    /**
+     * @return
+     */
+    public Observable<BaseEntity> requestSettleShoppingCar() {
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestSettleShoppingCar().retryWhen(new RetryWhen()));
     }
 
 }

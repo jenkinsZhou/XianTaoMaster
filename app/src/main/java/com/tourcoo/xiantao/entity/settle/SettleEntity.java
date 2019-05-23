@@ -63,7 +63,7 @@ public class SettleEntity implements Serializable {
 
     private String order_total_num;
     private double order_total_price;
-    private int coin;
+    private double coin;
     private String remark;
     private int coin_status;
     private double order_pay_price;
@@ -91,11 +91,11 @@ public class SettleEntity implements Serializable {
         this.order_total_price = order_total_price;
     }
 
-    public int getCoin() {
+    public double getCoin() {
         return coin;
     }
 
-    public void setCoin(int coin) {
+    public void setCoin(double coin) {
         this.coin = coin;
     }
 

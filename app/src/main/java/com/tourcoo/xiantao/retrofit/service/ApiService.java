@@ -237,13 +237,21 @@ public interface ApiService {
     Observable<BaseEntity<GoodsCount>> getTotalNum();
 
     /**
-     * 获取我的购物车商品列表
+     * 结算我的购物车商品列表
      *
      * @return
      */
     @POST("cart/getlists")
-    Observable<BaseEntity> getMyShoppingCarList();
+    Observable<BaseEntity> settleMyShoppingCarList();
 
+
+    /**
+     * 结算我的购物车商品列表
+     *
+     * @return
+     */
+    @POST("cart/getlists_new")
+    Observable<BaseEntity> getMyShoppingCarList();
 
     /**
      * 购物车减
@@ -692,8 +700,17 @@ public interface ApiService {
 
     /**
      * 清空所有消息
+     *
      * @return
      */
     @POST("msg/deleteall")
     Observable<BaseEntity> requestDeleteAllMsg();
+
+
+    /**
+     * 购物车结算
+     * @return
+     */
+    @POST("cart/getlists_pay")
+    Observable<BaseEntity> requestSettleShoppingCar();
 }

@@ -150,7 +150,7 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
         initBanner();
         initAdapter();
         initTitle();
-        locate();
+        requestLocate();
         statusLayoutManager.showLoadingLayout();
         initGoodsItemClick();
     }
@@ -739,7 +739,7 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
     /***
      * 定位
      */
-    private void locate() {
+    public void requestLocate() {
         LocateHelper.getInstance().startLocation(new AMapLocationListener() {
             @Override
             public void onLocationChanged(AMapLocation aMapLocation) {
@@ -904,7 +904,7 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
                                         try {
                                             mGoodsGridAdapter.addFooterView(footView);
                                         } catch (Exception e) {
-                                            TourCooLogUtil.e(TAG, TAG + ":" + e.toString());
+                                            TourCooLogUtil.e(TAG, TAG + "异常:" + e.toString());
                                         }
                                         mRefreshLayout.setEnableLoadMore(false);
                                         mRefreshLayout.setNoMoreData(true);

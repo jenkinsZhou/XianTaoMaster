@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.sdk.app.PayTask;
+import com.google.gson.Gson;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -296,7 +297,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                 return new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        doRequestByCondition();
                     }
                 };
             }
@@ -453,11 +454,10 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             recordPrice = shouldPrice;
         } else {
             //没有积分
-            tvShouldPayPrice.setText("¥" + TourCooUtil.doubleTrans(settleEntity.getOrder_pay_price()));
+            tvShouldPayPrice.setText("¥" + TourCooUtil.doubleTransString(settleEntity.getOrder_pay_price()));
             recordPrice = settleEntity.getOrder_pay_price();
         }
-
-        payMoney = settleEntity.getOrder_pay_price() - minusMoney;
+        payMoney = TourCooUtil.minusDouble(settleEntity.getOrder_pay_price(), minusMoney);
         if (payMoney <= MIN_PAY_MONEY) {
             payMoney = MIN_PAY_MONEY;
         }
@@ -592,12 +592,13 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
      * @param settleEntity
      */
     private void showCoin(SettleEntity settleEntity) {
-        int coin = settleEntity.getCoin();
+        double coin = settleEntity.getCoin();
         if (coin <= 0) {
             setVisible(llUseCoin, false);
         } else {
             setVisible(llUseCoin, true);
-            tvCoinAmount.setText("可抵现¥" + settleEntity.getCoin());
+            String ducuteCoin = "可抵现¥" + TourCooUtil.doubleTransString(settleEntity.getCoin());
+            tvCoinAmount.setText(ducuteCoin);
         }
         if (settleEntity.getCoin_status() == NOT_USE_COIN) {
             switchUseCoin.setChecked(false);
@@ -1021,13 +1022,13 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                         //非拼团订单需要判断是否是购物车结算/立即购买结算
                         if (isShoppingCarSettle) {
                             //购物车结算
-                            getMyShoppingCarList();
+                            requestSettleShoppingCar();
                             //此时购物车的结算信息也要刷新
                             EventBus.getDefault().post(new RefreshEvent());
                             TourCooLogUtil.i(TAG, TAG + "购物车结算:");
                         } else {
                             TourCooLogUtil.i(TAG, TAG + "立即购买结算:");
-                            buyNow(goodsId, goodsCount, skuId);
+                            settleNow(goodsId, goodsCount, skuId);
                         }
                     }
                 }
@@ -1038,7 +1039,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                     if (discountInfoList == null) {
                         return;
                     }
-                    showSelectDiscoutAndPayPrice(discountInfoList);
+                    showSelectDiscoutAndPayPrice(discountInfoList, mSettleEntity);
                     List<String> ids = new ArrayList<>();
                     for (DiscountInfo discountInfo : discountInfoList) {
                         ids.add(discountInfo.getId() + "");
@@ -1147,6 +1148,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         }
         try {
             String homeInfo = JSONObject.toJSONString(data);
+            Gson gson = new Gson();
+            gson.fromJson(homeInfo,SettleEntity.class);
             TourCooLogUtil.i(TAG, "准备解析:" + homeInfo);
             return JSON.parseObject(homeInfo, SettleEntity.class);
         } catch (Exception e) {
@@ -1213,6 +1216,11 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     private void doRequestByCondition() {
         mStatusLayoutManager.showLoadingLayout();
         //显示结算页面
+        if (isShoppingCarSettle) {
+            //请求购物车结算
+            requestSettleShoppingCar();
+            return;
+        }
         if (mSettleType == SETTLE_TYPE_PIN) {
             requestPinSettle(pinId);
         } else {
@@ -1356,7 +1364,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     }
 
 
-    private void showSelectDiscoutAndPayPrice(List<DiscountInfo> discountInfoList) {
+    private void showSelectDiscoutAndPayPrice(List<DiscountInfo> discountInfoList, SettleEntity settleEntity) {
         if (discountInfoList.size() > 0) {
             ivDiscount.setVisibility(View.GONE);
             tvCanUseCount.setVisibility(View.GONE);
@@ -1368,6 +1376,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             llDiscountMinus.setVisibility(View.VISIBLE);
             tvDiscountMinus.setText("-¥" + minus);
             payMoney = TourCooUtil.minusDouble(recordPrice, minus);
+            //todo
+
             if (payMoney <= MIN_PAY_MONEY) {
                 payMoney = MIN_PAY_MONEY;
             }
@@ -1440,7 +1450,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     /**
      * 请求添加商品接口(结算)
      */
-    private void buyNow(int goodsId, int count, String skuId) {
+    private void settleNow(int goodsId, int count, String skuId) {
         if (mStatusLayoutManager != null) {
             mStatusLayoutManager.showLoadingLayout();
         }
@@ -1473,10 +1483,10 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     /**
      * 购物车结算
      */
-    private void getMyShoppingCarList() {
+    private void requestSettleShoppingCar() {
         mStatusLayoutManager.showLoadingLayout();
-        ApiRepository.getInstance().getMyShoppingCarList().compose(bindUntilEvent(ActivityEvent.DESTROY)).
-                subscribe(new BaseLoadingObserver<BaseEntity>() {
+        ApiRepository.getInstance().requestSettleShoppingCar().compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
@@ -1521,7 +1531,6 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                     mSettleEntity.setExist_address(null);
                 }
                 showAddressInfo(null);
-
             }
         });
     }

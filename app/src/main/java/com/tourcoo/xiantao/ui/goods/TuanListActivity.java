@@ -73,8 +73,8 @@ public class TuanListActivity extends BaseTourCooTitleActivity implements OnRefr
         rvContent.addItemDecoration(new TourCoolRecycleViewDivider(this, LinearLayoutManager.VERTICAL));
         mAdapter.setIOnItemClickListener(new TuanListAdapter.IOnItemClickListener() {
             @Override
-            public void onJoinTuanClick(int tuan_id, int num,String surplus,long time) {
-                dialog = new PinTuanDialog(TuanListActivity.this, num,surplus,time, new PinTuanDialog.Callback() {
+            public void onJoinTuanClick(int tuan_id, int num, String surplus, long time) {
+                dialog = new PinTuanDialog(TuanListActivity.this, num, surplus, time, new PinTuanDialog.Callback() {
                     @Override
                     public void onAdded(int quantity) {
                         joinTuan(tuan_id, quantity);
@@ -84,13 +84,19 @@ public class TuanListActivity extends BaseTourCooTitleActivity implements OnRefr
             }
         });
         mRefreshLayout.setRefreshHeader(new ClassicsHeader(mContext).setSpinnerStyle(SpinnerStyle.Translate));
-        getTuanList();
+
 
     }
 
 
     @Override
     public void onRefresh(RefreshLayout refreshLayout) {
+        getTuanList();
+    }
+
+    @Override
+    public void loadData() {
+        super.loadData();
         getTuanList();
     }
 
@@ -109,11 +115,13 @@ public class TuanListActivity extends BaseTourCooTitleActivity implements OnRefr
                                     mAdapter.setNewData(entity.data);
                                     mRefreshLayout.finishRefresh(true);
                                 } else {
-                                    mStatusLayoutManager.showEmptyLayout();
+                                    showEmtyLayout();
+                                    mRefreshLayout.finishRefresh();
                                 }
                             } else {
                                 ToastUtil.showFailed(entity.msg);
-//                                mStatusLayoutManager.showErrorLayout();
+                                showErrorLayout(entity.msg);
+                                mRefreshLayout.finishRefresh();
                             }
                         }
                     }
