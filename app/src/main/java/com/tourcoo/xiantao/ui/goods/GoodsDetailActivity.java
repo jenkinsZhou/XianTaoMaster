@@ -412,7 +412,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             llGiveAway.setVisibility(View.GONE);
         } else {
             llGiveAway.setVisibility(View.VISIBLE);
-            String value = "购买本商品每满" + TourCooUtil.doubleTransString(detail.getGive()) + "元 , 赠送1金币";
+            String value = "购买本商品每满" + TourCooUtil.doubleTransStringZhen(detail.getGive()) + "元 , 赠送1金币";
             tvGiveAwayCoin.setText(value);
         }
         if (TextUtils.isEmpty(detail.getPromote())) {
@@ -425,7 +425,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             llDeduct.setVisibility(View.GONE);
         } else {
             llDeduct.setVisibility(View.VISIBLE);
-            String value = "金币每满" + TourCooUtil.doubleTransString(detail.getDeduct()) + "用" + TourCooUtil.doubleTransString(detail.getDeduct_coin());
+            String value = "金币每满" + TourCooUtil.doubleTransStringZhen(detail.getDeduct()) + "用" + TourCooUtil.doubleTransStringZhen(detail.getDeduct_coin());
             if (!TextUtils.isEmpty(detail.getDeduct_rule())) {
                 value += "(" + detail.getDeduct_rule() + ")";
             }

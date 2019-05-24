@@ -92,6 +92,9 @@
                         android:layout_centerHorizontal="true"
                         android:paddingTop="@dimen/dp_5"
                         android:paddingBottom="@dimen/dp_5"
+                        android:gravity="center"
+                        android:paddingLeft="@dimen/dp_10"
+                        android:paddingRight="@dimen/dp_1"
                         android:text="暂时只支持无为县无城镇地区"
                         android:textColor="@color/whiteCommon"
                         android:textSize="@dimen/sp_14" />

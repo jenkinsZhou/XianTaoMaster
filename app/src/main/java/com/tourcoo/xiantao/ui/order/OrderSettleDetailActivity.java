@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -63,6 +64,7 @@ import com.tourcoo.xiantao.widget.bigkoo.pickerview.view.TimePickerView;
 import com.tourcoo.xiantao.widget.dialog.PayDialog;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
+import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -87,13 +89,13 @@ import static com.tourcoo.xiantao.constant.WxConfig.APP_ID;
 import static com.tourcoo.xiantao.constant.WxConfig.WEI_XIN_PAY_TAG_NORMAL;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_ADDRESS_KEY;
-import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_WEI_XIN_KEY;
 import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_FAILED;
 import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_SUCCESS;
 import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.EXTRA_ADDRESS_INFO;
 import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.EXTRA_SKIP_TAG_SETTLE;
 import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.REQUEST_CODE_EDIT_ADDRESS;
 import static com.tourcoo.xiantao.ui.discount.DisCountSelectListActivity.EXTRA_DISCOUNT_LIST;
+import static com.tourcoo.xiantao.ui.discount.DisCountSelectListActivity.EXTRA_DISCOUNT_LIST_SELECT;
 import static com.tourcoo.xiantao.ui.discount.DisCountSelectListActivity.EXTRA_PRICE;
 import static com.tourcoo.xiantao.ui.goods.GoodsDetailActivity.EXTRA_SETTLE;
 import static com.tourcoo.xiantao.ui.home.HomeFragment.EXTRA_GOODS_ID;
@@ -1328,6 +1330,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         Intent intent = new Intent();
         //跳转至我的可用优惠券 全部列表
         intent.putExtra(EXTRA_PRICE, settleEntity.getOrder_total_price());
+        intent.putExtra(EXTRA_DISCOUNT_LIST_SELECT, (Serializable) mDiscountInfoList);
         intent.setClass(mContext, DisCountSelectListActivity.class);
         startActivityForResult(intent, REQUEST_CODE_SELECT_DISCOUNT);
         TourCooLogUtil.i(TAG, TAG + ":" + "已经跳转");

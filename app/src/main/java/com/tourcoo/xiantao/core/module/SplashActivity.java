@@ -183,6 +183,7 @@ public class SplashActivity extends BaseTitleActivity implements View.OnClickLis
                                 if (advertisEntity != null) {
                                     mAdvertisEntity = advertisEntity;
                                     if (advertisEntity.getImage() == null) {
+                                        GlideManager.loadImg(R.mipmap.img_start_page, sp_bg);
                                         layoutSkip.setVisibility(View.INVISIBLE);
                                         skipToMainTab();
                                     } else {
@@ -371,7 +372,7 @@ public class SplashActivity extends BaseTitleActivity implements View.OnClickLis
         }
     }
 
-    private void skipToMainTab(){
+    private void skipToMainTab() {
         mTimeHandler.post(new Runnable() {
             @Override
             public void run() {

@@ -46,8 +46,11 @@ public class DisCountSelectListActivity extends BaseTourCooTitleMultiViewActivit
     public static final String EXTRA_PRICE = "EXTRA_PRICE";
 
     public static final String EXTRA_DISCOUNT_LIST = "EXTRA_DISCOUNT_LIST";
+
+    public static final String EXTRA_DISCOUNT_LIST_SELECT = "EXTRA_DISCOUNT_LIST_SELECT";
     private double mPirce;
-    private SmartRefreshLayout smartLayout_rootFastLib;
+
+    private int ruleId = -1;
 
 
     private List<DiscountInfo> mDiscountInfoList = new ArrayList<>();
@@ -59,6 +62,8 @@ public class DisCountSelectListActivity extends BaseTourCooTitleMultiViewActivit
      */
     private int canUseCount = 0;
     private RelativeLayout rrRootView;
+
+    private List<DiscountInfo> selectDiscountList = new ArrayList<>();
 
     @Override
     public int getContentLayout() {
@@ -87,13 +92,22 @@ public class DisCountSelectListActivity extends BaseTourCooTitleMultiViewActivit
     @Override
     public void initView(Bundle savedInstanceState) {
         mPirce = getIntent().getDoubleExtra(EXTRA_PRICE, -1);
-        smartLayout_rootFastLib = findViewById(R.id.smartLayout_rootFastLib);
-        smartLayout_rootFastLib.setEnableRefresh(false);
+        SmartRefreshLayout refreshLayout = findViewById(R.id.smartLayout_rootFastLib);
+        refreshLayout.setEnableRefresh(false);
         rrRootView = findViewById(R.id.rrRootView);
         RecyclerView rvContent = findViewById(R.id.rv_content);
         rvContent.setLayoutManager(new LinearLayoutManager(mContext));
         mDiscountAdapter = new DiscountSelectAdapter();
         mDiscountAdapter.bindToRecyclerView(rvContent);
+        List<DiscountInfo> discountInfoList = (List<DiscountInfo>) getIntent().getSerializableExtra(EXTRA_DISCOUNT_LIST_SELECT);
+        if (discountInfoList != null && !discountInfoList.isEmpty()) {
+            selectDiscountList.addAll(discountInfoList);
+            if (selectDiscountList.get(0) != null) {
+                ruleId = selectDiscountList.get(0).getRule_id();
+            }
+        }
+
+
     }
 
 
@@ -271,6 +285,10 @@ public class DisCountSelectListActivity extends BaseTourCooTitleMultiViewActivit
      * @param ruleId
      */
     private void setDiscountClickableByRuleId(List<DiscountInfo> entityList, int ruleId) {
+        TourCooLogUtil.i(TAG, TAG + "规则id:" + ruleId);
+        if (ruleId < 0) {
+            return;
+        }
         for (DiscountInfo discountInfo : entityList) {
             if (discountInfo.getRule_id() == ruleId) {
                 discountInfo.setClickEnable(true);
@@ -280,6 +298,32 @@ public class DisCountSelectListActivity extends BaseTourCooTitleMultiViewActivit
             //只要是选中状态 肯定可以点击
             if (discountInfo.isSelect()) {
                 discountInfo.setClickEnable(true);
+            }
+        }
+    }
+
+
+    /**
+     * 根据规则id判断是否可以点击
+     *
+     * @param entityList
+     * @param ruleId
+     */
+    private void loadDiscountClickableByRuleId(List<DiscountInfo> entityList, int ruleId) {
+        TourCooLogUtil.i(TAG, TAG + "规则id:" + ruleId);
+        if (ruleId < 0) {
+            return;
+        }
+        TourCooLogUtil.i(TAG, TAG + "entityList:" + entityList.size());
+        for (DiscountInfo discountInfo : entityList) {
+            TourCooLogUtil.i(TAG, TAG + "当前优惠券:" + entityList.size());
+            //只要是选中状态 肯定可以点击
+            TourCooLogUtil.i(TAG, TAG + ":" + "discountInfo：" + discountInfo.getId() + "是否选中:" + discountInfo.isSelect());
+            if (discountInfo.isSelect()) {
+                discountInfo.setClickEnable(true);
+                TourCooLogUtil.i(TAG, TAG + "设置了属性:" + discountInfo.getId() + discountInfo.getName());
+            }else {
+                discountInfo.setClickEnable(false);
             }
         }
     }
@@ -296,6 +340,9 @@ public class DisCountSelectListActivity extends BaseTourCooTitleMultiViewActivit
                                 if (discountInfoList != null) {
                                     mStatusLayoutManager.showSuccessLayout();
                                     TourCooLogUtil.i(TAG, "数据数量:" + discountInfoList.size());
+                                    //加载选中状态
+                                    loadSelectStatus(discountInfoList);
+                                    loadDiscountClickableByRuleId(discountInfoList, ruleId);
                                     mDiscountAdapter.setNewData(discountInfoList);
                                 } else {
                                     mStatusLayoutManager.showErrorLayout();
@@ -346,8 +393,8 @@ public class DisCountSelectListActivity extends BaseTourCooTitleMultiViewActivit
         if (currentDiscount.getCost() <= 0) {
             return -1;
         }
-         TourCooLogUtil.i(TAG,TAG+"当前的订单总价:"+mPirce );
-        TourCooLogUtil.i(TAG,TAG+"当前的优惠券面值:"+currentDiscount.getCost() );
+        TourCooLogUtil.i(TAG, TAG + "当前的订单总价:" + mPirce);
+        TourCooLogUtil.i(TAG, TAG + "当前的优惠券面值:" + currentDiscount.getCost());
         int calculateNum = (int) (mPirce / currentDiscount.getCost());
         TourCooLogUtil.i(TAG, TAG + "计算的数量:" + calculateNum);
         if (num > calculateNum) {
@@ -378,6 +425,38 @@ public class DisCountSelectListActivity extends BaseTourCooTitleMultiViewActivit
             }
         }
         return discountInfoList;
+    }
+
+    /**
+     * 加载选中状态
+     */
+    private void loadSelectStatus(List<DiscountInfo> discountInfoList) {
+        TourCooLogUtil.e(TAG, TAG + ":" + "mDiscountInfoList长度:" + selectDiscountList.size());
+        if (selectDiscountList.isEmpty()) {
+            return;
+        }
+        for (DiscountInfo discountInfo : discountInfoList) {
+           // 说明用户有选择优惠券 则默认不可点击 也不可选中
+            discountInfo.setClickEnable(true);
+            discountInfo.setSelect(false);
+            for (DiscountInfo selectDiscount : selectDiscountList) {
+                if (selectDiscount == null) {
+                    continue;
+                }
+                TourCooLogUtil.e(TAG, TAG + ":" + "设置了:" + selectDiscount.isSelect() + ":" + selectDiscount.getId());
+                //如果选中
+                if (discountInfo.getId() == selectDiscount.getId()) {
+                    TourCooLogUtil.e(TAG, TAG + ":" + "设置了" + selectDiscount.getId());
+                    discountInfo.setSelect(true);
+                    ruleId = selectDiscount.getRule_id();
+                }
+                if(discountInfo.getRule_id() == selectDiscount.getRule_id()){
+                    discountInfo.setClickEnable(true);
+                }
+
+
+            }
+        }
     }
 
 
