@@ -112,6 +112,7 @@ import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
 public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity implements View.OnClickListener {
     private RelativeLayout rlSettleRemark;
     private TextView tvSettleRemark;
+    private List<DiscountInfo> mDiscountInfoList = new ArrayList<>();
     /**
      * 是否是购物车结算
      */
@@ -429,6 +430,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
      * @param settleEntity
      */
     private void showSettleInfo(SettleEntity settleEntity) {
+        //清空优惠券信息
+        discountIds = "";
         if (settleEntity == null || settleEntity.getGoods_list() == null) {
             ToastUtil.showFailed("未获取到商品信息");
             mStatusLayoutManager.showErrorLayout();
@@ -623,8 +626,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
 
 
     private void loadCoinSwitchAndPrice() {
-        if(mSettleEntity == null){
-              TourCooLogUtil.e(TAG,TAG+"订单结算实体为空" );
+        if (mSettleEntity == null) {
+            TourCooLogUtil.e(TAG, TAG + "订单结算实体为空");
             return;
         }
         /*switchUseCoin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -1044,9 +1047,11 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                     if (discountInfoList == null) {
                         return;
                     }
-                    showSelectDiscoutAndPayPrice(discountInfoList, mSettleEntity);
+                    mDiscountInfoList.clear();
+                    mDiscountInfoList.addAll(discountInfoList);
+                    showSelectDiscoutAndPayPrice(mDiscountInfoList, mSettleEntity);
                     List<String> ids = new ArrayList<>();
-                    for (DiscountInfo discountInfo : discountInfoList) {
+                    for (DiscountInfo discountInfo : mDiscountInfoList) {
                         ids.add(discountInfo.getId() + "");
                     }
                     discountIds = StringUtils.join(ids, ",");
@@ -1369,6 +1374,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
 
 
     private void showSelectDiscoutAndPayPrice(List<DiscountInfo> discountInfoList, SettleEntity settleEntity) {
+
         if (discountInfoList.size() > 0) {
             ivDiscount.setVisibility(View.GONE);
             tvCanUseCount.setVisibility(View.GONE);
@@ -1380,8 +1386,11 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             llDiscountMinus.setVisibility(View.VISIBLE);
             tvDiscountMinus.setText("-¥" + minus);
             payMoney = TourCooUtil.minusDouble(recordPrice, minus);
+            if(settleEntity.getCoin_status() == 1 ){
+                //表示当前使用积分抵扣
+                payMoney = TourCooUtil.minusDouble(payMoney, settleEntity.getCoin());
+            }
             //todo
-
             if (payMoney <= MIN_PAY_MONEY) {
                 payMoney = MIN_PAY_MONEY;
             }

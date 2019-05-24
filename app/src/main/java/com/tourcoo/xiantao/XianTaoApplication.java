@@ -178,7 +178,7 @@ public class XianTaoApplication extends LitePalApplication {
      * @return
      */
     public static int getImageHeight() {
-        imageHeight = (int) (SizeUtil.getScreenWidth() * 0.55);
+        imageHeight = (int) (SizeUtil.getScreenWidth() * 0.5);
         return imageHeight;
     }
 

@@ -600,6 +600,7 @@
                         android:id="@+id/llDiscountMinus"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         android:layout_marginTop="@dimen/dp_10"
                         android:orientation="horizontal">
 

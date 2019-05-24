@@ -87,6 +87,7 @@
                     app:banner_indicatorGravity="bottom|center_horizontal"
                     app:banner_placeholderDrawable="@color/transparent"
                     app:banner_pointAutoPlayAble="true"
+                    android:scaleType="centerInside"
                     app:banner_pointContainerBackground="@android:color/transparent"
                     app:banner_pointContainerLeftRightPadding="@dimen/dp_2"
                     app:banner_pointDrawable="@drawable/selector_banner_point">
