@@ -355,7 +355,6 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
                                     showGoodsList(shoppingCarEntity.getGoods_list());
                                 }
                             } else {
-                                ToastUtil.showFailed(entity.msg);
                                 setNoLogin(entity.msg);
                             }
                         }
@@ -604,6 +603,8 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
         }
         if (value.contains(NO_LOGIN)) {
             AccountInfoHelper.getInstance().deleteUserAccount();
+        }else {
+            ToastUtil.showFailed(value);
         }
     }
 

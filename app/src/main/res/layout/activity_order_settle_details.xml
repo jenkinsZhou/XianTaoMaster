@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@id/tvPayPrice"
-                android:text="应付金额"
+                android:text="应付金额 "
                 android:textColor="#333333"
                 android:textSize="@dimen/sp_15" />
 
@@ -477,7 +477,7 @@
                             android:textSize="@dimen/sp_13" />
 
                         <TextView
-                            android:id="@+id/tvShouldPayPrice"
+                            android:id="@+id/tvOrderPrice"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="¥ 0 "

@@ -66,6 +66,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="bottom"
                         android:text="8"
+                        android:maxLines="1"
                         android:textColor="@color/greenCommon"
                         android:textSize="@dimen/sp_36" />
                 </LinearLayout>
@@ -75,6 +76,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="下单立减"
+                    android:maxLines="1"
                     android:textSize="@dimen/sp_11" />
             </LinearLayout>
         </RelativeLayout>
@@ -105,6 +107,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="优惠券"
+                        android:ellipsize="end"
+                        android:maxEms="14"
+                        android:maxLines="1"
                         android:textColor="@color/greenCommon"
                         android:textSize="@dimen/sp_16" />
 
@@ -131,6 +136,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="2018.12.29 － 2019.01.04"
+                    android:maxLines="1"
                     android:textSize="@dimen/sp_12" />
 
             </LinearLayout>

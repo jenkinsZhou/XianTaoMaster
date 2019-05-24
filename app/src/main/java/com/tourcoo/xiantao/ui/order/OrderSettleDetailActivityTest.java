@@ -23,6 +23,11 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.sdk.app.PayTask;
@@ -44,8 +49,8 @@ import com.tourcoo.xiantao.core.threadpool.ThreadPoolManager;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
-import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.discount.DiscountInfo;
 import com.tourcoo.xiantao.entity.event.BaseEvent;
 import com.tourcoo.xiantao.entity.event.RefreshEvent;
@@ -63,6 +68,11 @@ import com.tourcoo.xiantao.widget.bigkoo.pickerview.view.TimePickerView;
 import com.tourcoo.xiantao.widget.dialog.PayDialog;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
+import org.apache.commons.lang.StringUtils;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -71,23 +81,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import org.apache.commons.lang.StringUtils;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
 import static com.tourcoo.xiantao.constant.WxConfig.APP_ID;
 import static com.tourcoo.xiantao.constant.WxConfig.WEI_XIN_PAY_TAG_NORMAL;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_ADDRESS_KEY;
-import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_WEI_XIN_KEY;
 import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_FAILED;
 import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_SUCCESS;
 import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.EXTRA_ADDRESS_INFO;
@@ -109,7 +108,7 @@ import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
  * @date 2019年04月25日11:33
  * @Email: 971613168@qq.com
  */
-public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity implements View.OnClickListener {
+public class OrderSettleDetailActivityTest extends BaseTourCooTitleMultiViewActivity implements View.OnClickListener {
     private RelativeLayout rlSettleRemark;
     private TextView tvSettleRemark;
     private List<DiscountInfo> mDiscountInfoList = new ArrayList<>();
@@ -182,7 +181,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     public static final int NOT_USE_COIN = 0;
     public static final String PAY_STATUS = "resultStatus";
     public static final String PAY_STATUS_SUCCESS = "9000";
-    private PaymentHandler mHandler = new PaymentHandler(OrderSettleDetailActivity.this);
+    private PaymentHandler mHandler = new PaymentHandler(OrderSettleDetailActivityTest.this);
     /**
      * 获取权限使用的 RequestCode
      */
@@ -431,6 +430,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
      */
     private void showSettleInfo(SettleEntity settleEntity) {
         //清空优惠券信息
+        discountIds = "";
         if (settleEntity == null || settleEntity.getGoods_list() == null) {
             ToastUtil.showFailed("未获取到商品信息");
             mStatusLayoutManager.showErrorLayout();
@@ -478,22 +478,6 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                 showErrorDialog(settleEntity.getError_msg().toString());
             }
         }
-        double orderPrice = computeOrderMoney(settleEntity);
-        String orderPriceValue = "¥" + TourCooUtil.doubleTransString(orderPrice);
-        //实际支付价格
-        double payPrice = computePayMoney(settleEntity);
-        String payPriceValue = "¥" + TourCooUtil.doubleTransString(payPrice);
-        tvOrderPrice.setText(orderPriceValue);
-        tvPayPrice.setText(payPriceValue);
-        double discountMoney = computeDiscountPrice(mDiscountInfoList);
-        if (discountMoney > 0) {
-            llDiscountMinus.setVisibility(View.GONE);
-        } else {
-            llDiscountMinus.setVisibility(View.VISIBLE);
-            String discountPrice = "¥" + TourCooUtil.doubleTransString(discountMoney);
-            tvDiscountMinus.setText(discountPrice);
-        }
-        payMoney = payPrice;
     }
 
     /**
@@ -909,10 +893,10 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
 
     @SuppressWarnings("unchecked")
     private static class PaymentHandler extends Handler {
-        private WeakReference<OrderSettleDetailActivity> softReference;
+        private WeakReference<OrderSettleDetailActivityTest> softReference;
 
-        public PaymentHandler(OrderSettleDetailActivity orderSettleDetailActivity) {
-            softReference = new WeakReference<>(orderSettleDetailActivity);
+        public PaymentHandler(OrderSettleDetailActivityTest orderSettleDetailActivityTest) {
+            softReference = new WeakReference<>(orderSettleDetailActivityTest);
         }
 
         @Override
@@ -1070,11 +1054,6 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                         ids.add(discountInfo.getId() + "");
                     }
                     discountIds = StringUtils.join(ids, ",");
-                    double payTotal = computePayMoney(mSettleEntity);
-                    String payValue = "¥" + TourCooUtil.doubleTransString(payTotal);
-                    tvPayPrice.setText(payValue);
-                    payMoney = payTotal;
-                    TourCooLogUtil.i(TAG, TAG + "需要支付的金额:" + payMoney + "discountIds=" + discountIds);
                 }
                 break;
             default:
@@ -1367,13 +1346,9 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             setVisible(llDiscountMinus, false);
         } else {
             setVisible(rlDiscount, true);
+            setVisible(llDiscountMinus, true);
             String value = num + "张可用";
             tvCanUseCount.setText(value);
-            if(mDiscountInfoList.isEmpty()){
-                setVisible(llDiscountMinus, false);
-            }else {
-                setVisible(llDiscountMinus, true);
-            }
         }
     }
 
@@ -1572,6 +1547,17 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         });
     }
 
+    /**
+     * 显示结算信息
+     *
+     * @param settleEntity
+     */
+    private void showSettleInfoTest(SettleEntity settleEntity) {
+        if (settleEntity == null) {
+            mStatusLayoutManager.showErrorLayout();
+        }
+    }
+
 
     /**
      * 计算订单总金额
@@ -1583,35 +1569,16 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         if (settleEntity == null) {
             return 0;
         }
-        double shouldPrice;
+        double orderPrice;
         boolean hasCoin = settleEntity.getCoin() > 0;
         if (hasCoin) {
             //用户有金币抵扣 则说明实际订单价格 = 支付价格+金币抵扣价格
-            shouldPrice = TourCooUtil.addDouble(settleEntity.getOrder_pay_price(), settleEntity.getCoin());
+            orderPrice = TourCooUtil.addDouble(settleEntity.getOrder_pay_price(), settleEntity.getCoin());
         } else {
             //用户没有金币 则代表 实际订单价格 = 支付价格
-            shouldPrice = settleEntity.getOrder_pay_price();
+            orderPrice = settleEntity.getOrder_pay_price();
         }
-        return shouldPrice;
-    }
-
-
-    /**
-     * 计算优惠券抵扣的金额
-     *
-     * @param discountInfoList
-     * @return
-     */
-    private double computeDiscountPrice(List<DiscountInfo> discountInfoList) {
-        if (discountInfoList == null || discountInfoList.isEmpty()) {
-            return 0;
-        }
-        double worthMoney = 0;
-        for (DiscountInfo discountInfo : discountInfoList) {
-            worthMoney += discountInfo.getWorth();
-            TourCooLogUtil.i(TAG, TAG + "抵扣金额:" + worthMoney);
-        }
-        return worthMoney;
+        return orderPrice;
     }
 
 
@@ -1661,4 +1628,22 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         return settleEntity.getCoin() > 0 && settleEntity.getCoin_status() == 1;
     }
 
+
+    /**
+     * 计算优惠券抵扣的金额
+     *
+     * @param discountInfoList
+     * @return
+     */
+    private double computeDiscountPrice(List<DiscountInfo> discountInfoList) {
+        if (discountInfoList == null || discountInfoList.isEmpty()) {
+            return 0;
+        }
+        double worthMoney = 0;
+        for (DiscountInfo discountInfo : discountInfoList) {
+            worthMoney += discountInfo.getWorth();
+            TourCooLogUtil.i(TAG, TAG + "抵扣金额:" + worthMoney);
+        }
+        return worthMoney;
+    }
 }

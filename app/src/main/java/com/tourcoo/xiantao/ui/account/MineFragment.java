@@ -481,11 +481,12 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                                     }
                                 }
                             } else {
-                                ToastUtil.showFailed(entity.msg);
                                 if (entity.msg.contains(NO_LOGIN)) {
                                     AccountInfoHelper.getInstance().deleteUserAccount();
+                                } else {
+                                    ToastUtil.showFailed(entity.msg);
                                 }
-                                refreshLayout.finishRefresh(false);
+                                refreshLayout.finishRefresh();
                             }
                         }
                     }
@@ -567,8 +568,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                                     showUnLoginUI();
                                 }
                             } else {
-                                refreshLayout.finishRefresh(false);
-                                ToastUtil.showFailed(entity.msg);
+                                refreshLayout.finishRefresh();
                                 setNoLogin(entity.msg);
                             }
                         }
@@ -627,7 +627,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                                 EventBus.getDefault().post(new MessageEvent(entity.data.getNum()));
                                 showMsg(entity.data.getNum());
                             } else {
-                                ToastUtil.showFailed(entity.msg);
+                               setNoLogin(entity.msg);
                             }
                         }
                     }
@@ -805,6 +805,8 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         }
         if (value.contains(NO_LOGIN)) {
             AccountInfoHelper.getInstance().deleteUserAccount();
+        } else {
+            ToastUtil.showFailed(value);
         }
     }
 }

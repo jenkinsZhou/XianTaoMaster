@@ -209,6 +209,7 @@
         <activity android:name=".ui.goods.GoodsDetailActivity"
             android:screenOrientation="portrait"
             />
+        <activity android:name=".ui.order.OrderSettleDetailActivityTest" />
     </application>
 
 </manifest>

@@ -203,7 +203,7 @@ public class DisCountSelectListActivity extends BaseTourCooTitleMultiViewActivit
                     currentDiscount.setSelect(true);
                     mDiscountAdapter.notifyDataSetChanged();
                     if (getSelectCount(discountInfoList) > canUseCount) {
-                        ToastUtil.showSuccess("当前优惠券只能选择" + canUseCount + "张");
+                        ToastUtil.showFailed("当前优惠券只能选择" + canUseCount + "张");
                         currentDiscount.setClickEnable(true);
                         currentDiscount.setSelect(false);
                         mDiscountAdapter.notifyDataSetChanged();
@@ -213,7 +213,7 @@ public class DisCountSelectListActivity extends BaseTourCooTitleMultiViewActivit
                 }
 
                 if (getSelectCount(discountInfoList) > canUseCount) {
-                    ToastUtil.showSuccess("当前优惠券只能选择" + canUseCount + "张");
+                    ToastUtil.showFailed("当前优惠券只能选择" + canUseCount + "张");
                     return;
                 }
                 boolean noSelect = !checkSelect(discountInfoList);
@@ -227,7 +227,7 @@ public class DisCountSelectListActivity extends BaseTourCooTitleMultiViewActivit
                 canUseCount = calculateUseCount(currentDiscount);
                 if (currentDiscount.isSelect()) {
                     if (getSelectCount(discountInfoList) > canUseCount) {
-                        ToastUtil.showSuccess("当前优惠券只能选择" + canUseCount + "张");
+                        ToastUtil.showFailed("当前优惠券只能选择" + canUseCount + "张");
                         return;
                     }
                 }
