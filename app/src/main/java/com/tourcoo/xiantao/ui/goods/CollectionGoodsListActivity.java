@@ -10,6 +10,7 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.CollectionGoodsAdapter;
 import com.tourcoo.xiantao.core.frame.UiConfigManager;
+import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
@@ -114,6 +115,22 @@ public class CollectionGoodsListActivity extends BaseTourCooRefreshLoadActivity<
                 skipGoodsDetail(mCollectionGoodsAdapter.getData().get(position).getGoods_id());
             }
         });
+        mCollectionGoodsAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                switch (view.getId()) {
+                    case R.id.rrContent:
+                        skipGoodsDetail(mCollectionGoodsAdapter.getData().get(position).getGoods_id());
+                        break;
+                    case R.id.btnCancelCollection:
+                        collectCancel(mCollectionGoodsAdapter.getData().get(position).getGoods_id());
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+        });
     }
 
     private void skipGoodsDetail(int goodsId) {
@@ -122,4 +139,27 @@ public class CollectionGoodsListActivity extends BaseTourCooRefreshLoadActivity<
         intent.setClass(mContext, GoodsDetailActivity.class);
         startActivity(intent);
     }
+
+
+    private void collectCancel(int goodsId) {
+        if (goodsId < 0) {
+            ToastUtil.showFailed("未获取到商品信息");
+            return;
+        }
+        ApiRepository.getInstance().collectCancel(goodsId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseLoadingObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            ToastUtil.showSuccess(entity.msg);
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                mRefreshLayout.autoRefresh();
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+                });
+    }
+
 }

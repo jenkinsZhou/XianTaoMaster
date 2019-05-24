@@ -14,6 +14,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.constant.OrderConstant;
+import com.tourcoo.xiantao.core.frame.util.SizeUtil;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.log.widget.utils.DateUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
@@ -45,6 +46,8 @@ import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_SEND;
  * @Email: 971613168@qq.com
  */
 public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, BaseViewHolder> {
+    float touchDownX;
+    float touchDownY;
 
     public OrderListAdapter() {
         super(R.layout.item_order_recycler_view_layout);
@@ -52,6 +55,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
 
     @Override
     protected void convert(BaseViewHolder helper, OrderEntity.OrderInfo orderInfo) {
+
         RecyclerView commentImageRecyclerView = helper.getView(R.id.photoRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -72,9 +76,29 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
         TextView btnThree = helper.getView(R.id.btnThree);
         TextView btnFour = helper.getView(R.id.btnFour);
         LinearLayout llOrderInfo = helper.getView(R.id.llOrderInfo);
+
         commentImageRecyclerView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                float x2;
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        touchDownX = event.getX();
+                        touchDownY = event.getY();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        x2 = event.getX();
+                        //左滑
+                        if (touchDownX - x2 > SizeUtil.dp2px(10)) {
+                            return false;
+                        } else if (touchDownX - x2 < -SizeUtil.dp2px(10)) {
+                            //右滑
+                            return false;
+                        }
+                        break ;
+                    default:
+                        return false;
+                }
                 return llOrderInfo.onTouchEvent(event);
             }
         });

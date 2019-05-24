@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class CollectionGoodsAdapter extends BaseQuickAdapter<Goods, BaseViewHolder> {
     public CollectionGoodsAdapter() {
-        super(R.layout.item_goods_catogry);
+        super(R.layout.item_goods_collection);
     }
 
     @Override
@@ -32,6 +32,8 @@ public class CollectionGoodsAdapter extends BaseQuickAdapter<Goods, BaseViewHold
         if (item == null) {
             return;
         }
+        helper.addOnClickListener(R.id.rrContent);
+        helper.addOnClickListener(R.id.btnCancelCollection);
         RoundedImageView ivGoodsIcon = helper.getView(R.id.ivGoodsIcon);
         GlideManager.loadImg(TourCooUtil.getUrl(item.getImage()), ivGoodsIcon);
         helper.setText(R.id.tvGoodsName, TourCoolUtil.getStringNotNull(item.getGoods_name()));
@@ -43,6 +45,9 @@ public class CollectionGoodsAdapter extends BaseQuickAdapter<Goods, BaseViewHold
             helper.setText(R.id.tvGoodsLabel,item.getLabel());
         }
 //        helper.setText(R.id.tvGoodsPrice, "¥" + item.getGoods_price());
+
         helper.setVisible(R.id.tvGoodsPrice,false);
+
+
     }
 }

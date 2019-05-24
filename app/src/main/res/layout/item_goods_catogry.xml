@@ -9,6 +9,8 @@
     android:orientation="vertical"
     android:padding="@dimen/dp_15">
 
+
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -132,6 +134,9 @@
             android:layout_toLeftOf="@id/ivGoodsIcon"
             android:background="@color/transparent"
             android:visibility="gone" />
-
     </RelativeLayout>
+
+
+
+
 </LinearLayout>

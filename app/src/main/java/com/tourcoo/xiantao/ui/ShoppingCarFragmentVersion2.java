@@ -1,5 +1,6 @@
 package com.tourcoo.xiantao.ui;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -36,6 +37,7 @@ import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
+import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.entity.goods.Goods;
@@ -190,7 +192,7 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
                 helper.setText(R.id.tvGoodsName, TourCoolUtil.getStringNotNull(goods.getGoods_name()));
 //                helper.setText(R.id.tvGoodsLabel, TourCoolUtil.getStringNotNull(item.goodsLabels));
 
-                helper.setText(R.id.tvGoodsPrice, "¥ " + goods.getGoods_price());
+                helper.setText(R.id.tvGoodsPrice, "¥ " + TourCooUtil.doubleTransString(goods.getGoods_price()));
 //                helper.setText(R.id.tvGoodsSpec, TourCoolUtil.getStringNotNull(item.goodsSpec));
                 initAddDelButtonListener(helper, goods);
                 intSwipeDeleteListener(helper, goods);
@@ -262,7 +264,7 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
             public void onClick(View v) {
                 TourCooLogUtil.i(TAG, TAG + "商品:" + goods.getTotal_num());
                 if (goods.getTotal_num() <= 1) {
-                    ToastUtil.show("当前商品不能再减了哦");
+                    showDeleteDialog(goods.getGoods_id(), goods.getSpec_sku_id());
                     return;
                 }
                 reduceGoods(goods.getGoods_id(), goods.getSpec_sku_id());
@@ -587,7 +589,6 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
 
     /**
      * 跳转到结算页面
-     *
      */
     private void skipOrderSettleDetail() {
         Intent intent = new Intent();
@@ -603,10 +604,28 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
         }
         if (value.contains(NO_LOGIN)) {
             AccountInfoHelper.getInstance().deleteUserAccount();
-        }else {
+        } else {
             ToastUtil.showFailed(value);
         }
     }
 
 
+    private void showDeleteDialog(int goodId, String skuId) {
+        ConfirmDialog.Builder builder = new ConfirmDialog.Builder(mContext);
+        builder.setTitle("确认移除").setFirstMessage("是否移除当前商品?")
+                .setFirstMsgSize(15).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        })
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteGoods(goodId, skuId);
+                        dialog.dismiss();
+                    }
+                });
+        showConfirmDialog(builder);
+    }
 }

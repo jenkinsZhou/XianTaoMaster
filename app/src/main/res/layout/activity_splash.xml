@@ -3,11 +3,12 @@
     android:layout_height="match_parent"
     android:background="#fff">
 
+    <include layout="@layout/layout_title_bar" />
     <ImageView
         android:id="@+id/sp_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
+        android:scaleType="centerInside"
         android:src="@mipmap/img_start_page" />
 
 

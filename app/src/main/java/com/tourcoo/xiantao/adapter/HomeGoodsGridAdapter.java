@@ -69,7 +69,7 @@ public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsEntity.Goods
                 helper.setGone(R.id.llDeductInfo, false);
                 SpannableStringBuilder stringBuilder = new SpanUtils()
                         .append("金币每满").setForegroundColor(TourCoolUtil.getColor(R.color.colorBalck333))
-                        .append(TourCooUtil.doubleTransString(item.getDeduct()))
+                        .append(TourCooUtil.doubleTransStringZhen(item.getDeduct()))
                         .setForegroundColor(TourCoolUtil.getColor(R.color.red_F95B47)).append("用").setForegroundColor(TourCooUtil.getColor((R.color.colorBalck333))).append(TourCooUtil.doubleTransString(item.getDeduct_coin())).setForegroundColor(TourCooUtil.getColor(R.color.red_F95B47)).create();
                 helper.setText(R.id.tvDecuctInfo, stringBuilder);
             } else {
@@ -77,8 +77,8 @@ public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsEntity.Goods
                 String rule = " (" + item.getDeduct_rule() + ")";
                 SpannableStringBuilder stringBuilder = new SpanUtils()
                         .append("金币每满").setForegroundColor(TourCoolUtil.getColor(R.color.colorBalck333))
-                        .append(TourCooUtil.doubleTransString(item.getDeduct()))
-                        .setForegroundColor(TourCoolUtil.getColor(R.color.red_F95B47)).append("用").setForegroundColor(TourCoolUtil.getColor(R.color.colorBalck333)).append(TourCooUtil.doubleTransString(item.getDeduct_coin())).setForegroundColor(TourCooUtil.getColor(R.color.red_F95B47)).append(rule).setForegroundColor(TourCooUtil.getColor(R.color.colorGray9A9A)).create();
+                        .append(TourCooUtil.doubleTransStringZhen(item.getDeduct()))
+                        .setForegroundColor(TourCoolUtil.getColor(R.color.red_F95B47)).append("用").setForegroundColor(TourCoolUtil.getColor(R.color.colorBalck333)).append(TourCooUtil.doubleTransStringZhen(item.getDeduct_coin())).setForegroundColor(TourCooUtil.getColor(R.color.red_F95B47)).append(rule).setForegroundColor(TourCooUtil.getColor(R.color.colorGray9A9A)).create();
                 helper.setText(R.id.tvDecuctInfo, stringBuilder);
             }
 
