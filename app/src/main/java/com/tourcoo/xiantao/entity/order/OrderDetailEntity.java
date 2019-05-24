@@ -89,7 +89,7 @@ public class OrderDetailEntity {
         }
 
         private String order_no;
-        private String total_price;
+        private double total_price;
         private double pay_price;
         private int pay_status;
         private int pay_time;
@@ -148,11 +148,11 @@ public class OrderDetailEntity {
             this.order_no = order_no;
         }
 
-        public String getTotal_price() {
+        public double getTotal_price() {
             return total_price;
         }
 
-        public void setTotal_price(String total_price) {
+        public void setTotal_price(double total_price) {
             this.total_price = total_price;
         }
 

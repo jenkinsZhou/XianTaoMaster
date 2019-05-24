@@ -450,14 +450,14 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             llUseDiscount.setVisibility(View.GONE);
         } else {
             llUseDiscount.setVisibility(View.VISIBLE);
-            String value = "-¥" + TourCooUtil.minusDouble(worth, 0);
+            String value = "-¥" + formateMoney(TourCooUtil.minusDouble(worth, 0));
             tvDiscountMoney.setText(value);
         }
         //显示运费
-        tvExpressPrice.setText("¥ " + orderBean.getExpress_price());
+        tvExpressPrice.setText(formateMoney(orderBean.getExpress_price()));
         //商品合计
-        tvTotalPrice.setText("¥ " + orderBean.getTotal_price());
-        tvPayPrice.setText("¥ " + orderBean.getPay_price());
+        tvTotalPrice.setText(formateMoney(orderBean.getTotal_price()));
+        tvPayPrice.setText(formateMoney(orderBean.getPay_price()));
         tvOrderNumber.setText(orderBean.getOrder_no());
         tvCreateTime.setText(DateUtil.parseDate(orderBean.getCreatetime()));
         //显示备注
@@ -469,7 +469,10 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             for (OrderDetailEntity.OrderBean.GoodsBean goodsBean : goodsList) {
                 size += goodsBean.getTotal_num();
             }
-            String amount = "共" + size + "件商品";
+            //todo 暂时取商品类型的数量
+//            String amount = "共" + size + "件商品";
+            size = goodsList.size();
+            String amount =  "共" + size + "件商品";
             tvGoodsTypeCount.setText(amount);
             mGoodsAdapter.setNewData(goodsList);
         }
@@ -510,10 +513,10 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private void showCoin(OrderDetailEntity orderDetailEntity) {
         double coin = orderDetailEntity.getOrder().getCoin();
         if (orderDetailEntity.getOrder().getCoin_status() == NOT_USE_COIN) {
-            tvCoin.setText("-¥" + 0.00);
+            tvCoin.setText("-" + formateMoney(0.00));
         } else {
             //使用了金币抵扣
-            tvCoin.setText("-¥" + coin);
+            tvCoin.setText("-" + formateMoney(coin));
         }
     }
 
@@ -1280,6 +1283,11 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             }
             imageEntityList.get(i).setBounds(bounds);
         }
+    }
+
+
+    private String formateMoney(double money) {
+        return "¥" + TourCooUtil.doubleTransString(money);
     }
 }
 

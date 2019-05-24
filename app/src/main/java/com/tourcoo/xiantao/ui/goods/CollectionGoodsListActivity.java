@@ -12,17 +12,23 @@ import com.tourcoo.xiantao.adapter.CollectionGoodsAdapter;
 import com.tourcoo.xiantao.core.frame.UiConfigManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.event.OrderRefreshEvent;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.goods.GoodsCollectEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooRefreshLoadActivity;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 
+import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_ALL;
+import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_PAY;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.ui.home.HomeFragment.EXTRA_GOODS_ID;
 
@@ -34,6 +40,7 @@ import static com.tourcoo.xiantao.ui.home.HomeFragment.EXTRA_GOODS_ID;
  * @Email: 971613168@qq.com
  */
 public class CollectionGoodsListActivity extends BaseTourCooRefreshLoadActivity<Goods> {
+    private int currentSelectPosition;
     private CollectionGoodsAdapter mCollectionGoodsAdapter;
 
     @Override
@@ -123,6 +130,7 @@ public class CollectionGoodsListActivity extends BaseTourCooRefreshLoadActivity<
                         skipGoodsDetail(mCollectionGoodsAdapter.getData().get(position).getGoods_id());
                         break;
                     case R.id.btnCancelCollection:
+                        currentSelectPosition = position;
                         collectCancel(mCollectionGoodsAdapter.getData().get(position).getGoods_id());
                         break;
                     default:
@@ -153,7 +161,7 @@ public class CollectionGoodsListActivity extends BaseTourCooRefreshLoadActivity<
                         if (entity != null) {
                             ToastUtil.showSuccess(entity.msg);
                             if (entity.code == CODE_REQUEST_SUCCESS) {
-                                mRefreshLayout.autoRefresh();
+                                refreshCollectList(currentSelectPosition);
                             } else {
                                 ToastUtil.showFailed(entity.msg);
                             }
@@ -162,4 +170,26 @@ public class CollectionGoodsListActivity extends BaseTourCooRefreshLoadActivity<
                 });
     }
 
+
+    /**
+     * 刷新列表
+     */
+    private void refreshCollectList(int position) {
+
+        if (position < 0 || position >= mCollectionGoodsAdapter.getData().size()) {
+            return;
+        }
+        TourCooLogUtil.i(TAG, TAG + "当前操作的位置:" + position);
+        mCollectionGoodsAdapter.remove(position);
+        mCollectionGoodsAdapter.refreshNotifyItemChanged(position);
+        if(mCollectionGoodsAdapter.getData().isEmpty()){
+            mStatusManager.showEmptyLayout();
+        }
+        //todo
+//        mRefreshLayout.autoRefresh();
+       /* if (mAdapter.getData().isEmpty()) {
+            mRefreshLayout.autoRefresh();
+        }*/
+
+    }
 }

@@ -422,7 +422,10 @@ public class TourCooUtil {
      * @return
      */
     public static String doubleTrans(double num) {
-        return FormatUtil.formatDoubleSize(num, 2);
+//        return FormatUtil.formatDoubleSize(num, 2);
+        double value = Double.parseDouble(FormatUtil.formatDoubleSize(num, 2));
+        DecimalFormat df = new DecimalFormat("#0.00");
+        return df.format(value);
     }
 
 

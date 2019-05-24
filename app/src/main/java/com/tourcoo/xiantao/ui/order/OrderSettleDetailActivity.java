@@ -443,11 +443,13 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         listenCoinSwitch();
         loadCoinSwitchAndPrice();
         //商品数量
-        String amount = "共" + settleEntity.getOrder_total_num() + "件商品";
+        //todo 暂时要求显示商品种类数量
+//        String amount = "共" + settleEntity.getOrder_total_num() + "件商品";
+        String amount = "共" + mGoodsAdapter.getData().size() + "件商品";
         tvGoodsTypeCount.setText(amount);
         //配送费
-        tvExpressPrice.setText("¥" + TourCooUtil.doubleTransString(settleEntity.getExpress_price()) );
-        tvTotalPrice.setText("¥" + TourCooUtil.doubleTransString(settleEntity.getOrder_total_price()) );
+        tvExpressPrice.setText("¥" + TourCooUtil.doubleTransString(settleEntity.getExpress_price()));
+        tvTotalPrice.setText("¥" + TourCooUtil.doubleTransString(settleEntity.getOrder_total_price()));
         double shouldPrice;
         boolean userCoin = settleEntity.getCoin() > 0;
         if (userCoin) {
@@ -513,7 +515,9 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         showAddressInfo(settleEntity.getExist_address());
         loadCoinSwitchAndPrice();
         //商品数量
-        String amount = "共" + settleEntity.getOrder_total_num() + "件商品";
+        //todo 暂时要求显示商品种类数量
+//        String amount = "共" + settleEntity.getOrder_total_num() + "件商品";
+        String amount = "共" + mGoodsAdapter.getData().size()+ "件商品";
         tvGoodsTypeCount.setText(amount);
         //配送费
         tvExpressPrice.setText("¥" + TourCooUtil.doubleTransString(settleEntity.getExpress_price()));
@@ -544,7 +548,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         if (payMoney <= MIN_PAY_MONEY) {
             payMoney = MIN_PAY_MONEY;
         }
-        String payMonty = "¥" + TourCooUtil.doubleTransString(payMoney) ;
+        String payMonty = "¥" + TourCooUtil.doubleTransString(payMoney);
         //底部应支付金额
         tvPayPrice.setText(payMonty);
         //显示金币
@@ -691,7 +695,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                     if (money <= MIN_PAY_MONEY) {
                         payMoney = MIN_PAY_MONEY;
                     }
-                    String value = "¥" +  TourCooUtil.doubleTransString(payMoney);
+                    String value = "¥" + TourCooUtil.doubleTransString(payMoney);
                     tvPayPrice.setText(value);
                 } else {
                     //不使用抵扣
@@ -1480,7 +1484,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
 
 
     private String formateMoney(double money) {
-        return  TourCooUtil.doubleTransString(money);
+        return TourCooUtil.doubleTransString(money);
     }
 
 

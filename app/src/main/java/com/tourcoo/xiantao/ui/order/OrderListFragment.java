@@ -421,6 +421,9 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
         TourCooLogUtil.i(TAG, TAG + "当前操作的位置:" + position);
         mAdapter.remove(position);
         mAdapter.refreshNotifyItemChanged(position);
+        if (mAdapter.getData().isEmpty()) {
+            mStatusManager.showEmptyLayout();
+        }
         EventBus.getDefault().post(new OrderRefreshEvent());
         //todo
 //        mRefreshLayout.autoRefresh();
@@ -691,7 +694,7 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
         }
         if (orderStatus == ORDER_STATUS_ALL) {
             refreshOrderInfo();
-            TourCooLogUtil.i(TAG, TAG + ":" + "直接刷新:"+orderStatus);
+            TourCooLogUtil.i(TAG, TAG + ":" + "直接刷新:" + orderStatus);
         }
     }
 
