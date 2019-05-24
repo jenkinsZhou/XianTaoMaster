@@ -102,8 +102,14 @@ public class DisCountSelectListActivity extends BaseTourCooTitleMultiViewActivit
         List<DiscountInfo> discountInfoList = (List<DiscountInfo>) getIntent().getSerializableExtra(EXTRA_DISCOUNT_LIST_SELECT);
         if (discountInfoList != null && !discountInfoList.isEmpty()) {
             selectDiscountList.addAll(discountInfoList);
+            for (DiscountInfo discountInfo : selectDiscountList) {
+                TourCooLogUtil.i(TAG, "是否选中" + discountInfo.isSelect());
+                TourCooLogUtil.i(TAG, "是否可以点击" + discountInfo.isClickEnable());
+                TourCooLogUtil.i(TAG, "规则id：" + discountInfo.getRule_id());
+            }
             if (selectDiscountList.get(0) != null) {
                 ruleId = selectDiscountList.get(0).getRule_id();
+                canUseCount = calculateUseCount(selectDiscountList.get(0));
             }
         }
 
@@ -318,12 +324,16 @@ public class DisCountSelectListActivity extends BaseTourCooTitleMultiViewActivit
         for (DiscountInfo discountInfo : entityList) {
             TourCooLogUtil.i(TAG, TAG + "当前优惠券:" + entityList.size());
             //只要是选中状态 肯定可以点击
-            TourCooLogUtil.i(TAG, TAG + ":" + "discountInfo：" + discountInfo.getId() + "是否选中:" + discountInfo.isSelect());
+            TourCooLogUtil.i(TAG, TAG + ":" + "discountInfo：" + discountInfo.getId() + "是否选中:" + discountInfo.isSelect() + "面值:" + discountInfo.getName());
             if (discountInfo.isSelect()) {
                 discountInfo.setClickEnable(true);
                 TourCooLogUtil.i(TAG, TAG + "设置了属性:" + discountInfo.getId() + discountInfo.getName());
-            }else {
-                discountInfo.setClickEnable(false);
+            } else {
+                if (discountInfo.getRule_id() == ruleId) {
+                    discountInfo.setClickEnable(true);
+                } else {
+                    discountInfo.setClickEnable(false);
+                }
             }
         }
     }
@@ -436,8 +446,8 @@ public class DisCountSelectListActivity extends BaseTourCooTitleMultiViewActivit
             return;
         }
         for (DiscountInfo discountInfo : discountInfoList) {
-           // 说明用户有选择优惠券 则默认不可点击 也不可选中
-            discountInfo.setClickEnable(true);
+            // 说明用户有选择优惠券 则默认不可点击 也不可选中
+            discountInfo.setClickEnable(false);
             discountInfo.setSelect(false);
             for (DiscountInfo selectDiscount : selectDiscountList) {
                 if (selectDiscount == null) {
@@ -450,11 +460,9 @@ public class DisCountSelectListActivity extends BaseTourCooTitleMultiViewActivit
                     discountInfo.setSelect(true);
                     ruleId = selectDiscount.getRule_id();
                 }
-                if(discountInfo.getRule_id() == selectDiscount.getRule_id()){
+                if (discountInfo.getRule_id() == selectDiscount.getRule_id()) {
                     discountInfo.setClickEnable(true);
                 }
-
-
             }
         }
     }
