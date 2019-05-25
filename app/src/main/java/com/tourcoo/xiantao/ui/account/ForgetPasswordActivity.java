@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -87,6 +88,8 @@ public class ForgetPasswordActivity extends BaseTourCooTitleActivity implements 
     private void init() {
         findViewById(R.id.tvSkipLogin).setOnClickListener(this);
         findViewById(R.id.tvLogin).setOnClickListener(this);
+        findViewById(R.id.ivReturnHome).setOnClickListener(this);
+        findViewById(R.id.rlTitleBar).setOnClickListener(this);
         tvSendVerificationCode = findViewById(R.id.tvSendVerificationCode);
         tvSendVerificationCode.setOnClickListener(this);
         cBoxAgree = findViewById(R.id.cBoxAgree);
@@ -121,12 +124,14 @@ public class ForgetPasswordActivity extends BaseTourCooTitleActivity implements 
         listenInput(etPhoneNumber, ivClearPhone);
         listenInput(etPassword, ivClearPass);
         listenInput(etPasswordConfirm, ivClearConfirmPass);
+
     }
 
     @Override
     public void setTitleBar(TitleBarView titleBar) {
-        super.setTitleBar(titleBar);
+     /*   super.setTitleBar(titleBar);
         titleBar.setTitleMainText("忘记密码");
+        titleBar.setHeight(0);*/
     }
 
 
@@ -156,6 +161,9 @@ public class ForgetPasswordActivity extends BaseTourCooTitleActivity implements 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.rlTitleBar:
+                finish();
+                break;
             case R.id.tvSendVerificationCode:
                 sendVCodeAndCountDownTime(getPhoneNumber());
                 break;
@@ -180,6 +188,9 @@ public class ForgetPasswordActivity extends BaseTourCooTitleActivity implements 
                 break;
             case R.id.tvSkipLogin:
                 TourCoolUtil.startActivity(mContext, LoginActivity.class);
+                break;
+            case R.id.ivReturnHome:
+                finish();
                 break;
             default:
                 break;

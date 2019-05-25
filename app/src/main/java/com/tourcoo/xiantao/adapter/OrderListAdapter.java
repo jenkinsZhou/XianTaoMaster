@@ -109,8 +109,8 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                 size += good.getTotal_num();
             }
             //todo 暂时要求显示商品种类数量
-//            helper.setText(R.id.tvNum, size + "");
-            helper.setText(R.id.tvNum, orderInfo.getGoods().size() + "");
+            helper.setText(R.id.tvNum, size + "");
+//            helper.setText(R.id.tvNum, orderInfo.getGoods().size() + "");
         } else {
             helper.setText(R.id.tvNum, "0");
         }
