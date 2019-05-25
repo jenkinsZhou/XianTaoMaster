@@ -401,9 +401,10 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
             showBottomMoney(goodsList);
             int count = 0;
             //todo 暂时显示商品类型数量
-            for (ShoppingCarEntity.GoodsBean goods : goodsList) {
+          /*  for (ShoppingCarEntity.GoodsBean goods : goodsList) {
                 count += goods.getTotal_num();
-            }
+            }*/
+            count = goodsList.size();
             mMainTabActivity.showRedDot(count);
             showView(llBottomLayout);
         } else {

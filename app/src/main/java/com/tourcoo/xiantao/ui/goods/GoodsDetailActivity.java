@@ -554,6 +554,10 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 btnJoinTuan.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        if (!AccountInfoHelper.getInstance().isLogin()) {
+                            skipToLoginActivity();
+                            return;
+                        }
                         LogUtils.e(tuanListBean.getNum(), tuanListBean.getSurplus(), tuanListBean.getDeadline() * 1000L);
                         PinTuanDialog pinTuanDialog = new PinTuanDialog(GoodsDetailActivity.this, tuanListBean.getNum(),
                                 tuanListBean.getSurplus(), tuanListBean.getDeadline() * 1000L, new PinTuanDialog.Callback() {
@@ -650,6 +654,10 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 dialog = new ProductSkuDialog(GoodsDetailActivity.this, goodsEntity, new ProductSkuDialog.Callback() {
                     @Override
                     public void onAdded(String specSkuId, int quantity) {
+                        if (!AccountInfoHelper.getInstance().isLogin()) {
+                            skipToLoginActivity();
+                            return;
+                        }
                         startNewTuan(goodsEntity.getDetail().getGoods_id(), quantity);
                     }
                 }, ProductSkuDialog.PING_TUAN);
@@ -817,6 +825,10 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnSeeTotal:
+                if (!AccountInfoHelper.getInstance().isLogin()) {
+                    skipToLoginActivity();
+                    return;
+                }
                 Intent intent = new Intent(GoodsDetailActivity.this, TuanListActivity.class);
                 intent.putExtra("goods_id", mGoodsId);
                 startActivity(intent);
@@ -1267,7 +1279,6 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         setResult(RESULT_OK);
         super.finish();
     }
-
 
 
 }
