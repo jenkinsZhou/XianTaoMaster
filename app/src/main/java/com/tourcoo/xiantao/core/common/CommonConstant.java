@@ -17,4 +17,8 @@ public class CommonConstant {
     public final static String EXCEPTION_EMPTY_URL = "请求参数为空!";
     public static final String SUFFIX_APK = ".apk";
     public static final int VCODE_TIME = 60;
+    /**
+     * 公司信息
+     */
+    public static String companyInfo = "";
 }

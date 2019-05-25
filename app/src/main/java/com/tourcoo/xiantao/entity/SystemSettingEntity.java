@@ -23,6 +23,15 @@ public class SystemSettingEntity {
     private String register;
     private String address;
 
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    private String company;
     public String getAddress() {
         return address;
     }

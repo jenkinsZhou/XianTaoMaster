@@ -31,6 +31,8 @@ public class AccountInfoHelper {
     public static final String PREF_TEL_WEI_XIN_KEY = "PREF_TEL_WEI_XIN_KEY";
 
     public static final String PREF_ADDRESS_KEY = "PREF_ADDRESS_KEY";
+    public static final String PREF_COMPANY_INFO = "PREF_COMPANY_INFO";
+
     /**
      * 充值规则
      */

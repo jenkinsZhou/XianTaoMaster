@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -42,6 +43,7 @@ import com.tourcoo.xiantao.core.log.widget.utils.DateUtil;
 import com.tourcoo.xiantao.core.threadpool.ThreadPoolManager;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
+import com.tourcoo.xiantao.core.widget.core.view.navigation.KeyboardHelper;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.entity.BaseEntity;
@@ -256,6 +258,7 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
         TourCooLogUtil.i(TAG, TAG + "pinTag:" + pinTag);
         isPin = pinTag == 1;
         EventBus.getDefault().register(this);
+
     }
 
     @Override
@@ -1285,9 +1288,7 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
         }
         returnMoney = Double.parseDouble(TourCooUtil.doubleTrans(returnMoney));
         realReturnMoney += TourCooUtil.doubleTransString(returnMoney);
-        //todo 暂时要求显示商品种类数量
-//        String amount = "共" + num + "件商品";
-        String amount = "共" + allGoodsList.size() + "件商品";
+        String amount = "共" + num + "件商品";
         tvGoodsTypeCount.setText(amount);
         mGoodsAdapter.setNewData(returnGoodsList);
         //应退款金额

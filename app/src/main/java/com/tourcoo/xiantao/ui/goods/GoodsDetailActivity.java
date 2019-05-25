@@ -48,13 +48,14 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.XianTaoApplication;
-import com.tourcoo.xiantao.adapter.GoodsLableAdapter;
 import com.tourcoo.xiantao.adapter.GridImageAdapter;
 import com.tourcoo.xiantao.constant.WxConfig;
+import com.tourcoo.xiantao.core.common.CommonConstant;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
+import com.tourcoo.xiantao.core.frame.util.SharedPreferencesUtil;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.log.widget.utils.DateUtil;
@@ -100,6 +101,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_ADDRESS_KEY;
+import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_COMPANY_INFO;
 import static com.tourcoo.xiantao.core.module.SplashActivity.EXTRA_ADV_TAG;
 import static com.tourcoo.xiantao.ui.home.HomeFragment.EXTRA_GOODS_ID;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_GOODS_COUNT;
@@ -117,7 +120,10 @@ import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SETTLE_TYPE
  * @Email: 971613168@qq.com
  */
 public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity implements IMultiStatusView, View.OnClickListener {
+    private boolean swiping = false;
+    private String companyInfo;
     private LinearLayout llComanyInfo;
+    private WebView companyWebView;
     private TitleBarView mTitleBarView;
     private RelativeLayout rlContentView;
     private ShareGoodsPopupWindow sharePopupWindow;
@@ -206,6 +212,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         api = WXAPIFactory.createWXAPI(mContext, WxConfig.APP_ID);
         rlORigin = findViewById(R.id.rlORigin);
         llComanyInfo = findViewById(R.id.llComanyInfo);
+        companyWebView = findViewById(R.id.companyWebView);
         mObservableScrollView = findViewById(R.id.mObservableScrollView);
         mFloatingActionButton = findViewById(R.id.mFloatingActionButton);
         llDeductRule = findViewById(R.id.llDeductRule);
@@ -268,6 +275,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
          * 进入此页面必须携带商品id参数
          */
         mGoodsId = getIntent().getIntExtra(EXTRA_GOODS_ID, -1);
+        companyInfo = CommonConstant.companyInfo;
         init();
         initFloatButton();
         initFloateButtonListener();
@@ -399,10 +407,18 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 GlideManager.loadImg(model, (ImageView) itemView);
             }
         });
+        List<ImageEntity> imageEntityList = parseImageEntityList(images);
+        computeBoundsBackward(bgaBanner, imageEntityList);
         bgaBanner.setDelegate(new BGABanner.Delegate() {
             @Override
             public void onBannerItemClick(BGABanner banner, View itemView, Object model, int position) {
-                WebViewActivity.start(mContext, model.toString(), false);
+//                WebViewActivity.start(mContext, model.toString(), false);
+                GPreviewBuilder.from(GoodsDetailActivity.this)
+                        .setData(imageEntityList)
+                        .setCurrentIndex(position)
+                        .setSingleFling(true)
+                        .setType(GPreviewBuilder.IndicatorType.Number)
+                        .start();
             }
         });
         bgaBanner.setData(images, null);
@@ -424,6 +440,8 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             return;
         }
         mTitleBarView.getTextView(Gravity.RIGHT).setVisibility(View.VISIBLE);
+        //显示公司信息
+        showCompanyInfo(companyInfo);
         currentGoods = detail;
         if (detail.getGive() <= 0) {
             llGiveAway.setVisibility(View.GONE);
@@ -620,7 +638,6 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         }
 
         imageFillWidth(webView, goodsEntity.getDetail().
-
                 getContent());
 
         tvPin.setOnClickListener(new View.OnClickListener() {
@@ -968,7 +985,6 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
      */
     private void imageFillWidth(WebView webView, String content) {
         Document doc = Jsoup.parse(content);
-
         //修改视频标签
         Elements embeds = doc.getElementsByTag("embed");
         for (Element element : embeds) {
@@ -984,10 +1000,8 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             //宽度填充手机，高度自适应
             imgs.get(i).attr("style", "width: 100%; height: auto;");
         }
-
         //对数据进行包装,除去WebView默认存在的一定像素的边距问题
         String data = "<html><head><style>img{width:100% !important;}</style></head><body style='margin:0;padding:0'>" + doc + "</body></html>";
-
         //加载使用 jsoup 处理过的 html 文本
         webView.loadData(data, "text/html; charset=UTF-8", null);
     }
@@ -1172,6 +1186,20 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         }
     }
 
+    private void computeBoundsBackward(BGABanner bgaBanner, List<ImageEntity> imageEntityList) {
+        if (bgaBanner == null) {
+            return;
+        }
+        for (int i = 0; i < imageEntityList.size(); i++) {
+            Rect bounds = new Rect();
+            bounds.left = bgaBanner.getLeft();
+            bounds.right = bgaBanner.getWidth();
+            bounds.top = bgaBanner.getTop();
+            bounds.bottom = bgaBanner.getHeight();
+            imageEntityList.get(i).setBounds(bounds);
+        }
+    }
+
     private List<ImageEntity> parseImageEntityList(List<String> imageUrlList) {
         List<ImageEntity> imageEntityList = new ArrayList<>();
         if (imageUrlList == null || imageUrlList.isEmpty()) {
@@ -1193,11 +1221,12 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             @Override
             public void onScrollDown() {
                 mFloatingActionButton.hide();
+                swiping = true;
             }
 
             @Override
             public void onScrollUp() {
-                mFloatingActionButton.show();
+                swiping = true;
             }
         }, new ObservableScrollView.OnScrollChangedListener() {
             @Override
@@ -1224,9 +1253,12 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private void showCompanyInfo(String info) {
         if (TextUtils.isEmpty(info)) {
             llComanyInfo.setVisibility(View.GONE);
+            companyWebView.setVisibility(View.GONE);
             return;
         }
         llComanyInfo.setVisibility(View.VISIBLE);
+        companyWebView.setVisibility(View.VISIBLE);
+        imageFillWidth(companyWebView, info);
     }
 
 
@@ -1235,4 +1267,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         setResult(RESULT_OK);
         super.finish();
     }
+
+
+
 }

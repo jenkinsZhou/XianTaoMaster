@@ -54,8 +54,10 @@ import androidx.annotation.NonNull;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
+import static com.tourcoo.xiantao.core.common.CommonConstant.companyInfo;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_ADDRESS_KEY;
+import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_COMPANY_INFO;
 import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_PHONE_KEY;
 import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_REGISTER_KEY;
 
@@ -317,10 +319,14 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
                                     if (TextUtils.isEmpty(settingEntity.getAddress())) {
                                         settingEntity.setAddress("");
                                     }
+                                    if (TextUtils.isEmpty(settingEntity.getCompany())) {
+                                        settingEntity.setCompany("");
+                                    }
                                     //保存注册条例
                                     SharedPreferencesUtil.put(PREF_TEL_REGISTER_KEY, register);
                                     SharedPreferencesUtil.put(PREF_TEL_PHONE_KEY, phone);
                                     SharedPreferencesUtil.put(PREF_ADDRESS_KEY, settingEntity.getAddress());
+                                    companyInfo = settingEntity.getCompany();
                                     boolean needUpdate = needUpdate(settingEntity.getAndroid_version());
                                     boolean isForce = isForce(settingEntity.getAndroid_update());
                                     if (needUpdate) {

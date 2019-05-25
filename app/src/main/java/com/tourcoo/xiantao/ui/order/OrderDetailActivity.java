@@ -450,7 +450,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             llUseDiscount.setVisibility(View.GONE);
         } else {
             llUseDiscount.setVisibility(View.VISIBLE);
-            String value = "-¥" + formateMoney(TourCooUtil.minusDouble(worth, 0));
+            String value = "-" + formateMoney(TourCooUtil.minusDouble(worth, 0));
             tvDiscountMoney.setText(value);
         }
         //显示运费
@@ -469,10 +469,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             for (OrderDetailEntity.OrderBean.GoodsBean goodsBean : goodsList) {
                 size += goodsBean.getTotal_num();
             }
-            //todo 暂时取商品类型的数量
-//            String amount = "共" + size + "件商品";
-            size = goodsList.size();
-            String amount =  "共" + size + "件商品";
+            String amount = "共" + size + "件商品";
             tvGoodsTypeCount.setText(amount);
             mGoodsAdapter.setNewData(goodsList);
         }

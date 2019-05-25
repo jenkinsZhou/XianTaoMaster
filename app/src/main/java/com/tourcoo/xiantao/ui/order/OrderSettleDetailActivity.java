@@ -44,6 +44,7 @@ import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.threadpool.ThreadPoolManager;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
+import com.tourcoo.xiantao.core.widget.core.view.navigation.KeyboardHelper;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.BaseEntity;
@@ -85,6 +86,10 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
+import static android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING;
+import static android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
+import static android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE;
+import static android.view.WindowManager.LayoutParams.SOFT_INPUT_MODE_CHANGED;
 import static com.tourcoo.xiantao.constant.WxConfig.APP_ID;
 import static com.tourcoo.xiantao.constant.WxConfig.WEI_XIN_PAY_TAG_NORMAL;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
@@ -388,6 +393,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         initTimePicker();
         listenCoinSwitch();
         requestPermission();
+        KeyboardHelper.with(mContext)
+                .setEnable(SOFT_INPUT_ADJUST_NOTHING);
     }
 
     @Override
@@ -445,9 +452,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         listenCoinSwitch();
         loadCoinSwitchAndPrice();
         //商品数量
-        //todo 暂时要求显示商品种类数量
-//        String amount = "共" + settleEntity.getOrder_total_num() + "件商品";
-        String amount = "共" + mGoodsAdapter.getData().size() + "件商品";
+        String amount = "共" + settleEntity.getOrder_total_num() + "件商品";
+//        String amount = "共" + mGoodsAdapter.getData().size() + "件商品";
         tvGoodsTypeCount.setText(amount);
         //配送费
         tvExpressPrice.setText("¥" + TourCooUtil.doubleTransString(settleEntity.getExpress_price()));
@@ -519,7 +525,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         //商品数量
         //todo 暂时要求显示商品种类数量
 //        String amount = "共" + settleEntity.getOrder_total_num() + "件商品";
-        String amount = "共" + mGoodsAdapter.getData().size()+ "件商品";
+        String amount = "共" + mGoodsAdapter.getData().size() + "件商品";
         tvGoodsTypeCount.setText(amount);
         //配送费
         tvExpressPrice.setText("¥" + TourCooUtil.doubleTransString(settleEntity.getExpress_price()));
@@ -932,6 +938,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                             boolean success = PAY_STATUS_SUCCESS.equals(stringStringEntry.getValue());
                             if (success) {
                                 ToastUtil.showSuccess("支付成功");
+                                softReference.get().paySuccessAndSkipToOrderListAndFinish();
                             } else {
                                 ToastUtil.showFailed("支付失败");
                                 TourCooLogUtil.e(TAG, result);
@@ -1247,6 +1254,21 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         finish();
     }
 
+
+    private void paySuccessAndSkipToOrderListAndFinish() {
+        try {
+            Intent intent = new Intent();
+            //跳转至我的订单 全部列表
+            intent.putExtra(EXTRA_CURRENT_TAB_INDEX, 0);
+            intent.setClass(mContext, MyOrderListActivity.class);
+            startActivity(intent);
+            TourCooLogUtil.i(TAG, TAG + ":" + "已经跳转");
+            finish();
+        } catch (Exception e) {
+            TourCooLogUtil.e(TAG, TAG + ":" + e.toString());
+        }
+
+    }
 
     private void doRequestByCondition() {
         mStatusLayoutManager.showLoadingLayout();
