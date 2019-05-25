@@ -82,6 +82,15 @@ public class HomeGoodsEntity {
          * deduct_coin : 0
          * deduct_rule : 直接购买可用
          */
+        private double goods_line_price;
+
+        public double getGoods_line_price() {
+            return goods_line_price;
+        }
+
+        public void setGoods_line_price(double goods_line_price) {
+            this.goods_line_price = goods_line_price;
+        }
 
         private int goods_id;
         private String goods_name;

@@ -1,7 +1,9 @@
 package com.tourcoo.xiantao.adapter;
 
+import android.graphics.Paint;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.widget.TextView;
 
 
 import com.blankj.utilcode.util.SpanUtils;
@@ -39,6 +41,15 @@ public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsEntity.Goods
         GlideManager.loadImg(TourCooUtil.getUrl(item.getImage()), roundedImageView);
         helper.setText(R.id.tvGoodsName, item.getGoods_name());
         helper.setText(R.id.tvGoodsPrice, "¥ " + TourCooUtil.doubleTransString(item.getGoods_min_price()));
+        if (item.getGoods_min_price() <= 0) {
+            helper.setVisible(R.id.tvGoodsLinePrice, false);
+        } else {
+            helper.setVisible(R.id.tvGoodsLinePrice, true);
+            TextView textView = helper.getView(R.id.tvGoodsLinePrice);
+            //中划线
+            textView.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG);
+            helper.setText(R.id.tvGoodsLinePrice, "¥ " + TourCooUtil.doubleTransString(item.getGoods_min_price()));
+        }
         helper.setText(R.id.tvGoodsOrigin, "产地:" + item.getOrigin());
         boolean showLabel = !TextUtils.isEmpty(item.getLabel());
         helper.setGone(R.id.llGoodsLabel, showLabel);

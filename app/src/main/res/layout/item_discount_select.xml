@@ -108,8 +108,8 @@
                         android:layout_height="wrap_content"
                         android:text="优惠券"
                         android:ellipsize="end"
-                        android:maxEms="14"
-                        android:maxLines="1"
+                        android:maxEms="24"
+                        android:maxLines="2"
                         android:textColor="@color/greenCommon"
                         android:textSize="@dimen/sp_16" />
 

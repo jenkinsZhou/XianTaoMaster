@@ -25,6 +25,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -36,6 +37,9 @@ import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
+import com.melnykov.fab.FloatingActionButton;
+import com.melnykov.fab.ObservableScrollView;
+import com.melnykov.fab.ScrollDirectionListener;
 import com.previewlibrary.GPreviewBuilder;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
@@ -189,6 +193,8 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
     private LinearLayout llDeductRule;
     private TextView tvExplainDiscount;
+    private FloatingActionButton mFloatingActionButton;
+    private ObservableScrollView mObservableScrollView;
 
     @Override
     public int getContentLayout() {
@@ -199,6 +205,8 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         //判断是否是从广告页跳转过来的
         api = WXAPIFactory.createWXAPI(mContext, WxConfig.APP_ID);
         rlORigin = findViewById(R.id.rlORigin);
+        mObservableScrollView = findViewById(R.id.mObservableScrollView);
+        mFloatingActionButton = findViewById(R.id.mFloatingActionButton);
         llDeductRule = findViewById(R.id.llDeductRule);
         tvExplainDiscount = findViewById(R.id.tvExplainDiscount);
         tvPriceRange = findViewById(R.id.tvPriceRange);
@@ -255,10 +263,13 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
          */
         mGoodsId = getIntent().getIntExtra(EXTRA_GOODS_ID, -1);
         init();
+        initFloatButton();
+        initFloateButtonListener();
         if (!checkPermission()) {
             PermissionManager.requestAllNeedPermission(this);
         }
         TourCooLogUtil.i(TAG, TAG + ":" + "商品id=" + mGoodsId);
+
     }
 
     @Override
@@ -1170,4 +1181,36 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     }
 
 
+    private void initFloatButton() {
+        mFloatingActionButton.hide(false);
+        mFloatingActionButton.attachToScrollView(mObservableScrollView, new ScrollDirectionListener() {
+            @Override
+            public void onScrollDown() {
+                mFloatingActionButton.hide();
+            }
+
+            @Override
+            public void onScrollUp() {
+                mFloatingActionButton.show();
+            }
+        }, new ObservableScrollView.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged(ScrollView who, int l, int t, int oldl, int oldt) {
+                if (t > bgaBanner.getHeight()) {
+                    mFloatingActionButton.show();
+                } else {
+                    mFloatingActionButton.hide();
+                }
+            }
+        });
+    }
+
+    private void initFloateButtonListener() {
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mObservableScrollView.fullScroll(ScrollView.FOCUS_UP);
+            }
+        });
+    }
 }
