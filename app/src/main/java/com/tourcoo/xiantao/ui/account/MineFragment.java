@@ -356,6 +356,10 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                 startActivityForResult(intent, REQUEST_CODE_EDIT_USER_INFO);
                 break;
             case R.id.ivMsg:
+                if (!AccountInfoHelper.getInstance().isLogin()) {
+                    TourCooUtil.startActivity(mContext, LoginActivity.class);
+                    return;
+                }
                 skipToMessageCenter();
                 break;
 

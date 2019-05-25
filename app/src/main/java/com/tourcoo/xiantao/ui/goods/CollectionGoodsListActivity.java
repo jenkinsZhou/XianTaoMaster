@@ -42,6 +42,7 @@ import static com.tourcoo.xiantao.ui.home.HomeFragment.EXTRA_GOODS_ID;
 public class CollectionGoodsListActivity extends BaseTourCooRefreshLoadActivity<Goods> {
     private int currentSelectPosition;
     private CollectionGoodsAdapter mCollectionGoodsAdapter;
+    public static final int REQUSET_CODE_COLLECTION = 113;
 
     @Override
     public int getContentLayout() {
@@ -145,7 +146,7 @@ public class CollectionGoodsListActivity extends BaseTourCooRefreshLoadActivity<
         Intent intent = new Intent();
         intent.putExtra(EXTRA_GOODS_ID, goodsId);
         intent.setClass(mContext, GoodsDetailActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, REQUSET_CODE_COLLECTION);
     }
 
 
@@ -182,7 +183,7 @@ public class CollectionGoodsListActivity extends BaseTourCooRefreshLoadActivity<
         TourCooLogUtil.i(TAG, TAG + "当前操作的位置:" + position);
         mCollectionGoodsAdapter.remove(position);
         mCollectionGoodsAdapter.refreshNotifyItemChanged(position);
-        if(mCollectionGoodsAdapter.getData().isEmpty()){
+        if (mCollectionGoodsAdapter.getData().isEmpty()) {
             mStatusManager.showEmptyLayout();
         }
         //todo
@@ -190,6 +191,19 @@ public class CollectionGoodsListActivity extends BaseTourCooRefreshLoadActivity<
        /* if (mAdapter.getData().isEmpty()) {
             mRefreshLayout.autoRefresh();
         }*/
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUSET_CODE_COLLECTION:
+                if (resultCode == RESULT_OK) {
+                    mRefreshLayout.autoRefresh();
+                }
+                break;
+            default:
+                break;
+        }
     }
 }

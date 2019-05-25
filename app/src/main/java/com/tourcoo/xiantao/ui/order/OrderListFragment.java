@@ -410,6 +410,7 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
     private void refreshWaitPayList(int position) {
         if (orderStatus == ORDER_STATUS_ALL) {
             mRefreshLayout.autoRefresh();
+            EventBus.getDefault().post(new OrderRefreshEvent());
         }
         if (orderStatus != ORDER_STATUS_WAIT_PAY) {
             TourCooLogUtil.e(TAG, TAG + ":" + "当前不是待付款列表");
@@ -693,6 +694,9 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
             return;
         }
         if (orderStatus == ORDER_STATUS_ALL) {
+            refreshOrderInfo();
+            TourCooLogUtil.i(TAG, TAG + ":" + "直接刷新:" + orderStatus);
+        } else if (orderStatus == ORDER_STATUS_WAIT_PAY) {
             refreshOrderInfo();
             TourCooLogUtil.i(TAG, TAG + ":" + "直接刷新:" + orderStatus);
         }

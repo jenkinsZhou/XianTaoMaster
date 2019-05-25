@@ -117,7 +117,7 @@ import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SETTLE_TYPE
  * @Email: 971613168@qq.com
  */
 public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity implements IMultiStatusView, View.OnClickListener {
-
+    private LinearLayout llComanyInfo;
     private TitleBarView mTitleBarView;
     private RelativeLayout rlContentView;
     private ShareGoodsPopupWindow sharePopupWindow;
@@ -205,6 +205,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         //判断是否是从广告页跳转过来的
         api = WXAPIFactory.createWXAPI(mContext, WxConfig.APP_ID);
         rlORigin = findViewById(R.id.rlORigin);
+        llComanyInfo = findViewById(R.id.llComanyInfo);
         mObservableScrollView = findViewById(R.id.mObservableScrollView);
         mFloatingActionButton = findViewById(R.id.mFloatingActionButton);
         llDeductRule = findViewById(R.id.llDeductRule);
@@ -220,6 +221,11 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (buttonView.isPressed()) {
+                    if (!AccountInfoHelper.getInstance().isLogin()) {
+                        cbCollect.setChecked(false);
+                        skipToLoginActivity();
+                        return;
+                    }
                     if (isChecked) {
                         collectAdd(mGoodsId);
                     } else {
@@ -461,6 +467,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             if (detail.getGoods_min_line_price() > 0) {
                 //中划线
                 tvLinePrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                tvLinePrice.getPaint().setAntiAlias(true);
                 String linePrice = "¥" + TourCooUtil.doubleTransString(detail.getGoods_min_line_price());
                 tvLinePrice.setText(linePrice);
             } else {
@@ -1109,7 +1116,6 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         Intent intent = new Intent();
         intent.setClass(mContext, LoginActivity.class);
         startActivity(intent);
-        finish();
     }
 
 
@@ -1212,5 +1218,21 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 mObservableScrollView.fullScroll(ScrollView.FOCUS_UP);
             }
         });
+    }
+
+
+    private void showCompanyInfo(String info) {
+        if (TextUtils.isEmpty(info)) {
+            llComanyInfo.setVisibility(View.GONE);
+            return;
+        }
+        llComanyInfo.setVisibility(View.VISIBLE);
+    }
+
+
+    @Override
+    public void finish() {
+        setResult(RESULT_OK);
+        super.finish();
     }
 }

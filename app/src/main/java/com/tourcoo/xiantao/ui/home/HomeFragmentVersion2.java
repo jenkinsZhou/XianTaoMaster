@@ -60,6 +60,7 @@ import com.tourcoo.xiantao.entity.news.NewsBean;
 import com.tourcoo.xiantao.helper.ShoppingCar;
 import com.tourcoo.xiantao.permission.PermissionManager;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
+import com.tourcoo.xiantao.ui.account.LoginActivity;
 import com.tourcoo.xiantao.ui.goods.GoodsCategoryListActivity;
 import com.tourcoo.xiantao.ui.goods.GoodsDetailActivity;
 import com.tourcoo.xiantao.ui.goods.SearchGoodsActivity;
@@ -289,6 +290,10 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
                 TourCoolUtil.startActivity(mContext, SearchGoodsActivity.class);
                 break;
             case R.id.ivMsg:
+                if (!AccountInfoHelper.getInstance().isLogin()) {
+                    TourCooUtil.startActivity(mContext, LoginActivity.class);
+                    return;
+                }
                 skipToMessageCenter();
                 break;
             case R.id.tvCity:
