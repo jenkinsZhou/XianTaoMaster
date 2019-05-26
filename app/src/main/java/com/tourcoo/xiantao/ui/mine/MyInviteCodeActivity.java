@@ -163,7 +163,7 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity implements Vi
                                 tvInviteCode.setText(entity.data);
                                 mStatusLayoutManager.showSuccessLayout();
                                 mTitleBar.getTextView(Gravity.RIGHT).setVisibility(View.VISIBLE);
-                                mContent = "https://app.ahxtao.com/h5/index.html?invite=" + entity.data;
+                                mContent = "https://wap.ahxtao.com/#/register?invite=" + entity.data;
                                 TourCooLogUtil.i(TAG, TAG + "链接:" + mContent);
                                 generateQrcodeAndDisplay(mContent);
                             } else {
@@ -360,7 +360,7 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity implements Vi
         switch (v.getId()) {
             case R.id.llSaveQrCode:
                 if (!checkPermission()) {
-                    ToastUtil.showFailed("您未授予相关权限");
+                    ToastUtil.showFailed("您未授予存储权限");
                     return;
                 }
                 try {

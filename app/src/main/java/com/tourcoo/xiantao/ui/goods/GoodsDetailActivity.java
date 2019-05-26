@@ -37,9 +37,7 @@ import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.melnykov.fab.FloatingActionButton;
 import com.melnykov.fab.ObservableScrollView;
-import com.melnykov.fab.ScrollDirectionListener;
 import com.previewlibrary.GPreviewBuilder;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
@@ -55,7 +53,6 @@ import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
-import com.tourcoo.xiantao.core.frame.util.SharedPreferencesUtil;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.log.widget.utils.DateUtil;
@@ -76,10 +73,8 @@ import com.tourcoo.xiantao.permission.PermissionManager;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
 import com.tourcoo.xiantao.ui.account.LoginActivity;
-import com.tourcoo.xiantao.ui.base.WebViewActivity;
 import com.tourcoo.xiantao.ui.comment.CommentListActivity;
 import com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity;
-import com.tourcoo.xiantao.ui.order.ReturnDetailActivity;
 import com.tourcoo.xiantao.util.FormatDuration;
 import com.tourcoo.xiantao.widget.custom.LabelLayout;
 import com.tourcoo.xiantao.widget.dialog.PinTuanDialog;
@@ -101,8 +96,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
-import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_ADDRESS_KEY;
-import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_COMPANY_INFO;
 import static com.tourcoo.xiantao.core.module.SplashActivity.EXTRA_ADV_TAG;
 import static com.tourcoo.xiantao.ui.home.HomeFragment.EXTRA_GOODS_ID;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_GOODS_COUNT;
@@ -206,7 +199,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
     @Override
     public int getContentLayout() {
-        return R.layout.activity_goods_detail_version2;
+        return R.layout.activity_goods_detail;
     }
 
     private void init() {
@@ -302,6 +295,12 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             @Override
             public void onClick(View v) {
                 showShare(currentGoods);
+            }
+        });
+        titleBar.setOnLeftTextClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }

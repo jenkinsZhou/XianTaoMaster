@@ -78,6 +78,7 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
     private boolean isFirstLoad = true;
     private MineFragment mineFragment;
     private ShoppingCarFragmentVersion2 shoppingCarFragment;
+    private HomeFragmentVersion2 mHomeFragmentVersion2;
     /**
      * 当前购物车中商品数量
      */
@@ -105,7 +106,8 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
         ArrayList<TabEntity> tabEntities = new ArrayList<>();
         mineFragment = MineFragment.newInstance();
         shoppingCarFragment = ShoppingCarFragmentVersion2.newInstance();
-        tabEntities.add(new TabEntity("首页", R.mipmap.tab_home_normal, R.mipmap.tab_home_selected, HomeFragmentVersion2.newInstance()));
+        mHomeFragmentVersion2 = HomeFragmentVersion2.newInstance();
+        tabEntities.add(new TabEntity("首页", R.mipmap.tab_home_normal, R.mipmap.tab_home_selected, mHomeFragmentVersion2));
         tabEntities.add(new TabEntity("分类", R.mipmap.tab_classification_normal, R.mipmap.tab_classification_selected, ClassifyGoodsFragment.newInstance()));
         tabEntities.add(new TabEntity("购物车", R.mipmap.tab_shopping_cart_normal, R.mipmap.tab_shopping_cart_selected, shoppingCarFragment));
         tabEntities.add(new TabEntity("个人中心", R.mipmap.tab_personal_center_normal, R.mipmap.tab_personal_center_selected, mineFragment));
@@ -218,6 +220,9 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
         //权限已被用户授予 //什么也不做
+        if (mHomeFragmentVersion2 != null) {
+            mHomeFragmentVersion2.requestLocate();
+        }
     }
 
     @Override
