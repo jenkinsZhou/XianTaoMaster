@@ -229,12 +229,19 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
                 break;
             case TUAN_STATUS_COMPLETE:
                 holder.ivStatus.setImageResource(R.mipmap.ic_completed);
-                holder.llStatus.setVisibility(View.GONE);
+                if (mDatas.get(position).getUser_status() == 0) {
+                    holder.btnPay.setVisibility(View.VISIBLE);
+                    holder.llStatus.setVisibility(View.VISIBLE);
+                } else {
+                    holder.btnPay.setVisibility(View.GONE);
+                    holder.llStatus.setVisibility(View.GONE);
+                }
                 holder.tvEndTime.setVisibility(View.GONE);
                 holder.tvTuanStatus.setVisibility(View.GONE);
                 holder.btnClick.setVisibility(View.GONE);
-                holder.btnPay.setVisibility(View.GONE);
+
                 break;
+
             default:
                 break;
         }

@@ -199,8 +199,10 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
     private LinearLayout llDeductRule;
     private TextView tvExplainDiscount;
-    private FloatingActionButton mFloatingActionButton;
+//    private FloatingActionButton mFloatingActionButton;
     private ObservableScrollView mObservableScrollView;
+
+    private CircleImageView civReturnTop;
 
     @Override
     public int getContentLayout() {
@@ -214,7 +216,8 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         llComanyInfo = findViewById(R.id.llComanyInfo);
         companyWebView = findViewById(R.id.companyWebView);
         mObservableScrollView = findViewById(R.id.mObservableScrollView);
-        mFloatingActionButton = findViewById(R.id.mFloatingActionButton);
+        civReturnTop = findViewById(R.id.civReturnTop);
+        civReturnTop.setVisibility(View.INVISIBLE);
         llDeductRule = findViewById(R.id.llDeductRule);
         tvExplainDiscount = findViewById(R.id.tvExplainDiscount);
         tvPriceRange = findViewById(R.id.tvPriceRange);
@@ -1026,8 +1029,11 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         cancelAllTimers();
+        if(api != null){
+            api.detach();
+        }
+        super.onDestroy();
     }
 
     /**
@@ -1228,8 +1234,19 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
 
     private void initFloatButton() {
-        mFloatingActionButton.hide(false);
-        mFloatingActionButton.attachToScrollView(mObservableScrollView, new ScrollDirectionListener() {
+//        mFloatingActionButton.hide(false);
+        civReturnTop.setVisibility(View.INVISIBLE);
+        mObservableScrollView.setOnScrollChangedListener(new ObservableScrollView.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged(ScrollView who, int l, int t, int oldl, int oldt) {
+                if (t > bgaBanner.getHeight()) {
+                    civReturnTop.setVisibility(View.VISIBLE);
+                } else {
+                    civReturnTop.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+     /*   mFloatingActionButton.attachToScrollView(mObservableScrollView, new ScrollDirectionListener() {
             @Override
             public void onScrollDown() {
                 mFloatingActionButton.hide();
@@ -1249,11 +1266,11 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     mFloatingActionButton.hide();
                 }
             }
-        });
+        });*/
     }
 
     private void initFloateButtonListener() {
-        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+        civReturnTop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mObservableScrollView.fullScroll(ScrollView.FOCUS_UP);

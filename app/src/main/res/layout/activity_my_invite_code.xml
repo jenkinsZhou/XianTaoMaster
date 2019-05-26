@@ -9,11 +9,12 @@
     <LinearLayout
         android:id="@+id/llContentView"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_277"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_25"
         android:background="@mipmap/img_invite_code_bg"
         android:orientation="vertical"
         android:paddingLeft="@dimen/dp_16"
+        android:paddingBottom="@dimen/dp_60"
         android:paddingTop="@dimen/dp_16">
 
         <TextView
@@ -38,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/dp_60">
+            android:layout_marginTop="@dimen/dp_30">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -81,15 +82,23 @@
         </LinearLayout>
             <TextView
                 android:id="@+id/tvInviteCode"
-                android:textSize="@dimen/sp_30"
+                android:textSize="@dimen/sp_22"
                 android:text=""
-                android:layout_marginTop="@dimen/dp_20"
+                android:layout_marginTop="@dimen/dp_10"
                 android:textColor="@color/whiteCommon"
                 android:layout_gravity="center_horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-
+                <ImageView
+                    android:id="@+id/ivQrCode"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:layout_gravity="center_horizontal"
+                    android:minHeight="@dimen/dp_100"
+                    android:minWidth="@dimen/dp_100"
+                    android:src="@mipmap/img_default_avatar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
     </LinearLayout>
 
 </LinearLayout>

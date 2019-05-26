@@ -1288,7 +1288,9 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
         }
         returnMoney = Double.parseDouble(TourCooUtil.doubleTrans(returnMoney));
         realReturnMoney += TourCooUtil.doubleTransString(returnMoney);
-        String amount = "共" + num + "件商品";
+//        String amount = "共" + num + "件商品";
+        String amount = "共" + returnGoodsList.size() + "件商品";
+
         tvGoodsTypeCount.setText(amount);
         mGoodsAdapter.setNewData(returnGoodsList);
         //应退款金额

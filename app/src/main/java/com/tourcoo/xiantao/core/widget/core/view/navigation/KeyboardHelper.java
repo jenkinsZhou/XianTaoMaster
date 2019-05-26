@@ -32,7 +32,7 @@ import java.lang.ref.WeakReference;
 
 public class KeyboardHelper {
     private WeakReference<Activity> mActivity;
-    private  WeakReference<View> mContentView;
+    private WeakReference<View> mContentView;
     private int mKeyMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED;
     /**
      * 显示软键盘的延迟时间
@@ -198,8 +198,8 @@ public class KeyboardHelper {
      * 监听layout变化
      */
     public KeyboardHelper setEnable() {
-      /*  setEnable(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
-                | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);*/
+        setEnable(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
+                | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         return this;
     }
 
@@ -257,7 +257,7 @@ public class KeyboardHelper {
         public void onGlobalLayout() {
             Activity activity = mActivity.get();
             View contentView = mContentView.get();
-            if (activity == null||contentView==null) {
+            if (activity == null || contentView == null) {
                 return;
             }
             if (visibleThreshold <= 0) {

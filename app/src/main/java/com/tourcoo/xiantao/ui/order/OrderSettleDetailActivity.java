@@ -452,8 +452,15 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         listenCoinSwitch();
         loadCoinSwitchAndPrice();
         //商品数量
-        String amount = "共" + settleEntity.getOrder_total_num() + "件商品";
-//        String amount = "共" + mGoodsAdapter.getData().size() + "件商品";
+      /*  int goodsAmount = 0;
+        for (Goods goods : goodsList) {
+            if (goods == null) {
+                continue;
+            }
+            goodsAmount += goods.getTotal_num();
+        }*/
+//        String amount = "共" +settleEntity.getOrder_total_num() + "件商品";
+        String amount = "共" + mGoodsAdapter.getData().size() + "件商品";
         tvGoodsTypeCount.setText(amount);
         //配送费
         tvExpressPrice.setText("¥" + TourCooUtil.doubleTransString(settleEntity.getExpress_price()));

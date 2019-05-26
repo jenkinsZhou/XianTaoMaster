@@ -161,9 +161,6 @@ public class ForgetPasswordActivity extends BaseTourCooTitleActivity implements 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.rlTitleBar:
-                finish();
-                break;
             case R.id.tvSendVerificationCode:
                 sendVCodeAndCountDownTime(getPhoneNumber());
                 break;

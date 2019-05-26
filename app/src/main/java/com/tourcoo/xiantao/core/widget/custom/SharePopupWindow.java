@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,37 +28,50 @@ public class SharePopupWindow extends PopupWindow {
     private TextView btnShareWXFriend;
     private TextView btnCancel;
 
+    private TextView tvShareTitle;
+
 
     public SharePopupWindow(Context context) {
-        this(context,false);
+        this(context, false);
     }
 
-    public SharePopupWindow(Context context,boolean isHideWXFriend) {
+    public SharePopupWindow(Context context, boolean isHideWXFriend) {
         super(context);
         this.mContext = context;
-        initView(context,isHideWXFriend);
+        initView(context, isHideWXFriend, null);
+        setPopConfig();
+    }
+
+    public SharePopupWindow(Context context, boolean isHideWXFriend, String title) {
+        super(context);
+        this.mContext = context;
+        initView(context, isHideWXFriend, title);
         setPopConfig();
     }
 
     /**
-     *   初始化控件
+     * 初始化控件
+     *
      * @param context
      */
-    private void initView(Context context,boolean isHideWXFriend) {
+    private void initView(Context context, boolean isHideWXFriend, String title) {
         parentView = View.inflate(context, R.layout.layout_share_popup_window, null);
         setContentView(parentView);
         btnShareWX = parentView.findViewById(R.id.btnShareWX);
         btnShareWXFriend = parentView.findViewById(R.id.btnShareWXFriend);
         btnCancel = parentView.findViewById(R.id.btnCancel);
-
-        if(isHideWXFriend){
+        tvShareTitle = parentView.findViewById(R.id.tvShareTitle);
+        if (!TextUtils.isEmpty(title)) {
+            tvShareTitle.setText(title);
+        }
+        if (isHideWXFriend) {
             btnShareWXFriend.setVisibility(View.GONE);
         }
 
         btnShareWX.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(listener != null){
+                if (listener != null) {
                     listener.onWxClick();
                 }
             }
@@ -66,7 +80,7 @@ public class SharePopupWindow extends PopupWindow {
         btnShareWXFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(listener != null){
+                if (listener != null) {
                     listener.onWxFriendClick();
                 }
             }
@@ -81,10 +95,9 @@ public class SharePopupWindow extends PopupWindow {
     }
 
     /**
-     *
      * 配置弹出框属性
-     * @updateInfo (此处输入修改内容,若无修改可不写.)
      *
+     * @updateInfo (此处输入修改内容, 若无修改可不写.)
      */
     private void setPopConfig() {
         this.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
@@ -104,12 +117,11 @@ public class SharePopupWindow extends PopupWindow {
     }
 
 
-
     /**
      * 显示在屏幕的下方
      */
-    public void showAtScreenBottom(View parent){
-        this.showAtLocation(parent, Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,0);
+    public void showAtScreenBottom(View parent) {
+        this.showAtLocation(parent, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
         popOutShadow();
     }
 
@@ -136,12 +148,13 @@ public class SharePopupWindow extends PopupWindow {
 
     private ISharePopupWindowClickListener listener;
 
-    public void setISharePopupWindowClickListener(ISharePopupWindowClickListener listener){
+    public void setISharePopupWindowClickListener(ISharePopupWindowClickListener listener) {
         this.listener = listener;
     }
 
-    public interface ISharePopupWindowClickListener{
+    public interface ISharePopupWindowClickListener {
         void onWxClick();
+
         void onWxFriendClick();
     }
 

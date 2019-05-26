@@ -469,7 +469,8 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             for (OrderDetailEntity.OrderBean.GoodsBean goodsBean : goodsList) {
                 size += goodsBean.getTotal_num();
             }
-            String amount = "共" + size + "件商品";
+//            String amount = "共" + size + "件商品";
+            String amount = "共" + goodsList.size() + "件商品";
             tvGoodsTypeCount.setText(amount);
             mGoodsAdapter.setNewData(goodsList);
         }
