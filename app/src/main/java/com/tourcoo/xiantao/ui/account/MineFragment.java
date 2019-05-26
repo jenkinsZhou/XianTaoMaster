@@ -59,6 +59,7 @@ import com.tourcoo.xiantao.ui.order.MyOrderListActivity;
 import com.tourcoo.xiantao.ui.order.ReturnOrderListActivity;
 import com.tourcoo.xiantao.ui.recharge.AccountBalanceActivity;
 import com.tourcoo.xiantao.ui.tuan.MyTuanListActivity;
+import com.tourcoo.xiantao.util.MoneyUtil;
 import com.trello.rxlifecycle3.android.FragmentEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -445,8 +446,8 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         TourCooLogUtil.i(TAG, TAG + "昵称:" + data.getNickname());
         GlideManager.loadImg(url, civUserAvatar, TourCooUtil.getDrawable(R.mipmap.img_default_avatar));
         tvBalance.setText("¥" + data.getCash());
-        String coinGold = data.getAu() + "";
-        String coinYin = data.getAg() + "";
+        String coinGold = TourCooUtil.doubleTransStringZhen(data.getAu()) + "";
+        String coinYin = MoneyUtil.amountConversion(data.getAg()) + "";
         tvAccumulatePointsGold.setText(coinGold);
         tvAccumulatePointsYin.setText(coinYin);
         showMineInfo(data);
@@ -631,7 +632,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
                                 EventBus.getDefault().post(new MessageEvent(entity.data.getNum()));
                                 showMsg(entity.data.getNum());
                             } else {
-                               setNoLogin(entity.msg);
+                                setNoLogin(entity.msg);
                             }
                         }
                     }

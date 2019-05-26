@@ -60,6 +60,7 @@ import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_ADDRESS_KEY
 import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_COMPANY_INFO;
 import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_PHONE_KEY;
 import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_REGISTER_KEY;
+import static com.tourcoo.xiantao.ui.account.MineFragment.NO_LOGIN;
 
 /**
  * @author :zhoujian
@@ -225,7 +226,7 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
         showPermissionDialog("请前往授权管理授权");
     }
 
- /*   *//**
+    /*   *//**
      * 校验token是否失效
      *//*
     private void checkToken() {
@@ -276,13 +277,24 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
                                     }
                                 }
                             } else {
-                                ToastUtil.showFailed(entity.msg);
+                                setNoLogin(entity.msg);
                             }
                         }
                     }
                 });
     }
 
+
+    private void setNoLogin(String value) {
+        if (TextUtils.isEmpty(value)) {
+            return;
+        }
+        if (value.contains(NO_LOGIN)) {
+            AccountInfoHelper.getInstance().deleteUserAccount();
+        } else {
+            ToastUtil.showFailed(value);
+        }
+    }
 
     public void showRedDot(int count) {
         if (count <= 0) {

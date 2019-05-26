@@ -600,19 +600,5 @@ public class TourCooUtil {
         return value;
     }
 
-    /**
-     * 测试方法入口
-     *
-     * @author
-     * @version 1.00.00
-     *
-     * @date 2018年1月18日
-     * @param args
-     */
-   /* public static void main(String[] args) throws Exception{
-        amountConversion(120);
-        amountConversion(18166.35);
-        amountConversion(1222188.35);
-        amountConversion(129887783.5);
-    }*/
+
 }

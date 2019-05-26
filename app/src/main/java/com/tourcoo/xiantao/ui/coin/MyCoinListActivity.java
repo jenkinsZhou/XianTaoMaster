@@ -30,6 +30,7 @@ import com.tourcoo.xiantao.entity.recharge.RechargeHistory;
 import com.tourcoo.xiantao.entity.user.CashEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooRefreshLoadActivity;
+import com.tourcoo.xiantao.util.MoneyUtil;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class MyCoinListActivity extends BaseTourCooRefreshLoadActivity<CoinDetai
 
     private CoinHistoryAdapter adapter;
     private TextView tvCurrentGold;
-    private TextView tvAu;
+    private TextView tvAg;
     private double currentAuAmount;
     private CoinHistory mCoinHistory;
 
@@ -58,7 +59,7 @@ public class MyCoinListActivity extends BaseTourCooRefreshLoadActivity<CoinDetai
 
     @Override
     public void initView(Bundle savedInstanceState) {
-        tvAu = findViewById(R.id.tvAu);
+        tvAg = findViewById(R.id.tvAg);
         tvCurrentGold = findViewById(R.id.tvCurrentGold);
         findViewById(R.id.tvConvertGold).setOnClickListener(this);
         TourCoolRecycleViewDivider divider = new TourCoolRecycleViewDivider(
@@ -111,7 +112,7 @@ public class MyCoinListActivity extends BaseTourCooRefreshLoadActivity<CoinDetai
         if (page == 1) {
             adapter.getData().clear();
         }
-         TourCooLogUtil.i(TAG,TAG+":"+ "执行了");
+        TourCooLogUtil.i(TAG, TAG + ":" + "执行了");
         ApiRepository.getInstance().requestMyCoinList(page).compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseObserver<BaseEntity<CoinHistory>>() {
                     @Override
@@ -142,8 +143,10 @@ public class MyCoinListActivity extends BaseTourCooRefreshLoadActivity<CoinDetai
             return;
         }
         currentAuAmount = coinHistory.getAg();
-        tvCurrentGold.setText(coinHistory.getAu() + "");
-        tvAu.setText(coinHistory.getAg() + "");
+        String au = TourCooUtil.doubleTransStringZhen(coinHistory.getAu());
+        String ag = MoneyUtil.amountConversion(coinHistory.getAg());
+        tvCurrentGold.setText(au);
+        tvAg.setText(ag);
     }
 
     @Override
