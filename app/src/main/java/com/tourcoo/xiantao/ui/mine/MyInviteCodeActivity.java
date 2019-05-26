@@ -3,10 +3,14 @@ package com.tourcoo.xiantao.ui.mine;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -29,6 +33,7 @@ import com.tourcoo.xiantao.constant.WxConfig;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.util.SizeUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
@@ -37,10 +42,15 @@ import com.tourcoo.xiantao.core.widget.custom.ShareGoodsPopupWindow;
 import com.tourcoo.xiantao.core.widget.custom.SharePopupWindow;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.goods.Goods;
+import com.tourcoo.xiantao.qrcode.ImageUtil;
 import com.tourcoo.xiantao.qrcode.QRCodeUtil;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
 import com.trello.rxlifecycle3.android.ActivityEvent;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import me.bakumon.statuslayoutmanager.library.OnStatusChildClickListener;
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
@@ -54,7 +64,7 @@ import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS
  * @date 2019年05月10日10:22
  * @Email: 971613168@qq.com
  */
-public class MyInviteCodeActivity extends BaseTourCooTitleActivity {
+public class MyInviteCodeActivity extends BaseTourCooTitleActivity implements View.OnClickListener {
     private TextView tvInviteCode;
     private LinearLayout llContentView;
     private StatusLayoutManager mStatusLayoutManager;
@@ -74,6 +84,7 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity {
     public void initView(Bundle savedInstanceState) {
         tvInviteCode = findViewById(R.id.tvInviteCode);
         llContentView = findViewById(R.id.llContentView);
+        findViewById(R.id.llSaveQrCode).setOnClickListener(this);
         ivQrCode = findViewById(R.id.ivQrCode);
         setupStatusLayoutManager();
         api = WXAPIFactory.createWXAPI(mContext, WxConfig.APP_ID);
@@ -148,7 +159,8 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity {
                                 tvInviteCode.setText(entity.data);
                                 mStatusLayoutManager.showSuccessLayout();
                                 mTitleBar.getTextView(Gravity.RIGHT).setVisibility(View.VISIBLE);
-                                mContent = "http://www.ahxtao.com/";
+                                mContent = "https://app.ahxtao.com/h5/index.html?invite=" + entity.data;
+                                TourCooLogUtil.i(TAG, TAG + "链接:" + mContent);
                                 generateQrcodeAndDisplay(mContent);
                             } else {
                                 mStatusLayoutManager.showErrorLayout();
@@ -234,8 +246,9 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity {
         }
         String error_correction_level = getResources().getStringArray(R.array.spinarr_error_correction)[2];
         String margin = getResources().getStringArray(R.array.spinarr_margin)[0];
+        Bitmap logoBitmap = ImageUtils.drawable2Bitmap(TourCooUtil.getDrawable(R.mipmap.icon_share_weixin));
         Bitmap qrcode_bitmap = QRCodeUtil.createQRCodeBitmap(content, width, height, "UTF-8",
-                error_correction_level, margin, Color.BLACK, Color.WHITE, null, 0.2F, null);
+                error_correction_level, margin, Color.BLACK, Color.WHITE, logoBitmap, 0.2F, null);
         ivQrCode.setImageBitmap(qrcode_bitmap);
         return qrcode_bitmap;
     }
@@ -277,7 +290,7 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity {
     }
 
 
-    public void WXsharePic(String transaction, final boolean isSession, Bitmap bitmap) {
+    public void wxSharePic(String transaction, final boolean isSession, Bitmap bitmap) {
         //初始化WXImageObject和WXMediaMessage对象
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
@@ -289,7 +302,7 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity {
         msg.thumbData = ImageUtils.bitmap2Bytes(scaledBitmap, Bitmap.CompressFormat.PNG);
         //构造一个Req
         SendMessageToWX.Req req = new SendMessageToWX.Req();
-        req.transaction = transaction +(System.currentTimeMillis());
+        req.transaction = transaction + (System.currentTimeMillis());
         req.message = msg;
         //表示发送给朋友圈  WXSceneTimeline  表示发送给朋友  WXSceneSession
         req.scene = isSession ? SendMessageToWX.Req.WXSceneSession : SendMessageToWX.Req.WXSceneTimeline;
@@ -309,10 +322,10 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity {
 //                doShare(true);
                 sharePopupWindow.dismiss();
                 Bitmap bitmap = generateQrcodeAndDisplay(mContent);
-                if(bitmap == null ){
+                if (bitmap == null) {
                     return;
                 }
-                WXsharePic("media",true,bitmap);
+                wxSharePic("media", true, bitmap);
             }
 
             @Override
@@ -320,10 +333,10 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity {
                 sharePopupWindow.dismiss();
 //                doShare(false);
                 Bitmap bitmap = generateQrcodeAndDisplay(mContent);
-                if(bitmap == null ){
+                if (bitmap == null) {
                     return;
                 }
-                WXsharePic("media",false,bitmap);
+                wxSharePic("media", false, bitmap);
             }
         });
         sharePopupWindow.showAtScreenBottom(llContentView);
@@ -337,4 +350,70 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity {
         }
         super.onDestroy();
     }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.llSaveQrCode:
+
+                Bitmap bitmap = generateQrcodeAndDisplay(mContent);
+                String time = "邀请码" + System.currentTimeMillis();
+                saveBmp2Gallery(bitmap, time);
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    /**
+     * @param bmp     获取的bitmap数据
+     * @param picName 自定义的图片名
+     */
+
+    public void saveBmp2Gallery(Bitmap bmp, String picName) {
+        if (bmp == null) {
+            ToastUtil.showFailed("保存失败");
+            return;
+        }
+        String fileName = null;
+        //系统相册目录
+        String galleryPath = Environment.getExternalStorageDirectory()
+                + File.separator + Environment.DIRECTORY_DCIM
+                + File.separator + "Camera" + File.separator;
+        // 声明文件对象
+        File file = null;
+        // 声明输出流
+        FileOutputStream outStream = null;
+        try {
+            // 如果有目标文件，直接获得文件对象，否则创建一个以filename为名称的文件
+            file = new File(galleryPath, picName + ".jpg");
+            // 获得文件相对路径
+            fileName = file.toString();
+            // 获得输出流，如果文件中有内容，追加内容
+            outStream = new FileOutputStream(fileName);
+            if (null != outStream) {
+                bmp.compress(Bitmap.CompressFormat.JPEG, 90, outStream);
+            }
+        } catch (Exception e) {
+            e.getStackTrace();
+        } finally {
+            try {
+                if (outStream != null) {
+                    outStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        //通知相册更新
+        MediaStore.Images.Media.insertImage(mContext.getContentResolver(),
+                bmp, fileName, null);
+        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        Uri uri = Uri.fromFile(file);
+        intent.setData(uri);
+        mContext.sendBroadcast(intent);
+        ToastUtil.showSuccess("图片保存成功");
+    }
+
 }
