@@ -156,8 +156,8 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
 
                 TourCooLogUtil.e(item);
                 LogUtils.e(position, time);
-                //已经过了截止时间 或者已经满团并支付    订单状态 ---> 已完成
-                if ((Double.parseDouble(item.getTuan().getSurplus()) == 0.0 && item.getUser_status() == 1) || time <= 0) {
+                //已经过了截止时间 或者已支付    订单状态 ---> 已完成
+                if ((item.getUser_status() == 1) || time <= 0) {
                     holder.ivStatus.setImageResource(R.mipmap.ic_completed);
                     holder.llStatus.setVisibility(View.GONE);
                     holder.tvEndTime.setVisibility(View.GONE);
@@ -236,9 +236,9 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
                     holder.btnPay.setVisibility(View.GONE);
                     holder.llStatus.setVisibility(View.GONE);
                 }
-                holder.tvEndTime.setVisibility(View.GONE);
-                holder.tvTuanStatus.setVisibility(View.GONE);
-                holder.btnClick.setVisibility(View.GONE);
+                holder.tvEndTime.setVisibility(View.INVISIBLE);
+                holder.tvTuanStatus.setVisibility(View.INVISIBLE);
+                holder.btnClick.setVisibility(View.INVISIBLE);
 
                 break;
 
