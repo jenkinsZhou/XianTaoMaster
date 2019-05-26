@@ -237,7 +237,7 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
                             if (entity.code == CODE_REQUEST_SUCCESS) {
                                 tokenCheckCallBack(entity.data);
                             } else {
-                                ToastUtil.showFailed(entity.msg);
+                                AccountInfoHelper.getInstance().deleteUserAccount();
                             }
                         }
                     }
@@ -247,14 +247,8 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
 
     private void tokenCheckCallBack(TokenInfo tokenInfo) {
         if (tokenInfo == null || AccountInfoHelper.getInstance().getUserInfo() == null) {
-            TourCooUtil.startActivity(mContext, LoginActivity.class);
-            finish();
-            return;
-        }
-        if (!tokenInfo.getToken().equals(AccountInfoHelper.getInstance().getToken())) {
-            ToastUtil.showFailed("登录已失效,请重新登录");
-            TourCooUtil.startActivity(mContext, LoginActivity.class);
-            finish();
+        } else {
+            AccountInfoHelper.getInstance().deleteUserAccount();
         }
     }
 

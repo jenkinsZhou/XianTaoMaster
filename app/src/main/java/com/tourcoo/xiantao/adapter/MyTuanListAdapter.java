@@ -143,9 +143,8 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
         switch (item.getStatus()) {
             case TUAN_STATUS_FAIL:
                 holder.ivStatus.setImageResource(R.mipmap.ic_failure);
-                holder.llStatus.setVisibility(View.GONE);
                 holder.tvEndTime.setVisibility(View.GONE);
-                holder.tvTuanStatus.setVisibility(View.GONE);
+                holder.tvTuanStatus.setText("拼团失败");
                 holder.btnClick.setVisibility(View.GONE);
                 holder.btnPay.setVisibility(View.GONE);
                 break;
@@ -157,16 +156,27 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
                 TourCooLogUtil.e(item);
                 LogUtils.e(position, time);
                 //已经过了截止时间 或者已支付    订单状态 ---> 已完成
-                if ((item.getUser_status() == 1) || time <= 0) {
+                if (time <= 0) {
                     holder.ivStatus.setImageResource(R.mipmap.ic_completed);
-                    holder.llStatus.setVisibility(View.GONE);
                     holder.tvEndTime.setVisibility(View.GONE);
-                    holder.tvTuanStatus.setVisibility(View.GONE);
+                    holder.tvTuanStatus.setText("拼团已结束");
                     holder.btnClick.setVisibility(View.GONE);
-                    holder.btnPay.setVisibility(View.GONE);
+                    if(mDatas.get(position).getUser_status() == 0){
+                        holder.btnPay.setVisibility(View.VISIBLE);
+                        holder.btnPay.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (listener != null) {
+                                    listener.onPayClick(item.getTuanuser_id());
+                                }
+                            }
+                        });
+                    }else {
+                        holder.btnPay.setVisibility(View.GONE);
+                    }
+
                 } else {
                     holder.ivStatus.setImageResource(R.mipmap.ic_ongoing);
-                    holder.llStatus.setVisibility(View.VISIBLE);
                     if (item.getUser_status() == 0) {
                         holder.btnPay.setVisibility(View.VISIBLE);
                         holder.btnPay.setOnClickListener(new View.OnClickListener() {
@@ -231,13 +241,11 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
                 holder.ivStatus.setImageResource(R.mipmap.ic_completed);
                 if (mDatas.get(position).getUser_status() == 0) {
                     holder.btnPay.setVisibility(View.VISIBLE);
-                    holder.llStatus.setVisibility(View.VISIBLE);
                 } else {
                     holder.btnPay.setVisibility(View.GONE);
-                    holder.llStatus.setVisibility(View.GONE);
                 }
                 holder.tvEndTime.setVisibility(View.INVISIBLE);
-                holder.tvTuanStatus.setVisibility(View.INVISIBLE);
+                holder.tvTuanStatus.setText("拼团已完成");
                 holder.btnClick.setVisibility(View.INVISIBLE);
 
                 break;
@@ -265,14 +273,12 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
         private TextView tvEndTime;
         private TextView btnClick;
         private TextView btnPay;
-        private LinearLayout llStatus;
         private RoundedImageView ivGoodsImage;
         private CountDownTimer countDownTimer;
 
         ViewHolder(View itemView) {
             super(itemView);
             ivStatus = itemView.findViewById(R.id.ivStatus);
-            llStatus = itemView.findViewById(R.id.llStatus);
             tvTuanStatus = itemView.findViewById(R.id.tvTuanStatus);
             ivGoodsImage = itemView.findViewById(R.id.ivGoodsImage);
             tvGoodsName = itemView.findViewById(R.id.tvGoodsName);
