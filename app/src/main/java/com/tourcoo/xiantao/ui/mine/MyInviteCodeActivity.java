@@ -42,6 +42,7 @@ import com.tourcoo.xiantao.core.widget.custom.ShareGoodsPopupWindow;
 import com.tourcoo.xiantao.core.widget.custom.SharePopupWindow;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.goods.Goods;
+import com.tourcoo.xiantao.permission.PermissionManager;
 import com.tourcoo.xiantao.qrcode.ImageUtil;
 import com.tourcoo.xiantao.qrcode.QRCodeUtil;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
@@ -125,6 +126,9 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity implements Vi
     @Override
     public void loadData() {
         super.loadData();
+        if (!checkPermission()) {
+            PermissionManager.requestAllNeedPermission(this);
+        }
         requestInvitecode();
     }
 
@@ -355,10 +359,17 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity implements Vi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.llSaveQrCode:
-
-                Bitmap bitmap = generateQrcodeAndDisplay(mContent);
-                String time = "邀请码" + System.currentTimeMillis();
-                saveBmp2Gallery(bitmap, time);
+                if (!checkPermission()) {
+                    ToastUtil.showFailed("您未授予相关权限");
+                    return;
+                }
+                try {
+                    Bitmap bitmap = generateQrcodeAndDisplay(mContent);
+                    String time = "邀请码" + System.currentTimeMillis();
+                    saveBmp2Gallery(bitmap, time);
+                } catch (Exception e) {
+                    TourCooLogUtil.e(TAG, TAG + "e:" + e.toString());
+                }
                 break;
             default:
                 break;

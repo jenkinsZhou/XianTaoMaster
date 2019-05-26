@@ -57,8 +57,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -390,8 +388,12 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
      * 显示购物车列表
      */
     private void showGoodsList(List<ShoppingCarEntity.GoodsBean> goodsList) {
+        if (!AccountInfoHelper.getInstance().isLogin()) {
+            showEmptyLayout();
+            return;
+        }
         if (goodsList == null) {
-            showErrorLayout();
+            showEmptyLayout();
             return;
         }
         if (!goodsList.isEmpty()) {
@@ -550,8 +552,9 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
                                         refreshLayout.finishRefresh(true);
                                     }
                                 } else {
-                                    ToastUtil.showFailed(entity.msg);
-                                    refreshLayout.finishRefresh(false);
+                                    showEmptyLayout();
+                                    setNoLogin(entity.msg);
+                                    refreshLayout.finishRefresh();
                                 }
                             }
                         }

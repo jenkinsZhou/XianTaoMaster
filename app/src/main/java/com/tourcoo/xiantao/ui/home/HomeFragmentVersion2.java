@@ -86,6 +86,7 @@ import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 import static android.app.Activity.RESULT_OK;
 import static com.tourcoo.xiantao.adapter.AddressInfoAdapter.ADDRESS_DEFAULT;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.ui.account.MineFragment.NO_LOGIN;
 import static com.tourcoo.xiantao.ui.account.MineFragment.REQUEST_CODE_MESSAGE_CENTER;
 import static com.tourcoo.xiantao.ui.goods.ClassifyGoodsFragment.EXTRA_CATEGORY_NAME;
 import static com.tourcoo.xiantao.ui.home.WebContentInfoActivity.ERTRA_TITLE;
@@ -704,7 +705,7 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
                                 TourCooLogUtil.i(TAG, "未读消息数量:" + entity.data.getNum());
                                 showMsg(entity.data.getNum());
                             } else {
-                                ToastUtil.showFailed(entity.msg);
+                                setNoLogin(entity.msg);
                             }
                         }
                     }
@@ -939,6 +940,17 @@ public class HomeFragmentVersion2 extends BaseTitleFragment implements View.OnCl
         } catch (Exception e) {
             TourCooLogUtil.e(TAG, "value:" + e.toString());
             return null;
+        }
+    }
+
+    private void setNoLogin(String value) {
+        if (TextUtils.isEmpty(value)) {
+            return;
+        }
+        if (value.contains(NO_LOGIN)) {
+            AccountInfoHelper.getInstance().deleteUserAccount();
+        } else {
+            ToastUtil.showFailed(value);
         }
     }
 }

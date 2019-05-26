@@ -85,9 +85,9 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (NetworkUtil.isConnected(mContext) && AccountInfoHelper.getInstance().isLogin()) {
+       /* if (NetworkUtil.isConnected(mContext) && AccountInfoHelper.getInstance().isLogin()) {
             checkToken();
-        }
+        }*/
        /* if (!hasPermission()) {
             //请求一次权限
             PermissionManager.requestAllNeedPermission(this);
@@ -225,9 +225,9 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
         showPermissionDialog("请前往授权管理授权");
     }
 
-    /**
+ /*   *//**
      * 校验token是否失效
-     */
+     *//*
     private void checkToken() {
         ApiRepository.getInstance().checkToken().compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseObserver<BaseEntity<TokenInfo>>() {
@@ -236,21 +236,19 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
                         if (entity != null) {
                             if (entity.code == CODE_REQUEST_SUCCESS) {
                                 tokenCheckCallBack(entity.data);
-                            } else {
-                                AccountInfoHelper.getInstance().deleteUserAccount();
                             }
                         }
                     }
                 });
     }
+*/
 
-
-    private void tokenCheckCallBack(TokenInfo tokenInfo) {
+    /*private void tokenCheckCallBack(TokenInfo tokenInfo) {
         if (tokenInfo == null || AccountInfoHelper.getInstance().getUserInfo() == null) {
         } else {
             AccountInfoHelper.getInstance().deleteUserAccount();
         }
-    }
+    }*/
 
 
     /**
