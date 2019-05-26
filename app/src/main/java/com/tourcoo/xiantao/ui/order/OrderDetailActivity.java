@@ -107,6 +107,8 @@ import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
  * @Email: 971613168@qq.com
  */
 public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity implements View.OnClickListener {
+
+    private LinearLayout llBottomToolBar;
     private static final int REQUEST_CODE_EVALUATE = 1001;
     public static final int REQUEST_CODE_RETURN_GOODS = 1002;
     private List<String> mImageList = new ArrayList<>();
@@ -197,6 +199,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     public void initView(Bundle savedInstanceState) {
         api = WXAPIFactory.createWXAPI(mContext, null);
         tvCoin = findViewById(R.id.tvCoin);
+        llBottomToolBar =findViewById(R.id.llBottomToolBar);
         tvDiscountMoney = findViewById(R.id.tvDiscountMoney);
         llUseDiscount = findViewById(R.id.llUseDiscount);
         llDeliveryTime = findViewById(R.id.llDeliveryTime);
@@ -622,6 +625,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 hideView(tvLookComment);
                 //隐藏 取消订单按钮
                 hideView(tvCancelReturn);
+                setViewVisible(llBottomToolBar,false);
                 break;
             case ORDER_STATUS_BACK_FINISH:
                 hideView(tvCommentNow);
@@ -632,6 +636,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 hideView(tvLookExpress);
                 hideView(tvLookComment);
                 hideView(tvCancelReturn);
+                setViewVisible(llBottomToolBar,false);
                 break;
             case ORDER_STATUS_BACK_REFUSE:
                 hideView(tvCommentNow);
@@ -642,6 +647,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 hideView(tvLookExpress);
                 hideView(tvLookComment);
                 hideView(tvCancelReturn);
+                setViewVisible(llBottomToolBar,false);
                 break;
             default:
                 break;

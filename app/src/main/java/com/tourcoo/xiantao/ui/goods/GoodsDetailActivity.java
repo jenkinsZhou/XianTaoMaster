@@ -53,6 +53,7 @@ import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
+import com.tourcoo.xiantao.core.frame.util.SharedPreferencesUtil;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.log.widget.utils.DateUtil;
@@ -64,6 +65,7 @@ import com.tourcoo.xiantao.core.widget.custom.ShareGoodsPopupWindow;
 import com.tourcoo.xiantao.core.widget.custom.SharePopupWindow;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.ImageEntity;
+import com.tourcoo.xiantao.entity.SystemSettingEntity;
 import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.goods.GoodsEntity;
@@ -95,7 +97,11 @@ import cn.bingoogolapple.bgabanner.BGABanner;
 import de.hdodenhof.circleimageview.CircleImageView;
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
+import static com.tourcoo.xiantao.core.common.CommonConstant.companyInfo;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_ADDRESS_KEY;
+import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_PHONE_KEY;
+import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_REGISTER_KEY;
 import static com.tourcoo.xiantao.core.module.SplashActivity.EXTRA_ADV_TAG;
 import static com.tourcoo.xiantao.ui.home.HomeFragment.EXTRA_GOODS_ID;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_GOODS_COUNT;
@@ -442,8 +448,6 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             return;
         }
         mTitleBarView.getTextView(Gravity.RIGHT).setVisibility(View.VISIBLE);
-        //显示公司信息
-        showCompanyInfo(companyInfo);
         currentGoods = detail;
         if (detail.getGive() <= 0) {
             llGiveAway.setVisibility(View.GONE);
@@ -1024,6 +1028,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     public void loadData() {
         super.loadData();
         getGoodsDetail(mGoodsId);
+        requestSystemConfig();
     }
 
     @Override
@@ -1296,5 +1301,41 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         super.finish();
     }
 
+
+    /**
+     * 获取系统相关信息
+     */
+    private void requestSystemConfig() {
+        ApiRepository.getInstance().requestSystemConfig().compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseObserver<BaseEntity<SystemSettingEntity>>() {
+                    @Override
+                    public void onRequestNext(BaseEntity<SystemSettingEntity> entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                SystemSettingEntity settingEntity = entity.data;
+                                if (settingEntity != null) {
+                                    String register = settingEntity.getRegister();
+                                    String phone = settingEntity.getKefu();
+                                    if (TextUtils.isEmpty(settingEntity.getAddress())) {
+                                        settingEntity.setAddress("");
+                                    }
+                                    if (TextUtils.isEmpty(settingEntity.getCompany())) {
+                                        settingEntity.setCompany("");
+                                    }
+                                    //保存注册条例
+                                    SharedPreferencesUtil.put(PREF_TEL_REGISTER_KEY, register);
+                                    SharedPreferencesUtil.put(PREF_TEL_PHONE_KEY, phone);
+                                    SharedPreferencesUtil.put(PREF_ADDRESS_KEY, settingEntity.getAddress());
+                                    companyInfo = settingEntity.getCompany();
+                                    //显示公司信息
+                                    showCompanyInfo(companyInfo);
+                                }
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                            }
+                        }
+                    }
+                });
+    }
 
 }
