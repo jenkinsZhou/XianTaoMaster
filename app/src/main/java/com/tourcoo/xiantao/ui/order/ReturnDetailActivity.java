@@ -193,6 +193,7 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
     private TextView tvRealReturnMoney;
     private TextView tvRealReturnCoin;
     private TextView tvReply;
+    private TextView tvReturnType;
 
     @Override
     public int getContentLayout() {
@@ -210,6 +211,7 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
     public void initView(Bundle savedInstanceState) {
         api = WXAPIFactory.createWXAPI(mContext, null);
         tvReply = findViewById(R.id.tvReply);
+        tvReturnType = findViewById(R.id.tvReturnType);
         tvRealReturnMoney = findViewById(R.id.tvRealReturnMoney);
         tvRealReturnCoin = findViewById(R.id.tvRealReturnCoin);
         llRealReturnMoney = findViewById(R.id.llRealReturnMoney);
@@ -1130,6 +1132,7 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
         String returnCoin = TourCooUtil.doubleTransString(returnInfo.getCoin());
         tvReturnCoin.setText(returnCoin);
         setViewVisible(llReturnGood, true);
+        tvReturnType.setText(returnInfo.getType());
         //退货详情
         if (TextUtils.isEmpty(returnInfo.getDetail())) {
             tvReturnDetail.setText("未填写");

@@ -213,7 +213,7 @@
                             android:id="@+id/tvReturnType"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="退货退款"
+                            android:text=""
                             android:textColor="#ff999999"
                             android:textSize="@dimen/sp_13" />
 
@@ -245,6 +245,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:layout_marginTop="@dimen/dp_5"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
@@ -269,6 +270,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:layout_marginTop="@dimen/dp_5"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
@@ -294,15 +296,17 @@
                     </LinearLayout>
 
                     <TextView
+                        android:layout_marginTop="@dimen/dp_5"
                         android:id="@+id/tvReturnImage"
                         android:layout_width="wrap_content"
-                        android:layout_height="@dimen/dp_30"
+                        android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:text="附加照片"
                         android:textColor="#ff333333"
                         android:textSize="@dimen/sp_13" />
 
                     <androidx.recyclerview.widget.RecyclerView
+                        android:layout_marginTop="@dimen/dp_5"
                         android:id="@+id/rvReturnGoods"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
@@ -475,6 +479,7 @@
 
                     <!--退单处理结果-->
                     <LinearLayout
+                        android:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
