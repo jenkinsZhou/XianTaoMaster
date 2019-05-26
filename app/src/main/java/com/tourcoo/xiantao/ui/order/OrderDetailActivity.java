@@ -531,7 +531,8 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private void showRemark(OrderDetailEntity.OrderBean orderBean) {
         String remark = TourCooUtil.getNotNullValue(orderBean.getRemark());
         if (TextUtils.isEmpty(remark)) {
-            llRemark.setVisibility(View.GONE);
+            llRemark.setVisibility(View.VISIBLE);
+            tvRemark.setText(TourCooUtil.getNotNullValue("无备注信息"));
         } else {
             llRemark.setVisibility(View.VISIBLE);
             tvRemark.setText(TourCooUtil.getNotNullValue(orderBean.getRemark()));

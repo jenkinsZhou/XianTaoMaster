@@ -9,10 +9,11 @@
         android:id="@+id/additionalRoundedImageView"
         android:layout_width="@dimen/dp_110"
         android:layout_height="@dimen/dp_61"
+        android:paddingLeft="@dimen/dp_4"
         android:paddingTop="@dimen/dp_4"
         android:paddingRight="@dimen/dp_4"
         android:paddingBottom="@dimen/dp_4"
-        android:scaleType="centerInside"
+        android:scaleType="center"
         android:src="@mipmap/img_alipay"
-        app:riv_corner_radius="@dimen/dp_4" />
+        app:riv_corner_radius="@dimen/dp_5" />
 </LinearLayout>

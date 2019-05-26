@@ -25,6 +25,6 @@ public class GridImageAdapter extends BaseQuickAdapter<String, BaseViewHolder> {
     @Override
     protected void convert(BaseViewHolder helper, String item) {
         GlideManager.loadImg(item, helper.getView(R.id.additionalRoundedImageView));
-         TourCooLogUtil.i(TAG,TAG+"图片地址:"+ item);
+        TourCooLogUtil.i(TAG, TAG + "图片地址:" + item);
     }
 }
