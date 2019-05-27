@@ -55,11 +55,10 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
 
     @Override
     protected void convert(BaseViewHolder helper, OrderEntity.OrderInfo orderInfo) {
-
         RecyclerView commentImageRecyclerView = helper.getView(R.id.photoRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        helper.setText(R.id.tvPrice, "¥" + orderInfo.getPay_price());
+        helper.setText(R.id.tvPrice, "¥ " + orderInfo.getPay_price());
         commentImageRecyclerView.setLayoutManager(layoutManager);
         List<Goods> goodsList = orderInfo.getGoods();
         List<String> imageList = new ArrayList<>();
@@ -253,7 +252,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                     hindView(btnTwo);
                     setTextGray(btnThree, "取消退单");
                     setTextGray(btnFour, "查看详情");
-                    helper.setText(R.id.tvPrice, "¥" + orderInfo.getReturn_price());
+                    helper.setText(R.id.tvPrice, "¥ " + orderInfo.getReturn_price());
                     break;
                 case 30:
                     //1表示拼团订单
@@ -270,7 +269,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                     hindView(btnOne);
                     hindView(btnTwo);
                     hindView(btnThree);
-                    helper.setText(R.id.tvPrice, "¥" + orderInfo.getReturn_price());
+                    helper.setText(R.id.tvPrice, "¥ " + orderInfo.getReturn_price());
                     setTextGray(btnFour, "查看详情");
                     break;
                 case 40:
@@ -286,7 +285,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                     hindView(btnOne);
                     hindView(btnTwo);
                     hindView(btnThree);
-                    helper.setText(R.id.tvPrice, "¥" + orderInfo.getReturn_price());
+                    helper.setText(R.id.tvPrice, "¥ " + orderInfo.getReturn_price());
                     setTextGray(btnFour, "查看详情");
                     break;
                 default:

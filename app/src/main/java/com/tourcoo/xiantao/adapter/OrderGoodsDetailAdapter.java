@@ -34,9 +34,9 @@ public class OrderGoodsDetailAdapter extends BaseQuickAdapter<OrderDetailEntity.
 
     @Override
     protected void convert(BaseViewHolder helper, @NonNull OrderDetailEntity.OrderBean.GoodsBean goods) {
+
         helper.setText(R.id.tvGoodsName, goods.getGoods_name());
         helper.setText(R.id.tvGoodsPrice, "¥ " + goods.getGoods_price());
-         TourCooLogUtil.i(TAG,TAG+"是否是拼团订单:"+isPin );
         //当前商品的数量
         helper.setText(R.id.goodsCount, "x" + goods.getTotal_num());
         RoundedImageView civGoodsIcon = helper.getView(R.id.civGoodsIcon);
