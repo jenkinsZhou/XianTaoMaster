@@ -38,6 +38,9 @@ import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.EXTRA_ADDRES
  * @Email: 971613168@qq.com
  */
 public class EditAddressActivity extends BaseTourCooTitleActivity implements View.OnClickListener {
+    private int provincePosition = -1;
+    private int cityPosition = -1;
+    private int regionPosition = -1;
     private AddressEntity mAddressEntity;
     private List<AddressPickerBean> options1Items = new ArrayList<>();
     private ArrayList<ArrayList<String>> options2Items = new ArrayList<>();
@@ -49,6 +52,9 @@ public class EditAddressActivity extends BaseTourCooTitleActivity implements Vie
     private OptionsPickerView pvOptions;
     private String region;
     private TextView tvSaveAddress;
+    private List<String> provinceNameList = new ArrayList<>();
+    private List<String> cityNameList = new ArrayList<>();
+    private List<String> rigionNameList = new ArrayList<>();
 
     @Override
     public int getContentLayout() {
@@ -121,6 +127,7 @@ public class EditAddressActivity extends BaseTourCooTitleActivity implements Vie
     /**
      * 弹出选择器
      */
+    @SuppressWarnings("unchecked")
     private void initPickerView() {
         pvOptions = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
             @Override
@@ -157,6 +164,7 @@ public class EditAddressActivity extends BaseTourCooTitleActivity implements Vie
         pvOptions.setPicker(options1Items, options2Items);//二级选择器*/
         //三级选择器
         pvOptions.setPicker(options1Items, options2Items, options3Items);
+
     }
 
     private String getName() {
@@ -208,8 +216,12 @@ public class EditAddressActivity extends BaseTourCooTitleActivity implements Vie
             String addInfo = areaBean.getProvince() + areaBean.getCity() + areaBean.getRegion();
             region = wholeAddress;
             tvSelectAddress.setText(addInfo);
+            loadSelect(areaBean.getProvince(), areaBean.getCity(), areaBean.getRegion());
         }
         edAddressDetail.setText(addressEntity.getDetail());
+        if (pvOptions != null && provincePosition > -1 && cityPosition > -1 && regionPosition > -1) {
+            pvOptions.setSelectOptions(provincePosition, cityPosition, regionPosition);
+        }
     }
 
 
@@ -263,4 +275,56 @@ public class EditAddressActivity extends BaseTourCooTitleActivity implements Vie
                 });
     }
 
+    private void loadSelect(String provice, String city, String region) {
+        try {
+            AddressPickerBean pickerBean;
+            for (int i = 0; i < options1Items.size(); i++) {
+                pickerBean = options1Items.get(i);
+                if (pickerBean == null || pickerBean.getName() == null) {
+                    continue;
+                }
+                if (pickerBean.getName().contains(provice)) {
+                    provincePosition = i;
+                    break;
+                }
+            }
+            if (provincePosition > -1 && provincePosition < options2Items.size()) {
+                //说明已经找到省份直接遍历省下面的市
+                List<String> cityList = options2Items.get(provincePosition);
+                String cityName;
+                for (int i = 0; i < cityList.size(); i++) {
+                    cityName = cityList.get(i);
+                    if (TextUtils.isEmpty(cityName)) {
+                        continue;
+                    }
+                    if (cityName.contains(city)) {
+                        //说明已经找到市直接遍历市下面的区
+                        cityPosition = i;
+                        break;
+                    }
+                }
+                if (provincePosition > -1 && cityPosition > -1 && cityPosition < options3Items.size()) {
+                    //当前地区集合
+                    List<String> regionList = options3Items.get(provincePosition).get(cityPosition);
+                    String regionName;
+                    for (int i = 0; i < regionList.size(); i++) {
+                        regionName = regionList.get(i);
+                        TourCooLogUtil.i(TAG, TAG + "当前区名称:" + regionName);
+                        if (TextUtils.isEmpty(regionName)) {
+                            continue;
+                        }
+                        if (regionName.contains(region)) {
+                            //说明已经找到当前城市对应的区
+                            regionPosition = i;
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            TourCooLogUtil.e(TAG, TAG + "查找异常:" + e.toString());
+        }
+
+
+    }
 }

@@ -32,6 +32,7 @@ public class SystemSettingEntity {
     }
 
     private String company;
+
     public String getAddress() {
         return address;
     }
@@ -78,6 +79,15 @@ public class SystemSettingEntity {
     private int android_update;
     private String android_download;
     private String kefu;
+    private int android_version_code;
+
+    public int getAndroid_version_code() {
+        return android_version_code;
+    }
+
+    public void setAndroid_version_code(int android_version_code) {
+        this.android_version_code = android_version_code;
+    }
 
     public String getCashrule() {
         return cashrule;

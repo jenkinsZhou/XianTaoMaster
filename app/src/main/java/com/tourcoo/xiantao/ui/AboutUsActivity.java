@@ -150,10 +150,11 @@ public class AboutUsActivity extends BaseTourCooTitleActivity implements View.On
     }
 
 
-    private boolean needUpdate(String versionInfo) {
-        TourCooLogUtil.i(TAG, TAG + "后台的版本号:" + versionInfo);
-        TourCooLogUtil.i(TAG, TAG + "本地的版本号:" + TourCooUtil.getVersionName(mContext));
-        return !TourCooUtil.getVersionName(mContext).equalsIgnoreCase(versionInfo);
+    private boolean needUpdate(int versionCode) {
+        TourCooLogUtil.i(TAG, TAG + "后台的版本号:" + versionCode);
+        int localVersionCode = TourCooUtil.getVersionCode(mContext);
+        TourCooLogUtil.i(TAG, TAG + "本地的版本号:" + localVersionCode);
+        return localVersionCode < versionCode;
     }
 
     private boolean isForce(int code) {
@@ -212,8 +213,6 @@ public class AboutUsActivity extends BaseTourCooTitleActivity implements View.On
     }
 
 
-
-
     /**
      * 获取系统相关信息
      */
@@ -229,11 +228,11 @@ public class AboutUsActivity extends BaseTourCooTitleActivity implements View.On
                                     phone = settingEntity.getKefu();
                                     showPhone(phone);
                                     boolean needUpdate;
-                                    if (TextUtils.isEmpty(settingEntity.getAndroid_version())) {
+                                    if (settingEntity.getAndroid_version_code() == 0 || TextUtils.isEmpty(settingEntity.getAndroid_version())) {
                                         ToastUtil.show("当前已是最新版本");
                                         return;
                                     }
-                                    needUpdate = needUpdate(settingEntity.getAndroid_version());
+                                    needUpdate = needUpdate(settingEntity.getAndroid_version_code());
                                     boolean isForce = isForce(settingEntity.getAndroid_update());
                                     if (needUpdate) {
                                         updateVersion(mContext, settingEntity.getAndroid_download(), settingEntity.getAndroid_info(), isForce);

@@ -336,7 +336,7 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
                                     SharedPreferencesUtil.put(PREF_TEL_PHONE_KEY, phone);
                                     SharedPreferencesUtil.put(PREF_ADDRESS_KEY, settingEntity.getAddress());
                                     companyInfo = settingEntity.getCompany();
-                                    boolean needUpdate = needUpdate(settingEntity.getAndroid_version());
+                                    boolean needUpdate = needUpdate(settingEntity.getAndroid_version_code());
                                     boolean isForce = isForce(settingEntity.getAndroid_update());
                                     if (needUpdate) {
                                         updateVersion(mContext, settingEntity.getAndroid_download(), settingEntity.getAndroid_info(), isForce);
@@ -351,10 +351,11 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
     }
 
 
-    private boolean needUpdate(String versionInfo) {
-        TourCooLogUtil.i(TAG, TAG + "后台的版本号:" + versionInfo);
-        TourCooLogUtil.i(TAG, TAG + "本地的版本号:" + TourCooUtil.getVersionName(mContext));
-        return !TourCooUtil.getVersionName(mContext).equalsIgnoreCase(versionInfo);
+    private boolean needUpdate(int versionCode) {
+        TourCooLogUtil.i(TAG, TAG + "后台的版本号:" + versionCode);
+        int localVersionCode = TourCooUtil.getVersionCode(mContext);
+        TourCooLogUtil.i(TAG, TAG + "本地的版本号:" + localVersionCode);
+        return localVersionCode < versionCode;
     }
 
     private boolean isForce(int code) {
