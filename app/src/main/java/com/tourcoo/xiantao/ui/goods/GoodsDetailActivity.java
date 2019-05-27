@@ -990,8 +990,10 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                             ToastUtil.showSuccess(entity.msg);
                             if (entity.code == CODE_REQUEST_SUCCESS) {
                                 showNoCollect();
+                                setResult(RESULT_OK);
                             } else {
                                 showCollect();
+                                setResult(RESULT_OK);
                             }
                         }
                     }
