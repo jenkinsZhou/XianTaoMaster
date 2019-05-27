@@ -188,8 +188,13 @@ public class MyCoinListActivity extends BaseTourCooRefreshLoadActivity<CoinDetai
 
 
     private void showExchangeDialog() {
+        int result = computeExchange(mCoinHistory.getAg());
+        String msg = "是否将银币全部兑换为金币？";
+        if (result > 0) {
+            msg = "您当前可以兑换" + result + "金币," + msg;
+        }
         ConfirmDialog.Builder builder = new ConfirmDialog.Builder(mContext);
-        builder.setTitle("兑换金币").setFirstMessage("是否将银币全部兑换为金币？")
+        builder.setTitle("兑换金币").setFirstMessage(msg).setMessageGravity(Gravity.LEFT)
                 .setFirstMsgSize(15).setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -208,5 +213,19 @@ public class MyCoinListActivity extends BaseTourCooRefreshLoadActivity<CoinDetai
     @Override
     public boolean isRefreshEnable() {
         return false;
+    }
+
+    /**
+     * 计算银币转换金币数量
+     *
+     * @param agAmout
+     * @return
+     */
+    private int computeExchange(double agAmout) {
+        // 银币/系数
+        if (mCoinHistory == null || mCoinHistory.getCoin() == 0) {
+            return 0;
+        }
+        return (int) (agAmout / mCoinHistory.getCoin());
     }
 }
