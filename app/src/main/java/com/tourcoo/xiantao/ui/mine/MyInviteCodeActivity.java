@@ -165,7 +165,7 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity implements Vi
                                 mTitleBar.getTextView(Gravity.RIGHT).setVisibility(View.VISIBLE);
                                 mContent = "https://wap.ahxtao.com/#/register?invite=" + entity.data;
                                 TourCooLogUtil.i(TAG, TAG + "链接:" + mContent);
-                                generateQrcodeAndDisplay(mContent);
+                                generateQrcodeAndDisplay(mContent, false);
                             } else {
                                 mStatusLayoutManager.showErrorLayout();
                                 tvErrorContent.setText(TourCooUtil.getNotNullValue(entity.msg));
@@ -242,7 +242,7 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity implements Vi
     /**
      * 生成二维码并显示
      */
-    private Bitmap generateQrcodeAndDisplay(String content) {
+    private Bitmap generateQrcodeAndDisplay(String content, boolean isAddLogo) {
         int width = SizeUtil.dp2px(120);
         int height = SizeUtil.dp2px(120);
         if (TextUtils.isEmpty(content)) {
@@ -250,10 +250,17 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity implements Vi
         }
         String error_correction_level = getResources().getStringArray(R.array.spinarr_error_correction)[2];
         String margin = getResources().getStringArray(R.array.spinarr_margin)[0];
-        Bitmap logoBitmap = ImageUtils.drawable2Bitmap(TourCooUtil.getDrawable(R.mipmap.icon_share_weixin));
-        Bitmap qrcode_bitmap = QRCodeUtil.createQRCodeBitmap(content, width, height, "UTF-8",
-                error_correction_level, margin, Color.BLACK, Color.WHITE, logoBitmap, 0.2F, null);
-        ivQrCode.setImageBitmap(qrcode_bitmap);
+        Bitmap qrcode_bitmap;
+        if (isAddLogo) {
+            Bitmap logoBitmap = ImageUtils.drawable2Bitmap(TourCooUtil.getDrawable(R.mipmap.icon_share_weixin));
+            qrcode_bitmap = QRCodeUtil.createQRCodeBitmap(content, width, height, "UTF-8",
+                    error_correction_level, margin, Color.BLACK, Color.WHITE, logoBitmap, 0.2F, null);
+            ivQrCode.setImageBitmap(qrcode_bitmap);
+        } else {
+            qrcode_bitmap = QRCodeUtil.createQRCodeBitmap(content, width, height, "UTF-8",
+                    error_correction_level, margin, Color.BLACK, Color.WHITE, null, 0.2F, null);
+            ivQrCode.setImageBitmap(qrcode_bitmap);
+        }
         return qrcode_bitmap;
     }
 
@@ -265,7 +272,7 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity implements Vi
             return;
         }
         WXImageObject wxImageObject = new WXImageObject();
-        Bitmap qrCodeBitmap = generateQrcodeAndDisplay(mContent);
+        Bitmap qrCodeBitmap = generateQrcodeWithLogo(mContent);
         // 如果没有位图，可以传null，会显示默认的图片
         if (qrCodeBitmap != null) {
             int width = qrCodeBitmap.getWidth();
@@ -325,7 +332,7 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity implements Vi
             public void onWxClick() {
 //                doShare(true);
                 sharePopupWindow.dismiss();
-                Bitmap bitmap = generateQrcodeAndDisplay(mContent);
+                Bitmap bitmap = generateQrcodeWithLogo(mContent);
                 if (bitmap == null) {
                     return;
                 }
@@ -336,7 +343,7 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity implements Vi
             public void onWxFriendClick() {
                 sharePopupWindow.dismiss();
 //                doShare(false);
-                Bitmap bitmap = generateQrcodeAndDisplay(mContent);
+                Bitmap bitmap = generateQrcodeWithLogo(mContent);
                 if (bitmap == null) {
                     return;
                 }
@@ -364,7 +371,7 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity implements Vi
                     return;
                 }
                 try {
-                    Bitmap bitmap = generateQrcodeAndDisplay(mContent);
+                    Bitmap bitmap = generateQrcodeWithLogo(mContent);
                     String time = "邀请码" + System.currentTimeMillis();
                     saveBmp2Gallery(bitmap, time);
                 } catch (Exception e) {
@@ -404,7 +411,7 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity implements Vi
             // 获得输出流，如果文件中有内容，追加内容
             outStream = new FileOutputStream(fileName);
             if (null != outStream) {
-                bmp.compress(Bitmap.CompressFormat.JPEG, 90, outStream);
+                bmp.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
             }
         } catch (Exception e) {
             e.getStackTrace();
@@ -425,6 +432,25 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity implements Vi
         intent.setData(uri);
         mContext.sendBroadcast(intent);
         ToastUtil.showSuccess("图片保存成功");
+    }
+
+
+    /**
+     * 生成二维码并显示
+     */
+    private Bitmap generateQrcodeWithLogo(String content) {
+        int width = SizeUtil.dp2px(120);
+        int height = SizeUtil.dp2px(120);
+        if (TextUtils.isEmpty(content)) {
+            return null;
+        }
+        String error_correction_level = getResources().getStringArray(R.array.spinarr_error_correction)[2];
+        String margin = getResources().getStringArray(R.array.spinarr_margin)[0];
+        Bitmap qrcode_bitmap;
+        Bitmap logoBitmap = ImageUtils.drawable2Bitmap(TourCooUtil.getDrawable(R.mipmap.icon_share_weixin));
+        qrcode_bitmap = QRCodeUtil.createQRCodeBitmap(content, width, height, "UTF-8",
+                error_correction_level, margin, Color.BLACK, Color.WHITE, logoBitmap, 0.2F, null);
+        return qrcode_bitmap;
     }
 
 }

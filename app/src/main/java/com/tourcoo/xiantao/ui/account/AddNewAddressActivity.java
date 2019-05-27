@@ -34,6 +34,9 @@ import java.util.List;
  * @Email: 971613168@qq.com
  */
 public class AddNewAddressActivity extends BaseTourCooTitleActivity implements View.OnClickListener {
+    private static final String DEFAULT_PROVINCE = "安徽";
+    private static final String DEFAULT_CITY = "芜湖";
+    private static final String DEFAULT_RIGION = "无为";
     private List<AddressPickerBean> options1Items = new ArrayList<>();
     private ArrayList<ArrayList<String>> options2Items = new ArrayList<>();
     private ArrayList<ArrayList<ArrayList<String>>> options3Items = new ArrayList<>();
@@ -43,6 +46,9 @@ public class AddNewAddressActivity extends BaseTourCooTitleActivity implements V
     private EditText edAddressDetail;
     private OptionsPickerView pvOptions;
     private String region;
+    private int defaultPositionProvince = -1;
+    private int defaultPositionCity = -1;
+    private int defaultPositionRegion = -1;
     public static final int RESULT_SUCCESS_ADDRESS = 2;
 
     @Override
@@ -59,6 +65,7 @@ public class AddNewAddressActivity extends BaseTourCooTitleActivity implements V
         tvSelectAddress.setOnClickListener(this);
         findViewById(R.id.tvSaveAddress).setOnClickListener(this);
         loadAddress();
+        TourCooLogUtil.i(TAG, TAG + "安徽省的位置:" + defaultPositionProvince + "-" + defaultPositionCity + "-" + defaultPositionRegion);
         initPickerView();
     }
 
@@ -71,6 +78,7 @@ public class AddNewAddressActivity extends BaseTourCooTitleActivity implements V
     /**
      * 弹出选择器
      */
+    @SuppressWarnings("unchecked")
     private void initPickerView() {
         pvOptions = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
             @Override
@@ -107,7 +115,7 @@ public class AddNewAddressActivity extends BaseTourCooTitleActivity implements V
         pvOptions.setPicker(options1Items, options2Items);//二级选择器*/
         //三级选择器
         pvOptions.setPicker(options1Items, options2Items, options3Items);
-
+        pvOptions.setSelectOptions(11,1,7);
     }
 
 
@@ -151,7 +159,8 @@ public class AddNewAddressActivity extends BaseTourCooTitleActivity implements V
                     city_AreaList.addAll(jsonBean.get(i).getCityList().get(c).getArea());
                 }*/
                 city_AreaList.addAll(addressPickerBeans.get(i).getCityList().get(c).getArea());
-                province_AreaList.add(city_AreaList);//添加该省所有地区数据
+                //添加该省所有地区数据
+                province_AreaList.add(city_AreaList);
             }
 
             /**

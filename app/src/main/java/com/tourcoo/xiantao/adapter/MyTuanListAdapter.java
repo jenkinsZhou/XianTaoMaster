@@ -157,11 +157,11 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
                 LogUtils.e(position, time);
                 //已经过了截止时间 或者已支付    订单状态 ---> 已完成
                 if (time <= 0) {
-                    holder.ivStatus.setImageResource(R.mipmap.ic_completed);
+                    holder.ivStatus.setImageResource(R.mipmap.ic_end);
                     holder.tvEndTime.setVisibility(View.GONE);
                     holder.tvTuanStatus.setText("拼团已结束");
                     holder.btnClick.setVisibility(View.GONE);
-                    if(mDatas.get(position).getUser_status() == 0){
+                    if (mDatas.get(position).getUser_status() == 0) {
                         holder.btnPay.setVisibility(View.VISIBLE);
                         holder.btnPay.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -171,7 +171,7 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
                                 }
                             }
                         });
-                    }else {
+                    } else {
                         holder.btnPay.setVisibility(View.GONE);
                     }
 

@@ -263,7 +263,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text=""
-                            android:gravity="right"
+                            android:gravity="left"
                             android:textColor="#ff999999"
                             android:textSize="@dimen/sp_13" />
 
@@ -288,7 +288,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:gravity="right"
+                            android:gravity="left"
                             android:text="无备注"
                             android:textColor="#ff999999"
                             android:textSize="@dimen/sp_13" />
