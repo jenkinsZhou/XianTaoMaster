@@ -31,10 +31,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:ellipsize="end"
-                android:maxEms="7"
                 android:maxLines="1"
                 android:text="0.0"
+                android:ellipsize="end"
+                android:maxEms="16"
                 android:textColor="@color/whiteCommon"
                 android:textSize="@dimen/sp_38" />
 
@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:ellipsize="end"
-                android:maxEms="7"
+                android:maxEms="8"
                 android:maxLines="1"
                 android:text="0.0"
                 android:textColor="@color/whiteCommon"

@@ -46,7 +46,7 @@ public class OrderGoodsDetailAdapter extends BaseQuickAdapter<OrderDetailEntity.
             helper.setVisible(R.id.llGoodsLabel, true);
             helper.setText(R.id.tvGoodsLabel, goods.getGoods_attr());
         }
-        if(isPin){
+       /* if(isPin){
             if (goods.getTuan_rule() != null) {
                 Gson gson = new Gson();
                 TuanRule tuanRule = gson.fromJson(goods.getTuan_rule().toString(), TuanRule.class);
@@ -56,7 +56,7 @@ public class OrderGoodsDetailAdapter extends BaseQuickAdapter<OrderDetailEntity.
                     helper.setText(R.id.tvGoodsLabel, tuanRule.getName());
                 }
             }
-        }
+        }*/
 
         GlideManager.loadImg(goods.getImage(), civGoodsIcon);
     }

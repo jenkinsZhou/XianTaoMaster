@@ -541,6 +541,7 @@
                         android:id="@+id/rlDiscount"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/dp_50"
+                        android:visibility="gone"
                         android:background="@color/whiteCommon"
                         android:orientation="horizontal">
 

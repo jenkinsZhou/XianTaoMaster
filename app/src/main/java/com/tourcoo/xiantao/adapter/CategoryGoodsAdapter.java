@@ -33,6 +33,7 @@ public class CategoryGoodsAdapter extends BaseQuickAdapter<GoodsCategoryBean.Goo
         } else {
             helper.setVisible(R.id.llGoodsLabel, false);
         }
-        helper.setText(R.id.tvGoodsPrice, "¥" + simpleInfo.getGoods_min_price());
+        helper.setText(R.id.tvGoodsPrice, "¥ " + simpleInfo.getGoods_min_price());
     }
+
 }
