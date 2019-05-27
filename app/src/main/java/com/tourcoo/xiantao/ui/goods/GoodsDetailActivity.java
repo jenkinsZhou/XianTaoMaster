@@ -198,7 +198,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
     private LinearLayout llDeductRule;
     private TextView tvExplainDiscount;
-//    private FloatingActionButton mFloatingActionButton;
+    //    private FloatingActionButton mFloatingActionButton;
     private ObservableScrollView mObservableScrollView;
 
     private CircleImageView civReturnTop;
@@ -967,8 +967,9 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                         if (entity != null) {
                             ToastUtil.showSuccess(entity.msg);
                             if (entity.code == CODE_REQUEST_SUCCESS) {
-                                showCollect();
+                                setResult(RESULT_OK);
                             } else {
+                                setResult(RESULT_OK);
                                 showNoCollect();
                             }
                         }
@@ -1034,7 +1035,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     @Override
     protected void onDestroy() {
         cancelAllTimers();
-        if(api != null){
+        if (api != null) {
             api.detach();
         }
         super.onDestroy();
@@ -1292,13 +1293,6 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         llComanyInfo.setVisibility(View.VISIBLE);
         companyWebView.setVisibility(View.VISIBLE);
         imageFillWidth(companyWebView, info);
-    }
-
-
-    @Override
-    public void finish() {
-        setResult(RESULT_OK);
-        super.finish();
     }
 
 

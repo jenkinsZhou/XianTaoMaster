@@ -65,7 +65,6 @@ public class AddNewAddressActivity extends BaseTourCooTitleActivity implements V
         tvSelectAddress.setOnClickListener(this);
         findViewById(R.id.tvSaveAddress).setOnClickListener(this);
         loadAddress();
-        TourCooLogUtil.i(TAG, TAG + "安徽省的位置:" + defaultPositionProvince + "-" + defaultPositionCity + "-" + defaultPositionRegion);
         initPickerView();
     }
 
@@ -115,7 +114,12 @@ public class AddNewAddressActivity extends BaseTourCooTitleActivity implements V
         pvOptions.setPicker(options1Items, options2Items);//二级选择器*/
         //三级选择器
         pvOptions.setPicker(options1Items, options2Items, options3Items);
-        pvOptions.setSelectOptions(11,1,7);
+        try {
+            pvOptions.setSelectOptions(11, 1, 7);
+        } catch (Exception e) {
+            TourCooLogUtil.e(TAG, TAG + "异常:" + e.toString());
+        }
+
     }
 
 

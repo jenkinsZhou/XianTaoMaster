@@ -509,6 +509,7 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
             tvRemark.setText("无备注信息");
         } else {
             tvRemark.setText(TourCooUtil.getNotNullValue(orderBean.getRemark()));
+
         }
     }
 

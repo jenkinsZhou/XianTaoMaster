@@ -92,12 +92,14 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/dp_5"
+                        android:paddingBottom="@dimen/dp_5"
                         android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/tvGoodsTypeCount"
                             android:layout_width="0dp"
-                            android:layout_height="@dimen/dp_30"
+                            android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             android:paddingLeft="@dimen/dp_17"
                             android:paddingRight="@dimen/dp_17"
@@ -109,7 +111,7 @@
                         <TextView
                             android:id="@+id/tvReturnStatus"
                             android:layout_width="0dp"
-                            android:layout_height="@dimen/dp_30"
+                            android:layout_height="wrap_content"
                             android:gravity="center_vertical|right"
                             android:paddingLeft="@dimen/dp_17"
                             android:paddingRight="@dimen/dp_17"
@@ -336,7 +338,7 @@
 
                         <TextView
                             android:layout_width="0dp"
-                            android:layout_height="@dimen/dp_30"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center_vertical"
                             android:text="配送日期"
@@ -360,7 +362,7 @@
 
                         <TextView
                             android:layout_width="0dp"
-                            android:layout_height="@dimen/dp_30"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center_vertical"
                             android:text="发票信息"
@@ -432,11 +434,12 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_10"
                         android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="0dp"
-                            android:layout_height="@dimen/dp_30"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center_vertical"
                             android:text="订单编号："
@@ -456,11 +459,12 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_10"
                         android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="0dp"
-                            android:layout_height="@dimen/dp_30"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center_vertical"
                             android:text="创建时间："
@@ -479,14 +483,15 @@
 
                     <!--退单处理结果-->
                     <LinearLayout
-                        android:visibility="gone"
+                        android:visibility="visible"
+                        android:layout_marginTop="@dimen/dp_10"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="0dp"
-                            android:layout_height="@dimen/dp_30"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center_vertical"
                             android:text="订单处理："
@@ -504,6 +509,7 @@
 
                         <!--实际退回金额-->
                     <LinearLayout
+                        android:layout_marginTop="@dimen/dp_10"
                         android:id="@+id/llRealReturnMoney"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -511,7 +517,7 @@
 
                         <TextView
                             android:layout_width="0dp"
-                            android:layout_height="@dimen/dp_30"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center_vertical"
                             android:text="实际退回金额："
@@ -530,7 +536,7 @@
 
                     <!--实际退回金币-->
                     <LinearLayout
-
+                        android:layout_marginTop="@dimen/dp_10"
                         android:id="@+id/llRealReturnCoin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -538,7 +544,7 @@
 
                         <TextView
                             android:layout_width="0dp"
-                            android:layout_height="@dimen/dp_30"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center_vertical"
                             android:text="实际退回金币："
@@ -555,6 +561,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:layout_marginTop="@dimen/dp_10"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
@@ -603,7 +610,7 @@
             <TextView
                 android:id="@+id/tvReturn"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/dp_30"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/selector_bg_radius_15_gray_hollow"
                 android:gravity="center"
@@ -614,7 +621,7 @@
             <TextView
                 android:id="@+id/tvLookExpress"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/dp_30"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dp_10"
                 android:layout_weight="1"
                 android:background="@drawable/selector_bg_radius_15_gray_hollow"
@@ -627,7 +634,7 @@
             <TextView
                 android:id="@+id/tvLookComment"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/dp_30"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dp_10"
                 android:layout_weight="1"
                 android:background="@drawable/selector_bg_radius_15_gray_hollow"
@@ -640,7 +647,7 @@
             <TextView
                 android:id="@+id/tvCancelReturn"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/dp_30"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dp_10"
                 android:layout_weight="1"
                 android:background="@drawable/selector_bg_radius_15_gray_hollow"
@@ -653,7 +660,7 @@
             <TextView
                 android:id="@+id/tvCancelOrder"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/dp_30"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dp_10"
                 android:layout_weight="1"
                 android:background="@drawable/selector_bg_radius_15_gray_hollow"
@@ -665,7 +672,7 @@
             <TextView
                 android:id="@+id/tvPayNow"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/dp_30"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dp_10"
                 android:layout_weight="1"
                 android:background="@drawable/selector_bg_radius_15_gray_hollow"
@@ -677,7 +684,7 @@
             <TextView
                 android:id="@+id/tvConfirmReceive"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/dp_30"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dp_10"
                 android:layout_weight="1"
                 android:background="@drawable/selector_bg_radius_15_gray_hollow"
@@ -690,7 +697,7 @@
             <TextView
                 android:id="@+id/tvCommentNow"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/dp_30"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dp_10"
                 android:layout_weight="1"
                 android:background="@drawable/selector_bg_radius_15_gray_hollow"
