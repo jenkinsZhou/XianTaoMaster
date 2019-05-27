@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
-import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -43,7 +42,6 @@ import com.tourcoo.xiantao.core.log.widget.utils.DateUtil;
 import com.tourcoo.xiantao.core.threadpool.ThreadPoolManager;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
-import com.tourcoo.xiantao.core.widget.core.view.navigation.KeyboardHelper;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.entity.BaseEntity;
@@ -90,7 +88,6 @@ import static com.tourcoo.xiantao.constant.WxConfig.WEI_XIN_PAY_TAG_NORMAL;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_FAILED;
 import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_SUCCESS;
-import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.NOT_USE_COIN;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.PAY_STATUS;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.PAY_STATUS_SUCCESS;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SDK_PAY_FLAG;
@@ -106,7 +103,7 @@ import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
  * @date 2019年05月07日10:14
  * @Email: 971613168@qq.com
  */
-public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity implements View.OnClickListener {
+public class ReturnGoodsDetailActivity extends BaseTourCooTitleMultiViewActivity implements View.OnClickListener {
 
     private static final int REQUEST_CODE_EVALUATE = 1001;
     public static final int REQUEST_CODE_RETURN_GOODS = 1002;
@@ -118,7 +115,7 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
     public static final String EXTRA_PIN_TAG = "EXTRA_PIN_TAG";
     private RecyclerView goodsOrderRecyclerView;
     private OrderDetailEntity mOrderEntity;
-    private PaymentHandler paymentHandler = new PaymentHandler(ReturnDetailActivity.this);
+    private PaymentHandler paymentHandler = new PaymentHandler(ReturnGoodsDetailActivity.this);
     private int mPayType;
     /**
      * 是否是拼团订单
@@ -1020,9 +1017,9 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
 
     @SuppressWarnings("unchecked")
     private static class PaymentHandler extends Handler {
-        private WeakReference<ReturnDetailActivity> softReference;
+        private WeakReference<ReturnGoodsDetailActivity> softReference;
 
-        public PaymentHandler(ReturnDetailActivity activity) {
+        public PaymentHandler(ReturnGoodsDetailActivity activity) {
             softReference = new WeakReference<>(activity);
         }
 
@@ -1149,10 +1146,10 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
         tvReturnResult.setText(TourCooUtil.getNotNullValue(returnInfo.getStatus_text()));
         //实际返回金额
         TourCooLogUtil.i(TAG, TAG + "实际退款金额:" + returnInfo.getPrice());
-        String realReturrnMoney = "¥" + TourCooUtil.doubleTransString(returnInfo.getPrice());
+        String realReturrnMoney = "¥ " + TourCooUtil.doubleTransString(returnInfo.getPrice());
         tvRealReturnMoney.setText(realReturrnMoney);
         //实际返回金币
-        tvRealReturnCoin.setText(TourCooUtil.doubleTransString(returnInfo.getCoin()));
+        tvRealReturnCoin.setText(TourCooUtil.doubleTransStringZhen(returnInfo.getCoin()));
         if (returnInfo.getReply() == null || TextUtils.isEmpty(returnInfo.getReply().toString())) {
             tvReply.setText("无回复");
         } else {
@@ -1176,7 +1173,7 @@ public class ReturnDetailActivity extends BaseTourCooTitleMultiViewActivity impl
 //                    onThumbnailClick(view, gridImageAdapter.getData().get(position));
                     List<ImageEntity> imageEntityList = parseImageEntityList(gridImageAdapter.getData());
                     computeBoundsBackward(rvReturnGoods, imageEntityList);
-                    GPreviewBuilder.from(ReturnDetailActivity.this)
+                    GPreviewBuilder.from(ReturnGoodsDetailActivity.this)
                             .setData(imageEntityList)
                             .setCurrentIndex(position)
                             .setSingleFling(true)

@@ -389,7 +389,6 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         goodsOrderRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mSettleEntity = (SettleEntity) getIntent().getSerializableExtra(EXTRA_SETTLE);
         EventBus.getDefault().register(this);
-        loadCoinSwitchAndPrice();
         initTimePicker();
         listenCoinSwitch();
         requestPermission();
@@ -450,7 +449,6 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         //显示配送地址
         showAddressInfo(settleEntity.getExist_address());
         listenCoinSwitch();
-        loadCoinSwitchAndPrice();
         //商品数量
       /*  int goodsAmount = 0;
         for (Goods goods : goodsList) {
@@ -463,26 +461,26 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         String amount = "共" + mGoodsAdapter.getData().size() + "件商品";
         tvGoodsTypeCount.setText(amount);
         //配送费
-        tvExpressPrice.setText("¥" + TourCooUtil.doubleTransString(settleEntity.getExpress_price()));
-        tvTotalPrice.setText("¥" + TourCooUtil.doubleTransString(settleEntity.getOrder_total_price()));
+        tvExpressPrice.setText("¥ " + TourCooUtil.doubleTransString(settleEntity.getExpress_price()));
+        tvTotalPrice.setText("¥ " + TourCooUtil.doubleTransString(settleEntity.getOrder_total_price()));
         double shouldPrice;
         boolean userCoin = settleEntity.getCoin() > 0;
         if (userCoin) {
             //有积分
             shouldPrice = settleEntity.getOrder_pay_price() + settleEntity.getCoin();
-            String value = "¥" + TourCooUtil.doubleTrans(shouldPrice);
+            String value = "¥ " + TourCooUtil.doubleTrans(shouldPrice);
             tvOrderPrice.setText(value);
             recordPrice = shouldPrice;
         } else {
             //没有积分
-            tvOrderPrice.setText("¥" + TourCooUtil.doubleTransString(settleEntity.getOrder_pay_price()));
+            tvOrderPrice.setText("¥ " + TourCooUtil.doubleTransString(settleEntity.getOrder_pay_price()));
             recordPrice = settleEntity.getOrder_pay_price();
         }
         payMoney = TourCooUtil.minusDouble(settleEntity.getOrder_pay_price(), minusMoney);
         if (payMoney <= MIN_PAY_MONEY) {
             payMoney = MIN_PAY_MONEY;
         }
-        String payMonty = "¥" + formateMoney(payMoney);
+        String payMonty = "¥ " + formateMoney(payMoney);
         //底部应支付金额
         tvPayPrice.setText(payMonty);
         //显示金币
@@ -496,10 +494,10 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             }
         }
         double orderPrice = computeOrderMoney(settleEntity);
-        String orderPriceValue = "¥" + TourCooUtil.doubleTransString(orderPrice);
+        String orderPriceValue = "¥ " + TourCooUtil.doubleTransString(orderPrice);
         //实际支付价格
         double payPrice = computePayMoney(settleEntity);
-        String payPriceValue = "¥" + TourCooUtil.doubleTransString(payPrice);
+        String payPriceValue = "¥ " + TourCooUtil.doubleTransString(payPrice);
         tvOrderPrice.setText(orderPriceValue);
         tvPayPrice.setText(payPriceValue);
         double discountMoney = computeDiscountPrice(mDiscountInfoList);
@@ -507,7 +505,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             llDiscountMinus.setVisibility(View.GONE);
         } else {
             llDiscountMinus.setVisibility(View.VISIBLE);
-            String discountPrice = "¥" + TourCooUtil.doubleTransString(discountMoney);
+            String discountPrice = "¥ " + TourCooUtil.doubleTransString(discountMoney);
             tvDiscountMinus.setText(discountPrice);
         }
         payMoney = payPrice;
@@ -528,15 +526,14 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         mGoodsAdapter.setNewData(goodsList);
         //显示配送地址
         showAddressInfo(settleEntity.getExist_address());
-        loadCoinSwitchAndPrice();
         //商品数量
         //todo 暂时要求显示商品种类数量
 //        String amount = "共" + settleEntity.getOrder_total_num() + "件商品";
         String amount = "共" + mGoodsAdapter.getData().size() + "件商品";
         tvGoodsTypeCount.setText(amount);
         //配送费
-        tvExpressPrice.setText("¥" + TourCooUtil.doubleTransString(settleEntity.getExpress_price()));
-        tvTotalPrice.setText("¥" + TourCooUtil.doubleTransString(settleEntity.getOrder_total_price()));
+        tvExpressPrice.setText("¥ " + TourCooUtil.doubleTransString(settleEntity.getExpress_price()));
+        tvTotalPrice.setText("¥ " + TourCooUtil.doubleTransString(settleEntity.getOrder_total_price()));
         if (TextUtils.isEmpty(settleEntity.getRemark())) {
             etRemark.setText("无备注");
         } else {
@@ -551,19 +548,19 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         if (userCoin) {
             //有积分
             shouldPrice = settleEntity.getOrder_pay_price() + settleEntity.getCoin();
-            String value = "¥" + TourCooUtil.doubleTrans(shouldPrice);
+            String value = "¥ " + TourCooUtil.doubleTrans(shouldPrice);
             tvOrderPrice.setText(value);
             recordPrice = shouldPrice;
         } else {
             //没有积分
-            tvOrderPrice.setText("¥" + TourCooUtil.doubleTransString(settleEntity.getOrder_pay_price()));
+            tvOrderPrice.setText("¥ " + TourCooUtil.doubleTransString(settleEntity.getOrder_pay_price()));
             recordPrice = settleEntity.getOrder_pay_price();
         }
         payMoney = settleEntity.getOrder_pay_price() - minusMoney;
         if (payMoney <= MIN_PAY_MONEY) {
             payMoney = MIN_PAY_MONEY;
         }
-        String payMonty = "¥" + TourCooUtil.doubleTransString(payMoney);
+        String payMonty = "¥ " + TourCooUtil.doubleTransString(payMoney);
         //底部应支付金额
         tvPayPrice.setText(payMonty);
         //显示金币
@@ -635,7 +632,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             setVisible(llUseCoin, false);
         } else {
             setVisible(llUseCoin, true);
-            String ducuteCoin = "可抵现¥" + TourCooUtil.doubleTransString(settleEntity.getCoin());
+            String ducuteCoin = "可抵现¥ " + TourCooUtil.doubleTransString(settleEntity.getCoin());
             tvCoinAmount.setText(ducuteCoin);
         }
         if (settleEntity.getCoin_status() == NOT_USE_COIN) {
@@ -659,40 +656,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     }
 
 
-    private void loadCoinSwitchAndPrice() {
-        if (mSettleEntity == null) {
-            TourCooLogUtil.e(TAG, TAG + "订单结算实体为空");
-            return;
-        }
-        /*switchUseCoin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    //使用抵扣
-                    mSettleEntity.setCoin_status(USE_COIN);
-                    double price = mSettleEntity.getOrder_total_price() + mSettleEntity.getExpress_price();
-                    TourCooLogUtil.d(TAG, TAG + "运费金额:" + mSettleEntity.getExpress_price());
-                    TourCooLogUtil.d(TAG, TAG + "运费金额:" + mSettleEntity.getOrder_total_price());
-                    String shouldPrice = "¥" + TourCooUtil.doubleTrans(price);
-                    tvShouldPayPrice.setText(shouldPrice);
-                    payMoney = TourCooUtil.minusDouble(mSettleEntity.getOrder_pay_price(), minusMoney);
-                    recordPrice = mSettleEntity.getOrder_pay_price();
-                } else {
-                    //不使用抵扣
-                    mSettleEntity.setCoin_status(NOT_USE_COIN);
-                    payMoney = mSettleEntity.getOrder_pay_price() + mSettleEntity.getCoin() - minusMoney;
-                    recordPrice = mSettleEntity.getOrder_pay_price() + mSettleEntity.getCoin();
-//                    tvShouldPayPrice.setText("¥" + mSettleEntity.getOrder_total_price() + mSettleEntity.getCoin());
-//                    tvShouldPayPrice.setText("¥" + mSettleEntity.getOrder_total_price());
-                    double price = mSettleEntity.getOrder_total_price() + mSettleEntity.getExpress_price();
-                    TourCooLogUtil.i(TAG, TAG + "运费金额:" + mSettleEntity.getExpress_price());
-                    TourCooLogUtil.i(TAG, TAG + "运费金额:" + mSettleEntity.getOrder_total_price());
-                    String shouldPrice = "¥" + TourCooUtil.doubleTrans(price);
-                    tvShouldPayPrice.setText(shouldPrice);
-                }
-            }
-        });*/
-    }
+
 
     private void listenCoinSwitch() {
         switchUseCoin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -1444,7 +1408,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             double minus = comuterDiscountPrice(discountInfoList);
             minusMoney = minus;
             llDiscountMinus.setVisibility(View.VISIBLE);
-            tvDiscountMinus.setText("-¥" + minus);
+            tvDiscountMinus.setText("-¥ " + minus);
             payMoney = TourCooUtil.minusDouble(recordPrice, minus);
             if (settleEntity.getCoin_status() == 1) {
                 //表示当前使用积分抵扣
@@ -1479,11 +1443,11 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             tvCanUseCount.setVisibility(View.GONE);
             tvSelectDiscount.setVisibility(View.VISIBLE);
             tvSelectDiscount.setTextColor(TourCooUtil.getColor(R.color.whiteCommon));
-            tvSelectDiscount.setText("¥" + settleEntity.getCoupon_worth());
+            tvSelectDiscount.setText("¥ " + settleEntity.getCoupon_worth());
             double minus = settleEntity.getCoupon_worth();
             minusMoney = minus;
             llDiscountMinus.setVisibility(View.VISIBLE);
-            tvDiscountMinus.setText("-¥" + minus);
+            tvDiscountMinus.setText("-¥ " + minus);
             payMoney = TourCooUtil.minusDouble(recordPrice, minus);
             if (payMoney <= MIN_PAY_MONEY) {
                 payMoney = MIN_PAY_MONEY;

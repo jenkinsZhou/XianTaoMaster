@@ -189,7 +189,7 @@
             android:name=".ui.msg.AdvDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.order.ReturnDetailActivity"
+            android:name=".ui.order.ReturnGoodsDetailActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.account.ChangePhoneNumberActivity"

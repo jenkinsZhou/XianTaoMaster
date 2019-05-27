@@ -210,7 +210,7 @@ public class ReturnOrderListActivity extends BaseTourCooRefreshLoadActivity<Orde
     private void skipReturnDetail(int orderId) {
         Intent intent = new Intent();
         intent.putExtra(EXTRA_ORDER_ID, orderId);
-        intent.setClass(mContext, ReturnDetailActivity.class);
+        intent.setClass(mContext, ReturnGoodsDetailActivity.class);
         //跳转至退单详情
         startActivityForResult(intent, REQUEST_CODE_RETURN_DETAIL);
     }

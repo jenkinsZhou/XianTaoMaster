@@ -293,7 +293,7 @@ public class ProductSkuDialog extends Dialog {
                 if (product.getSpecData() != null && type != PING_TUAN) {
 
                     if (scrollSkuList.getSelectedSku() == null) {
-                        String info = tvSkuInfo.getText().toString();
+                        String info = "请"+tvSkuInfo.getText().toString();
                         if (StringUtils.isEmpty(info)) {
                             ToastUtil.showFailed("请选择商品规格");
                         } else {
@@ -341,8 +341,6 @@ public class ProductSkuDialog extends Dialog {
                         callback.onAdded("", quantityInt);
                         dismiss();
                     }
-
-
                 }
             }
         });

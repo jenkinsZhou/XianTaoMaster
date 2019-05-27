@@ -17,10 +17,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.previewlibrary.GPreviewBuilder;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.GridImageAdapter;
-import com.tourcoo.xiantao.core.common.RequestConfig;
-import com.tourcoo.xiantao.core.frame.UiConfigManager;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
-import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.log.widget.utils.DateUtil;
@@ -33,7 +30,6 @@ import com.tourcoo.xiantao.entity.comment.CommentDetail;
 import com.tourcoo.xiantao.entity.comment.CommentEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
-import com.tourcoo.xiantao.ui.order.ReturnDetailActivity;
 import com.tourcoo.xiantao.widget.ratingstar.RatingStarView;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 

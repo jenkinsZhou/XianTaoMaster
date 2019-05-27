@@ -1292,7 +1292,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
 
     private String formateMoney(double money) {
-        return "¥" + TourCooUtil.doubleTransString(money);
+        return "¥ " + TourCooUtil.doubleTransString(money);
     }
 }
 

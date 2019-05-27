@@ -52,8 +52,8 @@ public class DiscountSelectAdapter extends BaseQuickAdapter<DiscountInfo, BaseVi
         helper.setText(R.id.tvDiscountName, name);
         if (discountInfo.getNum() > 1) {
             helper.setText(R.id.tvCanAdd, "[可叠加]");
-        } else {
-            helper.setText(R.id.tvCanAdd, "[不可叠加]");
+        }else {
+            helper.setText(R.id.tvCanAdd, "");
         }
         helper.setText(R.id.tvDiscount, cost);
         helper.setText(R.id.tvDeadLine, "有效期至" + parseDate(discountInfo.getDeadline()));
