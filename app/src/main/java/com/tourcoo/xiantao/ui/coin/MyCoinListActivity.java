@@ -143,7 +143,7 @@ public class MyCoinListActivity extends BaseTourCooRefreshLoadActivity<CoinDetai
             return;
         }
         currentAuAmount = coinHistory.getAg();
-        String au = MoneyUtil.amountConversion(coinHistory.getAu());
+        String au =  TourCooUtil.doubleTransStringZhen(coinHistory.getAu());
         String ag = MoneyUtil.amountConversion(coinHistory.getAg());
         tvCurrentGold.setText(au);
         tvAg.setText(ag);

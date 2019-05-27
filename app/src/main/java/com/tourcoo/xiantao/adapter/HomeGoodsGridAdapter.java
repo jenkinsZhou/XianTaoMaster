@@ -47,7 +47,7 @@ public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsEntity.Goods
             helper.setVisible(R.id.tvGoodsLinePrice, true);
             TextView textView = helper.getView(R.id.tvGoodsLinePrice);
             //中划线
-            textView.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG);
+            textView.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
             textView.getPaint().setAntiAlias(true);
             //抗锯齿
             helper.setText(R.id.tvGoodsLinePrice, "¥ " + TourCooUtil.doubleTransString(item.getGoods_line_price()));
@@ -56,7 +56,9 @@ public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsEntity.Goods
         boolean showLabel = !TextUtils.isEmpty(item.getLabel());
         helper.setGone(R.id.llGoodsLabel, showLabel);
         if (showLabel) {
-            String[] labelArray = item.getLabel().split(",");
+            String label = item.getLabel();
+            String result = label.replaceAll("，", ",");
+            String[] labelArray = result.split(",");
             switch (labelArray.length) {
                 case 0:
                     helper.setGone(R.id.llGoodsLabel, false);

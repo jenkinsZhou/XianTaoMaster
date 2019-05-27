@@ -1182,7 +1182,9 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         if (goodsEntity == null || goodsEntity.getDetail() == null || goodsEntity.getDetail().getLabel() == null) {
             return stringList;
         }
-        String[] labelArray = goodsEntity.getDetail().getLabel().split(",");
+        String label = goodsEntity.getDetail().getLabel();
+        String result = label.replaceAll("，", ",");
+        String[] labelArray = result.split(",");
         for (String s : labelArray) {
             stringList.add(s);
         }
