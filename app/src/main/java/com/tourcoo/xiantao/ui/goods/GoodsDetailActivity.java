@@ -53,6 +53,7 @@ import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
+import com.tourcoo.xiantao.core.frame.util.NetworkUtil;
 import com.tourcoo.xiantao.core.frame.util.SharedPreferencesUtil;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
@@ -119,6 +120,8 @@ import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SETTLE_TYPE
  * @Email: 971613168@qq.com
  */
 public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity implements IMultiStatusView, View.OnClickListener {
+    public static final int REQUSET_CODE_SETTLE = 1016;
+    public static final String EXTRA_SKIP_SETTLE = "EXTRA_SKIP_SETTLE";
     private boolean swiping = false;
     private String companyInfo;
     private LinearLayout llComanyInfo;
@@ -438,6 +441,9 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
      * @param goodsEntity
      */
     private void showGoodsDetail(GoodsEntity goodsEntity) {
+        countDownMap.clear();
+        llTuanContainer.removeAllViews();
+        llCommentContainer.removeAllViews();
         if (goodsEntity == null) {
             mStatusLayoutManager.showErrorLayout();
             return;
@@ -523,9 +529,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             setVisible(rlORigin, false);
         }
 
-        if (detail.isTuan() && detail.getTuan_list() != null && detail.getTuan_list().
-
-                size() > 0) {
+        if (detail.isTuan() && detail.getTuan_list() != null && detail.getTuan_list().size() > 0) {
             tvTuanStatus.setText(detail.getTuan_list().size() + "人正在拼团 可直接参与");
             int size = detail.getTuan_list().size() == 1 ? 1 : 2;
 
@@ -809,6 +813,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         intent.putExtra(EXTRA_GOODS_SKU_ID, skuId);
         intent.setClass(mContext, OrderSettleDetailActivity.class);
         startActivity(intent);
+//        startActivityForResult(intent, REQUSET_CODE_SETTLE);
     }
 
 
@@ -824,7 +829,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         intent.putExtra(EXTRA_PIN_USER_ID, pinId);
         intent.setClass(mContext, OrderSettleDetailActivity.class);
         TourCooLogUtil.i(TAG, "value:" + pinId);
-        startActivity(intent);
+        startActivityForResult(intent, REQUSET_CODE_SETTLE);
     }
 
     @Override
@@ -1166,6 +1171,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             setVisible(labelLayout, false);
             return;
         }
+        labelLayout.removeAllViews();
         setVisible(labelLayout, true);
         LayoutInflater layoutInflater = LayoutInflater.from(this);
         for (int i = 0; i < labelList.size(); i++) {
@@ -1332,6 +1338,58 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                                 ToastUtil.showFailed(entity.msg);
                             }
                         }
+                    }
+                });
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUSET_CODE_SETTLE:
+                if (NetworkUtil.isConnected(mContext)) {
+                    if (mGoodsId < 0) {
+                        return;
+                    }
+                    refreshGoodsDetail(mGoodsId);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    /**
+     * 刷新商品详情(重新请求)
+     */
+    private void refreshGoodsDetail(int goodsId) {
+        ApiRepository.getInstance().getGoodsDetail(goodsId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
+                subscribe(new BaseLoadingObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                if (entity.data != null) {
+                                    //显示回调
+                                    mStatusLayoutManager.showSuccessLayout();
+                                    mGoodsEntity = parseGoodsDetail(entity.data);
+                                    showGoodsDetail(mGoodsEntity);
+                                    TourCooLogUtil.i(TAG, mGoodsEntity);
+                                }
+                            } else {
+                                ToastUtil.showFailed(entity.msg);
+                                mStatusLayoutManager.showErrorLayout();
+                                showErrorLayoutMsg(entity.msg);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onRequestError(Throwable e) {
+                        super.onRequestError(e);
+                        mStatusLayoutManager.showErrorLayout();
                     }
                 });
     }

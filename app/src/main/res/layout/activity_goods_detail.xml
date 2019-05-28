@@ -16,7 +16,8 @@
         <LinearLayout
             android:id="@+id/llBottomToolBar"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_50"
+            android:minHeight="@dimen/dp_50"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal">
 
