@@ -556,7 +556,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
                     @Override
                     public void onFinish() {
-                        btnJoinTuan.setText("拼团已截止");
+                        btnJoinTuan.setText("已截止");
                         btnJoinTuan.setEnabled(false);
                     }
                 }.start();
