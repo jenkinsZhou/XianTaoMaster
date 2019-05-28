@@ -43,7 +43,7 @@
         android:drawableLeft="@mipmap/ic_goods_locate"
         android:drawablePadding="@dimen/dp_2"
         android:ellipsize="end"
-        android:maxEms="8"
+        android:maxEms="12"
         android:maxLines="1"
         android:text="产地:越南"
         android:textColor="#999999"
