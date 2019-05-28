@@ -39,6 +39,7 @@ import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.core.widget.dialog.alert.ConfirmDialog;
 import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.event.BaseEvent;
 import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.goods.GoodsDetailEntity;
@@ -66,6 +67,7 @@ import me.bakumon.statuslayoutmanager.library.OnStatusChildClickListener;
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_SUCCESS;
 import static com.tourcoo.xiantao.ui.account.MineFragment.NO_LOGIN;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_SETTLE_TYPE;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_SHOPPING_CAR_SETTLE;
@@ -233,7 +235,24 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
     }
 
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPaySuccessCallback(BaseEvent paySuccessEvent) {
+        //todo 支付成功执行购物车列表刷新
+        if (paySuccessEvent == null) {
+            return;
+        }
+        if(paySuccessEvent.id == EVENT_ACTION_PAY_FRESH_SUCCESS){
+            TourCooLogUtil.i(TAG, "刷新购物车");
+            mMainTabActivity.getTotalNumAndRefreshShoppingCar(true);
+        }
+
+//        refreshShoppingCarNoDialog();
+    }
+
+
+
     @Override
+
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();

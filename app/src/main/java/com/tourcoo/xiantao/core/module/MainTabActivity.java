@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.widget.TextView;
 
@@ -416,7 +417,7 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
     @Override
     public void loadData() {
         super.loadData();
-        requestSystemConfig();
+        requestSystemConfigDelay();
     }
 
 
@@ -439,4 +440,21 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
             return false;
         }
     }
+
+    /**
+     * 延迟请求后台配置信息
+     */
+    private void requestSystemConfigDelay() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!hasPermission()) {
+                    PermissionManager.requestAllNeedPermission(mContext);
+                }
+                requestSystemConfig();
+            }
+        }, 500);
+    }
+
+
 }

@@ -656,8 +656,6 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     }
 
 
-
-
     private void listenCoinSwitch() {
         switchUseCoin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -1083,6 +1081,20 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         });
     }
 
+    private void paySuccessAndskipOrderListNoHandler() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent();
+                intent.setClass(mContext, MyOrderListActivity.class);
+                startActivity(intent);
+                TourCooLogUtil.i(TAG, TAG + ":" + "已经跳转");
+                finish();
+            }
+        }, 100);
+
+    }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPayEvent(BaseEvent event) {
@@ -1091,10 +1103,13 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             return;
         }
         switch (event.id) {
+
             case EVENT_ACTION_PAY_FRESH_SUCCESS:
                 //支付成功 直接跳转到详情
                 if (WxConfig.weiXinPayTag == WEI_XIN_PAY_TAG_NORMAL) {
-                    paySuccessAndskipOrderList();
+                    paySuccessAndskipOrderListNoHandler();
+                } else {
+                    paySuccessAndskipOrderListNoHandler();
                 }
                 break;
             case EVENT_ACTION_PAY_FRESH_FAILED:
@@ -1216,29 +1231,38 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
      * 支付失败 跳转至订单列表 并finish页面
      */
     private void payFailedAndSkipToOrderListAndFinish() {
-        Intent intent = new Intent();
-        //跳转至我的订单 全部列表
-        intent.putExtra(EXTRA_CURRENT_TAB_INDEX, 0);
-        intent.setClass(mContext, MyOrderListActivity.class);
-        startActivity(intent);
-        TourCooLogUtil.i(TAG, TAG + ":" + "已经跳转");
-        finish();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent();
+                //跳转至我的订单 全部列表
+                intent.putExtra(EXTRA_CURRENT_TAB_INDEX, 0);
+                intent.setClass(mContext, MyOrderListActivity.class);
+                startActivity(intent);
+                TourCooLogUtil.i(TAG, TAG + ":" + "已经跳转");
+                finish();
+            }
+        }, 100);
     }
 
 
     private void paySuccessAndSkipToOrderListAndFinish() {
         try {
-            Intent intent = new Intent();
-            //跳转至我的订单 全部列表
-            intent.putExtra(EXTRA_CURRENT_TAB_INDEX, 0);
-            intent.setClass(mContext, MyOrderListActivity.class);
-            startActivity(intent);
-            TourCooLogUtil.i(TAG, TAG + ":" + "已经跳转");
-            finish();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent();
+                    //跳转至我的订单 全部列表
+                    intent.putExtra(EXTRA_CURRENT_TAB_INDEX, 0);
+                    intent.setClass(mContext, MyOrderListActivity.class);
+                    startActivity(intent);
+                    TourCooLogUtil.i(TAG, TAG + ":" + "已经跳转");
+                    finish();
+                }
+            }, 100);
         } catch (Exception e) {
             TourCooLogUtil.e(TAG, TAG + ":" + e.toString());
         }
-
     }
 
     private void doRequestByCondition() {
