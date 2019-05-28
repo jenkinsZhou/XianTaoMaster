@@ -1,13 +1,10 @@
 package com.tourcoo.xiantao.ui.home;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
@@ -16,10 +13,7 @@ import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.home.WebContentInfo;
-import com.tourcoo.xiantao.entity.news.NewsBean;
-import com.tourcoo.xiantao.entity.order.OrderDetailEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
-import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
@@ -29,7 +23,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
-import static com.tourcoo.xiantao.ui.home.HomeFragmentVersion2.EXTRA_PARAM;
+import static com.tourcoo.xiantao.ui.home.HomeFragment.EXTRA_PARAM;
 
 /**
  * @author :JenkinsZhou

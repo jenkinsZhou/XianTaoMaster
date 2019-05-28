@@ -19,7 +19,7 @@ import java.util.List;
 
 import static com.tourcoo.xiantao.ui.goods.ClassifyGoodsFragment.EXTRA_CATEGORY_ID;
 import static com.tourcoo.xiantao.ui.goods.ClassifyGoodsFragment.EXTRA_CATEGORY_NAME;
-import static com.tourcoo.xiantao.ui.home.HomeFragmentVersion2.EXTRA_PARAM;
+import static com.tourcoo.xiantao.ui.home.HomeFragment.EXTRA_PARAM;
 
 /**
  * @author :JenkinsZhou

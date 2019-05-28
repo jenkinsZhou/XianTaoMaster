@@ -24,26 +24,24 @@ import com.tourcoo.xiantao.core.frame.base.activity.BaseMainActivity;
 import com.tourcoo.xiantao.core.frame.delegate.MainTabDelegate;
 import com.tourcoo.xiantao.core.frame.entity.TabEntity;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
-import com.tourcoo.xiantao.core.frame.util.NetworkUtil;
 import com.tourcoo.xiantao.core.frame.util.SharedPreferencesUtil;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.action.BaseUpdateDialog;
+import com.tourcoo.xiantao.core.widget.core.util.SizeUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.SystemSettingEntity;
-import com.tourcoo.xiantao.entity.TokenInfo;
 import com.tourcoo.xiantao.entity.event.TabChangeEvent;
 import com.tourcoo.xiantao.helper.GoodsCount;
 import com.tourcoo.xiantao.helper.ShoppingCar;
 import com.tourcoo.xiantao.permission.PermissionManager;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.ShoppingCarFragmentVersion2;
-import com.tourcoo.xiantao.ui.account.LoginActivity;
 import com.tourcoo.xiantao.ui.account.MineFragment;
 import com.tourcoo.xiantao.ui.goods.ClassifyGoodsFragment;
-import com.tourcoo.xiantao.ui.home.HomeFragmentVersion2;
+import com.tourcoo.xiantao.ui.home.HomeFragment;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -58,7 +56,6 @@ import pub.devrel.easypermissions.EasyPermissions;
 import static com.tourcoo.xiantao.core.common.CommonConstant.companyInfo;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_ADDRESS_KEY;
-import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_COMPANY_INFO;
 import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_PHONE_KEY;
 import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_REGISTER_KEY;
 import static com.tourcoo.xiantao.ui.account.MineFragment.NO_LOGIN;
@@ -79,7 +76,7 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
     private boolean isFirstLoad = true;
     private MineFragment mineFragment;
     private ShoppingCarFragmentVersion2 shoppingCarFragment;
-    private HomeFragmentVersion2 mHomeFragmentVersion2;
+    private HomeFragment mHomeFragment;
     /**
      * 当前购物车中商品数量
      */
@@ -107,8 +104,8 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
         ArrayList<TabEntity> tabEntities = new ArrayList<>();
         mineFragment = MineFragment.newInstance();
         shoppingCarFragment = ShoppingCarFragmentVersion2.newInstance();
-        mHomeFragmentVersion2 = HomeFragmentVersion2.newInstance();
-        tabEntities.add(new TabEntity("首页", R.mipmap.tab_home_normal, R.mipmap.tab_home_selected, mHomeFragmentVersion2));
+        mHomeFragment = HomeFragment.newInstance();
+        tabEntities.add(new TabEntity("首页", R.mipmap.tab_home_normal, R.mipmap.tab_home_selected, mHomeFragment));
         tabEntities.add(new TabEntity("分类", R.mipmap.tab_classification_normal, R.mipmap.tab_classification_selected, ClassifyGoodsFragment.newInstance()));
         tabEntities.add(new TabEntity("购物车", R.mipmap.tab_shopping_cart_normal, R.mipmap.tab_shopping_cart_selected, shoppingCarFragment));
         tabEntities.add(new TabEntity("个人中心", R.mipmap.tab_personal_center_normal, R.mipmap.tab_personal_center_selected, mineFragment));
@@ -221,8 +218,8 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
         //权限已被用户授予 //什么也不做
-        if (mHomeFragmentVersion2 != null) {
-            mHomeFragmentVersion2.requestLocate();
+        if (mHomeFragment != null) {
+            mHomeFragment.requestLocate();
         }
     }
 
@@ -231,31 +228,6 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
         //权限被用户拒绝 则退出软件
         showPermissionDialog("请前往授权管理授权");
     }
-
-    /*   *//**
-     * 校验token是否失效
-     *//*
-    private void checkToken() {
-        ApiRepository.getInstance().checkToken().compose(bindUntilEvent(ActivityEvent.DESTROY)).
-                subscribe(new BaseObserver<BaseEntity<TokenInfo>>() {
-                    @Override
-                    public void onRequestNext(BaseEntity<TokenInfo> entity) {
-                        if (entity != null) {
-                            if (entity.code == CODE_REQUEST_SUCCESS) {
-                                tokenCheckCallBack(entity.data);
-                            }
-                        }
-                    }
-                });
-    }
-*/
-
-    /*private void tokenCheckCallBack(TokenInfo tokenInfo) {
-        if (tokenInfo == null || AccountInfoHelper.getInstance().getUserInfo() == null) {
-        } else {
-            AccountInfoHelper.getInstance().deleteUserAccount();
-        }
-    }*/
 
 
     /**
@@ -302,12 +274,14 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
         }
     }
 
+
     public void showRedDot(int count) {
         if (count <= 0) {
             mTabLayout.hideMsg(2);
         } else {
-            mTabLayout.setMsgMargin(2, -15, 0);
             mTabLayout.showMsg(2, count);
+            int leftPading = -SizeUtil.dp2px(5);
+            mTabLayout.setMsgMargin(2, leftPading, 0);
         }
     }
 
