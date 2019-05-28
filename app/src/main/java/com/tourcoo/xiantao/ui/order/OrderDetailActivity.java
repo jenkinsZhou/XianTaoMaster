@@ -137,6 +137,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private TextView tvOrderNumber;
     private TextView tvCreateTime;
     private TextView tvCoin;
+    private TextView tvPin;
 
     private TextView tvExpressPrice;
     /**
@@ -182,6 +183,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private LinearLayout llDeliveryTime;
     private LinearLayout llUseDiscount;
     private TextView tvDiscountMoney;
+    private LinearLayout llUseCoin;
 
     @Override
     public int getContentLayout() {
@@ -199,6 +201,8 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     public void initView(Bundle savedInstanceState) {
         api = WXAPIFactory.createWXAPI(mContext, null);
         tvCoin = findViewById(R.id.tvCoin);
+        tvPin = findViewById(R.id.tvPin);
+        llUseCoin = findViewById(R.id.llUseCoin);
         llBottomToolBar =findViewById(R.id.llBottomToolBar);
         tvDiscountMoney = findViewById(R.id.tvDiscountMoney);
         llUseDiscount = findViewById(R.id.llUseDiscount);
@@ -248,6 +252,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         TourCooLogUtil.i(TAG, TAG + "pinTag:" + pinTag);
         isPin = pinTag == 1;
         EventBus.getDefault().register(this);
+        setViewVisible(tvPin,isPin);
     }
 
     @Override
@@ -515,9 +520,15 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         double coin = orderDetailEntity.getOrder().getCoin();
         if (orderDetailEntity.getOrder().getCoin_status() == NOT_USE_COIN) {
             tvCoin.setText("-" + formateMoney(0.00));
+            setViewVisible(llUseCoin,false);
         } else {
             //使用了金币抵扣
             tvCoin.setText("-" + formateMoney(coin));
+            if(coin > 0){
+                setViewVisible(llUseCoin,true);
+            }else {
+                setViewVisible(llUseCoin,false);
+            }
         }
     }
 
@@ -626,8 +637,8 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 hideView(tvLookComment);
                 //隐藏 取消订单按钮
                 hideView(tvCancelReturn);
-                setViewVisible(llBottomToolBar,false);
-                break;
+                setViewVisible(llBottomToolBar,true);
+            break;
             case ORDER_STATUS_BACK_FINISH:
                 hideView(tvCommentNow);
                 hideView(tvPayNow);
@@ -637,7 +648,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 hideView(tvLookExpress);
                 hideView(tvLookComment);
                 hideView(tvCancelReturn);
-                setViewVisible(llBottomToolBar,false);
+                setViewVisible(llBottomToolBar,true);
                 break;
             case ORDER_STATUS_BACK_REFUSE:
                 hideView(tvCommentNow);
@@ -648,7 +659,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 hideView(tvLookExpress);
                 hideView(tvLookComment);
                 hideView(tvCancelReturn);
-                setViewVisible(llBottomToolBar,false);
+                setViewVisible(llBottomToolBar,true);
                 break;
             default:
                 break;

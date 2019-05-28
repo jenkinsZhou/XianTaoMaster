@@ -13,6 +13,7 @@ import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
+import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.AddressPickerBean;
 import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.BaseEntity;
@@ -60,6 +61,7 @@ public class EditAddressActivity extends BaseTourCooTitleActivity implements Vie
     public int getContentLayout() {
         return R.layout.activity_add_new_address;
     }
+
 
     @Override
     public void initView(Bundle savedInstanceState) {
@@ -234,6 +236,10 @@ public class EditAddressActivity extends BaseTourCooTitleActivity implements Vie
             ToastUtil.show("请填写收货人联系方式");
             return;
         }
+        if (!TourCooUtil.isMobileNumber(getPhone())) {
+            ToastUtil.show("请填写正确的手机号");
+            return;
+        }
         if (TextUtils.isEmpty(getRegion())) {
             ToastUtil.show("请选择地区");
             return;
@@ -324,7 +330,11 @@ public class EditAddressActivity extends BaseTourCooTitleActivity implements Vie
         } catch (Exception e) {
             TourCooLogUtil.e(TAG, TAG + "查找异常:" + e.toString());
         }
+    }
 
-
+    @Override
+    public void setTitleBar(TitleBarView titleBar) {
+        super.setTitleBar(titleBar);
+        titleBar.setTitleMainText("编辑地址");
     }
 }

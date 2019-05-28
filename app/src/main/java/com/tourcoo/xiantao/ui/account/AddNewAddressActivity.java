@@ -234,6 +234,10 @@ public class AddNewAddressActivity extends BaseTourCooTitleActivity implements V
             ToastUtil.show("请填写收货人联系方式");
             return;
         }
+        if (!TourCooUtil.isMobileNumber(getPhone())) {
+            ToastUtil.show("请填写正确的手机号");
+            return;
+        }
         if (TextUtils.isEmpty(getRegion())) {
             ToastUtil.show("请选择地区");
             return;

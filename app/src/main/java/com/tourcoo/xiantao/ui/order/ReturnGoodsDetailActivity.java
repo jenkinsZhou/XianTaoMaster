@@ -191,6 +191,7 @@ public class ReturnGoodsDetailActivity extends BaseTourCooTitleMultiViewActivity
     private TextView tvRealReturnCoin;
     private TextView tvReply;
     private TextView tvReturnType;
+    private TextView tvPin;
 
     @Override
     public int getContentLayout() {
@@ -208,6 +209,7 @@ public class ReturnGoodsDetailActivity extends BaseTourCooTitleMultiViewActivity
     public void initView(Bundle savedInstanceState) {
         api = WXAPIFactory.createWXAPI(mContext, null);
         tvReply = findViewById(R.id.tvReply);
+        tvPin = findViewById(R.id.tvPin);
         tvReturnType = findViewById(R.id.tvReturnType);
         tvRealReturnMoney = findViewById(R.id.tvRealReturnMoney);
         tvRealReturnCoin = findViewById(R.id.tvRealReturnCoin);
@@ -257,7 +259,7 @@ public class ReturnGoodsDetailActivity extends BaseTourCooTitleMultiViewActivity
         TourCooLogUtil.i(TAG, TAG + "pinTag:" + pinTag);
         isPin = pinTag == 1;
         EventBus.getDefault().register(this);
-
+        setViewVisible(tvPin, isPin);
     }
 
     @Override
@@ -1129,6 +1131,11 @@ public class ReturnGoodsDetailActivity extends BaseTourCooTitleMultiViewActivity
         //退还的金币
         String returnCoin = TourCooUtil.doubleTransString(returnInfo.getCoin());
         tvReturnCoin.setText(returnCoin);
+        if (returnInfo.getCoin() <= 0) {
+            setViewVisible(llReturnGood, false);
+        } else {
+            setViewVisible(llReturnGood, true);
+        }
         setViewVisible(llReturnGood, true);
         tvReturnType.setText(returnInfo.getType());
         //退货详情
