@@ -38,6 +38,7 @@ import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_COMME
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_SEND;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.ui.order.OrderDetailActivity.EXTRA_ORDER_ID;
+import static com.tourcoo.xiantao.ui.order.OrderDetailActivity.EXTRA_PIN_TAG;
 import static com.tourcoo.xiantao.ui.order.ReturnGoodsActivity.EXTRA_GOODS_LIST;
 
 /**
@@ -166,7 +167,7 @@ public class ReturnOrderListActivity extends BaseTourCooRefreshLoadActivity<Orde
                 switch (view.getId()) {
                     case R.id.photoRecyclerView:
                     case R.id.llOrderInfo:
-                        skipOrderDetail(orderInfo.getId());
+                        skipOrderDetail(orderInfo.getId(), orderInfo.getTuan());
                         break;
                     case R.id.btnOne:
                         ToastUtil.show("1");
@@ -193,9 +194,10 @@ public class ReturnOrderListActivity extends BaseTourCooRefreshLoadActivity<Orde
      *
      * @param orderId
      */
-    private void skipOrderDetail(int orderId) {
+    private void skipOrderDetail(int orderId, int isPin) {
         Intent intent = new Intent();
         intent.putExtra(EXTRA_ORDER_ID, orderId);
+        intent.putExtra(EXTRA_PIN_TAG, isPin);
         intent.setClass(mContext, OrderDetailActivity.class);
         //跳转至订单详情
         startActivityForResult(intent, REQUEST_CODE_ORDER_DETAIL);
@@ -207,13 +209,15 @@ public class ReturnOrderListActivity extends BaseTourCooRefreshLoadActivity<Orde
      *
      * @param orderId
      */
-    private void skipReturnDetail(int orderId) {
+    private void skipReturnDetail(int orderId, int pinTag) {
         Intent intent = new Intent();
         intent.putExtra(EXTRA_ORDER_ID, orderId);
+        intent.putExtra(EXTRA_PIN_TAG, pinTag);
         intent.setClass(mContext, ReturnGoodsDetailActivity.class);
         //跳转至退单详情
         startActivityForResult(intent, REQUEST_CODE_RETURN_DETAIL);
     }
+
     private void loadButton3Function(OrderEntity.OrderInfo orderInfo) {
         TourCooLogUtil.i(TAG, TAG + "订单状态:" + orderInfo.getOrder_status());
         switch (orderInfo.getOrder_status()) {
@@ -255,7 +259,7 @@ public class ReturnOrderListActivity extends BaseTourCooRefreshLoadActivity<Orde
             case ORDER_STATUS_BACK_REFUSE:
             case ORDER_STATUS_BACK_FINISH:
                 //查看退货详情
-                skipReturnDetail(orderInfo.getId());
+                skipReturnDetail(orderInfo.getId(), orderInfo.getTuan());
                 break;
             default:
                 break;

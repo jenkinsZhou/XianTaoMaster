@@ -1132,9 +1132,9 @@ public class ReturnGoodsDetailActivity extends BaseTourCooTitleMultiViewActivity
         String returnCoin = TourCooUtil.doubleTransString(returnInfo.getCoin());
         tvReturnCoin.setText(returnCoin);
         if (returnInfo.getCoin() <= 0) {
-            setViewVisible(llReturnGood, false);
+            setViewVisible(llRealReturnCoin, false);
         } else {
-            setViewVisible(llReturnGood, true);
+            setViewVisible(llRealReturnCoin, true);
         }
         setViewVisible(llReturnGood, true);
         tvReturnType.setText(returnInfo.getType());

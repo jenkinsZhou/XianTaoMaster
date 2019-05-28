@@ -484,6 +484,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         }
         loadBottomButtonFunction(orderBean);
         showReturnInfo(orderDetailEntity.getOrder().getReturn_info());
+        setViewVisible(tvPin,isPin);
     }
 
     private void setViewVisible(View view, boolean visible) {

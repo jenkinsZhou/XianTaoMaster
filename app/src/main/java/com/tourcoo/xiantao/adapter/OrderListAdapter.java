@@ -94,7 +94,7 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                             //右滑
                             return false;
                         }
-                        break ;
+                        break;
                     default:
                         return false;
                 }
@@ -138,10 +138,11 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
             if (isPin) {
                 //拼团不能取消订单
                 hindView(btnThree);
+                setTextGray(btnFour, "立即支付");
             } else {
                 setTextGray(btnThree, "取消订单");
+                setTextGray(btnFour, "立即支付");
             }
-            setTextGray(btnFour, "立即支付");
             TourCooLogUtil.i(TAG, TAG + "订单id:" + orderInfo.getId());
         } else {
             //1表示拼团订单

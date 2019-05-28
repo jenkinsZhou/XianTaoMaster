@@ -613,7 +613,8 @@
             <LinearLayout
                 android:id="@+id/llBottomToolBar"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_50"
+                android:minHeight="@dimen/dp_50"
+                android:layout_height="wrap_content"
                 android:gravity="center_vertical|right"
                 android:orientation="horizontal"
                 android:visibility="visible"
