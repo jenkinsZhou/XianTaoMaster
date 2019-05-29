@@ -89,7 +89,7 @@ public class MyInviteCodeActivity extends BaseTourCooTitleActivity implements Vi
         ivQrCode = findViewById(R.id.ivQrCode);
         setupStatusLayoutManager();
         api = WXAPIFactory.createWXAPI(mContext, WxConfig.APP_ID);
-        sharePopupWindow = new SharePopupWindow(mContext, true, "分享邀请码");
+        sharePopupWindow = new SharePopupWindow(mContext, false, "分享邀请码");
         mStatusLayoutManager.showLoadingLayout();
         if (AccountInfoHelper.getInstance().getUserInfo() != null) {
             tvInviteCode.setText(AccountInfoHelper.getInstance().getUserInfo().getMobile());

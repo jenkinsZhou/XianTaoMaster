@@ -70,7 +70,32 @@
         app:sLeftTextSize="@dimen/sp_15"
         app:sLeftTextString="去评分"
         app:sLeftViewMarginLeft="@dimen/dp_25"
-        app:sRightIconRes="@mipmap/ic_more">
+        app:sRightIconRes="@mipmap/ic_more"></com.allen.library.SuperTextView>
 
-    </com.allen.library.SuperTextView>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/copyRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/dp_15"
+            android:text="CopyRight@2019.All Rights Reserved"
+            android:textColor="#999999"
+            android:textSize="@dimen/sp_12" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/copyRight"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/dp_5"
+            android:text="濡江铺子 版权所有"
+            android:forceHasOverlappingRendering="false"
+            android:textColor="#999999"
+            android:textSize="@dimen/sp_12" />
+    </RelativeLayout>
 </LinearLayout>

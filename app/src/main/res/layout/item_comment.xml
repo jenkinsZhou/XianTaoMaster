@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:background="@color/whiteCommon"
     android:orientation="vertical"
+    android:layout_marginTop="@dimen/dp_5"
     android:padding="@dimen/dp_5">
     <!--商品评价-->
 

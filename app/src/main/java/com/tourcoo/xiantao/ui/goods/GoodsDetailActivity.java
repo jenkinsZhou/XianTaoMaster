@@ -13,11 +13,13 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.Layout;
 import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.CheckBox;
@@ -584,9 +586,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             }
         }
 
-        if (detail.getComment_list() != null && detail.getComment_list().
-
-                size() > 0) {
+        if (detail.getComment_list() != null && detail.getComment_list().size() > 0) {
             int size = detail.getComment_list().size() == 1 ? 1 : 2;
             for (int i = 0; i < size; i++) {
                 Goods.CommentListBean item = detail.getComment_list().get(i);
@@ -630,7 +630,6 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                         }
                     });
                 }
-
                 ratingStarView.setEnabled(false);
                 ratingStarView.setRating(item.getStar());
                 String imageUrl = TourCooUtil.getUrl(item.getAvatar());

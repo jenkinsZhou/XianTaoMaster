@@ -120,6 +120,10 @@
             android:exported="true"
             android:launchMode="singleTop" />
         <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:exported="true"
+            android:launchMode="singleTop" />
+        <activity
             android:name=".ui.goods.GoodsCategoryListActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -203,12 +207,12 @@
         <activity
             android:name=".ui.discount.DisCountSelectListActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.home.WebContentInfoActivity"
-            android:screenOrientation="portrait"
-            />
-        <activity android:name=".ui.goods.GoodsDetailActivity"
-            android:screenOrientation="portrait"
-            />
+        <activity
+            android:name=".ui.home.WebContentInfoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.goods.GoodsDetailActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

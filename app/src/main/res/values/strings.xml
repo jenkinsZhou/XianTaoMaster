@@ -89,4 +89,9 @@
     <string name="permission_already_granted">支付已有所需的权限</string>
     <string name="permission_rejected">无法获取支付所需的权限, 请到系统设置开启</string>
     <string name="permission_granted">所需的权限已经正常获取</string>
+
+    <string name="errcode_success">分享成功</string>
+    <string name="errcode_cancel">取消分享</string>
+    <string name="errcode_deny">分享失败</string>
+    <string name="errcode_unknown">发送返回</string>
 </resources>
