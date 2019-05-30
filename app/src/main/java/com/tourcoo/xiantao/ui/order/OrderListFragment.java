@@ -170,11 +170,13 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
                                         UiConfigManager.getInstance().getHttpRequestControl().httpRequestSuccess(getIHttpRequestControl(), orderEntity.getData() == null ? new ArrayList<>() : orderEntity.getData(), null);
                                     } else {
                                         ToastUtil.showFailed(entity.msg);
+                                      showEmptyLayout();
                                     }
                                 }
                             } else {
                                 ToastUtil.showFailed(entity.msg);
-                                mRefreshLayout.finishRefresh(false);
+                                mRefreshLayout.finishRefresh();
+                                showEmptyLayout();
                             }
                         }
                     }
@@ -182,8 +184,8 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
                     @Override
                     public void onRequestError(Throwable e) {
                         super.onRequestError(e);
-                        mRefreshLayout.finishRefresh(false);
-                        mStatusManager.showErrorLayout();
+                        mRefreshLayout.finishRefresh();
+                        mStatusManager.showEmptyLayout();
                     }
                 });
     }
@@ -842,4 +844,11 @@ public class OrderListFragment extends BaseRefreshFragment<OrderEntity.OrderInfo
         requestOrderInfo(1);
     }
 
+
+
+    private void showEmptyLayout(){
+        if(mStatusManager != null){
+            mStatusManager.showEmptyLayout();
+        }
+    }
 }
