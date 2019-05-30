@@ -1,6 +1,5 @@
 package com.tourcoo.xiantao.widget.sku.view;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -41,8 +40,7 @@ public class SkuItemView extends TextView {
         setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11);
         setSingleLine();
         setGravity(Gravity.CENTER);
-        setPadding(ScreenUtils.dp2PxInt(context, 10), 0, ScreenUtils.dp2PxInt(context, 10), 0);
-
+        setPadding(ScreenUtils.dp2PxInt(context, 12), 0, ScreenUtils.dp2PxInt(context, 12), 0);
         setMinWidth(ScreenUtils.dp2PxInt(context, 45));
         setMaxWidth(ScreenUtils.dp2PxInt(context, 200));
     }

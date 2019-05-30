@@ -100,7 +100,6 @@ public class ProductSkuDialog extends Dialog {
         setContentView(R.layout.dialog_goods_select);
         setCanceledOnTouchOutside(true);
         setCancelable(true);
-
         tvGoodsName = findViewById(R.id.tvGoodsName);
         tvTitle = findViewById(R.id.tvTitle);
         btnSkuQuantityMinus = findViewById(R.id.btn_sku_quantity_minus);
