@@ -468,7 +468,7 @@ public class ReturnGoodsDetailActivity extends BaseTourCooTitleMultiViewActivity
         //注意 这里显示的商品数量仅为退单的商品数量 因此需要排除没有退的商品
         showReturnGoodsList(orderBean);
         loadBottomButtonFunction(orderBean);
-        showReturnInfo(orderDetailEntity.getOrder().getReturn_info());
+        showReturnInfo(orderBean, orderDetailEntity.getOrder().getReturn_info());
     }
 
     private void setViewVisible(View view, boolean visible) {
@@ -1121,7 +1121,7 @@ public class ReturnGoodsDetailActivity extends BaseTourCooTitleMultiViewActivity
     /**
      * 显示退货信息
      */
-    private void showReturnInfo(ReturnInfo returnInfo) {
+    private void showReturnInfo(OrderDetailEntity.OrderBean orderBean, ReturnInfo returnInfo) {
         if (returnInfo == null) {
             setViewVisible(llReturnGood, false);
             setViewVisible(tvReturnImage, false);
@@ -1134,7 +1134,20 @@ public class ReturnGoodsDetailActivity extends BaseTourCooTitleMultiViewActivity
         if (returnInfo.getCoin() <= 0) {
             setViewVisible(llRealReturnCoin, false);
         } else {
-            setViewVisible(llRealReturnCoin, true);
+            switch (orderBean.getOrder_status()) {
+                case ORDER_STATUS_BACK_ING:
+                    setViewVisible(llRealReturnCoin, false);
+                    break;
+                case ORDER_STATUS_BACK_FINISH:
+                    //只有退货完成才显示退回金币
+                    setViewVisible(llRealReturnCoin, true);
+                    break;
+                default:
+                    //其他状态下 不显示退回金币
+                    setViewVisible(llRealReturnCoin, false);
+                    break;
+            }
+
         }
         setViewVisible(llReturnGood, true);
         tvReturnType.setText(returnInfo.getType());

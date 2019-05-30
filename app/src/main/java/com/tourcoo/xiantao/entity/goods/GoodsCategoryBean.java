@@ -94,7 +94,7 @@ public class GoodsCategoryBean implements Serializable {
             this.data = data;
         }
 
-        public static class DataBean implements Serializable{
+        public static class DataBean implements Serializable {
             /**
              * category_id : 5
              * coin : 0
@@ -359,7 +359,7 @@ public class GoodsCategoryBean implements Serializable {
                 this.tuan_list = tuan_list;
             }
 
-            public static class TuanRuleBean  implements Serializable  {
+            public static class TuanRuleBean implements Serializable {
                 /**
                  * status_text :
                  */
@@ -504,6 +504,7 @@ public class GoodsCategoryBean implements Serializable {
     }
 
     public static class GoodsSimpleInfo implements Serializable {
+
         /**
          * goods_max_price : 323.00
          * goods_min_price : 323.00
@@ -512,6 +513,16 @@ public class GoodsCategoryBean implements Serializable {
          * id : 22
          * image : https://her-family.oss-cn-qingdao.aliyuncs.com/addons_store_uploads/20181105/b044b7bcd4930202fcd96d6b50453894.jpg
          */
+        private String special;
+
+        public String getSpecial() {
+            return special;
+        }
+
+        public void setSpecial(String special) {
+            this.special = special;
+        }
+
         private String label;
 
         public String getLabel() {

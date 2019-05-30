@@ -9,6 +9,8 @@ import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.entity.goods.GoodsCategoryBean;
 
+import static com.tourcoo.xiantao.adapter.HomeGoodsGridAdapter.IS_SPECIAL;
+
 /**
  * @author :JenkinsZhou
  * @description :商城中的商品列表类型适配器
@@ -24,6 +26,8 @@ public class CategoryGoodsAdapter extends BaseQuickAdapter<GoodsCategoryBean.Goo
     @Override
     protected void convert(BaseViewHolder helper, GoodsCategoryBean.GoodsSimpleInfo simpleInfo) {
         RoundedImageView ivGoodsIcon = helper.getView(R.id.ivGoodsIcon);
+        boolean special = IS_SPECIAL.equals(simpleInfo.getSpecial());
+        helper.setGone(R.id.ivSpecial, special);
         GlideManager.loadImg(simpleInfo.getImage(), ivGoodsIcon, R.mipmap.img_zwt);
         helper.setText(R.id.tvGoodsName, simpleInfo.getGoods_name());
         if (!TextUtils.isEmpty(simpleInfo.getLabel())) {

@@ -28,8 +28,10 @@ import com.tourcoo.xiantao.util.FormatDuration;
  * @Email: 971613168@qq.com
  */
 public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsEntity.GoodsBean, BaseViewHolder> {
+    public static final String IS_SPECIAL = "1";
+
     public HomeGoodsGridAdapter() {
-        super(R.layout.item_home_goods);
+        super(R.layout.item_home_goods2);
     }
 
     @Override
@@ -37,6 +39,8 @@ public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsEntity.Goods
         if (item == null) {
             return;
         }
+        boolean special = IS_SPECIAL.equals(item.getSpecial());
+        helper.setGone(R.id.ivSpecial, special);
         RoundedImageView roundedImageView = helper.getView(R.id.rvGoodsImage);
         GlideManager.loadImg(TourCooUtil.getUrl(item.getImage()), roundedImageView);
         helper.setText(R.id.tvGoodsName, item.getGoods_name());

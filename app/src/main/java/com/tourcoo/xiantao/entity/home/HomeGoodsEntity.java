@@ -81,7 +81,21 @@ public class HomeGoodsEntity {
          * deduct : 0
          * deduct_coin : 0
          * deduct_rule : 直接购买可用
+         *
          */
+        /**
+         * 是否是特价商品 1代表是 0 代表否
+         */
+        private String special;
+
+        public String getSpecial() {
+            return special;
+        }
+
+        public void setSpecial(String special) {
+            this.special = special;
+        }
+
         private double goods_line_price;
 
         public double getGoods_line_price() {
