@@ -59,6 +59,11 @@ public class ProductSkuDialog extends Dialog {
     public static final int BUY_NOW = 3;
     private int type;
 
+    /**
+     * 判断是否是单规格商品
+     */
+    private boolean singleSpec = false;
+
 
     public ProductSkuDialog(@NonNull Context context, GoodsEntity product, Callback callback, int type) {
         super(context, R.style.CommonBottomDialogStyle);
@@ -103,6 +108,8 @@ public class ProductSkuDialog extends Dialog {
         setContentView(R.layout.dialog_goods_select);
         setCanceledOnTouchOutside(true);
         setCancelable(true);
+        //判断是否是单规格商品
+        singleSpec = isSingleSpec();
         stockQuantityFormat = context.getString(R.string.product_detail_sku_stock);
         tvGoodsName = findViewById(R.id.tvGoodsName);
         tvTitle = findViewById(R.id.tvTitle);
@@ -116,6 +123,8 @@ public class ProductSkuDialog extends Dialog {
         ivSkuLogo = findViewById(R.id.ivGoodsImage);
         tvSkuSellingPrice = findViewById(R.id.tv_sku_selling_price);
 //        tvSkuSellingPriceUnit =findViewById(R.id.tv_sku_selling_price_unit);
+        TourCooLogUtil.i(TAG, TAG + "是否是单规格商品:" + singleSpec);
+        currentSkuQuantity = getSingleSpecGoodsStock();
         showGoodsStockByCondition();
         btnSkuQuantityMinus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -222,6 +231,10 @@ public class ProductSkuDialog extends Dialog {
              */
             @Override
             public void onSelect(SkuAttribute selectAttribute) {
+                if (selectAttribute == null) {
+                    ToastUtil.showFailed("当前组合不存在");
+                    return;
+                }
                 String firstUnselectedAttributeName = scrollSkuList.getFirstUnelectedAttributeName();
                 tvSkuInfo.setText("选择：" + firstUnselectedAttributeName);
                 tvSkuSellingPrice.setText("");
@@ -234,6 +247,10 @@ public class ProductSkuDialog extends Dialog {
              */
             @Override
             public void onSkuSelected(SpecList specList) {
+                if (specList == null) {
+                    ToastUtil.showFailed("当前组合不存在");
+                    return;
+                }
                 selectedSku = specList;
                 currentSkuQuantity = specList.getForm().getStock_num();
                 StringBuilder builder = new StringBuilder();
@@ -289,7 +306,13 @@ public class ProductSkuDialog extends Dialog {
                 if (TextUtils.isEmpty(quantity)) {
                     return;
                 }
-
+                //如果是单规格商品 则直接判断库存 如果库存不足 直接拦截
+                if (singleSpec) {
+                    if (getSingleSpecGoodsStock() <= 0) {
+                        ToastUtil.showFailed("库存不足");
+                        return;
+                    }
+                }
                 if (product.getSpecData() != null && type != PING_TUAN) {
 
                     if (scrollSkuList.getSelectedSku() == null) {
@@ -325,7 +348,7 @@ public class ProductSkuDialog extends Dialog {
                         callback.onAdded(spec_sku_id.toString(), quantityInt);
                         dismiss();
                     } else {
-                        ToastUtil.showFailed("商品数量超出库存");
+                        ToastUtil.showFailed("库存不足");
                     }
                 } else {
                     int quantityInt = Integer.parseInt(quantity);
@@ -338,6 +361,7 @@ public class ProductSkuDialog extends Dialog {
                             ToastUtil.showFailed("已达到商品数量上限");
                         }
                     } else {
+
                         callback.onAdded("", quantityInt);
                         dismiss();
                     }
@@ -554,4 +578,39 @@ public class ProductSkuDialog extends Dialog {
             tvSkuQuantity.setText(String.format(stockQuantityFormat, stockNum));
         }
     }
+
+
+    /**
+     * 获取单规格商品的库存数量
+     *
+     * @return
+     */
+    private int getSingleSpecGoodsStock() {
+        if (product != null && product.getDetail() != null) {
+            if (product.getDetail().getSpec() != null && product.getDetail().getSpec().size() == 1) {
+                //当前商品只有一种属性
+                Spec spec = product.getDetail().getSpec().get(0);
+                if (spec != null) {
+                    return spec.getStock_num();
+                }
+            }
+        }
+        return -1;
+    }
+
+
+    private boolean isSingleSpec() {
+        if (product != null && product.getDetail() != null) {
+            if (product.getDetail().getSpec() != null && product.getDetail().getSpec().size() == 1) {
+                //当前商品只有一种属性
+                Spec spec = product.getDetail().getSpec().get(0);
+                if (spec != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
 }
