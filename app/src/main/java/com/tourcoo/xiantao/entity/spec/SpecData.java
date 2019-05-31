@@ -10,7 +10,7 @@ import java.util.List;
  * @date 2019年04月26日9:46
  * @Email: 971613168@qq.com
  */
-public class SpecData implements Serializable {
+public class SpecData implements Serializable{
     private List<SpecAttr> spec_attr;
     private List<SpecList> spec_list;
 
@@ -29,4 +29,5 @@ public class SpecData implements Serializable {
     public void setSpec_list(List<SpecList> spec_list) {
         this.spec_list = spec_list;
     }
+
 }
