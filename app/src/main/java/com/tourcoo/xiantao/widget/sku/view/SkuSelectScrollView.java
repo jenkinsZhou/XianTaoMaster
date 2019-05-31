@@ -16,6 +16,11 @@ import com.tourcoo.xiantao.entity.spec.SpecList;
 import com.tourcoo.xiantao.widget.sku.utils.ViewUtils;
 import com.tourcoo.xiantao.widget.sku.widget.SkuMaxHeightScrollView;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,6 +37,7 @@ import java.util.Map;
 public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuItemLayout.OnSkuItemSelectListener {
     private LinearLayout skuContainerLayout;
     private SpecData specData;
+
     private List<SkuAttribute> selectedAttributeList;  // 存放当前属性选中信息
     private OnSkuListener listener;                    // sku选中状态回调接口
 
@@ -80,6 +86,7 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
      */
     public void setSkuData(SpecData specData) {
         this.specData = specData;
+
         // 清空sku视图
         skuContainerLayout.removeAllViews();
 
@@ -104,12 +111,14 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
         }
 
         // 一个sku时，默认选中
-     /*   if (this.specData.getSpec_attr().size() == 1) {
-            selectedAttributeList.clear();
-            for (SkuAttribute attribute : this.specData.getSpec_attr().get(0).getSpec_items()) {
-                selectedAttributeList.add(new SkuAttribute(attribute.getItem_id(), attribute.getSpec_value()));
-            }
-        }*/
+//        if (this.specData.getSpec_attr().size() == 1) {
+//            selectedAttributeList.clear();
+//            for (SkuAttribute attribute : this.specData.getSpec_attr().get(0).getSpec_items()) {
+//                selectedAttributeList.add(new SkuAttribute(attribute.getItem_id(), attribute.getSpec_value()));
+//            }
+//        }
+
+
         // 清除所有选中状态
         clearAllLayoutStatus();
         // 设置是否可点击
@@ -161,10 +170,11 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
     private void optionLayoutEnableStatusSingleProperty() {
         SkuItemLayout itemLayout = (SkuItemLayout) skuContainerLayout.getChildAt(0);
         SpecAttr specAttr = specData.getSpec_attr().get(0);
+
+        TourCooLogUtil.e(specAttr);
         // 遍历sku列表
         for (int i = 0; i < specAttr.getSpec_items().size(); i++) {
             SkuAttribute attribute = specAttr.getSpec_items().get(i);
-
             for (SpecList specList : specData.getSpec_list()) {
                 if (specList.getSpec_sku_id().equals(attribute.getItem_id())) {
                     // 属性值是否可点击flag  默认禁止点击
@@ -172,12 +182,14 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
                         //如果当前库存为0包括大于0时，该商品有该类型的属性，只是当前库存为0，有可能会允许购买，可以点击
                         String attributeValue = specAttr.getSpec_items().get(i).getSpec_value();
                         itemLayout.optionItemViewEnableStatus(attributeValue);
+                        break;
                     } else {
                         //如果当前库存为 -1时，该商品没有该类型的属性，禁止点击
                     }
                 }
             }
         }
+
     }
 
     private void optionLayoutEnableStatusMultipleProperties() {
@@ -292,7 +304,7 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
                         List<String> unclickId = map.get(k);
                         for (int i = 0; i < attributeBeanList.size(); i++) {
                             String id = attributeBeanList.get(i).getItem_id();
-                            if(!unclickId.contains(id)){
+                            if (!unclickId.contains(id)) {
                                 String attributeValue = attributeBeanList.get(i).getSpec_value();
                                 itemLayout.optionItemViewEnableStatus(attributeValue);
                             }
@@ -381,7 +393,6 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
 
     /**
      * 设置选中的sku
-     * todo:存在bug,暂未修复，后期优化 两层sku属性 选择会出错
      * @param specList
      */
     public void setSelectedSku(SpecList specList) {
@@ -417,7 +428,12 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
             selectedAttributeList.set(position, attribute);
         } else {
             // 取消选中，清空保存的选中信息
-            selectedAttributeList.get(position).setSpec_value("");
+            SkuAttribute selectedSku = new SkuAttribute();
+            selectedSku.setItem_id(selectedAttributeList.get(position).getItem_id());
+            selectedSku.setSpec_value("");
+            selectedAttributeList.remove(position);
+            selectedAttributeList.add(position, selectedSku);
+//            selectedAttributeList.get(position).setSpec_value("");
         }
         clearAllLayoutStatus();
         // 设置是否可点击
@@ -433,4 +449,50 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
             listener.onUnselected(attribute);
         }
     }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T cloneTo(T src) throws RuntimeException {
+        ByteArrayOutputStream memoryBuffer = new ByteArrayOutputStream();
+        ObjectOutputStream out = null;
+        ObjectInputStream in = null;
+        T dist = null;
+        try {
+            out = new ObjectOutputStream(memoryBuffer);
+            out.writeObject(src);
+            out.flush();
+            in = new ObjectInputStream(new ByteArrayInputStream(memoryBuffer.toByteArray()));
+            dist = (T) in.readObject();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (out != null)
+                try {
+                    out.close();
+                    out = null;
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            if (in != null)
+                try {
+                    in.close();
+                    in = null;
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+        }
+        return dist;
+    }
+
+
+    public Object deepClone(Object src) throws IOException, ClassNotFoundException {
+        //将对象写到流里
+        ByteArrayOutputStream bo = new ByteArrayOutputStream();
+        ObjectOutputStream oo = new ObjectOutputStream(bo);
+        oo.writeObject(src);
+        //从流里读出来
+        ByteArrayInputStream bi = new ByteArrayInputStream(bo.toByteArray());
+        ObjectInputStream oi = new ObjectInputStream(bi);
+        return (oi.readObject());
+    }
+
 }
