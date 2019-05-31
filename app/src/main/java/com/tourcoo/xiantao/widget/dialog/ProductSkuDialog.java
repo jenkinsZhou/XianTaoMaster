@@ -22,6 +22,7 @@ import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
+import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.entity.goods.GoodsEntity;
 import com.tourcoo.xiantao.entity.goods.TuanRule;
 import com.tourcoo.xiantao.entity.spec.SkuAttribute;
@@ -267,7 +268,14 @@ public class ProductSkuDialog extends Dialog {
                 }
 
                 tvSkuQuantity.setVisibility(View.VISIBLE);
-                tvSkuQuantity.setText(String.format(stockQuantityFormat, specList.getForm().getStock_num()));
+                if (specList.getForm().getStock_num() <= 0) {
+                    tvSkuQuantity.setTextColor(TourCooUtil.getColor(R.color.redTextCommon));
+                    String saleOut = "(已售完)";
+                    tvSkuQuantity.setText(saleOut);
+                } else {
+                    tvSkuQuantity.setTextColor(TourCooUtil.getColor(R.color.comm_text_gray));
+                    tvSkuQuantity.setText(String.format(stockQuantityFormat, specList.getForm().getStock_num()));
+                }
 
                 tvSkuSellingPrice.setText(String.format(priceFormat, specList.getForm().getGoods_price()));
                 tvSkuInfo.setText("已选：" + builder.toString());
@@ -292,7 +300,7 @@ public class ProductSkuDialog extends Dialog {
                 if (product.getSpecData() != null && type != PING_TUAN) {
 
                     if (scrollSkuList.getSelectedSku() == null) {
-                        String info = "请"+tvSkuInfo.getText().toString();
+                        String info = "请" + tvSkuInfo.getText().toString();
                         if (StringUtils.isEmpty(info)) {
                             ToastUtil.showFailed("请选择商品规格");
                         } else {

@@ -6,6 +6,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.tourcoo.xiantao.R;
+import com.tourcoo.xiantao.adapter.AllCommentAdapter;
 import com.tourcoo.xiantao.adapter.CommentAdapter;
 import com.tourcoo.xiantao.core.frame.UiConfigManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
@@ -25,13 +26,13 @@ import static com.tourcoo.xiantao.ui.home.HomeFragment.EXTRA_GOODS_ID;
 
 /**
  * @author :JenkinsZhou
- * @description :
+ * @description :全部评价
  * @company :途酷科技
  * @date 2019年04月30日17:57
  * @Email: 971613168@qq.com
  */
 public class CommentListActivity extends BaseTourCooRefreshLoadActivity<CommentDetail> {
-    private CommentAdapter adapter;
+    private AllCommentAdapter adapter;
     private int goodsId;
 
     @Override
@@ -53,7 +54,7 @@ public class CommentListActivity extends BaseTourCooRefreshLoadActivity<CommentD
 
     @Override
     public BaseQuickAdapter<CommentDetail, BaseViewHolder> getAdapter() {
-        adapter = new CommentAdapter();
+        adapter = new AllCommentAdapter();
         return adapter;
     }
 
