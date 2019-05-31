@@ -540,6 +540,10 @@ public class ProductSkuDialog extends Dialog {
         if (tvSkuQuantity == null) {
             return;
         }
+        if (type == PING_TUAN) {
+            tvSkuQuantity.setVisibility(View.GONE);
+            return;
+        }
         tvSkuQuantity.setVisibility(View.VISIBLE);
         if (stockNum <= 0) {
             tvSkuQuantity.setTextColor(TourCooUtil.getColor(R.color.redTextCommon));
