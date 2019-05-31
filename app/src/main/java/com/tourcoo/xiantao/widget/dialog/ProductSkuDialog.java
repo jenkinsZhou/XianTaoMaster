@@ -24,6 +24,7 @@ import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.entity.goods.GoodsEntity;
+import com.tourcoo.xiantao.entity.goods.Spec;
 import com.tourcoo.xiantao.entity.goods.TuanRule;
 import com.tourcoo.xiantao.entity.spec.SkuAttribute;
 import com.tourcoo.xiantao.entity.spec.SpecAttr;
@@ -43,11 +44,12 @@ import androidx.annotation.NonNull;
  * Created by liufei on 2017/11/30.
  */
 public class ProductSkuDialog extends Dialog {
+    private static final String TAG = "ProductSkuDialog";
     private Context context;
     private GoodsEntity product;
     private List<SpecAttr> skuList;
     private Callback callback;
-
+    private String saleOut = "(已售完)";
     private SpecList selectedSku;
     private String priceFormat;
     private String stockQuantityFormat;
@@ -101,6 +103,7 @@ public class ProductSkuDialog extends Dialog {
         setContentView(R.layout.dialog_goods_select);
         setCanceledOnTouchOutside(true);
         setCancelable(true);
+        stockQuantityFormat = context.getString(R.string.product_detail_sku_stock);
         tvGoodsName = findViewById(R.id.tvGoodsName);
         tvTitle = findViewById(R.id.tvTitle);
         btnSkuQuantityMinus = findViewById(R.id.btn_sku_quantity_minus);
@@ -113,7 +116,7 @@ public class ProductSkuDialog extends Dialog {
         ivSkuLogo = findViewById(R.id.ivGoodsImage);
         tvSkuSellingPrice = findViewById(R.id.tv_sku_selling_price);
 //        tvSkuSellingPriceUnit =findViewById(R.id.tv_sku_selling_price_unit);
-
+        showGoodsStockByCondition();
         btnSkuQuantityMinus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -198,10 +201,8 @@ public class ProductSkuDialog extends Dialog {
                 currentSkuQuantity = -1;
                 tvSkuSellingPrice.setText("");
                 GlideManager.loadImg(product.getDetail().getImage(), ivSkuLogo);
-
                 tvSkuQuantity.setVisibility(View.GONE);
                 tvSkuQuantity.setText(String.format(stockQuantityFormat, 0));
-
                 String firstUnselectedAttributeName = scrollSkuList.getFirstUnelectedAttributeName();
                 tvSkuInfo.setText("选择：" + firstUnselectedAttributeName);
                 btnSubmit.setEnabled(false);
@@ -268,15 +269,7 @@ public class ProductSkuDialog extends Dialog {
                 }
 
                 tvSkuQuantity.setVisibility(View.VISIBLE);
-                if (specList.getForm().getStock_num() <= 0) {
-                    tvSkuQuantity.setTextColor(TourCooUtil.getColor(R.color.redTextCommon));
-                    String saleOut = "(已售完)";
-                    tvSkuQuantity.setText(saleOut);
-                } else {
-                    tvSkuQuantity.setTextColor(TourCooUtil.getColor(R.color.comm_text_gray));
-                    tvSkuQuantity.setText(String.format(stockQuantityFormat, specList.getForm().getStock_num()));
-                }
-
+                showGoodsStock(specList.getForm().getStock_num());
                 tvSkuSellingPrice.setText(String.format(priceFormat, specList.getForm().getGoods_price()));
                 tvSkuInfo.setText("已选：" + builder.toString());
 
@@ -353,7 +346,7 @@ public class ProductSkuDialog extends Dialog {
         });
 
         priceFormat = context.getString(R.string.comm_price_format);
-        stockQuantityFormat = context.getString(R.string.product_detail_sku_stock);
+
 
         tvGoodsName.setText(product.getDetail().getGoods_name());
 
@@ -527,5 +520,33 @@ public class ProductSkuDialog extends Dialog {
 
     public interface Callback {
         void onAdded(String specSkuId, int quantity);
+    }
+
+
+    private void showGoodsStockByCondition() {
+        if (product != null && product.getDetail() != null) {
+            if (product.getDetail().getSpec() != null && product.getDetail().getSpec().size() == 1) {
+                //当前商品只有一种属性
+                Spec spec = product.getDetail().getSpec().get(0);
+                if (spec != null) {
+                    showGoodsStock(spec.getStock_num());
+                }
+            }
+        }
+    }
+
+
+    private void showGoodsStock(int stockNum) {
+        if (tvSkuQuantity == null) {
+            return;
+        }
+        tvSkuQuantity.setVisibility(View.VISIBLE);
+        if (stockNum <= 0) {
+            tvSkuQuantity.setTextColor(TourCooUtil.getColor(R.color.redTextCommon));
+            tvSkuQuantity.setText(saleOut);
+        } else {
+            tvSkuQuantity.setTextColor(TourCooUtil.getColor(R.color.comm_text_gray));
+            tvSkuQuantity.setText(String.format(stockQuantityFormat, stockNum));
+        }
     }
 }
