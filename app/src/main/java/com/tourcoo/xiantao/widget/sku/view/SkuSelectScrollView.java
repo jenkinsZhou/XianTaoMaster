@@ -87,6 +87,9 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
     public void setSkuData(SpecData specData) {
         this.specData = specData;
 
+        TourCooLogUtil.e(specData);
+
+
         // 清空sku视图
         skuContainerLayout.removeAllViews();
 
@@ -109,6 +112,8 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
             // 初始状态下，所有属性信息设置为空
             selectedAttributeList.add(new SkuAttribute(entry.getKey(), ""));
         }
+
+        TourCooLogUtil.e(selectedAttributeList);
 
         // 一个sku时，默认选中
 //        if (this.specData.getSpec_attr().size() == 1) {
@@ -211,6 +216,9 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
                 selectSpecId.add(selectedAttributeList.get(k).getItem_id());
             }
         }
+
+        LogUtils.e(skuIdList.size());
+        TourCooLogUtil.e(selectSpecId);
 
         //如果不存在需要设置不可点击的组合，则对所有的sku全部设置成可点击状态
         if (skuIdList.size() == 0) {
@@ -431,8 +439,9 @@ public class SkuSelectScrollView extends SkuMaxHeightScrollView implements SkuIt
             SkuAttribute selectedSku = new SkuAttribute();
             selectedSku.setItem_id(selectedAttributeList.get(position).getItem_id());
             selectedSku.setSpec_value("");
-            selectedAttributeList.remove(position);
-            selectedAttributeList.add(position, selectedSku);
+            selectedAttributeList.set(position,selectedSku);
+//            selectedAttributeList.remove(position);
+//            selectedAttributeList.add(position, selectedSku);
 //            selectedAttributeList.get(position).setSpec_value("");
         }
         clearAllLayoutStatus();

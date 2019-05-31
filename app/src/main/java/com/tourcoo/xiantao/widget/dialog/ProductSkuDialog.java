@@ -407,7 +407,7 @@ public class ProductSkuDialog extends Dialog {
         scrollSkuList.setSkuData(product.getSpecData());
         SpecList firstSku = null;
         for (SpecList first : product.getSpecData().getSpec_list()) {
-            if (first.getForm().getStock_num() >= 0) {
+            if (first.getForm().getStock_num() > 0) {
                 firstSku = first;
                 TourCooLogUtil.e(first);
                 break;
