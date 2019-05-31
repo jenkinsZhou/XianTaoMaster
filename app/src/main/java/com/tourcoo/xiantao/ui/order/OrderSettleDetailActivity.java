@@ -777,7 +777,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
      */
     private void createSinglePay(int payType) {
         if (mSettleEntity == null || mSettleEntity.getGoods_list() == null || mSettleEntity.getGoods_list().isEmpty()) {
-            ToastUtil.show("未获取到订单信息");
+            ToastUtil.showFailed("未获取到商品信息");
             return;
         }
         Map<String, Object> params = new HashMap<>(1);
@@ -840,7 +840,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
      */
     private void createCarPay(int payType) {
         if (mSettleEntity == null || mSettleEntity.getGoods_list() == null || mSettleEntity.getGoods_list().isEmpty()) {
-            ToastUtil.show("未获取到订单信息");
+            ToastUtil.showFailed("未获取到商品信息");
             return;
         }
         boolean useCoin = switchUseCoin.isChecked();
@@ -1192,7 +1192,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
      */
     private void createPinPay(int payType) {
         if (mSettleEntity == null || mSettleEntity.getGoods_list() == null || mSettleEntity.getGoods_list().isEmpty()) {
-            ToastUtil.show("未获取到订单信息");
+            ToastUtil.showFailed("未获取到商品信息");
             return;
         }
         ApiRepository.getInstance().requestPinPay(pinId, payType, getRemark(), getTextValue(tvDeliveryTime), discountIds).compose(bindUntilEvent(ActivityEvent.DESTROY)).
