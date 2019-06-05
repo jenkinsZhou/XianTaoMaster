@@ -274,6 +274,8 @@ public class ReturnOrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderIn
                     if (orderInfo.getFreight_status() == NOT_FINISH) {
                         //待发货状态下 无法查看物流
                         hindView(btnThree);
+                    }else {
+                        setTextGray(btnThree, "查看物流");
                     }
                     helper.setText(R.id.tvPrice, "¥ " + orderInfo.getReturn_price());
                     setTextGray(btnFour, "查看详情");

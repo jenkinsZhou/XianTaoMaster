@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.CoinHistoryAdapter;
-import com.tourcoo.xiantao.adapter.RechargeDetailAdapter;
 import com.tourcoo.xiantao.core.frame.UiConfigManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
@@ -26,8 +25,6 @@ import com.tourcoo.xiantao.core.widget.divider.TourCoolRecycleViewDivider;
 import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.coin.CoinDetail;
 import com.tourcoo.xiantao.entity.coin.CoinHistory;
-import com.tourcoo.xiantao.entity.recharge.RechargeHistory;
-import com.tourcoo.xiantao.entity.user.CashEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooRefreshLoadActivity;
 import com.tourcoo.xiantao.util.MoneyUtil;
@@ -143,8 +140,9 @@ public class MyCoinListActivity extends BaseTourCooRefreshLoadActivity<CoinDetai
             return;
         }
         currentAuAmount = coinHistory.getAg();
-        String au =  TourCooUtil.doubleTransStringZhen(coinHistory.getAu());
-        String ag = MoneyUtil.amountConversion(coinHistory.getAg());
+        String au = TourCooUtil.doubleTransStringZhen(coinHistory.getAu());
+//        String ag = MoneyUtil.amountConversion(coinHistory.getAg());
+        String ag = TourCooUtil.doubleTransStringZhen(coinHistory.getAg());
         tvCurrentGold.setText(au);
         tvAg.setText(ag);
     }

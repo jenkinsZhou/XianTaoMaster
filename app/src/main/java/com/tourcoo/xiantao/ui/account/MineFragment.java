@@ -449,7 +449,8 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         GlideManager.loadImg(url, civUserAvatar, TourCooUtil.getDrawable(R.mipmap.img_default_avatar));
         tvBalance.setText("¥" + data.getCash());
         String coinGold = TourCooUtil.doubleTransStringZhen(data.getAu()) + "";
-        String coinYin = MoneyUtil.amountConversion(data.getAg()) + "";
+//        String coinYin = MoneyUtil.amountConversion(data.getAg()) + "";
+        String coinYin =  TourCooUtil.doubleTransStringZhen(data.getAg()) + "";
         tvAccumulatePointsGold.setText(coinGold);
         tvAccumulatePointsYin.setText(coinYin);
         showMineInfo(data);
