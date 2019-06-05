@@ -5,9 +5,11 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
 
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.previewlibrary.ZoomMediaLoader;
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.crashreport.CrashReport;
+import com.tourcoo.xiantao.core.common.CommonConfig;
 import com.tourcoo.xiantao.core.crash.CrashManager;
 import com.tourcoo.xiantao.core.frame.UiConfigManager;
 import com.tourcoo.xiantao.core.frame.impl.ActivityControlImpl;
@@ -185,14 +187,28 @@ public class XianTaoApplication extends LitePalApplication {
     /**
      * 异步加载
      */
-    private void asyncLoad(){
+    private void asyncLoad() {
         ThreadPoolManager.getThreadPoolProxy().execute(new Runnable() {
             @Override
             public void run() {
+                // 这两行必须写在init之前，否则这些配置在init过程中将无效
+                if (DEBUG_MODE) {
+                    // 打印日志
+                    ARouter.openLog();
+                    // 开启调试模式(如果在InstantRun模式下运行，必须开启调试模式！线上版本需要关闭,否则有安全风险)
+                    ARouter.openDebug();
+                }
+                // 初始化路由 尽可能早
+                ARouter.init(mContext);
                 //初始化地址信息
                 AddressHelper.getInstance().initAddressData();
                 ZoomMediaLoader.getInstance().init(new GlideImageLoader());
             }
         });
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
     }
 }

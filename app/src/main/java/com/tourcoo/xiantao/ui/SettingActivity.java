@@ -100,6 +100,7 @@ public class SettingActivity extends BaseTourCooTitleActivity implements View.On
                     TourCooUtil.startActivity(mContext, EditPasswordActivity.class);
                 } else {
                     TourCooUtil.startActivity(mContext, LoginActivity.class);
+                    finish();
                 }
                 break;
             case R.id.stvAboutUs:
@@ -109,6 +110,7 @@ public class SettingActivity extends BaseTourCooTitleActivity implements View.On
             case R.id.btnGoLogin:
                 //去登陆
                 TourCooUtil.startActivity(mContext, LoginActivity.class);
+                finish();
                 break;
             case R.id.ivReturn:
                 finish();

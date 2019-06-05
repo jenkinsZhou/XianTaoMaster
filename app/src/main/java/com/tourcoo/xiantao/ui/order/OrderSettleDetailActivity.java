@@ -1,6 +1,7 @@
 package com.tourcoo.xiantao.ui.order;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -39,6 +40,7 @@ import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.frame.util.FormatUtil;
 import com.tourcoo.xiantao.core.frame.util.SharedPreferencesUtil;
+import com.tourcoo.xiantao.core.frame.util.StackUtil;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.threadpool.ThreadPoolManager;
@@ -60,6 +62,7 @@ import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
 import com.tourcoo.xiantao.ui.account.AddressManagerActivity;
 import com.tourcoo.xiantao.ui.discount.DisCountSelectListActivity;
+import com.tourcoo.xiantao.ui.goods.GoodsDetailActivity;
 import com.tourcoo.xiantao.widget.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.tourcoo.xiantao.widget.bigkoo.pickerview.view.TimePickerView;
 import com.tourcoo.xiantao.widget.dialog.PayDialog;
@@ -1238,6 +1241,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                 //跳转至我的订单 全部列表
                 intent.putExtra(EXTRA_CURRENT_TAB_INDEX, 0);
                 intent.setClass(mContext, MyOrderListActivity.class);
+                closeGoodsDetailActivity();
                 startActivity(intent);
                 TourCooLogUtil.i(TAG, TAG + ":" + "已经跳转");
                 finish();
@@ -1256,6 +1260,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                     intent.putExtra(EXTRA_CURRENT_TAB_INDEX, 0);
                     intent.setClass(mContext, MyOrderListActivity.class);
                     startActivity(intent);
+                    closeGoodsDetailActivity();
                     TourCooLogUtil.i(TAG, TAG + ":" + "已经跳转");
                     finish();
                 }
@@ -1685,4 +1690,13 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         return settleEntity.getCoin() > 0 && settleEntity.getCoin_status() == 1;
     }
 
+    /**
+     * 关闭商品详情页
+     */
+    private void closeGoodsDetailActivity() {
+        Activity goodsDetailActivity = StackUtil.getInstance().getActivity(GoodsDetailActivity.class);
+        if (goodsDetailActivity != null) {
+            goodsDetailActivity.finish();
+        }
+    }
 }

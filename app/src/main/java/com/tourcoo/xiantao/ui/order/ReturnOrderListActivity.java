@@ -165,6 +165,10 @@ public class ReturnOrderListActivity extends BaseTourCooRefreshLoadActivity<Orde
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 OrderEntity.OrderInfo orderInfo = mAdapter.getData().get(position);
+                if(orderInfo == null){
+                    ToastUtil.showFailed("未获取到订单信息");
+                    return;
+                }
                 switch (view.getId()) {
                     case R.id.photoRecyclerView:
                     case R.id.llOrderInfo:
@@ -174,7 +178,7 @@ public class ReturnOrderListActivity extends BaseTourCooRefreshLoadActivity<Orde
                         ToastUtil.show("1");
                         break;
                     case R.id.btnTwo:
-                        ToastUtil.show("2");
+                        loadButton2Function(orderInfo);
                         break;
                     case R.id.btnThree:
                         loadButton3Function(orderInfo);
@@ -273,6 +277,28 @@ public class ReturnOrderListActivity extends BaseTourCooRefreshLoadActivity<Orde
         }
     }
 
+    private void loadButton2Function(OrderEntity.OrderInfo orderInfo) {
+        TourCooLogUtil.i(TAG, TAG + "订单状态:" + orderInfo.getOrder_status());
+        switch (orderInfo.getOrder_status()) {
+            case ORDER_STATUS_WAIT_SEND:
+                //申请退单
+//                skipReturnGoods(orderInfo);
+                break;
+            case ORDER_STATUS_WAIT_COMMENT:
+                //待评价状态 去评价
+//                skipEvaluation(orderInfo);
+                break;
+            case ORDER_STATUS_BACK:
+            case ORDER_STATUS_FINISH:
+            case ORDER_STATUS_BACK_ING:
+            case ORDER_STATUS_BACK_REFUSE:
+            case ORDER_STATUS_BACK_FINISH:
+                skipSeeLogistics(orderInfo.getId());
+                break;
+            default:
+                break;
+        }
+    }
 
     /**
      * 跳转至退货页面

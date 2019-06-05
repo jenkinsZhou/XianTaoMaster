@@ -43,6 +43,7 @@ import com.tourcoo.xiantao.entity.BaseEntity;
 import com.tourcoo.xiantao.entity.MenuItem;
 import com.tourcoo.xiantao.entity.SystemSettingEntity;
 import com.tourcoo.xiantao.entity.TokenInfo;
+import com.tourcoo.xiantao.entity.event.LoginEvent;
 import com.tourcoo.xiantao.entity.event.MessageEvent;
 import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.entity.message.MessageBean;
@@ -91,6 +92,7 @@ import static com.tourcoo.xiantao.ui.order.MyOrderListActivity.EXTRA_CURRENT_TAB
  * @Email: 971613168@qq.com
  */
 public class MineFragment extends BaseTitleFragment implements View.OnClickListener, OnRefreshListener {
+
     public static final String NO_LOGIN = "请登录";
     private MenuAdapter mMenuAdapter;
     private List<MenuItem> mMenuItemList = new ArrayList<>();
@@ -316,7 +318,7 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
             case R.id.llYin:
             case R.id.llGold:
                 if (!AccountInfoHelper.getInstance().isLogin()) {
-                    TourCooUtil.startActivity(mContext, LoginActivity.class);
+                    skipToLoginActivity();
                     return;
                 }
                 Intent coinIntent = new Intent();
@@ -797,13 +799,6 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
     }
 
 
-    private void skipToLoginActivity() {
-        Intent intent = new Intent();
-        intent.setClass(mContext, LoginActivity.class);
-        startActivity(intent);
-    }
-
-
     private void setNoLogin(String value) {
         if (TextUtils.isEmpty(value)) {
             return;
@@ -813,6 +808,27 @@ public class MineFragment extends BaseTitleFragment implements View.OnClickListe
         } else {
             ToastUtil.showFailed(value);
         }
+    }
+
+
+    private void skipToLoginActivity(){
+        if(mMainTabActivity != null){
+            mMainTabActivity.skipToLoginActivity();
+        }
+    }
+
+
+    /**
+     * 登录回调
+     * @param loginEvent
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoginEvent(LoginEvent loginEvent) {
+        //todo 刷新ui
+        if (loginEvent == null) {
+            return;
+        }
+        checkTokenAndRequestUserInfo();
     }
 }
 

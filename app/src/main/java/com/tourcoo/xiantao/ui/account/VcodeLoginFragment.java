@@ -58,6 +58,7 @@ public class VcodeLoginFragment extends BaseFragment implements View.OnClickList
 
     private ImageView ivClearPhone;
     private TextView tvSendVerificationCode;
+    private LoginActivity mLoginActivity;
 
     @Override
     public int getContentLayout() {
@@ -66,6 +67,7 @@ public class VcodeLoginFragment extends BaseFragment implements View.OnClickList
 
     @Override
     public void initView(Bundle savedInstanceState) {
+        mLoginActivity = (LoginActivity) mContext;
         etPhoneNumber = mContentView.findViewById(R.id.etPhoneNumber);
         ivClearPhone = mContentView.findViewById(R.id.ivClearPhone);
         etVCode = mContentView.findViewById(R.id.etVCode);
@@ -331,9 +333,11 @@ public class VcodeLoginFragment extends BaseFragment implements View.OnClickList
             //存储本地 保存用户信息并跳转
             AccountInfoHelper.getInstance().saveUserInfoToSq(userInfoBean.getUserinfo());
             AccountInfoHelper.getInstance().setUserInfo(userInfoBean.getUserinfo());
-            mContext.finish();
-            finishMainTab();
-            TourCoolUtil.startActivity(mContext, MainTabActivity.class);
+            mLoginActivity.startActivity();
+//            mContext.finish();
+         /*   finishMainTab();
+            TourCoolUtil.startActivity(mContext, MainTabActivity.class);*/
+
         } else {
             ToastUtil.showFailed("注册失败");
         }

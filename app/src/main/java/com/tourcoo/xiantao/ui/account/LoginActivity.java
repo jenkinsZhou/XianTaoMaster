@@ -1,5 +1,6 @@
 package com.tourcoo.xiantao.ui.account;
 
+import android.content.ComponentName;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
@@ -8,8 +9,11 @@ import android.widget.TextView;
 
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
+import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.custom.WrapContentHeightViewPager;
+import com.tourcoo.xiantao.entity.event.LoginEvent;
+import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
 
 import java.util.ArrayList;
@@ -19,6 +23,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * @author :zhoujian
@@ -59,7 +65,6 @@ public class LoginActivity extends BaseTourCooTitleActivity implements ViewPager
         wrapViewPager.addOnPageChangeListener(this);
         wrapViewPager.setAdapter(pagerAdapter);
     }
-
 
 
     @Override
@@ -167,6 +172,23 @@ public class LoginActivity extends BaseTourCooTitleActivity implements ViewPager
     }
 
 
+    public void startActivity() {
+        if (getIntent().getExtras() != null && getIntent().getExtras().getString("className") != null) {
+            String className = getIntent().getExtras().getString("className");
+            getIntent().removeExtra("className");
+            if (className != null && !className.equals(mContext.getClass().getName())) {
+                try {
+                    ComponentName componentName = new ComponentName(mContext, Class.forName(className));
+                    TourCooLogUtil.i(TAG, TAG + "componentName:" + componentName);
+                    startActivity(getIntent().setComponent(componentName));
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        EventBus.getDefault().post(new LoginEvent());
+        finish();
+    }
 
 
 }

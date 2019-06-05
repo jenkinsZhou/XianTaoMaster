@@ -1,6 +1,7 @@
 package com.tourcoo.xiantao.ui.goods;
 
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +14,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.UserManager;
 import android.text.Layout;
 import android.text.TextUtils;
 import android.util.SparseArray;
@@ -33,6 +35,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.LogUtils;
@@ -121,6 +124,7 @@ import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SETTLE_TYPE
  * @date 2019年04月24日19:52
  * @Email: 971613168@qq.com
  */
+@Route(path = "/goods/GoodsDetailActivity")
 public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity implements IMultiStatusView, View.OnClickListener {
     public static final int REQUSET_CODE_SETTLE = 1016;
     public static final String EXTRA_SKIP_SETTLE = "EXTRA_SKIP_SETTLE";
@@ -1158,7 +1162,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private void skipToLoginActivity() {
         Intent intent = new Intent();
         intent.setClass(mContext, LoginActivity.class);
-        startActivity(intent);
+        startActivityAfterLogin(intent);
     }
 
 
@@ -1393,4 +1397,17 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 });
     }
 
+
+    public void startActivityAfterLogin(Intent intent) {
+        //未登录（这里用自己的登录逻辑去判断是否未登录）
+        if (!AccountInfoHelper.getInstance().isLogin()) {
+            ComponentName componentName = new ComponentName(mContext, LoginActivity.class);
+            intent.putExtra("className", intent.getComponent().getClassName());
+            intent.setComponent(componentName);
+            super.startActivity(intent);
+        } else {
+            super.startActivity(intent);
+        }
+    }
 }
+

@@ -247,7 +247,12 @@ public class ReturnOrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderIn
                     setTextGreen(tvOrderStatus, "退货中");
                     orderInfo.setOrder_status(ORDER_STATUS_BACK_ING);
                     hindView(btnOne);
-                    hindView(btnTwo);
+                    if (orderInfo.getFreight_status() == NOT_FINISH) {
+                        //待发货状态下 无法查看物流
+                        hindView(btnTwo);
+                    }else {
+                        setTextGray(btnTwo, "查看物流");
+                    }
                     setTextGray(btnThree, "取消退单");
                     setTextGray(btnFour, "查看详情");
                     helper.setText(R.id.tvPrice, "¥ " + orderInfo.getReturn_price());
@@ -288,6 +293,8 @@ public class ReturnOrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderIn
                     if (orderInfo.getFreight_status() == NOT_FINISH) {
                         //待发货状态下 无法查看物流
                         hindView(btnThree);
+                    }else {
+                        setTextGray(btnThree, "查看物流");
                     }
                     helper.setText(R.id.tvPrice, "¥ " + orderInfo.getReturn_price());
                     setTextGray(btnFour, "查看详情");

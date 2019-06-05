@@ -3,8 +3,10 @@ package com.tourcoo.xiantao.core.module;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -39,6 +41,7 @@ import com.tourcoo.xiantao.helper.ShoppingCar;
 import com.tourcoo.xiantao.permission.PermissionManager;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.ShoppingCarFragmentVersion2;
+import com.tourcoo.xiantao.ui.account.LoginActivity;
 import com.tourcoo.xiantao.ui.account.MineFragment;
 import com.tourcoo.xiantao.ui.goods.ClassifyGoodsFragment;
 import com.tourcoo.xiantao.ui.home.HomeFragment;
@@ -68,6 +71,8 @@ import static com.tourcoo.xiantao.ui.account.MineFragment.NO_LOGIN;
  * @Email: 971613168@qq.com
  */
 public class MainTabActivity extends BaseMainActivity implements EasyPermissions.PermissionCallbacks {
+    private static final String EXTRA_SKIP_TAG_MAIN = "EXTRA_SKIP_TAG_MAIN";
+    private static final int REQUEST_CODE_SKIP_MAIN = 1000;
     private TabChangeEvent mTabChangeEvent;
     public CommonTabLayout mTabLayout;
     public static final int TAB_INDEX_MINE = 3;
@@ -428,6 +433,37 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
                 requestSystemConfig();
             }
         }, 500);
+    }
+
+    public void startActivityAfterLogin(Intent intent) {
+        //未登录（这里用自己的登录逻辑去判断是否未登录）
+        if (!AccountInfoHelper.getInstance().isLogin()) {
+            ComponentName componentName = new ComponentName(mContext, LoginActivity.class);
+            intent.putExtra("className", intent.getComponent().getClassName());
+            intent.setComponent(componentName);
+            super.startActivity(intent);
+        } else {
+            super.startActivity(intent);
+        }
+    }
+
+
+    public void skipToLoginActivity() {
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_SKIP_TAG_MAIN, EXTRA_SKIP_TAG_MAIN);
+        intent.setClass(mContext, LoginActivity.class);
+        startActivityForResult(intent, REQUEST_CODE_SKIP_MAIN);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_SKIP_MAIN) {
+            if (resultCode == RESULT_OK && mineFragment != null) {
+                TourCooLogUtil.i(TAG, TAG + "刷新个人中心:");
+                mineFragment.checkTokenAndRequestUserInfo();
+            }
+        }
     }
 
 

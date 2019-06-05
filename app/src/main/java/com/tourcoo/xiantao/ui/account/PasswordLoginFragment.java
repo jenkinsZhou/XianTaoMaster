@@ -41,7 +41,7 @@ import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS
  * @Email: 971613168@qq.com
  */
 public class PasswordLoginFragment extends BaseFragment implements View.OnClickListener {
-
+    private LoginActivity mLoginActivity;
     private EditText etPhoneNumber;
 
     private EditText etPassword;
@@ -61,6 +61,7 @@ public class PasswordLoginFragment extends BaseFragment implements View.OnClickL
 
     @Override
     public void initView(Bundle savedInstanceState) {
+        mLoginActivity = (LoginActivity) mContext;
         etPhoneNumber = mContentView.findViewById(R.id.etPhoneNumber);
         etPassword = mContentView.findViewById(R.id.etPassword);
         ivClearPhone = mContentView.findViewById(R.id.ivClearPhone);
@@ -243,9 +244,11 @@ public class PasswordLoginFragment extends BaseFragment implements View.OnClickL
             //存储本地 保存用户信息并跳转
             AccountInfoHelper.getInstance().saveUserInfoToSq(userInfoBean.getUserinfo());
             AccountInfoHelper.getInstance().setUserInfo(userInfoBean.getUserinfo());
-            mContext.finish();
-            finishMainTab();
-            TourCoolUtil.startActivity(mContext, MainTabActivity.class);
+          /*  finishMainTab();
+            TourCoolUtil.startActivity(mContext, MainTabActivity.class);*/
+            mLoginActivity.startActivity();
+//            mContext.finish();
+
         } else {
             ToastUtil.showFailed("注册失败");
         }
