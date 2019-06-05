@@ -1,6 +1,7 @@
 package com.tourcoo.xiantao.ui.account;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -27,10 +28,13 @@ import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.event.LoginEvent;
 import com.tourcoo.xiantao.entity.user.UserInfoBean;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
 import com.trello.rxlifecycle3.android.ActivityEvent;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -477,9 +481,10 @@ public class RegisterActivity extends BaseTourCooTitleActivity implements View.O
             //存储本地 保存用户信息并跳转
             AccountInfoHelper.getInstance().saveUserInfoToSq(userInfoBean.getUserinfo());
             AccountInfoHelper.getInstance().setUserInfo(userInfoBean.getUserinfo());
-            mContext.finish();
-            finishMainTab();
-            TourCoolUtil.startActivity(mContext, MainTabActivity.class);
+            startActivity();
+//            mContext.finish();
+//            finishMainTab();
+//            TourCoolUtil.startActivity(mContext, MainTabActivity.class);
         } else {
             ToastUtil.showSuccess("注册失败");
         }
@@ -487,6 +492,37 @@ public class RegisterActivity extends BaseTourCooTitleActivity implements View.O
 
     private void finishMainTab() {
         Activity activity = StackUtil.getInstance().getActivity(MainTabActivity.class);
+        if (activity != null) {
+            activity.finish();
+        }
+    }
+
+
+    private void startActivity() {
+        if (getIntent().getExtras() != null && getIntent().getExtras().getString("className") != null) {
+            String className = getIntent().getExtras().getString("className");
+            getIntent().removeExtra("className");
+            if (className != null && !className.equals(mContext.getClass().getName())) {
+                try {
+                    ComponentName componentName = new ComponentName(mContext, Class.forName(className));
+                    TourCooLogUtil.i(TAG, TAG + "componentName:" + componentName);
+                    startActivity(getIntent().setComponent(componentName));
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        EventBus.getDefault().post(new LoginEvent());
+        //登录成功 关闭登录页面
+        closeLoginActivity();
+        finish();
+    }
+
+    /**
+     * 关闭登录页
+     */
+    private void closeLoginActivity() {
+        Activity activity = StackUtil.getInstance().getActivity(LoginActivity.class);
         if (activity != null) {
             activity.finish();
         }
