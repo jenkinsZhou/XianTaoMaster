@@ -11,6 +11,7 @@ import com.blankj.utilcode.util.LogUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.OrderListAdapter;
+import com.tourcoo.xiantao.adapter.ReturnOrderListAdapter;
 import com.tourcoo.xiantao.core.frame.UiConfigManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
@@ -49,7 +50,7 @@ import static com.tourcoo.xiantao.ui.order.ReturnGoodsActivity.EXTRA_GOODS_LIST;
  * @Email: 971613168@qq.com
  */
 public class ReturnOrderListActivity extends BaseTourCooRefreshLoadActivity<OrderEntity.OrderInfo> implements View.OnClickListener {
-    private OrderListAdapter mAdapter;
+    private ReturnOrderListAdapter mAdapter;
     private int orderStatus = ORDER_STATUS_BACK;
     public static final String EXTRA_ORDER_STATUS = "EXTRA_ORDER_STATUS";
     public static final int REQUEST_CODE_RETURN_LIST = 1005;
@@ -76,8 +77,8 @@ public class ReturnOrderListActivity extends BaseTourCooRefreshLoadActivity<Orde
     }
 
     @Override
-    public OrderListAdapter getAdapter() {
-        mAdapter = new OrderListAdapter();
+    public ReturnOrderListAdapter getAdapter() {
+        mAdapter = new ReturnOrderListAdapter();
         return mAdapter;
     }
 
@@ -225,6 +226,12 @@ public class ReturnOrderListActivity extends BaseTourCooRefreshLoadActivity<Orde
                 showConfirmCancelDialog(orderInfo);
                 break;
             case ORDER_STATUS_FINISH:
+                skipSeeLogistics(orderInfo.getId());
+                break;
+            case ORDER_STATUS_BACK_REFUSE:
+                skipSeeLogistics(orderInfo.getId());
+                break;
+            case ORDER_STATUS_BACK_FINISH:
                 skipSeeLogistics(orderInfo.getId());
                 break;
             default:

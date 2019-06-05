@@ -5,19 +5,15 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.tourcoo.xiantao.R;
-import com.tourcoo.xiantao.constant.OrderConstant;
 import com.tourcoo.xiantao.core.frame.util.SizeUtil;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.log.widget.utils.DateUtil;
-import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.entity.goods.Goods;
 import com.tourcoo.xiantao.entity.order.OrderEntity;
@@ -27,7 +23,6 @@ import java.util.List;
 
 import static com.tourcoo.xiantao.constant.OrderConstant.FINISH;
 import static com.tourcoo.xiantao.constant.OrderConstant.NOT_FINISH;
-import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_BACK;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_BACK_FINISH;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_BACK_ING;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_BACK_REFUSE;
@@ -37,19 +32,18 @@ import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_PAY;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_RECIEVE;
 import static com.tourcoo.xiantao.constant.OrderConstant.ORDER_STATUS_WAIT_SEND;
 
-
 /**
  * @author :JenkinsZhou
- * @description :订单列表适配器
+ * @description :退单列表适配器
  * @company :途酷科技
- * @date 2019年04月27日19:17
+ * @date 2019年06月05日10:15
  * @Email: 971613168@qq.com
  */
-public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, BaseViewHolder> {
+public class ReturnOrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, BaseViewHolder> {
     float touchDownX;
     float touchDownY;
 
-    public OrderListAdapter() {
+    public ReturnOrderListAdapter() {
         super(R.layout.item_order_recycler_view_layout);
     }
 
@@ -241,8 +235,6 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
             switch (orderInfo.getReturn_status()) {
                 //用户没有发起退货
                 case 10:
-
-
                     break;
                 //todo 退货中 20
                 case FINISH:
@@ -274,12 +266,15 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                     orderInfo.setOrder_status(ORDER_STATUS_BACK_FINISH);
                     hindView(btnOne);
                     hindView(btnTwo);
-                    hindView(btnThree);
+                    if (orderInfo.getFreight_status() == NOT_FINISH) {
+                        //待发货状态下 无法查看物流
+                        hindView(btnThree);
+                    }
                     helper.setText(R.id.tvPrice, "¥ " + orderInfo.getReturn_price());
                     setTextGray(btnFour, "查看详情");
                     break;
                 case 40:
-                  /*  //1表示拼团订单
+                    //1表示拼团订单
                     if (isPin) {
                         helper.setGone(R.id.tvPin, true);
                     } else {
@@ -290,33 +285,17 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
                     orderInfo.setOrder_status(ORDER_STATUS_BACK_REFUSE);
                     hindView(btnOne);
                     hindView(btnTwo);
-                    hindView(btnThree);
+                    if (orderInfo.getFreight_status() == NOT_FINISH) {
+                        //待发货状态下 无法查看物流
+                        hindView(btnThree);
+                    }
                     helper.setText(R.id.tvPrice, "¥ " + orderInfo.getReturn_price());
-                    setTextGray(btnFour, "查看详情");*/
-
-                  /*  //待发货
-                    orderInfo.setOrder_status(ORDER_STATUS_WAIT_SEND);
-                    tvOrderStatus.setText("待发货");
-                    hindView(btnOne);
-                    hindView(btnTwo);
-                    hindView(btnThree);
-                    if (isPin) {
-                        hindView(btnFour);
-                        //拼团不让退单
-                    } else {
-                        setTextGray(btnFour, "申请退单");
-                    }*/
+                    setTextGray(btnFour, "查看详情");
                     TourCooLogUtil.i(TAG, TAG + "订单id:" + orderInfo.getId());
                     break;
                 default:
                     break;
             }
-         /*   //1表示拼团订单
-        if (isPin) {
-            helper.setGone(R.id.tvPin, true);
-        } else {
-            helper.setGone(R.id.tvPin, false);
-        }*/
         }
     }
 
@@ -345,8 +324,4 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderEntity.OrderInfo, Ba
     private void showView(View view) {
         view.setVisibility(View.VISIBLE);
     }
-
-
 }
-
-
