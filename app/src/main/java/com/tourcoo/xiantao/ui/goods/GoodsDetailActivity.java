@@ -127,6 +127,7 @@ import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SETTLE_TYPE
 @Route(path = "/goods/GoodsDetailActivity")
 public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity implements IMultiStatusView, View.OnClickListener {
     public static final int REQUSET_CODE_SETTLE = 1016;
+    public static final int REQUSET_CODE_TUAN_LIST = 1017;
     public static final String EXTRA_SKIP_SETTLE = "EXTRA_SKIP_SETTLE";
     private boolean swiping = false;
     private String companyInfo;
@@ -845,7 +846,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 }
                 Intent intent = new Intent(GoodsDetailActivity.this, TuanListActivity.class);
                 intent.putExtra("goods_id", mGoodsId);
-                startActivity(intent);
+                startActivityForResult(intent,REQUSET_CODE_TUAN_LIST);
                 break;
             case R.id.btnSeeComment:
             case R.id.btnSeeTotalComment:
@@ -1358,7 +1359,16 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     refreshGoodsDetail(mGoodsId);
                 }
                 break;
+            case REQUSET_CODE_TUAN_LIST:
+                if (NetworkUtil.isConnected(mContext)) {
+                    if (mGoodsId < 0) {
+                        return;
+                    }
+                    refreshGoodsDetail(mGoodsId);
+                }
+                break;
             default:
+
                 break;
         }
     }

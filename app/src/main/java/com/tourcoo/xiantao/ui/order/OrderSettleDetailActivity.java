@@ -63,6 +63,7 @@ import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
 import com.tourcoo.xiantao.ui.account.AddressManagerActivity;
 import com.tourcoo.xiantao.ui.discount.DisCountSelectListActivity;
 import com.tourcoo.xiantao.ui.goods.GoodsDetailActivity;
+import com.tourcoo.xiantao.ui.goods.TuanListActivity;
 import com.tourcoo.xiantao.widget.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.tourcoo.xiantao.widget.bigkoo.pickerview.view.TimePickerView;
 import com.tourcoo.xiantao.widget.dialog.PayDialog;
@@ -1242,6 +1243,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                 intent.putExtra(EXTRA_CURRENT_TAB_INDEX, 0);
                 intent.setClass(mContext, MyOrderListActivity.class);
                 closeGoodsDetailActivity();
+                closeTuanListActivity();
                 startActivity(intent);
                 TourCooLogUtil.i(TAG, TAG + ":" + "已经跳转");
                 finish();
@@ -1261,6 +1263,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                     intent.setClass(mContext, MyOrderListActivity.class);
                     startActivity(intent);
                     closeGoodsDetailActivity();
+                    closeTuanListActivity();
                     TourCooLogUtil.i(TAG, TAG + ":" + "已经跳转");
                     finish();
                 }
@@ -1698,5 +1701,21 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         if (goodsDetailActivity != null) {
             goodsDetailActivity.finish();
         }
+    }
+
+    /**
+     * 关闭拼团列表（如果存在）
+     */
+    private void closeTuanListActivity() {
+        Activity tuanListActivity = StackUtil.getInstance().getActivity(TuanListActivity.class);
+        if (tuanListActivity != null) {
+            tuanListActivity.finish();
+        }
+    }
+
+    @Override
+    public void finish() {
+        closeTuanListActivity();
+        super.finish();
     }
 }
