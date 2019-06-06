@@ -595,7 +595,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             int size = detail.getComment_list().size() == 1 ? 1 : 2;
             for (int i = 0; i < size; i++) {
                 Goods.CommentListBean item = detail.getComment_list().get(i);
-                View view = View.inflate(this, R.layout.item_comment, null);
+                View view = View.inflate(this, R.layout.item_comment_match_content, null);
                 RatingStarView ratingStarView = view.findViewById(R.id.rsvRating);
                 RecyclerView commentImageRecyclerView = view.findViewById(R.id.commentImageRecyclerView);
 
