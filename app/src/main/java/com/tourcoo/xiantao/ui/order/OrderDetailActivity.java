@@ -420,7 +420,7 @@ public class OrderDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     break;
                 case 40:
                     //退货被拒绝
-                    orderInfo.setOrder_status(ORDER_STATUS_BACK_REFUSE);
+//                    orderInfo.setOrder_status(ORDER_STATUS_BACK_REFUSE);
                     break;
                 default:
                     break;
