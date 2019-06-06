@@ -143,6 +143,7 @@
                     android:maxLines="1"
                     android:gravity="bottom"
                     android:text="0.0"
+                    android:layout_marginLeft="@dimen/dp_2"
                     android:textColor="@color/whiteCommon"
                     android:textSize="@dimen/sp_30" />
 

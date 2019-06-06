@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -17,6 +18,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.previewlibrary.GPreviewBuilder;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.GridImageAdapter;
+import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
@@ -30,6 +32,7 @@ import com.tourcoo.xiantao.entity.comment.CommentDetail;
 import com.tourcoo.xiantao.entity.comment.CommentEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
+import com.tourcoo.xiantao.ui.BaseTourCooTitleMultiViewActivity;
 import com.tourcoo.xiantao.widget.ratingstar.RatingStarView;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
@@ -38,6 +41,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 
@@ -49,7 +53,7 @@ import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS
  * @date 2019年04月11日21:02
  * @Email: 971613168@qq.com
  */
-public class LookEvaluationActivity extends BaseTourCooTitleActivity {
+public class LookEvaluationActivity extends BaseTourCooTitleMultiViewActivity {
     private RecyclerView rvImageComment;
     private List<String> imageUrList = new ArrayList<>();
     private TextView tvCommentDetail;
@@ -60,6 +64,7 @@ public class LookEvaluationActivity extends BaseTourCooTitleActivity {
     private TextView tvNickName;
     private int orderId;
     public static final String EXTRA_ORDER_ID = "EXTRA_ORDER_ID";
+    private LinearLayout llRootView;
 
     @Override
     public int getContentLayout() {
@@ -68,7 +73,8 @@ public class LookEvaluationActivity extends BaseTourCooTitleActivity {
 
     @Override
     public void initView(Bundle savedInstanceState) {
-        orderId = getIntent().getIntExtra(EXTRA_ORDER_ID,-1);
+        llRootView = findViewById(R.id.llRootView);
+        orderId = getIntent().getIntExtra(EXTRA_ORDER_ID, -1);
         tvNickName = findViewById(R.id.tvNickName);
         civAvatar = findViewById(R.id.civAvatar);
         rvImageComment = findViewById(R.id.rvImageComment);
@@ -127,7 +133,8 @@ public class LookEvaluationActivity extends BaseTourCooTitleActivity {
 
     private void showDetail(CommentDetail commentDetail) {
         if (commentDetail == null) {
-            ToastUtil.showFailed("未获取到订单信息");
+             TourCooLogUtil.i(TAG,TAG+"mStatusLayoutManager:"+mStatusLayoutManager );
+            showEmtyLayout("未获取到评价信息");
             return;
         }
         GlideManager.loadCircleImg(TourCooUtil.getUrl(commentDetail.getAvatar()), civAvatar, R.mipmap.img_default_avatar);
@@ -154,6 +161,7 @@ public class LookEvaluationActivity extends BaseTourCooTitleActivity {
             TourCooLogUtil.i(TAG, TAG + ":" + "图片url:" + s);
         }
         gridImageAdapter.notifyDataSetChanged();
+        showSuccessLayout();
     }
 
     private String getNotNullValue(String value) {
@@ -191,7 +199,8 @@ public class LookEvaluationActivity extends BaseTourCooTitleActivity {
      * 查询评价记录
      */
     private void requestOrderCommentList(int orderId) {
-         TourCooLogUtil.i(TAG,TAG+"评价的订单id:"+orderId );
+        TourCooLogUtil.i(TAG, TAG + "评价的订单id:" + orderId);
+        showLoadingLayout();
         ApiRepository.getInstance().requestOrderCommentList(orderId, 1).compose(bindUntilEvent(ActivityEvent.DESTROY)).
                 subscribe(new BaseObserver<BaseEntity<CommentEntity>>() {
                     @Override
@@ -202,10 +211,10 @@ public class LookEvaluationActivity extends BaseTourCooTitleActivity {
                                 if (commentEntity.getData() != null) {
                                     showDetail(getDetail(commentEntity.getData()));
                                 } else {
-                                    ToastUtil.showFailed("解析失败");
+                                    showEmtyLayout("暂无评价");
                                 }
                             } else {
-                                ToastUtil.showFailed(entity.msg);
+                                showEmtyLayout(entity.msg);
                             }
                         }
                     }
@@ -213,6 +222,7 @@ public class LookEvaluationActivity extends BaseTourCooTitleActivity {
                     @Override
                     public void onRequestError(Throwable e) {
                         super.onRequestError(e);
+                        showEmtyLayout();
                     }
                 });
     }
@@ -251,5 +261,51 @@ public class LookEvaluationActivity extends BaseTourCooTitleActivity {
             }
             imageEntityList.get(i).setBounds(bounds);
         }
+    }
+
+
+    @Override
+    protected IMultiStatusView getMultiStatusView() {
+        return new IMultiStatusView() {
+            @Override
+            public View getMultiStatusContentView() {
+                return llRootView;
+            }
+
+            @Override
+            public void setMultiStatusView(StatusLayoutManager.Builder statusView) {
+
+            }
+
+            @Override
+            public View.OnClickListener getEmptyClickListener() {
+                return new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        requestOrderCommentList(orderId);
+                    }
+                };
+            }
+
+            @Override
+            public View.OnClickListener getErrorClickListener() {
+                return new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        requestOrderCommentList(orderId);
+                    }
+                };
+            }
+
+            @Override
+            public View.OnClickListener getCustomerClickListener() {
+                return new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        requestOrderCommentList(orderId);
+                    }
+                };
+            }
+        };
     }
 }

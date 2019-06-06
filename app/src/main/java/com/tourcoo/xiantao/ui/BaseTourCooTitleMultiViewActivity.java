@@ -29,6 +29,8 @@ public abstract class BaseTourCooTitleMultiViewActivity extends BaseTourCooTitle
     protected Handler mHandler = new Handler();
     protected long delayTime = 1000L;
 
+
+
     @Override
     public void loadData() {
         super.loadData();

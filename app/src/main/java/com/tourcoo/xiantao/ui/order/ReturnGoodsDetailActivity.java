@@ -30,6 +30,7 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.GridImageAdapter;
+import com.tourcoo.xiantao.adapter.GridImageMatchContentAdapter;
 import com.tourcoo.xiantao.adapter.OrderGoodsDetailAdapter;
 import com.tourcoo.xiantao.constant.WxConfig;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
@@ -108,7 +109,7 @@ public class ReturnGoodsDetailActivity extends BaseTourCooTitleMultiViewActivity
     private static final int REQUEST_CODE_EVALUATE = 1001;
     public static final int REQUEST_CODE_RETURN_GOODS = 1002;
     private List<String> mImageList = new ArrayList<>();
-    private GridImageAdapter gridImageAdapter;
+    private GridImageMatchContentAdapter gridImageAdapter;
     private IWXAPI api;
     private LinearLayout llAddressInfo;
     public static final String EXTRA_ORDER_ID = "EXTRA_ORDER_ID";
@@ -1180,7 +1181,7 @@ public class ReturnGoodsDetailActivity extends BaseTourCooTitleMultiViewActivity
             setViewVisible(tvReturnImage, false);
         } else {
             //显示退货图片
-            gridImageAdapter = new GridImageAdapter(mImageList);
+            gridImageAdapter = new GridImageMatchContentAdapter(mImageList);
             gridImageAdapter.bindToRecyclerView(rvReturnGoods);
             rvReturnGoods.setLayoutManager(new GridLayoutManager(mContext, 4));
             String[] images = returnInfo.getImages().split(",");
