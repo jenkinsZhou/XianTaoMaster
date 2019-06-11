@@ -422,6 +422,47 @@
                              android:textSize="@dimen/sp_10" />-->
                     </LinearLayout>
 
+                    <!--限购数量-->
+                    <LinearLayout
+                        android:id="@+id/llLimitSaleInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/dp_10"
+                        android:orientation="horizontal"
+                        android:paddingTop="@dimen/dp_5">
+                        <!-- android:paddingBottom="@dimen/dp_8"-->
+                        <!-- android:paddingTop="@dimen/dp_3"-->
+                        <TextView
+                            android:layout_width="@dimen/dp_6"
+                            android:layout_height="@dimen/dp_6"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="@dimen/dp_5"
+                            android:background="@drawable/dot_red_6dp" />
+
+                        <TextView
+                            android:id="@+id/tvLimitInfo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="@color/red_common"
+                            android:textSize="@dimen/sp_12" />
+
+                        <!-- <TextView
+                             android:layout_width="@dimen/dp_6"
+                             android:layout_height="@dimen/dp_6"
+                             android:layout_gravity="center_vertical"
+                             android:layout_marginLeft="@dimen/dp_10"
+                             android:background="@drawable/dot_green_6dp" />
+
+                         <TextView
+                             android:id="@+id/tvRemarkSecond"
+                             android:layout_width="wrap_content"
+                             android:layout_height="wrap_content"
+                             android:text="不支持七天无理由退货"
+                             android:textSize="@dimen/sp_10" />-->
+                    </LinearLayout>
+
+
                 </LinearLayout>
 
                 <!--促销说明-->

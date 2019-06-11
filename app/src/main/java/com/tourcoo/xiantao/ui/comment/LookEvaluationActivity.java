@@ -17,13 +17,12 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 
 import com.previewlibrary.GPreviewBuilder;
 import com.tourcoo.xiantao.R;
-import com.tourcoo.xiantao.adapter.GridImageAdapter;
+import com.tourcoo.xiantao.adapter.GridCommentImageAdapter;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.log.widget.utils.DateUtil;
-import com.tourcoo.xiantao.core.util.ToastUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
 import com.tourcoo.xiantao.entity.BaseEntity;
@@ -58,7 +57,7 @@ public class LookEvaluationActivity extends BaseTourCooTitleMultiViewActivity {
     private List<String> imageUrList = new ArrayList<>();
     private TextView tvCommentDetail;
     private RatingStarView rsvRating;
-    private GridImageAdapter gridImageAdapter;
+    private GridCommentImageAdapter gridImageAdapter;
     private TextView tvCommentTime;
     private CircleImageView civAvatar;
     private TextView tvNickName;
@@ -81,7 +80,7 @@ public class LookEvaluationActivity extends BaseTourCooTitleMultiViewActivity {
         rsvRating = findViewById(R.id.rsvRating);
         tvCommentDetail = findViewById(R.id.tvCommentDetail);
         tvCommentTime = findViewById(R.id.tvCommentTime);
-        gridImageAdapter = new GridImageAdapter(imageUrList);
+        gridImageAdapter = new GridCommentImageAdapter(imageUrList);
         gridImageAdapter.bindToRecyclerView(rvImageComment);
         rvImageComment.setLayoutManager(new GridLayoutManager(mContext, 4));
         gridImageAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {

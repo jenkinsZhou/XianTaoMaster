@@ -51,6 +51,7 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.XianTaoApplication;
+import com.tourcoo.xiantao.adapter.GridCommentImageAdapter;
 import com.tourcoo.xiantao.adapter.GridImageAdapter;
 import com.tourcoo.xiantao.constant.WxConfig;
 import com.tourcoo.xiantao.core.common.CommonConstant;
@@ -151,6 +152,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
      */
     private TextView tvPinPrice;
     private GoodsEntity mGoodsEntity;
+    private TextView tvLimitInfo;
     /**
      * 用于退出activity,避免countdown，造成资源浪费。
      */
@@ -210,7 +212,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private TextView tvExplainDiscount;
     //    private FloatingActionButton mFloatingActionButton;
     private ObservableScrollView mObservableScrollView;
-
+    private LinearLayout llLimitSaleInfo;
     private CircleImageView civReturnTop;
 
     @Override
@@ -255,10 +257,12 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         });
         rlContentView = findViewById(R.id.rlContentView);
         llGiveAway = findViewById(R.id.llGiveAway);
+        llLimitSaleInfo = findViewById(R.id.llLimitSaleInfo);
         labelLayout = findViewById(R.id.labelLayout);
         llDeduct = findViewById(R.id.llDeduct);
         tvDeduct = findViewById(R.id.tvDeduct);
         tvGiveAwayCoin = findViewById(R.id.tvGiveAwayCoin);
+        tvLimitInfo = findViewById(R.id.tvLimitInfo);
         llAssemble = findViewById(R.id.llAssemble);
         tvBuyNow = findViewById(R.id.tvBuyNow);
         tvPin = findViewById(R.id.tvPin);
@@ -442,6 +446,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         bgaBanner.setData(images, null);
     }
 
+
     /**
      * 显示商品详情
      *
@@ -468,6 +473,14 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             llGiveAway.setVisibility(View.VISIBLE);
             String value = "购买本商品每满" + TourCooUtil.doubleTransStringZhen(detail.getGive()) + "元 , 赠送1金币";
             tvGiveAwayCoin.setText(value);
+        }
+        //显示限购数量
+        if (detail.getQuota() <= 0) {
+            llLimitSaleInfo.setVisibility(View.GONE);
+        } else {
+            llLimitSaleInfo.setVisibility(View.VISIBLE);
+            String value = "本商品限购" + detail.getQuota() + "份";
+            tvLimitInfo.setText(value);
         }
         if (TextUtils.isEmpty(detail.getPromote())) {
             setVisible(llDeductRule, false);
@@ -618,7 +631,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                         }
                     }
                     commentImageRecyclerView.setLayoutManager(new GridLayoutManager(mContext, 4));
-                    GridImageAdapter gridImageAdapter = new GridImageAdapter(imageUrlList);
+                    GridCommentImageAdapter gridImageAdapter = new GridCommentImageAdapter(imageUrlList);
                     gridImageAdapter.bindToRecyclerView(commentImageRecyclerView);
                     List<ImageEntity> imageEntityList = parseImageEntityList(gridImageAdapter.getData());
                     gridImageAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -846,7 +859,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                 }
                 Intent intent = new Intent(GoodsDetailActivity.this, TuanListActivity.class);
                 intent.putExtra("goods_id", mGoodsId);
-                startActivityForResult(intent,REQUSET_CODE_TUAN_LIST);
+                startActivityForResult(intent, REQUSET_CODE_TUAN_LIST);
                 break;
             case R.id.btnSeeComment:
             case R.id.btnSeeTotalComment:

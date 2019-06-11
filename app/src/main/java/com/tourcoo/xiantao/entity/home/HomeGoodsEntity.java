@@ -81,6 +81,7 @@ public class HomeGoodsEntity {
          * deduct : 0
          * deduct_coin : 0
          * deduct_rule : 直接购买可用
+         * quota
          *
          */
         /**
@@ -119,6 +120,18 @@ public class HomeGoodsEntity {
         private double deduct;
         private double deduct_coin;
         private String deduct_rule;
+        /**
+         * 限购数量 若 > 0 则表示商品为限购商品
+         */
+        private int quota;
+
+        public int getQuota() {
+            return quota;
+        }
+
+        public void setQuota(int quota) {
+            this.quota = quota;
+        }
 
         public int getGoods_id() {
             return goods_id;

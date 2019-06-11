@@ -44,8 +44,19 @@ public class Goods implements Serializable {
      * tuan_list : [{"id":114,"goods_id":22,"user_id":4,"rule_id":2,"status":1,"createtime":1556741129,"updatetime":1556741129,"deadline":1556913929,"nickname":"ﾟ默｡","avatar":"https://wx.qlogo.cn/mmopen/vi_32/lTYDafia0gtOUD73KkMECgR3CqaqpUtRGzOsxCltfpHWIMr02yIDRxe6ED6GzAMQm1MRkdfWAG044agOxVS8Xcw/132","num":4,"surplus":12,"goods":{"goods_name":"Mate 20 华为 HUAWEI 1","label":"","images":"https://her-family.oss-cn-qingdao.aliyuncs.com/addons_store_uploads/20181105/b044b7bcd4930202fcd96d6b50453894.jpg,https://her-family.oss-cn-qingdao.aliyuncs.com/addons_store_uploads/20181105/4fffea1c27bfb8df655a39114bb05814.jpg,https://her-family.oss-cn-qingdao.aliyuncs.com/addons_store_uploads/20181105/e0d6dc822cf7632c66f7718bdd0dc2bc.jpg","image":"https://her-family.oss-cn-qingdao.aliyuncs.com/addons_store_uploads/20181105/b044b7bcd4930202fcd96d6b50453894.jpg","spec_type_text":"","deduct_stock_type_text":"","goods_status_text":"","is_delete_text":"","tuan_rule":false,"tuan":false,"tuan_list":[],"comment_list":[],"coin":0},"tuan_rule":{"id":2,"goods_id":22,"price":2,"name":"风光ix5  280TGDI CVT智尊型","weigh":3,"num":5,"status":"normal","createtime":1555916724,"updatetime":1556595809,"validity":2,"admin_id":0,"status_text":"开启"},"user":{"nickname":"ﾟ默｡","avatar":"https://wx.qlogo.cn/mmopen/vi_32/lTYDafia0gtOUD73KkMECgR3CqaqpUtRGzOsxCltfpHWIMr02yIDRxe6ED6GzAMQm1MRkdfWAG044agOxVS8Xcw/132"},"tuan":{"num":4,"surplus":12}}]
      * comment_list : [{"id":29,"goods_id":0,"user_id":2,"order_id":302,"nickname":"嘻哈江湖","avatar":"https://ahxtao.hfcoco.top/uploads/20190429/db00fae60f092ccf9bef0607cef4924f.jpg","star":5,"detail":"很好","images":"https://ahxtao.hfcoco.top/uploads/20190501/37b99a4245257091f7f9076ca129edf0.jpg","createtime":1556717549,"updatetime":1556717549,"status":"normal","reply":null,"admin_id":0},{"id":21,"goods_id":0,"user_id":2,"order_id":214,"nickname":"嘻哈江湖","avatar":"https://ahxtao.hfcoco.top/uploads/20190429/db00fae60f092ccf9bef0607cef4924f.jpg","star":5,"detail":"测试八张图片","images":null,"createtime":1556615329,"updatetime":1556615329,"status":"normal","reply":null,"admin_id":0}]
      * coin : 0
+     * quota:3
      */
     private int id;
+
+    private int quota;
+
+    public int getQuota() {
+        return quota;
+    }
+
+    public void setQuota(int quota) {
+        this.quota = quota;
+    }
 
     public int getId() {
         return id;

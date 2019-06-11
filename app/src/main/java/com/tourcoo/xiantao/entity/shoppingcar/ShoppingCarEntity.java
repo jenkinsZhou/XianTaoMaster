@@ -57,7 +57,17 @@ public class ShoppingCarEntity {
          * image : https://test.ahxtao.com/uploads/20190522/86842ebb9f9ada12d87a6ff93cde62a7.jpg
          * goods_name : 新奇士橙子
          * total_price : 60
+         * quota :3
          */
+        private int quota;
+
+        public int getQuota() {
+            return quota;
+        }
+
+        public void setQuota(int quota) {
+            this.quota = quota;
+        }
 
         private int goods_id;
         private double goods_price;

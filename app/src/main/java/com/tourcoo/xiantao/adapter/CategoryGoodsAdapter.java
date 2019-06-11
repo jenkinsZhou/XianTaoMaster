@@ -1,6 +1,7 @@
 package com.tourcoo.xiantao.adapter;
 
 import android.text.TextUtils;
+import android.widget.ImageView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -28,6 +29,13 @@ public class CategoryGoodsAdapter extends BaseQuickAdapter<GoodsCategoryBean.Goo
         RoundedImageView ivGoodsIcon = helper.getView(R.id.ivGoodsIcon);
         boolean special = IS_SPECIAL.equals(simpleInfo.getSpecial());
         helper.setGone(R.id.ivSpecial, special);
+        ImageView ivLabel = helper.getView(R.id.ivSpecial);
+        helper.setGone(R.id.ivSpecial, special);
+        if (simpleInfo.getQuota() > 0) {
+            //大于0 表示当前商品为特价商品
+            ivLabel.setImageResource(R.mipmap.img_sale_purchasing);
+            helper.setVisible(R.id.ivSpecial, true);
+        }
         GlideManager.loadImg(simpleInfo.getImage(), ivGoodsIcon, R.mipmap.img_zwt);
         helper.setText(R.id.tvGoodsName, simpleInfo.getGoods_name());
         if (!TextUtils.isEmpty(simpleInfo.getLabel())) {

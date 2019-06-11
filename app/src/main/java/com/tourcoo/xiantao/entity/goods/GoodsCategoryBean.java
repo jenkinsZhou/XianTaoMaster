@@ -511,9 +511,20 @@ public class GoodsCategoryBean implements Serializable {
          * goods_name : Mate 20 华为 HUAWEI
          * goods_sales : 75
          * id : 22
+         * quota
          * image : https://her-family.oss-cn-qingdao.aliyuncs.com/addons_store_uploads/20181105/b044b7bcd4930202fcd96d6b50453894.jpg
          */
         private String special;
+
+        public int getQuota() {
+            return quota;
+        }
+
+        public void setQuota(int quota) {
+            this.quota = quota;
+        }
+
+        private int quota;
 
         public String getSpecial() {
             return special;

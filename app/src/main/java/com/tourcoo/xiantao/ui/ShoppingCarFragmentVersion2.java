@@ -241,7 +241,7 @@ public class ShoppingCarFragmentVersion2 extends BaseTitleTourCoolFragment imple
         if (paySuccessEvent == null) {
             return;
         }
-        if(paySuccessEvent.id == EVENT_ACTION_PAY_FRESH_SUCCESS){
+        if (paySuccessEvent.id == EVENT_ACTION_PAY_FRESH_SUCCESS) {
             TourCooLogUtil.i(TAG, "刷新购物车");
             mMainTabActivity.getTotalNumAndRefreshShoppingCar(true);
         }

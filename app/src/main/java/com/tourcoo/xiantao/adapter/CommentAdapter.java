@@ -68,7 +68,7 @@ public class CommentAdapter extends BaseQuickAdapter<CommentDetail, BaseViewHold
 
             RecyclerView commentImageRecyclerView = helper.getView(R.id.commentImageRecyclerView);
             commentImageRecyclerView.setLayoutManager(new GridLayoutManager(mContext, 4));
-            GridImageAdapter gridImageAdapter = new GridImageAdapter(imageUrlList);
+            GridCommentImageAdapter gridImageAdapter = new GridCommentImageAdapter(imageUrlList);
             gridImageAdapter.bindToRecyclerView(commentImageRecyclerView);
             gridImageAdapter.setOnItemClickListener(new OnItemClickListener() {
                 @Override

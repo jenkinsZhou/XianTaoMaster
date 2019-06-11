@@ -3,6 +3,7 @@ package com.tourcoo.xiantao.adapter;
 import android.graphics.Paint;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -40,7 +41,13 @@ public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsEntity.Goods
             return;
         }
         boolean special = IS_SPECIAL.equals(item.getSpecial());
+        ImageView ivLabel = helper.getView(R.id.ivSpecial);
         helper.setGone(R.id.ivSpecial, special);
+        if (item.getQuota() > 0) {
+            //大于0 表示当前商品为特价商品
+            ivLabel.setImageResource(R.mipmap.img_sale_purchasing);
+            helper.setVisible(R.id.ivSpecial, true);
+        }
         RoundedImageView roundedImageView = helper.getView(R.id.rvGoodsImage);
         GlideManager.loadImg(TourCooUtil.getUrl(item.getImage()), roundedImageView);
         helper.setText(R.id.tvGoodsName, item.getGoods_name());
