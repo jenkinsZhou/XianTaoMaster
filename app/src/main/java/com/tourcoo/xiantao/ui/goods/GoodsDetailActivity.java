@@ -479,7 +479,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             llLimitSaleInfo.setVisibility(View.GONE);
         } else {
             llLimitSaleInfo.setVisibility(View.VISIBLE);
-            String value = "本商品限购" + detail.getQuota() + "份";
+            String value = "本商品每人限购" + detail.getQuota() + "份";
             tvLimitInfo.setText(value);
         }
         if (TextUtils.isEmpty(detail.getPromote())) {

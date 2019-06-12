@@ -729,6 +729,9 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
      * 定位
      */
     public void requestLocate() {
+        if(hasPermission()){
+            tvCity.setText("定位中");
+        }
         LocateHelper.getInstance().startLocation(new AMapLocationListener() {
             @Override
             public void onLocationChanged(AMapLocation aMapLocation) {
@@ -768,6 +771,8 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
                 }
                 tvCity.setText(city);
             }
+        }else {
+            tvCity.setText("定位失败");
         }
     }
 

@@ -42,11 +42,19 @@ public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsEntity.Goods
         }
         boolean special = IS_SPECIAL.equals(item.getSpecial());
         ImageView ivLabel = helper.getView(R.id.ivSpecial);
-        helper.setGone(R.id.ivSpecial, special);
+        boolean isLimit = item.getQuota() > 0;
         if (item.getQuota() > 0) {
-            //大于0 表示当前商品为特价商品
+            //大于0 表示当前商品为限购商品
             ivLabel.setImageResource(R.mipmap.img_sale_purchasing);
-            helper.setVisible(R.id.ivSpecial, true);
+            helper.setVisible(R.id.ivSpecial, isLimit);
+        } else {
+            //当前不是特价商品，需要判断当前商品是否是特价商品
+            ivLabel.setImageResource(R.mipmap.img_sale);
+            if (special) {
+                helper.setVisible(R.id.ivSpecial, true);
+            } else {
+                helper.setVisible(R.id.ivSpecial, false);
+            }
         }
         RoundedImageView roundedImageView = helper.getView(R.id.rvGoodsImage);
         GlideManager.loadImg(TourCooUtil.getUrl(item.getImage()), roundedImageView);
