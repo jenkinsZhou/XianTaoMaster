@@ -64,14 +64,19 @@ public class ProductSkuDialog extends Dialog {
      */
     private boolean singleSpec = false;
 
+    /**
+     * 当前商品限购的数量
+     */
+    private double limitSaleCount;
 
-    public ProductSkuDialog(@NonNull Context context, GoodsEntity product, Callback callback, int type) {
+
+    public ProductSkuDialog(@NonNull Context context, GoodsEntity product, Callback callback, int type,double limitSaleCount) {
         super(context, R.style.CommonBottomDialogStyle);
         this.context = context;
         this.product = product;
         this.callback = callback;
         this.type = type;
-
+        this.limitSaleCount = limitSaleCount;
     }
 
 
@@ -312,6 +317,11 @@ public class ProductSkuDialog extends Dialog {
                         ToastUtil.showFailed("库存不足");
                         return;
                     }
+                }
+
+                if (Integer.parseInt(quantity) > limitSaleCount) {
+                    ToastUtil.show("本商品为限购商品,您剩余可购买的数量为: " +  TourCooUtil.doubleTransStringZhen(limitSaleCount));
+                    return;
                 }
                 if (product.getSpecData() != null && type != PING_TUAN) {
 

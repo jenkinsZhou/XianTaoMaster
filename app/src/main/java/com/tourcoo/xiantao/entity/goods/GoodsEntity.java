@@ -129,6 +129,7 @@ public class GoodsEntity implements Serializable {
      * },
      * "tuan": false,
      * "tuan_list": [],
+     * quota_surplus
      * "give": 0,
      * "deduct": 0,
      * "deduct_coin": 0,

@@ -48,13 +48,23 @@ public class Goods implements Serializable {
      */
     private int id;
 
-    private int quota;
+    private double quota;
 
-    public int getQuota() {
+    private double quota_surplus;
+
+    public double getQuota() {
         return quota;
     }
 
-    public void setQuota(int quota) {
+    public double getQuota_surplus() {
+        return quota_surplus;
+    }
+
+    public void setQuota_surplus(double quota_surplus) {
+        this.quota_surplus = quota_surplus;
+    }
+
+    public void setQuota(double quota) {
         this.quota = quota;
     }
 

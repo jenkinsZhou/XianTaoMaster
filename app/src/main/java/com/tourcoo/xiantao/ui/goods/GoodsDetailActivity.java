@@ -214,6 +214,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private ObservableScrollView mObservableScrollView;
     private LinearLayout llLimitSaleInfo;
     private CircleImageView civReturnTop;
+    private double limitSaleCount;
 
     @Override
     public int getContentLayout() {
@@ -467,6 +468,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         }
         mTitleBarView.getTextView(Gravity.RIGHT).setVisibility(View.VISIBLE);
         currentGoods = detail;
+        loadLimitSaleCount(detail);
         if (detail.getGive() <= 0) {
             llGiveAway.setVisibility(View.GONE);
         } else {
@@ -479,7 +481,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             llLimitSaleInfo.setVisibility(View.GONE);
         } else {
             llLimitSaleInfo.setVisibility(View.VISIBLE);
-            String value = "本商品每人限购" + detail.getQuota() + "份";
+            String value = "本商品每人限购" +  TourCooUtil.doubleTransStringZhen(detail.getQuota()) + "份";
             tvLimitInfo.setText(value);
         }
         if (TextUtils.isEmpty(detail.getPromote())) {
@@ -687,7 +689,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                         }
                         startNewTuan(goodsEntity.getDetail().getGoods_id(), quantity);
                     }
-                }, ProductSkuDialog.PING_TUAN);
+                }, ProductSkuDialog.PING_TUAN, Integer.MAX_VALUE);
 
                 dialog.show();
             }
@@ -705,7 +707,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                     public void onAdded(String specSkuId, int quantity) {
                         buyNow(goodsEntity.getDetail().getGoods_id(), quantity, specSkuId);
                     }
-                }, ProductSkuDialog.BUY_NOW);
+                }, ProductSkuDialog.BUY_NOW, limitSaleCount);
 
                 dialog.show();
             }
@@ -724,7 +726,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
                         //添加购物车
                         addShopingCar(goodsEntity.getDetail().getGoods_id(), quantity, specSkuId);
                     }
-                }, ProductSkuDialog.SHOPPING_CART);
+                }, ProductSkuDialog.SHOPPING_CART, limitSaleCount);
 
                 dialog.show();
             }
@@ -1430,6 +1432,16 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             super.startActivity(intent);
         } else {
             super.startActivity(intent);
+        }
+    }
+
+
+    private void loadLimitSaleCount(Goods goods) {
+        if (goods.getQuota() > 0) {
+            limitSaleCount = goods.getQuota_surplus();
+        } else {
+            //说明商品不是限购商品 无需限制
+            limitSaleCount = Integer.MAX_VALUE;
         }
     }
 }
