@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -1073,7 +1072,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
      * 跳转到订单列表
      */
     private void paySuccessAndskipOrderList() {
-        mHandler.post(new Runnable() {
+        mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 Intent intent = new Intent();
@@ -1082,7 +1081,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                 TourCooLogUtil.i(TAG, TAG + ":" + "已经跳转");
                 finish();
             }
-        });
+        },100);
     }
 
     private void paySuccessAndskipOrderListByHandler() {
