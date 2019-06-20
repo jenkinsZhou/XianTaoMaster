@@ -76,8 +76,17 @@ public class TuanEntity {
          * user : {"nickname":"18133676739","avatar":"https://ahxtao.hfcoco.top/assets/img/avatar.png"}
          * tuan : {"num":2,"surplus":5}
          */
-
+        private double pay_price;
         private int id;
+
+        public double getPay_price() {
+            return pay_price;
+        }
+
+        public void setPay_price(double pay_price) {
+            this.pay_price = pay_price;
+        }
+
         private int goods_id;
         private int user_id;
         private int rule_id;
@@ -87,6 +96,16 @@ public class TuanEntity {
         private int deadline;
         private int user_status;
         private int tuanuser_id;
+        private int order_id;
+
+        public int getOrder_id() {
+            return order_id;
+        }
+
+        public void setOrder_id(int order_id) {
+            this.order_id = order_id;
+        }
+
         private GoodsBean goods;
         private TuanRuleBean tuan_rule;
         private UserBean user;

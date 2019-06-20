@@ -1,9 +1,13 @@
 package com.tourcoo.xiantao.ui.tuan;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -13,7 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alipay.sdk.app.PayTask;
 import com.blankj.utilcode.util.ImageUtils;
+import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
@@ -22,6 +28,7 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject;
+import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tourcoo.xiantao.R;
@@ -29,26 +36,48 @@ import com.tourcoo.xiantao.adapter.MyTuanListAdapter;
 import com.tourcoo.xiantao.constant.WxConfig;
 import com.tourcoo.xiantao.core.frame.base.fragment.BaseFragment;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
+import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
+import com.tourcoo.xiantao.core.frame.util.StackUtil;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
+import com.tourcoo.xiantao.core.threadpool.ThreadPoolManager;
 import com.tourcoo.xiantao.core.util.ToastUtil;
-import com.tourcoo.xiantao.core.util.TourCoolUtil;
 import com.tourcoo.xiantao.core.widget.custom.SharePopupWindow;
 import com.tourcoo.xiantao.entity.BaseEntity;
+import com.tourcoo.xiantao.entity.event.BaseEvent;
+import com.tourcoo.xiantao.entity.pay.WeiXinPay;
 import com.tourcoo.xiantao.entity.tuan.TuanEntity;
 import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity;
+import com.tourcoo.xiantao.widget.dialog.PayDialog;
 import com.trello.rxlifecycle3.android.FragmentEvent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.lang.ref.WeakReference;
+import java.util.Map;
 
 import me.bakumon.statuslayoutmanager.library.OnStatusChildClickListener;
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
 import static com.tourcoo.xiantao.constant.TuanConstant.TUAN_STATUS_MINE;
+import static com.tourcoo.xiantao.constant.WxConfig.APP_ID;
 import static com.tourcoo.xiantao.constant.WxConfig.WEIXIN_PIN_URL;
+import static com.tourcoo.xiantao.constant.WxConfig.WEI_XIN_PAY_TAG_NORMAL;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
+import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_FAILED;
+import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FRESH_SUCCESS;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_PIN_USER_ID;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.EXTRA_SETTLE_TYPE;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.PAY_STATUS;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.PAY_STATUS_SUCCESS;
+import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SDK_PAY_FLAG;
 import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SETTLE_TYPE_PIN;
+import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_ALI;
+import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_BALANCE;
+import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
 
 /**
  * @author :JenkinsZhou
@@ -59,13 +88,15 @@ import static com.tourcoo.xiantao.ui.order.OrderSettleDetailActivity.SETTLE_TYPE
  */
 public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMoreListener {
 
+    private static final String TAG = "MyTuanListFragment";
     private SmartRefreshLayout mRefreshLayout;
     private RecyclerView mRecyclerView;
     private int mDefaultPage = 1;
     private int mDefaultPageSize = 10;
     private boolean isLoadMore = false;
     private int totalPage = -1;
-
+    int mPayType;
+    private PaymentHandler mHandler = new PaymentHandler(MyTuanListFragment.this);
     private SharePopupWindow sharePopupWindow;
     private View footView;
     private IWXAPI api;
@@ -122,6 +153,7 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
         mRecyclerView.setAdapter(mAdapter);
         mRefreshLayout.setOnRefreshLoadMoreListener(this);
         mRefreshLayout.setRefreshHeader(new ClassicsHeader(mContext).setSpinnerStyle(SpinnerStyle.Translate));
+        EventBus.getDefault().register(this);
         mAdapter.setIOnItemClickListener(new MyTuanListAdapter.IOnItemClickListener() {
             @Override
             public void onItemClick(int tuan_id) {
@@ -150,7 +182,7 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
                         mediaMessage.title = "拼团钜惠";
                         //自定义
                         mediaMessage.description = "拼团钜惠";
-                        Bitmap bitmapStatic = BitmapFactory.decodeResource(getResources(),R.mipmap.ic_wei_xin_app);
+                        Bitmap bitmapStatic = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_wei_xin_app);
                         int width = bitmapStatic.getWidth();
                         int height = bitmapStatic.getHeight();
                         Bitmap sendBitmap = Bitmap.createScaledBitmap(bitmapStatic, width, height, false);
@@ -176,8 +208,14 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
             }
 
             @Override
-            public void onPayClick(int tuanuser_id) {
-                skipOrderSettleByPin(tuanuser_id);
+            public void onPayClick(int tuanuser_id, int orderId, double payPrice) {
+                TourCooLogUtil.d("订单id：" + orderId);
+                if (orderId > 0) {
+                    //表示订单已经生成 直接结算支付 无需跳转
+                    showPayDialog(payPrice, tuanuser_id);
+                } else {
+                    skipOrderSettleByPin(tuanuser_id);
+                }
             }
         });
         loadData(mDefaultPage);
@@ -211,11 +249,20 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
     }
 
     /**
+     * 刷新列表
+     */
+    private void refreshData() {
+        mAdapter.getData().clear();
+        mDefaultPage = 1;
+        requestTuanListInfo(mDefaultPage);
+    }
+
+    /**
      * 获取拼团列表记录
      */
     private void requestTuanListInfo(int page) {
         ApiRepository.getInstance().requestTuanListInfo(tuanStatus, page).compose(bindUntilEvent(FragmentEvent.DESTROY)).
-                subscribe(new BaseObserver<BaseEntity>() {
+                subscribe(new BaseLoadingObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
@@ -232,9 +279,9 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
                                             mAdapter.addMoreItem(tuanEntity.getData());
                                             mRefreshLayout.finishLoadMore();
                                         }
-                                        if(mAdapter.getItemCount() == 0){
+                                        if (mAdapter.getItemCount() == 0) {
                                             mStatusLayoutManager.showEmptyLayout();
-                                        }else {
+                                        } else {
                                             mStatusLayoutManager.showSuccessLayout();
                                         }
                                     } else {
@@ -300,11 +347,8 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
         if (mAdapter != null) {
             mAdapter.cancelAllTimers();
         }
+        EventBus.getDefault().unregister(this);
     }
-
-
-
-
 
 
     private void setupStatusLayoutManager() {
@@ -372,11 +416,175 @@ public class MyTuanListFragment extends BaseFragment implements OnRefreshLoadMor
         return LayoutInflater.from(mContext).inflate(layoutId, null);
     }
 
-    private void refresh(){
+    private void refresh() {
         mRefreshLayout.setNoMoreData(false);
         mRefreshLayout.setEnableLoadMore(true);
         isLoadMore = false;
         mDefaultPage = 1;
         loadData(mDefaultPage);
     }
+
+
+    /**
+     * 拼团支付接口
+     */
+    private void createPinPay(int payType, int pinId) {
+        ApiRepository.getInstance().requestPinPay(payType, pinId).compose(bindUntilEvent(FragmentEvent.DESTROY)).
+                subscribe(new BaseLoadingObserver<BaseEntity>() {
+                    @Override
+                    public void onRequestNext(BaseEntity entity) {
+                        if (entity != null) {
+                            if (entity.code == CODE_REQUEST_SUCCESS) {
+                                ThreadPoolManager.getThreadPoolProxy().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        switch (mPayType) {
+                                            case PAY_TYPE_WE_XIN:
+                                                weiChatPay(entity.data.toString(), WEI_XIN_PAY_TAG_NORMAL);
+                                                break;
+                                            case PAY_TYPE_ALI:
+                                                aliPay(entity.data.toString());
+                                                break;
+                                            case PAY_TYPE_BALANCE:
+                                                refreshData();
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                });
+                            } else {
+                                ToastUtil.show(entity.msg);
+                            }
+                        }
+                    }
+                });
+    }
+
+
+    private void showPayDialog(double money, int pinId) {
+        PayDialog payDialog = new PayDialog(mContext, money, 0, new PayDialog.PayListener() {
+            @Override
+            public void pay(int payType, Dialog dialog) {
+                mPayType = payType;
+                //拼团结算
+                createPinPay(payType, pinId);
+                dialog.dismiss();
+            }
+        });
+        payDialog.show();
+    }
+
+
+    /**
+     * 微信支付
+     *
+     * @param payInfo
+     */
+    private void weiChatPay(String payInfo, int payAction) {
+        WeiXinPay weiXinPay = parseWeiXinPay(payInfo);
+        if (weiXinPay != null) {
+            PayReq req = new PayReq();
+            req.appId = weiXinPay.getAppid();
+            req.nonceStr = weiXinPay.getNoncestr();
+            req.packageValue = "Sign=WXPay";
+            req.partnerId = weiXinPay.getPartnerid();
+            req.timeStamp = weiXinPay.getTimestamp();
+            req.sign = weiXinPay.getSign();
+            TourCooLogUtil.d("请求结果", weiXinPay);
+            req.prepayId = weiXinPay.getPrepayid();
+            api.registerApp(APP_ID);
+            api.sendReq(req);
+            WxConfig.weiXinPayTag = payAction;
+        } else {
+            ToastUtil.showFailed("解析失败");
+        }
+    }
+
+
+    private WeiXinPay parseWeiXinPay(String data) {
+        if (data == null) {
+            return null;
+        }
+        try {
+            return JSON.parseObject(data, WeiXinPay.class);
+        } catch (Exception e) {
+            TourCooLogUtil.e(TAG, "value:" + e.toString());
+            return null;
+        }
+    }
+
+
+    private void aliPay(String payInfo) {
+        PayTask aliPay = new PayTask(mContext);
+        Map<String, String> result = aliPay.payV2(payInfo, true);
+        Message msg = new Message();
+        msg.what = SDK_PAY_FLAG;
+        msg.obj = result;
+        mHandler.sendMessage(msg);
+        //订单生成成功 将状态置为true
+    }
+
+
+    @SuppressWarnings("unchecked")
+    private static class PaymentHandler extends Handler {
+        private WeakReference<MyTuanListFragment> softReference;
+
+        public PaymentHandler(MyTuanListFragment fragment) {
+            softReference = new WeakReference<>(fragment);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case SDK_PAY_FLAG:
+                    Map<String, String> result = (Map<String, String>) msg.obj;
+                    for (Map.Entry<String, String> stringStringEntry : result.entrySet()) {
+                        if (PAY_STATUS.equalsIgnoreCase(stringStringEntry.getKey())) {
+                            boolean success = PAY_STATUS_SUCCESS.equals(stringStringEntry.getValue());
+                            if (success) {
+                                ToastUtil.showSuccess("支付成功");
+                                softReference.get().refreshData();
+                            } else {
+                                ToastUtil.showFailed("支付失败");
+                                TourCooLogUtil.e(TAG, result);
+                                softReference.get().refreshData();
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPayEvent(BaseEvent event) {
+        if (event == null) {
+            TourCooLogUtil.e(TAG, "直接拦截");
+            return;
+        }
+        switch (event.id) {
+
+            case EVENT_ACTION_PAY_FRESH_SUCCESS:
+                //支付成功 直接跳转到详情
+                if (WxConfig.weiXinPayTag == WEI_XIN_PAY_TAG_NORMAL) {
+                    //刷新列表
+                    refreshData();
+                }
+                break;
+            case EVENT_ACTION_PAY_FRESH_FAILED:
+                if (WxConfig.weiXinPayTag == WEI_XIN_PAY_TAG_NORMAL) {
+                    TourCooLogUtil.e(TAG, TAG + ":" + "微信支付失败");
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
 }

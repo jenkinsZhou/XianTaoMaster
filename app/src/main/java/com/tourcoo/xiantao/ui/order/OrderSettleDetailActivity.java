@@ -1085,7 +1085,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         });
     }
 
-    private void paySuccessAndskipOrderListNoHandler() {
+    private void paySuccessAndskipOrderListByHandler() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -1111,9 +1111,9 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             case EVENT_ACTION_PAY_FRESH_SUCCESS:
                 //支付成功 直接跳转到详情
                 if (WxConfig.weiXinPayTag == WEI_XIN_PAY_TAG_NORMAL) {
-                    paySuccessAndskipOrderListNoHandler();
+                    paySuccessAndskipOrderListByHandler();
                 } else {
-                    paySuccessAndskipOrderListNoHandler();
+                    paySuccessAndskipOrderListByHandler();
                 }
                 break;
             case EVENT_ACTION_PAY_FRESH_FAILED:
@@ -1145,6 +1145,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                                     if (mSettleEntity.getId() > 0) {
                                         //表示此订单已经生成,此时所以信息都不可编辑
                                         canEdit = false;
+                                        TourCooLogUtil.i("订单id:"+mSettleEntity.getId());
                                         showSettleInfoExsist(mSettleEntity);
                                     } else {
                                         canEdit = true;
@@ -1245,7 +1246,6 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                 closeGoodsDetailActivity();
                 closeTuanListActivity();
                 startActivity(intent);
-                TourCooLogUtil.i(TAG, TAG + ":" + "已经跳转");
                 finish();
             }
         }, 100);

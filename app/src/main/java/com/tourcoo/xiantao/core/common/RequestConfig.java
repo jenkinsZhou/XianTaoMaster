@@ -22,9 +22,9 @@ public class RequestConfig {
      * 濡江铺子测试服务器
      */
 
-    public static final String BASE_URL = "https://test.ahxtao.com/";
+    public static final String BASE_URL = "https://test2.ahxtao.com/";
 
-    public static final String BASE_URL_NO_LINE = "https://test.ahxtao.com";
+    public static final String BASE_URL_NO_LINE = "https://test2.ahxtao.com";
 
     /**
      * 濡江铺子

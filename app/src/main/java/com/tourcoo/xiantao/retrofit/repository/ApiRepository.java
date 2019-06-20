@@ -961,6 +961,35 @@ public class ApiRepository extends BaseRepository {
     }
 
 
+    /**
+     * 拼团支付
+     *
+     * @return
+     */
+    public Observable<BaseEntity> requestPinPay( int payType, int pinId) {
+        Map<String, Object> params = new HashMap<>(2);
+//        params.put("tuanuser_id", pinId);
+        params.put("tuanuser_id", pinId);
+        String payTypeString;
+        switch (payType) {
+            case PAY_TYPE_ALI:
+                payTypeString = "ali";
+                break;
+            case PAY_TYPE_WE_XIN:
+                payTypeString = "wx";
+                break;
+            case PAY_TYPE_BALANCE:
+                payTypeString = "cash";
+                break;
+            default:
+                payTypeString = "ali";
+                break;
+        }
+        params.put("pay_type", payTypeString);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestPinPay(params).retryWhen(new RetryWhen()));
+    }
+
+
     public Observable<BaseEntity> requestFeedback(String detail, String images, String type) {
         Map<String, Object> params = new HashMap<>(2);
         params.put("type", type);

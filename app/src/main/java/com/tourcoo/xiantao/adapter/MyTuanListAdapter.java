@@ -167,7 +167,7 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
                             @Override
                             public void onClick(View v) {
                                 if (listener != null) {
-                                    listener.onPayClick(item.getTuanuser_id());
+                                    listener.onPayClick(item.getTuanuser_id(),item.getOrder_id(),item.getPay_price());
                                 }
                             }
                         });
@@ -183,7 +183,7 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
                             @Override
                             public void onClick(View v) {
                                 if (listener != null) {
-                                    listener.onPayClick(item.getTuanuser_id());
+                                    listener.onPayClick(item.getTuanuser_id(),item.getOrder_id(),item.getPay_price());
                                 }
                             }
                         });
@@ -301,7 +301,7 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
 
         void onBtnClick(int tuan_id, Bitmap bitmap);
 
-        void onPayClick(int tuanuser_id);
+        void onPayClick(int tuanuser_id,int orderId,double payPrice);
     }
 
 
@@ -340,6 +340,9 @@ public class MyTuanListAdapter extends RecyclerView.Adapter<MyTuanListAdapter.Vi
     }
 
 
+    public List getData(){
+        return mDatas;
+    }
 }
 
 
