@@ -3,6 +3,7 @@ package com.tourcoo.xiantao.adapter;
 import android.graphics.Paint;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -62,6 +63,7 @@ public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsEntity.Goods
         helper.setText(R.id.tvGoodsPrice, "¥ " + TourCooUtil.doubleTransString(item.getGoods_min_price()));
         if (item.getGoods_line_price() <= 0) {
             helper.setVisible(R.id.tvGoodsLinePrice, false);
+            helper.setVisible(R.id.tvSaleCount, false);
         } else {
             helper.setVisible(R.id.tvGoodsLinePrice, true);
             TextView textView = helper.getView(R.id.tvGoodsLinePrice);
@@ -70,6 +72,16 @@ public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsEntity.Goods
             textView.getPaint().setAntiAlias(true);
             //抗锯齿
             helper.setText(R.id.tvGoodsLinePrice, "¥ " + TourCooUtil.doubleTransString(item.getGoods_line_price()));
+            double sale = item.getGoods_min_price() / item.getGoods_line_price();
+            double limitMin = 0.1;
+            double limitMax = 10;
+            if (sale <= 0 || sale < limitMin || sale >= limitMax) {
+                helper.setVisible(R.id.tvSaleCount, false);
+            } else {
+                helper.setVisible(R.id.tvSaleCount, true);
+                String onSaleValue = TourCooUtil.formatNumber(sale, 1, true) + "折";
+                helper.setText(R.id.tvSaleCount, onSaleValue);
+            }
         }
         helper.setText(R.id.tvGoodsOrigin, "产地:" + item.getOrigin());
         boolean showLabel = !TextUtils.isEmpty(item.getLabel());

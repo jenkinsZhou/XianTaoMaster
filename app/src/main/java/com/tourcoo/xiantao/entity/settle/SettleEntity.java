@@ -32,6 +32,15 @@ public class SettleEntity implements Serializable {
      * error_msg : null
      */
     private int id;
+    private String coupon_id;
+
+    public String getCoupon_id() {
+        return coupon_id;
+    }
+
+    public void setCoupon_id(String coupon_id) {
+        this.coupon_id = coupon_id;
+    }
 
     private double coupon_worth;
 

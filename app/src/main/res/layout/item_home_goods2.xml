@@ -119,12 +119,23 @@
                 android:id="@+id/tvGoodsLinePrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_marginLeft="@dimen/dp_5"
                 android:layout_marginTop="@dimen/dp_8"
                 android:gravity="center"
                 android:text="¥ 16.8 "
                 android:textColor="#BBBBBB"
                 android:textSize="@dimen/sp_16" />
+
+            <TextView
+                android:id="@+id/tvSaleCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_3"
+                android:layout_marginTop="@dimen/dp_8"
+                android:gravity="center"
+                android:text="3折"
+                android:textColor="#ff9000"
+                android:textSize="@dimen/sp_12" />
         </LinearLayout>
 
 

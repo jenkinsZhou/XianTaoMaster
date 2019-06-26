@@ -560,10 +560,6 @@ public class TourCooUtil {
      * @param number   要四舍五入的数字
      * @param decimal  保留的小数点数
      * @param rounding 是否四舍五入
-     * @return
-     * @author
-     * @version 1.00.00
-     * @date 2018年1月18日
      */
     public static Double formatNumber(double number, int decimal, boolean rounding) {
         BigDecimal bigDecimal = new BigDecimal(number);

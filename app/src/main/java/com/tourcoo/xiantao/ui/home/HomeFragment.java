@@ -365,8 +365,6 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
     }
 
 
-
-
     private void getHomeInfo() {
         ApiRepository.getInstance().requestHomeInfo().compose(bindUntilEvent(FragmentEvent.DESTROY)).
                 subscribe(new BaseObserver<BaseEntity>() {
@@ -729,7 +727,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
      * 定位
      */
     public void requestLocate() {
-        if(hasPermission()){
+        if (hasPermission()) {
             tvCity.setText("定位中");
         }
         LocateHelper.getInstance().startLocation(new AMapLocationListener() {
@@ -771,7 +769,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
                 }
                 tvCity.setText(city);
             }
-        }else {
+        } else {
             tvCity.setText("定位失败");
         }
     }
@@ -893,7 +891,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
                                     //加载更多
                                     mRefreshLayout.finishLoadMore(true);
                                     mGoodsGridAdapter.getData().addAll(homeGoodsEntity.getData());
-                                    if (homeGoodsEntity.getData().isEmpty() || homeGoodsEntity.getData().size() <homeGoodsEntity.getPer_page()  ) {
+                                    if (homeGoodsEntity.getData().isEmpty() || homeGoodsEntity.getData().size() < homeGoodsEntity.getPer_page()) {
                                         //没有更多了
                                         try {
                                             mGoodsGridAdapter.addFooterView(footView);

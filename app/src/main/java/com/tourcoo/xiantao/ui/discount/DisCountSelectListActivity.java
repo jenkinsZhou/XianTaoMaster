@@ -48,6 +48,8 @@ public class DisCountSelectListActivity extends BaseTourCooTitleMultiViewActivit
     public static final String EXTRA_DISCOUNT_LIST = "EXTRA_DISCOUNT_LIST";
 
     public static final String EXTRA_DISCOUNT_LIST_SELECT = "EXTRA_DISCOUNT_LIST_SELECT";
+
+    public static final String EXTRA_DISCOUNT_CAN_USE_COUNT = "EXTRA_DISCOUNT_CAN_USE_COUNT";
     private double mPirce;
 
     private int ruleId = -1;
@@ -60,7 +62,7 @@ public class DisCountSelectListActivity extends BaseTourCooTitleMultiViewActivit
     /**
      * 可使用的优惠券数量
      */
-    private int canUseCount = 0;
+    private int canUseCount = -1;
     private RelativeLayout rrRootView;
 
     private List<DiscountInfo> selectDiscountList = new ArrayList<>();
@@ -100,6 +102,7 @@ public class DisCountSelectListActivity extends BaseTourCooTitleMultiViewActivit
         mDiscountAdapter = new DiscountSelectAdapter();
         mDiscountAdapter.bindToRecyclerView(rvContent);
         List<DiscountInfo> discountInfoList = (List<DiscountInfo>) getIntent().getSerializableExtra(EXTRA_DISCOUNT_LIST_SELECT);
+        canUseCount = getIntent().getIntExtra(EXTRA_DISCOUNT_CAN_USE_COUNT, -1);
         if (discountInfoList != null && !discountInfoList.isEmpty()) {
             selectDiscountList.addAll(discountInfoList);
             for (DiscountInfo discountInfo : selectDiscountList) {
@@ -109,7 +112,10 @@ public class DisCountSelectListActivity extends BaseTourCooTitleMultiViewActivit
             }
             if (selectDiscountList.get(0) != null) {
                 ruleId = selectDiscountList.get(0).getRule_id();
-                canUseCount = calculateUseCount(selectDiscountList.get(0));
+                if (canUseCount < 0) {
+                    //小于0才去计算可使用的优惠券数量
+                    canUseCount = calculateUseCount(selectDiscountList.get(0));
+                }
             }
         }
 

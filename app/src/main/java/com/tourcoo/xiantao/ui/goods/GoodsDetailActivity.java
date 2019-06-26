@@ -136,6 +136,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private WebView companyWebView;
     private TitleBarView mTitleBarView;
     private RelativeLayout rlContentView;
+
     private ShareGoodsPopupWindow sharePopupWindow;
     private RelativeLayout rlORigin;
     private IWXAPI api;
@@ -147,6 +148,8 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
      */
     private TextView tvPriceRange;
     private TextView tvLinePrice;
+    private TextView tvSaleCount;
+
     /**
      * 拼团价
      */
@@ -225,6 +228,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         //判断是否是从广告页跳转过来的
         api = WXAPIFactory.createWXAPI(mContext, WxConfig.APP_ID);
         rlORigin = findViewById(R.id.rlORigin);
+        tvSaleCount = findViewById(R.id.tvSaleCount);
         llComanyInfo = findViewById(R.id.llComanyInfo);
         companyWebView = findViewById(R.id.companyWebView);
         mObservableScrollView = findViewById(R.id.mObservableScrollView);
@@ -476,6 +480,8 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             String value = "购买本商品每满" + TourCooUtil.doubleTransStringZhen(detail.getGive()) + "元 , 赠送1金币";
             tvGiveAwayCoin.setText(value);
         }
+        //显示折扣信息
+        showSaleCountByCondition(detail);
         //显示限购数量
         if (detail.getQuota() <= 0) {
             llLimitSaleInfo.setVisibility(View.GONE);
@@ -1444,6 +1450,28 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             //说明商品不是限购商品 无需限制
             limitSaleCount = Integer.MAX_VALUE;
         }
+    }
+
+
+    private void showSaleCountByCondition(Goods detail) {
+        if (detail == null) {
+            return;
+        }
+        double minLinePrice = detail.getGoods_min_line_price();
+        if (minLinePrice <= 0) {
+            tvSaleCount.setVisibility(View.GONE);
+            return;
+        }
+        double sale = detail.getGoods_min_price() / minLinePrice;
+        double limitMin = 0.1;
+        double limitMax = 10;
+        if (sale <= 0 || sale < limitMin || sale >= limitMax) {
+            tvSaleCount.setVisibility(View.GONE);
+            return;
+        }
+        String onSaleValue = TourCooUtil.formatNumber(sale, 1, true) + "折";
+        tvSaleCount.setText(onSaleValue);
+        tvSaleCount.setVisibility(View.VISIBLE);
     }
 
 }

@@ -102,6 +102,7 @@ import static com.tourcoo.xiantao.entity.event.EventConstant.EVENT_ACTION_PAY_FR
 import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.EXTRA_ADDRESS_INFO;
 import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.EXTRA_SKIP_TAG_SETTLE;
 import static com.tourcoo.xiantao.ui.account.AddressManagerActivity.REQUEST_CODE_EDIT_ADDRESS;
+import static com.tourcoo.xiantao.ui.discount.DisCountSelectListActivity.EXTRA_DISCOUNT_CAN_USE_COUNT;
 import static com.tourcoo.xiantao.ui.discount.DisCountSelectListActivity.EXTRA_DISCOUNT_LIST;
 import static com.tourcoo.xiantao.ui.discount.DisCountSelectListActivity.EXTRA_DISCOUNT_LIST_SELECT;
 import static com.tourcoo.xiantao.ui.discount.DisCountSelectListActivity.EXTRA_PRICE;
@@ -120,6 +121,7 @@ import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
  * @Email: 971613168@qq.com
  */
 public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity implements View.OnClickListener {
+    private int discountCanUseCount = -1;
     private RelativeLayout rlSettleRemark;
     private TextView tvSettleRemark;
     private List<DiscountInfo> mDiscountInfoList = new ArrayList<>();
@@ -512,6 +514,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             tvDiscountMinus.setText(discountPrice);
         }
         payMoney = payPrice;
+        doAutoSelectDisCount(settleEntity);
     }
 
     /**
@@ -571,7 +574,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         //todo 请求优惠券数量 显示优惠券
         mStatusLayoutManager.showSuccessLayout();
         //无需请求 直接显示优惠券抵扣信息
-        showSelectDiscoutAndPayPrice(settleEntity);
+        showSelectDiscountAndPayPrice(settleEntity);
+        doAutoSelectDisCount(settleEntity);
     }
 
     @Override
@@ -1049,7 +1053,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                     }
                     mDiscountInfoList.clear();
                     mDiscountInfoList.addAll(discountInfoList);
-                    showSelectDiscoutAndPayPrice(mDiscountInfoList, mSettleEntity);
+                    showSelectDiscountAndPayPrice(mDiscountInfoList, mSettleEntity);
                     List<String> ids = new ArrayList<>();
                     for (DiscountInfo discountInfo : mDiscountInfoList) {
                         ids.add(discountInfo.getId() + "");
@@ -1057,8 +1061,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                     discountIds = StringUtils.join(ids, ",");
                     double payTotal = computePayMoney(mSettleEntity);
                     String payValue = "¥" + TourCooUtil.doubleTransString(payTotal);
-                    tvPayPrice.setText(payValue);
                     payMoney = payTotal;
+                    tvPayPrice.setText(payValue);
                     TourCooLogUtil.i(TAG, TAG + "需要支付的金额:" + payMoney + "discountIds=" + discountIds);
                 }
                 break;
@@ -1081,7 +1085,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                 TourCooLogUtil.i(TAG, TAG + ":" + "已经跳转");
                 finish();
             }
-        },100);
+        }, 100);
     }
 
     private void paySuccessAndskipOrderListByHandler() {
@@ -1144,7 +1148,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                                     if (mSettleEntity.getId() > 0) {
                                         //表示此订单已经生成,此时所以信息都不可编辑
                                         canEdit = false;
-                                        TourCooLogUtil.i("订单id:"+mSettleEntity.getId());
+                                        TourCooLogUtil.i("订单id:" + mSettleEntity.getId());
                                         showSettleInfoExsist(mSettleEntity);
                                     } else {
                                         canEdit = true;
@@ -1355,9 +1359,13 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         //跳转至我的可用优惠券 全部列表
         intent.putExtra(EXTRA_PRICE, settleEntity.getOrder_total_price());
         intent.putExtra(EXTRA_DISCOUNT_LIST_SELECT, (Serializable) mDiscountInfoList);
+        //把可用优惠券数量带过去
+        intent.putExtra(EXTRA_DISCOUNT_CAN_USE_COUNT, discountCanUseCount);
         intent.setClass(mContext, DisCountSelectListActivity.class);
         startActivityForResult(intent, REQUEST_CODE_SELECT_DISCOUNT);
-        TourCooLogUtil.i(TAG, TAG + ":" + "已经跳转");
+        //跳转过去后 立马将可用数量置为空
+        discountCanUseCount = -1;
+        TourCooLogUtil.i(TAG, TAG + ":" + "已经跳转优惠券数量：" + mDiscountInfoList.size());
     }
 
 
@@ -1428,7 +1436,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     }
 
 
-    private void showSelectDiscoutAndPayPrice(List<DiscountInfo> discountInfoList, SettleEntity settleEntity) {
+    private void showSelectDiscountAndPayPrice(List<DiscountInfo> discountInfoList, SettleEntity settleEntity) {
 
         if (discountInfoList.size() > 0) {
             ivDiscount.setVisibility(View.GONE);
@@ -1467,7 +1475,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     }
 
 
-    private void showSelectDiscoutAndPayPrice(SettleEntity settleEntity) {
+    private void showSelectDiscountAndPayPrice(SettleEntity settleEntity) {
         if (settleEntity.getCoupon_worth() > 0) {
             rlDiscount.setVisibility(View.VISIBLE);
             ivDiscount.setVisibility(View.GONE);
@@ -1716,5 +1724,54 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     public void finish() {
         closeTuanListActivity();
         super.finish();
+    }
+
+    /**
+     * 根据后台返回数据主动帮用户选择使用优惠券
+     */
+    private void doAutoSelectDisCount(SettleEntity settleEntity) {
+        if (settleEntity == null || TextUtils.isEmpty(settleEntity.getCoupon_id())) {
+            return;
+        }
+        List<DiscountInfo> discountInfoList = parseSelectDiscountInfoList(settleEntity);
+        if (discountInfoList.isEmpty()) {
+            return;
+        }
+        //说明当前可以使用优惠券
+        discountCanUseCount = discountInfoList.size();
+        mDiscountInfoList.clear();
+        mDiscountInfoList.addAll(discountInfoList);
+        showSelectDiscountAndPayPrice(mDiscountInfoList, mSettleEntity);
+        List<String> ids = new ArrayList<>();
+        for (DiscountInfo discountInfo : mDiscountInfoList) {
+            ids.add(discountInfo.getId() + "");
+        }
+        discountIds = StringUtils.join(ids, ",");
+        double payTotal = computePayMoney(mSettleEntity);
+        String payValue = "¥" + TourCooUtil.doubleTransString(payTotal);
+        payMoney = payTotal;
+        tvPayPrice.setText(payValue);
+    }
+
+
+    private List<DiscountInfo> parseSelectDiscountInfoList(SettleEntity settleEntity) {
+        List<DiscountInfo> discountInfoList = new ArrayList<>();
+        if (settleEntity == null || TextUtils.isEmpty(settleEntity.getCoupon_id())) {
+            return discountInfoList;
+        }
+        String[] idList = settleEntity.getCoupon_id().split(",");
+        if (idList.length == 0) {
+            return discountInfoList;
+        }
+        DiscountInfo discountInfo;
+        int worth = (int) settleEntity.getCoupon_worth() / idList.length;
+        for (String id : idList) {
+            discountInfo = new DiscountInfo();
+            discountInfo.setId(Integer.parseInt(id));
+            discountInfo.setWorth(worth);
+            discountInfo.setSelect(true);
+            discountInfoList.add(discountInfo);
+        }
+        return discountInfoList;
     }
 }
