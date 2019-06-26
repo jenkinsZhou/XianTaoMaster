@@ -1463,6 +1463,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             return;
         }
         double sale = detail.getGoods_min_price() / minLinePrice;
+        sale = sale * 10;
         double limitMin = 0.1;
         double limitMax = 10;
         if (sale <= 0 || sale < limitMin || sale >= limitMax) {

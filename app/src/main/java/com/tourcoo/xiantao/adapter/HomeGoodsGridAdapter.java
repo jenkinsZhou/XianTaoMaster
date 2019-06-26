@@ -73,6 +73,7 @@ public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsEntity.Goods
             //抗锯齿
             helper.setText(R.id.tvGoodsLinePrice, "¥ " + TourCooUtil.doubleTransString(item.getGoods_line_price()));
             double sale = item.getGoods_min_price() / item.getGoods_line_price();
+            sale = sale * 10;
             double limitMin = 0.1;
             double limitMax = 10;
             if (sale <= 0 || sale < limitMin || sale >= limitMax) {
