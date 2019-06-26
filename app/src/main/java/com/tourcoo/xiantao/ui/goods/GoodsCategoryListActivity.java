@@ -17,8 +17,8 @@ import com.tourcoo.xiantao.ui.BaseTourCooTitleActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.tourcoo.xiantao.ui.goods.ClassifyGoodsFragment.EXTRA_CATEGORY_ID;
-import static com.tourcoo.xiantao.ui.goods.ClassifyGoodsFragment.EXTRA_CATEGORY_NAME;
+import static com.tourcoo.xiantao.ui.goods.ClassifyGoodsFragmentVersion1.EXTRA_CATEGORY_ID;
+import static com.tourcoo.xiantao.ui.goods.ClassifyGoodsFragmentVersion1.EXTRA_CATEGORY_NAME;
 import static com.tourcoo.xiantao.ui.home.HomeFragment.EXTRA_PARAM;
 
 /**

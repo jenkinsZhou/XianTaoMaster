@@ -148,4 +148,7 @@ public class GoodsCategorySaleFragment extends BaseRefreshFragment<GoodsCategory
         startActivity(intent);
     }
 
+
+
+
 }

@@ -268,12 +268,16 @@ public class ApiRepository extends BaseRepository {
     }
 
     /**
-     * 获取分类页面商品列表
+     * 获取分类页面商品列表 (旧)
      *
      * @return
      */
     public Observable<BaseEntity> getGoodsClassify() {
         return TourCoolTransformer.switchSchedulersIo(getApiService().getGoodsClassify().retryWhen(new RetryWhen()));
+    }
+
+    public Observable<BaseEntity> requestCategoryList() {
+        return TourCoolTransformer.switchSchedulersIo(getApiService().requestCategoryList().retryWhen(new RetryWhen()));
     }
 
 
@@ -449,6 +453,20 @@ public class ApiRepository extends BaseRepository {
         return TourCoolTransformer.switchSchedulersIo(getApiService().getCategoryGoodsList(params).retryWhen(new RetryWhen()));
     }
 
+
+    /**
+     * 根据商品分类id获取商品列表
+     *
+     * @param categoryId
+     * @return
+     */
+    public Observable<BaseEntity> getCategoryGoodsListNoSearch(int categoryId, int pageIndex) {
+        Map<String, Object> params = new HashMap<>(3);
+        params.put("p", pageIndex);
+        params.put("id", categoryId);
+        TourCooLogUtil.i(TAG, TAG + ":" + params);
+        return TourCoolTransformer.switchSchedulersIo(getApiService().getCategoryGoodsList(params).retryWhen(new RetryWhen()));
+    }
 
     /**
      * 会员中心
@@ -966,7 +984,7 @@ public class ApiRepository extends BaseRepository {
      *
      * @return
      */
-    public Observable<BaseEntity> requestPinPay( int payType, int pinId) {
+    public Observable<BaseEntity> requestPinPay(int payType, int pinId) {
         Map<String, Object> params = new HashMap<>(2);
 //        params.put("tuanuser_id", pinId);
         params.put("tuanuser_id", pinId);

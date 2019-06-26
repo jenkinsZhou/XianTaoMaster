@@ -44,7 +44,7 @@ import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS
  * @date 2019年04月24日16:32
  * @Email: 971613168@qq.com
  */
-public class ClassifyGoodsFragment extends BaseTitleFragment {
+public class ClassifyGoodsFragmentVersion1 extends BaseTitleFragment {
     private RecyclerView classifyRecyclerView;
     private RecyclerView goodsRecyclerView;
     private ClassifyNameAdapter mClassifyNameAdapter;
@@ -99,9 +99,9 @@ public class ClassifyGoodsFragment extends BaseTitleFragment {
     }
 
 
-    public static ClassifyGoodsFragment newInstance() {
+    public static ClassifyGoodsFragmentVersion1 newInstance() {
         Bundle args = new Bundle();
-        ClassifyGoodsFragment fragment = new ClassifyGoodsFragment();
+        ClassifyGoodsFragmentVersion1 fragment = new ClassifyGoodsFragmentVersion1();
         fragment.setArguments(args);
         return fragment;
     }

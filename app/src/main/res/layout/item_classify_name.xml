@@ -19,12 +19,14 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:text="分类名称"
+            android:gravity="center"
+            android:padding="@dimen/dp_2"
             android:textSize="@dimen/sp_15" />
 
         <View
             android:id="@+id/viewIndicator"
             android:layout_width="@dimen/dp_2"
-            android:layout_height="@dimen/dp_18"
+            android:layout_height="@dimen/dp_22"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:background="@color/greenCommon" />

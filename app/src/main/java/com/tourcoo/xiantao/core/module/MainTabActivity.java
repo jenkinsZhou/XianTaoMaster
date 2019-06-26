@@ -43,7 +43,8 @@ import com.tourcoo.xiantao.retrofit.repository.ApiRepository;
 import com.tourcoo.xiantao.ui.ShoppingCarFragmentVersion2;
 import com.tourcoo.xiantao.ui.account.LoginActivity;
 import com.tourcoo.xiantao.ui.account.MineFragment;
-import com.tourcoo.xiantao.ui.goods.ClassifyGoodsFragment;
+import com.tourcoo.xiantao.ui.goods.ClassifyGoodsFragmentVersion1;
+import com.tourcoo.xiantao.ui.goods.ClassifyGoodsFragmentVersion2;
 import com.tourcoo.xiantao.ui.home.HomeFragment;
 import com.trello.rxlifecycle3.android.ActivityEvent;
 
@@ -111,7 +112,7 @@ public class MainTabActivity extends BaseMainActivity implements EasyPermissions
         shoppingCarFragment = ShoppingCarFragmentVersion2.newInstance();
         mHomeFragment = HomeFragment.newInstance();
         tabEntities.add(new TabEntity("首页", R.mipmap.tab_home_normal, R.mipmap.tab_home_selected, mHomeFragment));
-        tabEntities.add(new TabEntity("分类", R.mipmap.tab_classification_normal, R.mipmap.tab_classification_selected, ClassifyGoodsFragment.newInstance()));
+        tabEntities.add(new TabEntity("分类", R.mipmap.tab_classification_normal, R.mipmap.tab_classification_selected, ClassifyGoodsFragmentVersion2.newInstance()));
         tabEntities.add(new TabEntity("购物车", R.mipmap.tab_shopping_cart_normal, R.mipmap.tab_shopping_cart_selected, shoppingCarFragment));
         tabEntities.add(new TabEntity("个人中心", R.mipmap.tab_personal_center_normal, R.mipmap.tab_personal_center_selected, mineFragment));
         return tabEntities;

@@ -713,4 +713,11 @@ public interface ApiService {
      */
     @POST("cart/getlists_pay")
     Observable<BaseEntity> requestSettleShoppingCar();
+
+    /**
+     * 分类页面新接口
+     * @return
+     */
+    @POST("category/getlist")
+    Observable<BaseEntity> requestCategoryList();
 }

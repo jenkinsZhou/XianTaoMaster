@@ -83,7 +83,7 @@ import static com.tourcoo.xiantao.adapter.AddressInfoAdapter.ADDRESS_DEFAULT;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.ui.account.MineFragment.NO_LOGIN;
 import static com.tourcoo.xiantao.ui.account.MineFragment.REQUEST_CODE_MESSAGE_CENTER;
-import static com.tourcoo.xiantao.ui.goods.ClassifyGoodsFragment.EXTRA_CATEGORY_NAME;
+import static com.tourcoo.xiantao.ui.goods.ClassifyGoodsFragmentVersion1.EXTRA_CATEGORY_NAME;
 import static com.tourcoo.xiantao.ui.home.WebContentInfoActivity.ERTRA_TITLE;
 
 /**
