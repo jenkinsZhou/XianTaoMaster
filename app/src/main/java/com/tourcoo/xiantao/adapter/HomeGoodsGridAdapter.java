@@ -77,10 +77,10 @@ public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsEntity.Goods
             double limitMin = 0.1;
             double limitMax = 10;
             if (sale <= 0 || sale < limitMin || sale >= limitMax) {
-                helper.setVisible(R.id.tvSaleCount, false);
+                helper.setGone(R.id.tvSaleCount, false);
             } else {
-                helper.setVisible(R.id.tvSaleCount, true);
-                String onSaleValue = TourCooUtil.formatNumber(sale, 1, true) + "折";
+                helper.setGone(R.id.tvSaleCount, true);
+                String onSaleValue = TourCooUtil.doubleTransStringZhenKeepOnePoint(TourCooUtil.formatNumber(sale, 1, false)) + "折";
                 helper.setText(R.id.tvSaleCount, onSaleValue);
             }
         }

@@ -40,7 +40,7 @@ public class UiConfigManager {
 
     private static Application mApplication;
 
-    private static String TAG = "FastManager";
+    private static String TAG = "UiConfigManager";
     private static volatile UiConfigManager sInstance;
 
     private UiConfigManager() {

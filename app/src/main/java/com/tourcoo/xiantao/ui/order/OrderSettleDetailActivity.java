@@ -37,7 +37,6 @@ import com.tourcoo.xiantao.constant.WxConfig;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
-import com.tourcoo.xiantao.core.frame.util.FormatUtil;
 import com.tourcoo.xiantao.core.frame.util.SharedPreferencesUtil;
 import com.tourcoo.xiantao.core.frame.util.StackUtil;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
@@ -599,6 +598,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                     ToastUtil.show("请选择配送时间");
                     return;
                 }
+                //暂时屏蔽结算按钮
+                makeViewEnable(tvSettleAccounts, false);
                 showPayDialog(payMoney, cash);
                 break;
             case R.id.llAddressInfo:
@@ -724,8 +725,13 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                         ToastUtil.show("未获取到结算类型");
                         break;
                 }
-
                 dialog.dismiss();
+            }
+        });
+        payDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                makeViewEnable(tvSettleAccounts, true);
             }
         });
         payDialog.show();
@@ -991,7 +997,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
      */
     private void requestBalance() {
         ApiRepository.getInstance().requestBalance().compose(bindUntilEvent(ActivityEvent.DESTROY)).
-                subscribe(new BaseObserver<BaseEntity<CashEntity>>() {
+                subscribe(new BaseLoadingObserver<BaseEntity<CashEntity>>() {
                     @Override
                     public void onRequestNext(BaseEntity<CashEntity> entity) {
                         if (entity != null) {
@@ -1137,7 +1143,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
      */
     private void requestPinSettle(int pinId) {
         ApiRepository.getInstance().requestPinSettle(pinId).compose(bindUntilEvent(ActivityEvent.DESTROY)).
-                subscribe(new BaseObserver<BaseEntity>() {
+                subscribe(new BaseLoadingObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
@@ -1562,7 +1568,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     private void requestSettleShoppingCar() {
         mStatusLayoutManager.showLoadingLayout();
         ApiRepository.getInstance().requestSettleShoppingCar().compose(bindUntilEvent(ActivityEvent.DESTROY)).
-                subscribe(new BaseObserver<BaseEntity>() {
+                subscribe(new BaseLoadingObserver<BaseEntity>() {
                     @Override
                     public void onRequestNext(BaseEntity entity) {
                         if (entity != null) {
@@ -1773,5 +1779,10 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             discountInfoList.add(discountInfo);
         }
         return discountInfoList;
+    }
+
+
+    private void makeViewEnable(View view, boolean enable) {
+        view.setEnabled(enable);
     }
 }

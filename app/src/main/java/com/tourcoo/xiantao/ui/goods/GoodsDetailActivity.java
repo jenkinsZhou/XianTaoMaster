@@ -1470,7 +1470,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             tvSaleCount.setVisibility(View.GONE);
             return;
         }
-        String onSaleValue = TourCooUtil.formatNumber(sale, 1, true) + "折";
+        String onSaleValue =  TourCooUtil.doubleTransStringZhenKeepOnePoint(TourCooUtil.formatNumber(sale, 1, false)) + "折";
         tvSaleCount.setText(onSaleValue);
         tvSaleCount.setVisibility(View.VISIBLE);
     }

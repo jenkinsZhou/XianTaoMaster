@@ -35,6 +35,7 @@ import java.util.function.DoubleUnaryOperator;
 
 import io.reactivex.Observable;
 
+import static com.tourcoo.xiantao.constant.GoodsConstant.TYPE_GOODS_NORMAL;
 import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_ALI;
 import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_BALANCE;
 import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
@@ -464,6 +465,7 @@ public class ApiRepository extends BaseRepository {
         Map<String, Object> params = new HashMap<>(3);
         params.put("p", pageIndex);
         params.put("id", categoryId);
+        params.put("types", TYPE_GOODS_NORMAL);
         TourCooLogUtil.i(TAG, TAG + ":" + params);
         return TourCoolTransformer.switchSchedulersIo(getApiService().getCategoryGoodsList(params).retryWhen(new RetryWhen()));
     }

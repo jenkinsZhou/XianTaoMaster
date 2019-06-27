@@ -491,6 +491,20 @@ public class TourCooUtil {
         return df.format(value);
     }
 
+    /**
+     * 保留一位小数
+     * @param d
+     * @return
+     */
+    public static String doubleTransStringZhenKeepOnePoint(double d) {
+        if (Math.round(d) - d == 0) {
+            return String.valueOf((long) d);
+        }
+        //四舍五入 并保留两位小数
+        double value = Double.parseDouble(FormatUtil.formatDoubleSize(d, 1));
+        DecimalFormat df = new DecimalFormat("#0.0");
+        return df.format(value);
+    }
 
     private static final Double MILLION = 10000.0;
     private static final Double MILLIONS = 1000000.0;

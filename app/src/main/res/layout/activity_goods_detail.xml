@@ -181,16 +181,6 @@
                         android:textColor="#666666"
                         android:textSize="@dimen/sp_11"
                         android:visibility="gone" />
-
-                    <TextView
-                        android:id="@+id/tvLinePrice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/dp_7"
-                        android:text="¥ 16.8"
-                        android:textColor="#BBBBBB"
-                        android:textSize="@dimen/sp_14" />
                     <TextView
                         android:id="@+id/tvSaleCount"
                         android:layout_width="wrap_content"
@@ -200,6 +190,16 @@
                         android:text="3折"
                         android:textColor="#ff9000"
                         android:textSize="@dimen/sp_14" />
+                    <TextView
+                        android:id="@+id/tvLinePrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/dp_7"
+                        android:text="¥ 16.8"
+                        android:textColor="#BBBBBB"
+                        android:textSize="@dimen/sp_14" />
+
                     <TextView
                         android:id="@+id/tvPinPrice"
                         android:layout_width="wrap_content"
