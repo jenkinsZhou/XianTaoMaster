@@ -181,15 +181,7 @@
                         android:textColor="#666666"
                         android:textSize="@dimen/sp_11"
                         android:visibility="gone" />
-                    <TextView
-                        android:id="@+id/tvSaleCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/dp_5"
-                        android:text="3折"
-                        android:textColor="#ff9000"
-                        android:textSize="@dimen/sp_14" />
+
                     <TextView
                         android:id="@+id/tvLinePrice"
                         android:layout_width="wrap_content"
@@ -198,6 +190,16 @@
                         android:layout_marginLeft="@dimen/dp_7"
                         android:text="¥ 16.8"
                         android:textColor="#BBBBBB"
+                        android:textSize="@dimen/sp_14" />
+
+                    <TextView
+                        android:id="@+id/tvSaleCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/dp_5"
+                        android:text="3折"
+                        android:textColor="#ff9000"
                         android:textSize="@dimen/sp_14" />
 
                     <TextView
@@ -212,10 +214,10 @@
 
                     <RelativeLayout
                         android:id="@+id/rlORigin"
-                        android:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical">
+                        android:layout_gravity="center_vertical"
+                        android:visibility="gone">
 
                         <TextView
                             android:id="@+id/tvOriginInfo"
@@ -322,8 +324,8 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingBottom="@dimen/dp_5"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:paddingBottom="@dimen/dp_5">
 
                         <TextView
                             android:layout_width="@dimen/dp_6"
@@ -336,11 +338,9 @@
                             android:id="@+id/tvOrigin"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="产地"
                             android:layout_gravity="center_vertical"
+                            android:text="产地"
                             android:textSize="@dimen/sp_12" />
-
-
 
 
                     </LinearLayout>
@@ -568,9 +568,9 @@
                 <!--拼团相关 17人正在拼团-->
                 <LinearLayout
                     android:id="@+id/llAssemble"
-                    android:layout_marginTop="@dimen/dp_10"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_10"
                     android:background="@color/whiteCommon"
                     android:orientation="vertical">
 
@@ -685,18 +685,18 @@
 
 
                 <TextView
-                    android:layout_marginTop="@dimen/dp_8"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_8"
                     android:background="@color/whiteCommon"
                     android:gravity="center_vertical"
                     android:paddingLeft="@dimen/dp_15"
                     android:paddingTop="@dimen/dp_8"
                     android:paddingBottom="@dimen/dp_8"
-                    android:textColor="#333333"
                     android:text="商品详情"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/sp_13" />
+                    android:textColor="#333333"
+                    android:textSize="@dimen/sp_13"
+                    android:textStyle="bold" />
 
                 <include layout="@layout/line_horizontal_gray_1dp" />
 

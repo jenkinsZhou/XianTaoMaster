@@ -32,6 +32,9 @@ public class WxConfig {
      */
     public static final String MINI_PROGRAM_PATH = "/pages/progress/progress?from=out&tuan_id=";
 
+    public static final String MINI_PROGRAM_PATH_GOODS_DETAIL = "/pages/goodsLsit/goodsDetails/goodsDetails?goods_id=";
+
+
     /**
      * 微信支付的tag
      */

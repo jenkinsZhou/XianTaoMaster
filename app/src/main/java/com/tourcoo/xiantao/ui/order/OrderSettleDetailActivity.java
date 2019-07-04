@@ -38,11 +38,14 @@ import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
 import com.tourcoo.xiantao.core.frame.util.SharedPreferencesUtil;
+import com.tourcoo.xiantao.core.frame.util.SizeUtil;
 import com.tourcoo.xiantao.core.frame.util.StackUtil;
 import com.tourcoo.xiantao.core.helper.AccountInfoHelper;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.threadpool.ThreadPoolManager;
 import com.tourcoo.xiantao.core.util.ToastUtil;
+import com.tourcoo.xiantao.core.widget.core.action.ActionSheetDialog;
+import com.tourcoo.xiantao.core.widget.core.action.BaseDialog;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.core.widget.core.view.navigation.KeyboardHelper;
 import com.tourcoo.xiantao.core.widget.core.view.titlebar.TitleBarView;
@@ -89,9 +92,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
 import static android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING;
-import static android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
-import static android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE;
-import static android.view.WindowManager.LayoutParams.SOFT_INPUT_MODE_CHANGED;
 import static com.tourcoo.xiantao.constant.WxConfig.APP_ID;
 import static com.tourcoo.xiantao.constant.WxConfig.WEI_XIN_PAY_TAG_NORMAL;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
@@ -124,6 +124,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     private RelativeLayout rlSettleRemark;
     private TextView tvSettleRemark;
     private List<DiscountInfo> mDiscountInfoList = new ArrayList<>();
+
+    private String[] returnTypeArray = new String[]{"上午11:30", "下午5:30", "自提",};
     /**
      * 是否是购物车结算
      */
@@ -615,7 +617,8 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
                     ToastUtil.show("该订单已经生成,无法修改相关信息");
                     return;
                 }
-                pvTime.show();
+                showTypeDialog();
+//                pvTime.show();
                 break;
             case R.id.rlDiscount:
                 if (!canEdit) {
@@ -1785,4 +1788,30 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
     private void makeViewEnable(View view, boolean enable) {
         view.setEnabled(enable);
     }
+
+
+    private void showTypeDialog() {
+        new ActionSheetDialog.ListIOSBuilder(this)
+                .addItems(returnTypeArray)
+                .setItemsTextColorResource(R.color.greenCommon)
+                .setBackgroundColor(TourCooUtil.getColor(R.color.whiteCommon))
+                .setCancel(R.string.cancel)
+                .setTitle("选择配送时间")
+                .setCancelMarginTop(SizeUtil.dp2px(8))
+                .setCancelTextColorResource(R.color.greenCommon)
+                .setOnItemClickListener(mOnItemClickListener)
+                .create()
+//                .setDimAmount(0.6f)
+//                .setAlpha(0.6f)
+                .show();
+    }
+
+
+    private ActionSheetDialog.OnItemClickListener mOnItemClickListener = new ActionSheetDialog.OnItemClickListener() {
+        @Override
+        public void onClick(BaseDialog dialog, View itemView, int position) {
+            setTextValue(tvDeliveryTime, returnTypeArray[position]);
+            dialog.dismiss();
+        }
+    };
 }

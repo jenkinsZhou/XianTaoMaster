@@ -348,7 +348,7 @@
                             android:paddingLeft="@dimen/dp_20"
                             android:paddingTop="@dimen/dp_5"
                             android:paddingBottom="@dimen/dp_5"
-                            android:text="10:30"
+                            android:text="上午11:30"
                             android:textColor="#ff999999"
                             android:textSize="@dimen/sp_13" />
 

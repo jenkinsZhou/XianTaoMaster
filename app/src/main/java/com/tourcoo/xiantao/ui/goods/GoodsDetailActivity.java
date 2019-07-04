@@ -14,14 +14,11 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.UserManager;
-import android.text.Layout;
 import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.CheckBox;
@@ -38,6 +35,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.blankj.utilcode.util.ImageUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -46,13 +44,13 @@ import com.melnykov.fab.ObservableScrollView;
 import com.previewlibrary.GPreviewBuilder;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject;
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.XianTaoApplication;
 import com.tourcoo.xiantao.adapter.GridCommentImageAdapter;
-import com.tourcoo.xiantao.adapter.GridImageAdapter;
 import com.tourcoo.xiantao.constant.WxConfig;
 import com.tourcoo.xiantao.core.common.CommonConstant;
 import com.tourcoo.xiantao.core.frame.interfaces.IMultiStatusView;
@@ -104,7 +102,7 @@ import cn.bingoogolapple.bgabanner.BGABanner;
 import de.hdodenhof.circleimageview.CircleImageView;
 import me.bakumon.statuslayoutmanager.library.StatusLayoutManager;
 
-import static com.tourcoo.xiantao.core.common.CommonConstant.companyInfo;
+import static com.tourcoo.xiantao.constant.WxConfig.WEIXIN_PIN_URL;
 import static com.tourcoo.xiantao.core.common.RequestConfig.CODE_REQUEST_SUCCESS;
 import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_ADDRESS_KEY;
 import static com.tourcoo.xiantao.core.helper.AccountInfoHelper.PREF_TEL_PHONE_KEY;
@@ -136,13 +134,14 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     private WebView companyWebView;
     private TitleBarView mTitleBarView;
     private RelativeLayout rlContentView;
-
-    private ShareGoodsPopupWindow sharePopupWindow;
+    private ShareGoodsPopupWindow sharePopupWeb;
     private RelativeLayout rlORigin;
     private IWXAPI api;
     private int count;
     private BGABanner bgaBanner;
     private List<String> imageList = new ArrayList<>();
+
+    private SharePopupWindow sharePopupWindow;
     /**
      * 商品价格区间
      */
@@ -239,7 +238,8 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         tvPriceRange = findViewById(R.id.tvPriceRange);
         tvLinePrice = findViewById(R.id.tvLinePrice);
         tvPinPrice = findViewById(R.id.tvPinPrice);
-        sharePopupWindow = new ShareGoodsPopupWindow(mContext, false);
+        sharePopupWeb = new ShareGoodsPopupWindow(mContext, false);
+        sharePopupWindow = new SharePopupWindow(mContext, true,"分享拼团小程序");
         skipTag = getIntent().getStringExtra(EXTRA_ADV_TAG);
         countDownMap = new SparseArray<>();
         cbCollect = findViewById(R.id.cbCollect);
@@ -319,7 +319,8 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         titleBar.setOnRightTextClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showShare(currentGoods);
+//                showShare(currentGoods);
+                shareWeiXinProgram(currentGoods);
             }
         });
         titleBar.setOnLeftTextClickListener(new View.OnClickListener() {
@@ -1096,24 +1097,24 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
      * @param goods
      */
     private void showShare(Goods goods) {
-        sharePopupWindow.setISharePopupWindowClickListener(new SharePopupWindow.ISharePopupWindowClickListener() {
+        sharePopupWeb.setISharePopupWindowClickListener(new SharePopupWindow.ISharePopupWindowClickListener() {
             @Override
             public void onWxClick() {
-                doShare(goods, true);
-                sharePopupWindow.dismiss();
+                doShareApp(goods, true);
+                sharePopupWeb.dismiss();
             }
 
             @Override
             public void onWxFriendClick() {
-                doShare(goods, false);
-                sharePopupWindow.dismiss();
+                doShareApp(goods, false);
+                sharePopupWeb.dismiss();
             }
         });
-        sharePopupWindow.showAtScreenBottom(rlContentView);
+        sharePopupWeb.showAtScreenBottom(rlContentView);
     }
 
 
-    private void doShare(Goods goods, boolean isFrend) {
+    private void doShareApp(Goods goods, boolean isFrend) {
         // 检查手机或者模拟器是否安装了微信
         if (goods == null) {
             ToastUtil.showFailed("未获取到商品信息");
@@ -1475,5 +1476,49 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         tvSaleCount.setVisibility(View.VISIBLE);
     }
 
+
+
+private void shareWeiXinProgram(Goods goods ){
+    sharePopupWindow.setISharePopupWindowClickListener(new SharePopupWindow.ISharePopupWindowClickListener() {
+        @Override
+        public void onWxClick() {
+            WXMiniProgramObject miniProgram = new WXMiniProgramObject();
+            //自定义
+            miniProgram.webpageUrl = WEIXIN_PIN_URL;
+            //小程序端提供参数
+            miniProgram.userName = WxConfig.MINI_PROGRAM_USERNAME;
+            //小程序端提供参数
+            miniProgram.path = WxConfig.MINI_PROGRAM_PATH_GOODS_DETAIL + goods.getId();
+//                        miniProgram.miniprogramType = WXMiniProgramObject.MINIPROGRAM_TYPE_TEST;// 正式版:0，测试版:1，体验版:2
+            miniProgram.miniprogramType = WXMiniProgramObject.MINIPROGRAM_TYPE_PREVIEW;
+            WXMediaMessage mediaMessage = new WXMediaMessage(miniProgram);
+            //自定义
+            mediaMessage.title = "拼团钜惠";
+            //自定义
+            mediaMessage.description = "拼团钜惠";
+            Bitmap bitmapStatic = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_wei_xin_app);
+            int width = bitmapStatic.getWidth();
+            int height = bitmapStatic.getHeight();
+            Bitmap sendBitmap = Bitmap.createScaledBitmap(bitmapStatic, width, height, false);
+            mediaMessage.thumbData = ImageUtils.bitmap2Bytes(sendBitmap, Bitmap.CompressFormat.PNG);
+            bitmapStatic.recycle();
+            SendMessageToWX.Req req = new SendMessageToWX.Req();
+            req.transaction = "";
+            req.scene = SendMessageToWX.Req.WXSceneSession;
+            req.message = mediaMessage;
+            api.sendReq(req);
+            sendBitmap.recycle();
+            sharePopupWindow.dismiss();
+        }
+
+        @Override
+        public void onWxFriendClick() {
+            sharePopupWindow.dismiss();
+        }
+    });
+    sharePopupWindow.showAtScreenBottom(rlContentView);
+}
+
+  
 }
 

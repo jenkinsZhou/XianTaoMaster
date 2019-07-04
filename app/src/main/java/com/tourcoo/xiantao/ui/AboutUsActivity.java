@@ -145,7 +145,7 @@ public class AboutUsActivity extends BaseTourCooTitleActivity implements View.On
     }
 
     private void showAppVersion() {
-        String version = "V" + TourCooUtil.getVersionName(mContext);
+        String version = "V " + TourCooUtil.getVersionName(mContext);
         tvAppVersion.setText(version);
     }
 
