@@ -105,8 +105,9 @@ dependencies {
               implementation('com.github.bumptech.glide:glide:4.7.1') {
                   exclude group: 'com.android.support'
               }*/
-    //内存泄漏检测工具
+
     implementation 'com.github.lygttpod:SuperTextView:2.1.8'
+    //内存泄漏检测工具
     testImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'

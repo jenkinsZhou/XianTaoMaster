@@ -1825,7 +1825,9 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         }
     };
 
-
+    /**
+     * 根据用户选择的配送方式选择运费
+     */
     private void showChangeExpress() {
         if (isZiTi()) {
             //说明用户上门自提 需要减运费
@@ -1852,7 +1854,11 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         }
     }
 
-
+    /**
+     * 配送方式是否为自提
+     *
+     * @return
+     */
     private boolean isZiTi() {
         return tvDeliveryTime.getText().toString().contains(ZI_TI);
     }

@@ -320,7 +320,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             @Override
             public void onClick(View v) {
 //                showShare(currentGoods);
-                shareWeiXinProgram(currentGoods);
+                shareWeiXinProgram();
             }
         });
         titleBar.setOnLeftTextClickListener(new View.OnClickListener() {
@@ -1478,7 +1478,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
 
 
-private void shareWeiXinProgram(Goods goods ){
+private void shareWeiXinProgram(){
     sharePopupWindow.setISharePopupWindowClickListener(new SharePopupWindow.ISharePopupWindowClickListener() {
         @Override
         public void onWxClick() {
@@ -1491,12 +1491,12 @@ private void shareWeiXinProgram(Goods goods ){
             TourCooLogUtil.i("商品id："+mGoodsId);
             miniProgram.path = WxConfig.MINI_PROGRAM_PATH_GOODS_DETAIL + mGoodsId;
 //                        miniProgram.miniprogramType = WXMiniProgramObject.MINIPROGRAM_TYPE_TEST;// 正式版:0，测试版:1，体验版:2
-            miniProgram.miniprogramType = WXMiniProgramObject.MINIPROGRAM_TYPE_PREVIEW;
+            miniProgram.miniprogramType = WXMiniProgramObject.MINIPTOGRAM_TYPE_RELEASE;
             WXMediaMessage mediaMessage = new WXMediaMessage(miniProgram);
             //自定义
-            mediaMessage.title = "拼团钜惠";
+            mediaMessage.title = "特大喜讯！濡江铺子试运营今日开启！";
             //自定义
-            mediaMessage.description = "拼团钜惠";
+            mediaMessage.description = "精挑细选的新鲜水果，欢迎选购，优惠多多，奖励多多，快把绿色健康带回家吧！";
             Bitmap bitmapStatic = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_wei_xin_app);
             int width = bitmapStatic.getWidth();
             int height = bitmapStatic.getHeight();
