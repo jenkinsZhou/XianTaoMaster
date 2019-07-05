@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -15,17 +14,12 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alipay.sdk.app.PayTask;
-import com.aries.ui.view.tab.CommonTabLayout;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.adapter.RechargeAmountAdapter;
-import com.tourcoo.xiantao.core.frame.UiConfigManager;
-import com.tourcoo.xiantao.core.frame.entity.TabEntity;
-import com.tourcoo.xiantao.core.frame.impl.SwipeBackControlImpl;
-import com.tourcoo.xiantao.core.frame.interfaces.IHomeView;
 import com.tourcoo.xiantao.core.frame.interfaces.SwipeBackControl;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseLoadingObserver;
 import com.tourcoo.xiantao.core.frame.retrofit.BaseObserver;
@@ -51,11 +45,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

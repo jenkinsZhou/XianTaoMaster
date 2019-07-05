@@ -50,7 +50,6 @@ import com.tourcoo.xiantao.entity.address.AddressEntity;
 import com.tourcoo.xiantao.entity.event.BaseEvent;
 import com.tourcoo.xiantao.entity.event.RefreshEvent;
 import com.tourcoo.xiantao.entity.goods.Goods;
-import com.tourcoo.xiantao.entity.goods.Spec;
 import com.tourcoo.xiantao.entity.order.OrderDetailEntity;
 import com.tourcoo.xiantao.entity.order.ReturnInfo;
 import com.tourcoo.xiantao.entity.pay.WeiXinPay;
@@ -69,7 +68,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

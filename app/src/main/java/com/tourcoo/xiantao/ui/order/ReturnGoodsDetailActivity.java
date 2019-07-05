@@ -29,7 +29,6 @@ import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tourcoo.xiantao.R;
-import com.tourcoo.xiantao.adapter.GridImageAdapter;
 import com.tourcoo.xiantao.adapter.GridImageMatchContentAdapter;
 import com.tourcoo.xiantao.adapter.OrderGoodsDetailAdapter;
 import com.tourcoo.xiantao.constant.WxConfig;
