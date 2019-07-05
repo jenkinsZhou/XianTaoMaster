@@ -120,12 +120,16 @@ import static com.tourcoo.xiantao.widget.dialog.PayDialog.PAY_TYPE_WE_XIN;
  * @Email: 971613168@qq.com
  */
 public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity implements View.OnClickListener {
+    /**
+     * 是否修改过配送方式为自提
+     */
+    private boolean isEditExpressZiTi = false;
     private int discountCanUseCount = -1;
     private RelativeLayout rlSettleRemark;
     private TextView tvSettleRemark;
     private List<DiscountInfo> mDiscountInfoList = new ArrayList<>();
 
-    private String[] returnTypeArray = new String[]{"上午11:30", "下午5:30", "自提",};
+    private String[] returnTypeArray = new String[]{"上午11:30", "下午5:30", "自提"};
     /**
      * 是否是购物车结算
      */
@@ -450,6 +454,7 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
             mStatusLayoutManager.showErrorLayout();
             return;
         }
+        tvDeliveryTime.setText("上午11:30");
         List<Goods> goodsList = settleEntity.getGoods_list();
         mGoodsAdapter.setNewData(goodsList);
         //显示配送地址
@@ -1811,7 +1816,32 @@ public class OrderSettleDetailActivity extends BaseTourCooTitleMultiViewActivity
         @Override
         public void onClick(BaseDialog dialog, View itemView, int position) {
             setTextValue(tvDeliveryTime, returnTypeArray[position]);
+            if (position == 2) {
+                //说明用户上门自提 需要减运费
+                isEditExpressZiTi = true;
+                tvExpressPrice.setText("¥ 0.00");
+                payMoney = TourCooUtil.minusDouble(computePayMoney(mSettleEntity), mSettleEntity.getExpress_price());
+                if (payMoney <= 0) {
+                    payMoney = 0.01;
+                }
+                double orderPriceTemp = TourCooUtil.minusDouble(computeOrderMoney(mSettleEntity), mSettleEntity.getExpress_price());
+                if (orderPriceTemp <= 0) {
+                    orderPriceTemp = 0.01;
+                }
+                tvPayPrice.setText("¥ " + TourCooUtil.doubleTransString(payMoney));
+                tvOrderPrice.setText("¥ " + TourCooUtil.doubleTransString(orderPriceTemp));
+            } else {
+                tvExpressPrice.setText("¥ " + TourCooUtil.doubleTransString(mSettleEntity.getExpress_price()));
+                if (isEditExpressZiTi) {
+                    payMoney = computePayMoney(mSettleEntity);
+                    isEditExpressZiTi = false;
+                }
+                tvOrderPrice.setText("¥ " + TourCooUtil.doubleTransString(computeOrderMoney(mSettleEntity)));
+                tvPayPrice.setText("¥ " + TourCooUtil.doubleTransString(payMoney));
+            }
             dialog.dismiss();
         }
     };
+
+
 }

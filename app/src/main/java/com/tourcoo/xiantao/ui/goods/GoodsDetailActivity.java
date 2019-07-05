@@ -1488,7 +1488,8 @@ private void shareWeiXinProgram(Goods goods ){
             //小程序端提供参数
             miniProgram.userName = WxConfig.MINI_PROGRAM_USERNAME;
             //小程序端提供参数
-            miniProgram.path = WxConfig.MINI_PROGRAM_PATH_GOODS_DETAIL + goods.getId();
+            TourCooLogUtil.i("商品id："+mGoodsId);
+            miniProgram.path = WxConfig.MINI_PROGRAM_PATH_GOODS_DETAIL + mGoodsId;
 //                        miniProgram.miniprogramType = WXMiniProgramObject.MINIPROGRAM_TYPE_TEST;// 正式版:0，测试版:1，体验版:2
             miniProgram.miniprogramType = WXMiniProgramObject.MINIPROGRAM_TYPE_PREVIEW;
             WXMediaMessage mediaMessage = new WXMediaMessage(miniProgram);
