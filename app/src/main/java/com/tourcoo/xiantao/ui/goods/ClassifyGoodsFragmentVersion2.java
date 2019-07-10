@@ -376,7 +376,11 @@ public class ClassifyGoodsFragmentVersion2 extends BaseTitleFragment implements 
                                     GoodsCategoryBean garageEntity = parseGoodsInfo(entity.data);
                                     if (garageEntity != null) {
                                         if (garageEntity.getListdata() == null || garageEntity.getListdata().isEmpty()) {
-                                            statusLayoutManagerChild.showEmptyLayout();
+                                            if (pageIndex <= 1) {
+                                                statusLayoutManagerChild.showEmptyLayout();
+                                            } else {
+                                                smartLayoutRoot.setEnableLoadMore(isLoadMoreEnable(garageEntity.getListdata()));
+                                            }
                                         } else {
                                             mCategoryGoodsAdapter.addData(garageEntity.getListdata());
                                             smartLayoutRoot.setEnableLoadMore(isLoadMoreEnable(garageEntity.getListdata()));
