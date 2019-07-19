@@ -47,7 +47,7 @@ import static com.tourcoo.xiantao.core.common.RequestConfig.BASE_URL_API;
 public class XianTaoApplication extends LitePalApplication {
     private static Application mContext;
     private static int imageHeight = 0;
-
+    private static int goodsBannerimageHeight = 0;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -184,6 +184,10 @@ public class XianTaoApplication extends LitePalApplication {
         return imageHeight;
     }
 
+    public static int getGoodsVBannerDetail() {
+        goodsBannerimageHeight = SizeUtil.getScreenWidth() ;
+        return goodsBannerimageHeight;
+    }
     /**
      * 异步加载
      */

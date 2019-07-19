@@ -97,8 +97,8 @@
 
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/ivPhoto"
-            android:layout_width="@dimen/dp_110"
-            android:layout_height="@dimen/dp_55"
+            android:layout_width="@dimen/dp_80"
+            android:layout_height="@dimen/dp_80"
             android:layout_gravity="center_vertical"
             android:src="@mipmap/ic_orange"
             android:scaleType="centerInside"

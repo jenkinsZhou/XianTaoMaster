@@ -18,6 +18,7 @@
         app:ios="true"
         app:leftSwipe="true"
         app:swipeEnable="true">
+
         <RelativeLayout
             android:id="@+id/rrContent"
             android:layout_width="match_parent"
@@ -33,12 +34,12 @@
 
             <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/ivGoodsIcon"
-                android:layout_width="@dimen/dp_110"
-                android:layout_height="@dimen/dp_65"
-                app:riv_corner_radius="@dimen/dp_5"
-                android:scaleType="centerInside"
+                android:layout_width="@dimen/dp_80"
+                android:layout_height="@dimen/dp_80"
                 android:background="#F5F5F5"
-                android:src="@mipmap/ic_orange" />
+                android:scaleType="centerInside"
+                android:src="@mipmap/ic_orange"
+                app:riv_corner_radius="@dimen/dp_5" />
 
             <TextView
                 android:id="@+id/tvGoodsName"
@@ -54,38 +55,36 @@
                 android:textStyle="bold" />
 
             <LinearLayout
-                android:visibility="visible"
                 android:id="@+id/llGoodsLabel"
                 android:layout_width="wrap_content"
-                android:layout_below="@id/tvGoodsName"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:layout_alignLeft="@id/tvGoodsName"
-                android:layout_marginTop="@dimen/dp_8"
                 android:layout_toRightOf="@id/ivGoodsIcon"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="visible">
 
                 <TextView
                     android:id="@+id/tvGoodsLabel"
                     style="@style/TextView12spGray666"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/sp_11"
-                    android:visibility="invisible"
-                    android:maxLines="1"
                     android:ellipsize="end"
                     android:maxEms="15"
-                    android:text="特点标签" />
+                    android:maxLines="1"
+                    android:text="特点标签"
+                    android:textSize="@dimen/sp_11"
+                    android:visibility="invisible" />
 
 
             </LinearLayout>
             <!--规格-->
             <LinearLayout
+                android:layout_alignBottom="@id/ivGoodsIcon"
                 android:id="@+id/llGoodsSpec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_5"
                 android:layout_alignLeft="@id/tvGoodsName"
-                android:layout_below="@id/llGoodsLabel"
                 android:layout_toRightOf="@id/ivGoodsIcon"
                 android:orientation="horizontal">
 
@@ -104,8 +103,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/dp_5"
                     android:text="300g/包"
-                    android:visibility="invisible"
-                    android:textSize="@dimen/sp_10" />
+                    android:textSize="@dimen/sp_10"
+                    android:visibility="invisible" />
             </LinearLayout>
 
 

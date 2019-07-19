@@ -427,7 +427,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
     private void setBanner(List<String> images) {
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) bgaBanner.getLayoutParams();
-        params.height = XianTaoApplication.getImageHeight();
+        params.height = XianTaoApplication.getGoodsVBannerDetail();
         TourCooLogUtil.i(TAG, "banner:高度" + params.height + ";width:" + com.tourcoo.xiantao.core.frame.util.SizeUtil.getScreenWidth());
         bgaBanner.setAdapter(new BGABanner.Adapter() {
             @Override

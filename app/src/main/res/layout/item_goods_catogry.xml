@@ -29,8 +29,8 @@
 
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/ivGoodsIcon"
-            android:layout_width="@dimen/dp_110"
-            android:layout_height="@dimen/dp_65"
+            android:layout_width="@dimen/dp_80"
+            android:layout_height="@dimen/dp_80"
             app:riv_corner_radius="@dimen/dp_5"
             android:scaleType="centerInside"
             android:background="#F5F5F5"
@@ -53,10 +53,9 @@
             android:visibility="visible"
             android:id="@+id/llGoodsLabel"
             android:layout_width="wrap_content"
-            android:layout_below="@id/tvGoodsName"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_alignLeft="@id/tvGoodsName"
-            android:layout_marginTop="@dimen/dp_6"
             android:layout_toRightOf="@id/ivGoodsIcon"
             android:orientation="horizontal">
 
@@ -79,9 +78,8 @@
             android:id="@+id/llGoodsSpec"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_5"
+            android:layout_alignBottom="@id/ivGoodsIcon"
             android:layout_alignLeft="@id/tvGoodsName"
-            android:layout_below="@id/llGoodsLabel"
             android:layout_toRightOf="@id/ivGoodsIcon"
             android:orientation="horizontal">
 
