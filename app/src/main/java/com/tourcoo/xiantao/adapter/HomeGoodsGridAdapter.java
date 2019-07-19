@@ -4,9 +4,13 @@ import android.graphics.Paint;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+
+import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.blankj.utilcode.util.SpanUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -31,9 +35,11 @@ import com.tourcoo.xiantao.util.FormatDuration;
  */
 public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsEntity.GoodsBean, BaseViewHolder> {
     public static final String IS_SPECIAL = "1";
+    private GridLayoutManager layoutManager;
 
-    public HomeGoodsGridAdapter() {
+    public HomeGoodsGridAdapter(GridLayoutManager layoutManager) {
         super(R.layout.item_home_goods2);
+        this.layoutManager = layoutManager;
     }
 
     @Override
@@ -41,6 +47,10 @@ public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsEntity.Goods
         if (item == null) {
             return;
         }
+     /*   //设置item的高度跟随宽度走
+        ViewGroup.LayoutParams parm = holder.layoutContent.getLayoutParams();
+        parm.height = gridLayoutManager.getWidth()/ gridLayoutManager.getSpanCount()
+                - 2*holder.layoutContent.getPaddingLeft() - 2*((ViewGroup.MarginLayoutParams)parm).leftMargin;*/
         boolean special = IS_SPECIAL.equals(item.getSpecial());
         ImageView ivLabel = helper.getView(R.id.ivSpecial);
         boolean isLimit = item.getQuota() > 0;
@@ -58,6 +68,10 @@ public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsEntity.Goods
             }
         }
         RoundedImageView roundedImageView = helper.getView(R.id.rvGoodsImage);
+        ViewGroup.LayoutParams params = roundedImageView.getLayoutParams();
+        params.height = layoutManager.getWidth() / layoutManager.getSpanCount()
+                - roundedImageView.getPaddingLeft();
+        TourCooLogUtil.i(TAG, "layoutManager宽度:" + layoutManager.getWidth());
         GlideManager.loadImg(TourCooUtil.getUrl(item.getImage()), roundedImageView);
         helper.setText(R.id.tvGoodsName, item.getGoods_name());
         helper.setText(R.id.tvGoodsPrice, "¥ " + TourCooUtil.doubleTransString(item.getGoods_min_price()));
@@ -153,6 +167,12 @@ public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsEntity.Goods
             helper.setVisible(R.id.tvAssemble, false);
         }
         GlideManager.loadImg(item.getImage(), roundedImageView);*/
+
+
+        ViewGroup.LayoutParams layoutParams = roundedImageView.getLayoutParams();
+        layoutParams.height = layoutManager.getWidth() / layoutManager.getSpanCount()
+                - 2 * roundedImageView.getPaddingLeft() - 2 * ((ViewGroup.MarginLayoutParams) layoutParams).leftMargin;//margin为什么要乘以2留给你们思考一下
+
     }
 
 

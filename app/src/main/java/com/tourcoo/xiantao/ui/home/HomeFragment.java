@@ -112,6 +112,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
     private List<BannerBean> mBannerBeanList = new ArrayList<>();
     private LinearLayout rlContentView;
     private HomeGoodsNewBean mHomeGoodsNewBean;
+    private GridLayoutManager gridLayoutManager;
 
     /**
      * 没有更多数据足布局
@@ -216,7 +217,8 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
         ivMsg.setOnClickListener(this);
         rvHome = mContentView.findViewById(R.id.rvHome);
         footView = LayoutInflater.from(mContext).inflate(R.layout.item_view, null);
-        rvHome.setLayoutManager(new GridLayoutManager(mContext, 2));
+        gridLayoutManager = new GridLayoutManager(mContext, 2);
+        rvHome.setLayoutManager(gridLayoutManager);
         mRefreshLayout = mContentView.findViewById(R.id.refreshLayoutHome);
         mRefreshLayout.setEnableLoadMore(true);
         mRefreshLayout.setOnRefreshListener(this);
@@ -229,7 +231,7 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
      * 初始化商品适配器
      */
     private void initAdapter() {
-        mGoodsGridAdapter = new HomeGoodsGridAdapter();
+        mGoodsGridAdapter = new HomeGoodsGridAdapter(gridLayoutManager);
         mGoodsGridAdapter.bindToRecyclerView(rvHome);
         mGoodsGridAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
