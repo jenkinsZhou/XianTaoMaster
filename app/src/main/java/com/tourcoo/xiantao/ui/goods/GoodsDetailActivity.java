@@ -2,6 +2,7 @@ package com.tourcoo.xiantao.ui.goods;
 
 import android.app.Dialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -19,6 +21,7 @@ import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.CheckBox;
@@ -38,6 +41,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.ImageUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.ObservableScrollView;
@@ -129,6 +136,9 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
     public static final int REQUSET_CODE_TUAN_LIST = 1017;
     public static final String EXTRA_SKIP_SETTLE = "EXTRA_SKIP_SETTLE";
     private boolean swiping = false;
+    private float screenWidth;
+    //设置图片宽高比
+    private float scale = 1;
     private String companyInfo;
     private LinearLayout llComanyInfo;
     private WebView companyWebView;
@@ -225,6 +235,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
 
     private void init() {
         //判断是否是从广告页跳转过来的
+        screenWidth = SizeUtil.getScreenWidth();
         api = WXAPIFactory.createWXAPI(mContext, WxConfig.APP_ID);
         rlORigin = findViewById(R.id.rlORigin);
         tvSaleCount = findViewById(R.id.tvSaleCount);
@@ -239,7 +250,7 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         tvLinePrice = findViewById(R.id.tvLinePrice);
         tvPinPrice = findViewById(R.id.tvPinPrice);
         sharePopupWeb = new ShareGoodsPopupWindow(mContext, false);
-        sharePopupWindow = new SharePopupWindow(mContext, true,"分享拼团小程序");
+        sharePopupWindow = new SharePopupWindow(mContext, true, "分享拼团小程序");
         skipTag = getIntent().getStringExtra(EXTRA_ADV_TAG);
         countDownMap = new SparseArray<>();
         cbCollect = findViewById(R.id.cbCollect);
@@ -432,7 +443,14 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
         bgaBanner.setAdapter(new BGABanner.Adapter() {
             @Override
             public void fillBannerItem(BGABanner banner, View itemView, Object model, int position) {
-                GlideManager.loadImg(model, (ImageView) itemView);
+                //计算BGABanner的应有高度
+                int viewHeight = Math.round(screenWidth / scale);
+                //设置BGABanner的宽高属性
+                ViewGroup.LayoutParams banner_params = banner.getLayoutParams();
+                banner_params.width = (int) screenWidth;
+                banner_params.height = viewHeight;
+                banner.setLayoutParams(banner_params);
+                Glide.with(mContext).load(model).into((ImageView) itemView);
             }
         });
         List<ImageEntity> imageEntityList = parseImageEntityList(images);
@@ -1471,55 +1489,65 @@ public class GoodsDetailActivity extends BaseTourCooTitleMultiViewActivity imple
             tvSaleCount.setVisibility(View.GONE);
             return;
         }
-        String onSaleValue =  TourCooUtil.doubleTransStringZhenKeepOnePoint(TourCooUtil.formatNumber(sale, 1, false)) + "折";
+        String onSaleValue = TourCooUtil.doubleTransStringZhenKeepOnePoint(TourCooUtil.formatNumber(sale, 1, false)) + "折";
         tvSaleCount.setText(onSaleValue);
         tvSaleCount.setVisibility(View.VISIBLE);
     }
 
 
-
-private void shareWeiXinProgram(){
-    sharePopupWindow.setISharePopupWindowClickListener(new SharePopupWindow.ISharePopupWindowClickListener() {
-        @Override
-        public void onWxClick() {
-            WXMiniProgramObject miniProgram = new WXMiniProgramObject();
-            //自定义
-            miniProgram.webpageUrl = WEIXIN_PIN_URL;
-            //小程序端提供参数
-            miniProgram.userName = WxConfig.MINI_PROGRAM_USERNAME;
-            //小程序端提供参数
-            TourCooLogUtil.i("商品id："+mGoodsId);
-            miniProgram.path = WxConfig.MINI_PROGRAM_PATH_GOODS_DETAIL + mGoodsId;
+    private void shareWeiXinProgram() {
+        sharePopupWindow.setISharePopupWindowClickListener(new SharePopupWindow.ISharePopupWindowClickListener() {
+            @Override
+            public void onWxClick() {
+                WXMiniProgramObject miniProgram = new WXMiniProgramObject();
+                //自定义
+                miniProgram.webpageUrl = WEIXIN_PIN_URL;
+                //小程序端提供参数
+                miniProgram.userName = WxConfig.MINI_PROGRAM_USERNAME;
+                //小程序端提供参数
+                TourCooLogUtil.i("商品id：" + mGoodsId);
+                miniProgram.path = WxConfig.MINI_PROGRAM_PATH_GOODS_DETAIL + mGoodsId;
 //                        miniProgram.miniprogramType = WXMiniProgramObject.MINIPROGRAM_TYPE_TEST;// 正式版:0，测试版:1，体验版:2
-            miniProgram.miniprogramType = WXMiniProgramObject.MINIPTOGRAM_TYPE_RELEASE;
-            WXMediaMessage mediaMessage = new WXMediaMessage(miniProgram);
-            //自定义
-            mediaMessage.title = "特大喜讯！濡江铺子试运营今日开启！";
-            //自定义
-            mediaMessage.description = "精挑细选的新鲜水果，欢迎选购，优惠多多，奖励多多，快把绿色健康带回家吧！";
-            Bitmap bitmapStatic = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_wei_xin_app);
-            int width = bitmapStatic.getWidth();
-            int height = bitmapStatic.getHeight();
-            Bitmap sendBitmap = Bitmap.createScaledBitmap(bitmapStatic, width, height, false);
-            mediaMessage.thumbData = ImageUtils.bitmap2Bytes(sendBitmap, Bitmap.CompressFormat.PNG);
-            bitmapStatic.recycle();
-            SendMessageToWX.Req req = new SendMessageToWX.Req();
-            req.transaction = "";
-            req.scene = SendMessageToWX.Req.WXSceneSession;
-            req.message = mediaMessage;
-            api.sendReq(req);
-            sendBitmap.recycle();
-            sharePopupWindow.dismiss();
-        }
+                miniProgram.miniprogramType = WXMiniProgramObject.MINIPTOGRAM_TYPE_RELEASE;
+                WXMediaMessage mediaMessage = new WXMediaMessage(miniProgram);
+                //自定义
+                mediaMessage.title = "特大喜讯！濡江铺子试运营今日开启！";
+                //自定义
+                mediaMessage.description = "精挑细选的新鲜水果，欢迎选购，优惠多多，奖励多多，快把绿色健康带回家吧！";
+                Bitmap bitmapStatic = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_wei_xin_app);
+                int width = bitmapStatic.getWidth();
+                int height = bitmapStatic.getHeight();
+                Bitmap sendBitmap = Bitmap.createScaledBitmap(bitmapStatic, width, height, false);
+                mediaMessage.thumbData = ImageUtils.bitmap2Bytes(sendBitmap, Bitmap.CompressFormat.PNG);
+                bitmapStatic.recycle();
+                SendMessageToWX.Req req = new SendMessageToWX.Req();
+                req.transaction = "";
+                req.scene = SendMessageToWX.Req.WXSceneSession;
+                req.message = mediaMessage;
+                api.sendReq(req);
+                sendBitmap.recycle();
+                sharePopupWindow.dismiss();
+            }
 
-        @Override
-        public void onWxFriendClick() {
-            sharePopupWindow.dismiss();
-        }
-    });
-    sharePopupWindow.showAtScreenBottom(rlContentView);
-}
+            @Override
+            public void onWxFriendClick() {
+                sharePopupWindow.dismiss();
+            }
+        });
+        sharePopupWindow.showAtScreenBottom(rlContentView);
+    }
 
-  
+
+    private static RequestOptions getRequestOptionsCentetInside(int width, int height) {
+        RequestOptions requestOptions = new RequestOptions()
+                // 填充方式
+                .centerInside()
+                //优先级
+                .priority(Priority.HIGH)
+                .override(width, height)
+                //缓存策略
+                .diskCacheStrategy(DiskCacheStrategy.ALL);
+        return requestOptions;
+    }
 }
 

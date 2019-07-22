@@ -12,7 +12,7 @@
         <!--android:layout_height="280px"-->
         <!--android:layout_gravity="center_horizontal"-->
         <!--android:layout_marginTop="500px"-->
-        <!--android:scaleType="fitCenter"-->
+        <!--android:scaleType="centerInside"-->
         <!--android:src="@drawable/jyz_png"/>-->
 
     <ImageView

@@ -99,8 +99,8 @@
                 <cn.bingoogolapple.bgabanner.BGABanner
                     android:id="@+id/bgaBanner"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:scaleType="centerInside"
+                    android:layout_height="wrap_content"
                     app:banner_indicatorGravity="bottom|center_horizontal"
                     app:banner_placeholderDrawable="@color/transparent"
                     app:banner_pointAutoPlayAble="true"

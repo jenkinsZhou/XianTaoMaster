@@ -123,26 +123,64 @@ public class GlideManager {
      * @param iv
      * @param placeholder
      */
-    public static void loadImg(Object obj, ImageView iv, Drawable placeholder) {
-        Glide.with(iv.getContext()).load(obj).apply(getRequestOptions()
+    public static void loadImgCenterCrop(Object obj, ImageView iv, Drawable placeholder) {
+        Glide.with(iv.getContext()).load(obj).apply(getRequestOptionsCenterCrop()
                 .error(placeholder)
                 .placeholder(placeholder)
                 .fallback(placeholder)
                 .dontAnimate()).into(iv);
     }
 
+    public static void loadImgCenterCropReally(Object obj, ImageView iv, Drawable placeholder) {
+        Glide.with(iv.getContext()).load(obj).apply(getRequestOptionsCenterCropReally()
+                .error(placeholder)
+                .placeholder(placeholder)
+                .fallback(placeholder)
+                .dontAnimate()).into(iv);
+    }
+    public static void loadImgCenterInside(Object obj, ImageView iv, Drawable placeholder) {
+        Glide.with(iv.getContext()).load(obj).apply(getRequestOptionsCentetInside()
+                .error(placeholder)
+                .placeholder(placeholder)
+                .fallback(placeholder)
+                .dontAnimate()).into(iv);
+    }
 
-    public static void loadImg(Object obj, ImageView iv, int placeholderResource) {
+    public static void loadImgCenterCrop(Object obj, ImageView iv, int placeholderResource) {
         Drawable drawable = getDrawable(iv.getContext(), placeholderResource);
-        loadImg(obj, iv, drawable != null ? drawable : sCommonPlaceholderDrawable);
+        loadImgCenterCrop(obj, iv, drawable != null ? drawable : sCommonPlaceholderDrawable);
+    }
+    public static void loadImgCenterCropReally(Object obj, ImageView iv, int placeholderResource) {
+        Drawable drawable = getDrawable(iv.getContext(), placeholderResource);
+        loadImgCenterCropReally(obj, iv, drawable != null ? drawable : sCommonPlaceholderDrawable);
+    }
+
+    public static void loadImgCenterInside(Object obj, ImageView iv, int placeholderResource) {
+        Drawable drawable = getDrawable(iv.getContext(), placeholderResource);
+        loadImgCenterInside(obj, iv, drawable != null ? drawable : sCommonPlaceholderDrawable);
     }
 
     public static void loadImg(Object obj, ImageView iv) {
-        loadImg(obj, iv, R.mipmap.img_zwt);
+        loadImgCenterCrop(obj, iv, R.mipmap.img_zwt);
+    }
+
+    public static void loadImg(Object obj, ImageView iv, int placeholderResource) {
+        loadImgCenterCrop(obj, iv, placeholderResource);
+    }
+
+    public static void loadImageCenterCrop(Object obj, ImageView iv, int placeholderResource) {
+        loadImgCenterCrop(obj, iv, placeholderResource);
+    }
+    public static void loadImg(Object obj, ImageView iv, Drawable placeholderResource) {
+        loadImgCenterCrop(obj, iv, placeholderResource);
+    }
+
+    public static void loadImgCenterInside(Object obj, ImageView iv) {
+        loadImgCenterInside(obj, iv, R.mipmap.img_zwt);
     }
 
     public static void loadDefaultAvatar(Object obj, ImageView iv) {
-        loadImg(obj, iv, R.mipmap.img_default_avatar);
+        loadImgCenterCrop(obj, iv, R.mipmap.img_default_avatar);
     }
 
     /**
@@ -153,7 +191,7 @@ public class GlideManager {
      * @param placeholder 占位图
      */
     public static void loadCircleImg(Object obj, ImageView iv, Drawable placeholder) {
-        Glide.with(iv.getContext()).load(obj).apply(getRequestOptions()
+        Glide.with(iv.getContext()).load(obj).apply(getRequestOptionsCentetInside()
                 .error(placeholder)
                 .placeholder(placeholder)
                 .fallback(placeholder)
@@ -180,7 +218,7 @@ public class GlideManager {
      * @param isOfficial-是否官方模式圆角
      */
     public static void loadRoundImg(Object obj, ImageView iv, float dp, Drawable placeholder, boolean isOfficial) {
-        Glide.with(iv.getContext()).load(obj).apply(getRequestOptions()
+        Glide.with(iv.getContext()).load(obj).apply(getRequestOptionsCenterCrop()
                 .error(placeholder)
                 .placeholder(placeholder)
                 .fallback(placeholder)
@@ -209,10 +247,31 @@ public class GlideManager {
         loadRoundImg(obj, iv, true);
     }
 
-    private static RequestOptions getRequestOptions() {
+    private static RequestOptions getRequestOptionsCenterCrop() {
+        RequestOptions requestOptions = new RequestOptions()
+                // 填充方式
+                .centerInside()
+                //优先级
+                .priority(Priority.HIGH)
+                //缓存策略
+                .diskCacheStrategy(DiskCacheStrategy.ALL);
+        return requestOptions;
+    }
+
+    private static RequestOptions getRequestOptionsCenterCropReally() {
         RequestOptions requestOptions = new RequestOptions()
                 // 填充方式
                 .centerCrop()
+                //优先级
+                .priority(Priority.HIGH)
+                //缓存策略
+                .diskCacheStrategy(DiskCacheStrategy.ALL);
+        return requestOptions;
+    }
+    private static RequestOptions getRequestOptionsCentetInside() {
+        RequestOptions requestOptions = new RequestOptions()
+                // 填充方式
+                .centerInside()
                 //优先级
                 .priority(Priority.HIGH)
                 //缓存策略

@@ -16,6 +16,6 @@
         android:paddingTop="@dimen/dp_4"
         android:paddingBottom="@dimen/dp_4"
         android:paddingRight="@dimen/dp_2"
-        android:scaleType="fitCenter"
+        android:scaleType="centerInside"
         android:src="@mipmap/img_alipay" />
 </LinearLayout>

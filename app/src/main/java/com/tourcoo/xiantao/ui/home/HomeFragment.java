@@ -455,23 +455,23 @@ public class HomeFragment extends BaseTitleFragment implements View.OnClickListe
         }
         if (indexBean.getTop() != null) {
             imageTop.setClickable(true);
-            GlideManager.loadImg(TourCooUtil.getUrl(indexBean.getTop().getImage()), imageTop, R.mipmap.img_zwt);
+            GlideManager.loadImgCenterCropReally(TourCooUtil.getUrl(indexBean.getTop().getImage()), imageTop, R.mipmap.img_zwt);
         }
         if (indexBean.getBottom() != null) {
             imageBottom.setClickable(true);
-            GlideManager.loadImg(TourCooUtil.getUrl(indexBean.getBottom().getImage()), imageBottom, R.mipmap.img_zwt);
+            GlideManager.loadImgCenterCropReally(TourCooUtil.getUrl(indexBean.getBottom().getImage()), imageBottom, R.mipmap.img_zwt);
         }
         if (indexBean.getRecommend1() != null) {
             rvRecommend1.setClickable(true);
-            GlideManager.loadImg(TourCooUtil.getUrl(indexBean.getRecommend1().getImage()), rvRecommend1, R.mipmap.img_zwt);
+            GlideManager.loadImgCenterCropReally(TourCooUtil.getUrl(indexBean.getRecommend1().getImage()), rvRecommend1, R.mipmap.img_zwt);
         }
         if (indexBean.getRecommend2() != null) {
             rvRecommend2.setClickable(true);
-            GlideManager.loadImg(TourCooUtil.getUrl(indexBean.getRecommend2().getImage()), rvRecommend2, R.mipmap.img_zwt);
+            GlideManager.loadImgCenterCropReally(TourCooUtil.getUrl(indexBean.getRecommend2().getImage()), rvRecommend2, R.mipmap.img_zwt);
         }
         if (indexBean.getRecommend3() != null) {
             rvRecommend3.setClickable(true);
-            GlideManager.loadImg(TourCooUtil.getUrl(indexBean.getRecommend3().getImage()), rvRecommend3, R.mipmap.img_zwt);
+            GlideManager.loadImgCenterCropReally(TourCooUtil.getUrl(indexBean.getRecommend3().getImage()), rvRecommend3, R.mipmap.img_zwt);
         }
     }
 

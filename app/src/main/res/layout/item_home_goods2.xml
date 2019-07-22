@@ -22,10 +22,10 @@
             <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/rvGoodsImage"
                 android:layout_width="match_parent"
+                android:padding="@dimen/dp_10"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:scaleType="fitCenter"
-                android:padding="@dimen/dp_10"
+                android:scaleType="centerInside"
                 android:src="@mipmap/ic_orange"
                 app:riv_corner_radius="@dimen/dp_2" />
         </RelativeLayout>

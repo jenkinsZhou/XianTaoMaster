@@ -56,7 +56,7 @@ public class GlideImageLoader implements IZoomMediaLoader {
 
     private void loadImage(Fragment context, ImageView image, String url,MySimpleTarget simpleTarget) {
         RequestOptions options = new RequestOptions()
-                .fitCenter()
+                .centerInside()
                 .placeholder(R.mipmap.img_zwt)
                 .error(R.mipmap.img_zwt)
                 .priority(Priority.HIGH)

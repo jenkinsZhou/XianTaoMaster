@@ -20,6 +20,7 @@ import com.tourcoo.xiantao.R;
 import com.tourcoo.xiantao.core.frame.manager.GlideManager;
 import com.tourcoo.xiantao.core.log.TourCooLogUtil;
 import com.tourcoo.xiantao.core.util.TourCoolUtil;
+import com.tourcoo.xiantao.core.widget.core.util.SizeUtil;
 import com.tourcoo.xiantao.core.widget.core.util.TourCooUtil;
 import com.tourcoo.xiantao.entity.home.HomeGoodsEntity;
 import com.tourcoo.xiantao.entity.home.HomeGoodsNewBean;
@@ -36,6 +37,7 @@ import com.tourcoo.xiantao.util.FormatDuration;
 public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsEntity.GoodsBean, BaseViewHolder> {
     public static final String IS_SPECIAL = "1";
     private GridLayoutManager layoutManager;
+    private int height;
 
     public HomeGoodsGridAdapter(GridLayoutManager layoutManager) {
         super(R.layout.item_home_goods2);
@@ -72,7 +74,7 @@ public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsEntity.Goods
         params.height = layoutManager.getWidth() / layoutManager.getSpanCount()
                 - roundedImageView.getPaddingLeft();
         TourCooLogUtil.i(TAG, "layoutManager宽度:" + layoutManager.getWidth());
-        GlideManager.loadImg(TourCooUtil.getUrl(item.getImage()), roundedImageView);
+        GlideManager.loadImgCenterInside(TourCooUtil.getUrl(item.getImage()), roundedImageView);
         helper.setText(R.id.tvGoodsName, item.getGoods_name());
         helper.setText(R.id.tvGoodsPrice, "¥ " + TourCooUtil.doubleTransString(item.getGoods_min_price()));
         if (item.getGoods_line_price() <= 0) {
@@ -168,10 +170,16 @@ public class HomeGoodsGridAdapter extends BaseQuickAdapter<HomeGoodsEntity.Goods
         }
         GlideManager.loadImg(item.getImage(), roundedImageView);*/
 
+        if (height <= 0) {
+            ViewGroup.LayoutParams layoutParams = roundedImageView.getLayoutParams();
+            layoutParams.height = layoutManager.getWidth() / layoutManager.getSpanCount()
+                    - 2 * roundedImageView.getPaddingLeft() - 2 * ((ViewGroup.MarginLayoutParams) layoutParams).leftMargin;//margin为什么要乘以2留给你们思考一下
+            height = layoutParams.height;
+        } else {
+            ViewGroup.LayoutParams layoutParams = roundedImageView.getLayoutParams();
+            layoutParams.height = height;
+        }
 
-        ViewGroup.LayoutParams layoutParams = roundedImageView.getLayoutParams();
-        layoutParams.height = layoutManager.getWidth() / layoutManager.getSpanCount()
-                - 2 * roundedImageView.getPaddingLeft() - 2 * ((ViewGroup.MarginLayoutParams) layoutParams).leftMargin;//margin为什么要乘以2留给你们思考一下
 
     }
 
