@@ -23,6 +23,7 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/civAvatar"
+                android:background="@color/whiteCommon"
                 android:layout_width="@dimen/dp_32"
                 android:layout_height="@dimen/dp_32"
                 android:layout_centerVertical="true"

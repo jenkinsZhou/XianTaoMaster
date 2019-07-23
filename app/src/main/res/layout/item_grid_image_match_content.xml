@@ -15,6 +15,7 @@
         app:riv_corner_radius="@dimen/dp_4"
         android:paddingTop="@dimen/dp_4"
         android:paddingBottom="@dimen/dp_4"
+        android:background="@color/whiteCommon"
         android:paddingRight="@dimen/dp_2"
         android:scaleType="centerInside"
         android:src="@mipmap/img_alipay" />

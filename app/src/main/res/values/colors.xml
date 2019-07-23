@@ -15,7 +15,7 @@
 
     <color name="comm_line">#dddddd</color>
     <color name="color_black_alpha_20">#33000000</color>
-    <color name="whiteCommon">#FFFFFF</color>
+    <color name="whiteCommon">#FFFFFFFF</color>
     <!--灰色背景通用-->
     <color name="grayBgCommon">#F9F9F9</color>
     <color name="grayDeepBgCommon">#F2F2F2</color>

@@ -23,6 +23,7 @@
                 android:id="@+id/rvGoodsImage"
                 android:layout_width="match_parent"
                 android:padding="@dimen/dp_10"
+                android:background="@color/whiteCommon"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:scaleType="centerInside"

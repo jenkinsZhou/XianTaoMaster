@@ -163,7 +163,9 @@ public class GlideManager {
     public static void loadImg(Object obj, ImageView iv) {
         loadImgCenterCrop(obj, iv, R.mipmap.img_zwt);
     }
-
+    public static void loadImgCenterCropReally(Object obj, ImageView iv) {
+        loadImgCenterCropReally(obj, iv, R.mipmap.img_zwt);
+    }
     public static void loadImg(Object obj, ImageView iv, int placeholderResource) {
         loadImgCenterCrop(obj, iv, placeholderResource);
     }

@@ -217,6 +217,7 @@
                                 android:layout_height="@dimen/dp_118"
                                 android:layout_marginRight="@dimen/dp_5"
                                 android:layout_weight="1"
+                                android:background="@color/whiteCommon"
                                 android:clickable="false"
                                 android:scaleType="centerInside"
                                 android:src="@mipmap/img_zwt"
